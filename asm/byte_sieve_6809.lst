@@ -1,0 +1,554 @@
+                      (byte_sieve_6809.a):00001         ; [TURBO9_HEADER_START]
+                      (byte_sieve_6809.a):00002         ; ////////////////////////////////////////////////////////////////////////////
+                      (byte_sieve_6809.a):00003         ;                          Turbo9 Microprocessor IP
+                      (byte_sieve_6809.a):00004         ; ////////////////////////////////////////////////////////////////////////////
+                      (byte_sieve_6809.a):00005         ; Website: www.turbo9.org
+                      (byte_sieve_6809.a):00006         ; Contact: team[at]turbo9[dot]org
+                      (byte_sieve_6809.a):00007         ; ////////////////////////////////////////////////////////////////////////////
+                      (byte_sieve_6809.a):00008         ; [TURBO9_LICENSE_START]
+                      (byte_sieve_6809.a):00009         ; BSD-1-Clause
+                      (byte_sieve_6809.a):00010         ;
+                      (byte_sieve_6809.a):00011         ; Copyright (c) 2020-2023
+                      (byte_sieve_6809.a):00012         ; Kevin Phillipson
+                      (byte_sieve_6809.a):00013         ; Michael Rywalt
+                      (byte_sieve_6809.a):00014         ; All rights reserved.
+                      (byte_sieve_6809.a):00015         ;
+                      (byte_sieve_6809.a):00016         ; Redistribution and use in source and binary forms, with or without
+                      (byte_sieve_6809.a):00017         ; modification, are permitted provided that the following conditions are met:
+                      (byte_sieve_6809.a):00018         ;
+                      (byte_sieve_6809.a):00019         ; 1. Redistributions of source code must retain the above copyright notice,
+                      (byte_sieve_6809.a):00020         ;    this list of conditions and the following disclaimer.
+                      (byte_sieve_6809.a):00021         ;
+                      (byte_sieve_6809.a):00022         ; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+                      (byte_sieve_6809.a):00023         ; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+                      (byte_sieve_6809.a):00024         ; IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+                      (byte_sieve_6809.a):00025         ; ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS AND CONTRIBUTORS BE
+                      (byte_sieve_6809.a):00026         ; LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+                      (byte_sieve_6809.a):00027         ; CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+                      (byte_sieve_6809.a):00028         ; SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+                      (byte_sieve_6809.a):00029         ; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+                      (byte_sieve_6809.a):00030         ; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+                      (byte_sieve_6809.a):00031         ; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+                      (byte_sieve_6809.a):00032         ; POSSIBILITY OF SUCH DAMAGE.
+                      (byte_sieve_6809.a):00033         ; [TURBO9_LICENSE_END]
+                      (byte_sieve_6809.a):00034         ; ////////////////////////////////////////////////////////////////////////////
+                      (byte_sieve_6809.a):00035         ; Engineer: Kevin Phillipson
+                      (byte_sieve_6809.a):00036         ; Description:
+                      (byte_sieve_6809.a):00037         ; BYTE Sieve Benchmark (Language: 6809 ASM)
+                      (byte_sieve_6809.a):00038         ; Originally published in BYTE magazine September 1981
+                      (byte_sieve_6809.a):00039         ; 6809 Assembly port by Kevin Phillipson
+                      (byte_sieve_6809.a):00040         ;
+                      (byte_sieve_6809.a):00041         ; ////////////////////////////////////////////////////////////////////////////
+                      (byte_sieve_6809.a):00042         ; History:
+                      (byte_sieve_6809.a):00043         ; 07.14.2023 - Kevin Phillipson
+                      (byte_sieve_6809.a):00044         ;   File header added
+                      (byte_sieve_6809.a):00045         ;
+                      (byte_sieve_6809.a):00046         ; ////////////////////////////////////////////////////////////////////////////
+                      (byte_sieve_6809.a):00047         ; [TURBO9_HEADER_END]
+                      (byte_sieve_6809.a):00048         
+                      (byte_sieve_6809.a):00049         ; ////////////////////////////////////////////////////////////////////////////
+                      (byte_sieve_6809.a):00050         ;                  Turbo9 / 6809 BYTE sieve benchmark program
+                      (byte_sieve_6809.a):00051         ; ////////////////////////////////////////////////////////////////////////////
+                      (byte_sieve_6809.a):00052         
+                      (byte_sieve_6809.a):00053           IFDEF _COCO
+0000                  (byte_sieve_6809.a):00054         prog_start  equ $4000
+0000                  (byte_sieve_6809.a):00055         clk_cnt     equ $0112
+                      (byte_sieve_6809.a):00056           ELSE
+     8000             (byte_sieve_6809.a):00057         prog_start  equ $8000
+     0004             (byte_sieve_6809.a):00058         clk_cnt     equ $0004
+     0000             (byte_sieve_6809.a):00059         output_port equ $0000
+                      (byte_sieve_6809.a):00060           ENDC
+                      (byte_sieve_6809.a):00061         
+                      (byte_sieve_6809.a):00062         
+     1FFE             (byte_sieve_6809.a):00063         data_size   equ 8190
+     000A             (byte_sieve_6809.a):00064         iter        equ 10
+     000A             (byte_sieve_6809.a):00065         LF          equ $0a
+                      (byte_sieve_6809.a):00066         
+                      (byte_sieve_6809.a):00067         
+                      (byte_sieve_6809.a):00068           org  prog_start  ; 32k of memory at the top
+                      (byte_sieve_6809.a):00069         
+                      (byte_sieve_6809.a):00070           IFDEF _COCO
+                      (byte_sieve_6809.a):00071          section code
+                      (byte_sieve_6809.a):00072           ENDC
+                      (byte_sieve_6809.a):00073         ; ////////////////////////////////////////////////////////////////////////////
+                      (byte_sieve_6809.a):00074         ;                             Code Under Test
+                      (byte_sieve_6809.a):00075         ; ////////////////////////////////////////////////////////////////////////////
+8000                  (byte_sieve_6809.a):00076         code_under_test:
+8000 327F             (byte_sieve_6809.a):00077           leas  -1,s
+                      (byte_sieve_6809.a):00078         
+8002 8EA0DC           (byte_sieve_6809.a):00079           ldx   #prog_title
+8005 BDA197           (byte_sieve_6809.a):00080           jsr   print_x
+                      (byte_sieve_6809.a):00081         
+                      (byte_sieve_6809.a):00082           IFDEF _COCO
+                      (byte_sieve_6809.a):00083           ldd   #0
+                      (byte_sieve_6809.a):00084           std   clk_cnt
+                      (byte_sieve_6809.a):00085           ELSE
+8008 B60000           (byte_sieve_6809.a):00086           lda   >output_port
+800B 8A02             (byte_sieve_6809.a):00087           ora   #$02
+800D B70000           (byte_sieve_6809.a):00088           sta   >output_port    ; Set output_port[1] = 1, starting clk_counter
+                      (byte_sieve_6809.a):00089           ENDC
+                      (byte_sieve_6809.a):00090         
+                      (byte_sieve_6809.a):00091         
+                      (byte_sieve_6809.a):00092         ; ////////////////////////////////////////////////////////////////////////////
+                      (byte_sieve_6809.a):00093         ;                               BYTE sieve function
+                      (byte_sieve_6809.a):00094         ; ////////////////////////////////////////////////////////////////////////////
+                      (byte_sieve_6809.a):00095         ; #define true 1
+                      (byte_sieve_6809.a):00096         ; #define false 0
+                      (byte_sieve_6809.a):00097         ; #define size 8190
+                      (byte_sieve_6809.a):00098         ; #define sizepl 8191
+                      (byte_sieve_6809.a):00099         ; char flags[sizepl];
+                      (byte_sieve_6809.a):00100         ; main() {
+                      (byte_sieve_6809.a):00101         ;     int i, prime, k, count, iter; 
+                      (byte_sieve_6809.a):00102         ;     printf("10 iterations\n");
+                      (byte_sieve_6809.a):00103         ;     for (iter = 1; iter <= 10; iter ++) {     // interation_loop
+                      (byte_sieve_6809.a):00104         ;         count=0 ; 
+                      (byte_sieve_6809.a):00105         ;         for (i = 0; i <= size; i++)           // set_flags_loop
+                      (byte_sieve_6809.a):00106         ;             flags[i] = true;                  // set_flags_loop_done
+                      (byte_sieve_6809.a):00107         ;         for (i = 0; i <= size; i++) {         // find_primes_loop 
+                      (byte_sieve_6809.a):00108         ;             if (flags[i]) {
+                      (byte_sieve_6809.a):00109         ;                 prime = i + i + 3; 
+                      (byte_sieve_6809.a):00110         ;                 k = i + prime; 
+                      (byte_sieve_6809.a):00111         ;                 while (k <= size) {           // clr_flags_loop
+                      (byte_sieve_6809.a):00112         ;                     flags[k] = false; 
+                      (byte_sieve_6809.a):00113         ;                     k += prime; 
+                      (byte_sieve_6809.a):00114         ;                 }                             // clr_flags_loop_done
+                      (byte_sieve_6809.a):00115         ;                 count = count + 1;
+                      (byte_sieve_6809.a):00116         ;             }
+                      (byte_sieve_6809.a):00117         ;         }                                     // find_primes_loop_done 
+                      (byte_sieve_6809.a):00118         ;     }                                         // interation_loop_done
+                      (byte_sieve_6809.a):00119         ;    printf("\n%d primes", count);
+                      (byte_sieve_6809.a):00120         ; }
+                      (byte_sieve_6809.a):00121         ; Variables:
+                      (byte_sieve_6809.a):00122         ;
+                      (byte_sieve_6809.a):00123         ; i: generic loop counter (16bit) (X used) 
+                      (byte_sieve_6809.a):00124         ; prime:  16bit                   (D used)
+                      (byte_sieve_6809.a):00125         ; k:      16bit                   (Y used)
+                      (byte_sieve_6809.a):00126         ; count:  16bit                   (U used)
+                      (byte_sieve_6809.a):00127         ; iter:   8bit                    (0,s)
+                      (byte_sieve_6809.a):00128         
+8010 860A             (byte_sieve_6809.a):00129           lda   #iter
+8012 A7E4             (byte_sieve_6809.a):00130           sta   ,s
+                      (byte_sieve_6809.a):00131         
+8014                  (byte_sieve_6809.a):00132         interation_loop
+                      (byte_sieve_6809.a):00133           
+8014 8E0007           (byte_sieve_6809.a):00134           ldx   #((data_size+1)&$0007)
+8017 CE80BE           (byte_sieve_6809.a):00135           ldu   #flags
+801A CC0101           (byte_sieve_6809.a):00136           ldd   #$0101
+                      (byte_sieve_6809.a):00137           ;  
+801D                  (byte_sieve_6809.a):00138         set_flags_loop_1
+801D A7C0             (byte_sieve_6809.a):00139           sta   ,u+
+801F 301F             (byte_sieve_6809.a):00140           leax  -1,x
+8021 26FA             (byte_sieve_6809.a):00141           bne   set_flags_loop_1
+                      (byte_sieve_6809.a):00142           ;
+8023 8E1FF8           (byte_sieve_6809.a):00143           ldx   #((data_size+1)&$FFF8)
+8026 2717             (byte_sieve_6809.a):00144           beq   set_flags_done
+                      (byte_sieve_6809.a):00145         
+8028 1F02             (byte_sieve_6809.a):00146           tfr   d,y   ; y   = $0101
+802A 1F01             (byte_sieve_6809.a):00147           tfr   d,x   ; x   = $0101
+802C 1F8B             (byte_sieve_6809.a):00148           tfr   a,dp  ; dp  = $01
+802E CEA0BD           (byte_sieve_6809.a):00149           ldu   #(flags+data_size+1)
+                      (byte_sieve_6809.a):00150         
+8031 3401             (byte_sieve_6809.a):00151           pshs  cc
+8033                  (byte_sieve_6809.a):00152         set_flags_loop_8
+8033 1F8A             (byte_sieve_6809.a):00153           tfr   a,cc  ; cc  = $01
+8035 363F             (byte_sieve_6809.a):00154           pshu  y,x,dp,b,a,cc
+8037 118380C5         (byte_sieve_6809.a):00155           cmpu  #(flags+((data_size+1)&$0007))
+803B 26F6             (byte_sieve_6809.a):00156           bne   set_flags_loop_8  ; Could unroll this loop...
+803D 3501             (byte_sieve_6809.a):00157           puls  cc
+803F                  (byte_sieve_6809.a):00158         set_flags_done
+                      (byte_sieve_6809.a):00159         
+803F CE0000           (byte_sieve_6809.a):00160           ldu   #0                ; U = count = 0
+8042 CC0003           (byte_sieve_6809.a):00161           ldd   #3                ; D = i + i + 3 (prime)
+8045 8E80BE           (byte_sieve_6809.a):00162           ldx   #flags            ; X = i + flags
+8048                  (byte_sieve_6809.a):00163         find_primes_loop
+8048 6D80             (byte_sieve_6809.a):00164           tst   ,x+               ; need to account for this +1
+804A 260E             (byte_sieve_6809.a):00165           bne   if_flag_set       ; flag[i] = 1?
+804C C30002           (byte_sieve_6809.a):00166           addd  #2
+804F 8CA0BC           (byte_sieve_6809.a):00167           cmpx  #(flags+data_size)
+8052 23F4             (byte_sieve_6809.a):00168           bls   find_primes_loop  ; Could unroll this loop...
+8054                  (byte_sieve_6809.a):00169         find_primes_loop_done_0
+                      (byte_sieve_6809.a):00170           
+8054 6AE4             (byte_sieve_6809.a):00171           dec   ,s
+8056 26BC             (byte_sieve_6809.a):00172           bne   interation_loop
+8058                  (byte_sieve_6809.a):00173         interation_loop_done_0
+                      (byte_sieve_6809.a):00174         
+8058 2020             (byte_sieve_6809.a):00175           bra   main_done
+                      (byte_sieve_6809.a):00176         
+805A                  (byte_sieve_6809.a):00177         if_flag_set
+805A 318B             (byte_sieve_6809.a):00178           leay  d,x                   ; Y = k = i + prime + flags +1
+805C 108CA0BD         (byte_sieve_6809.a):00179           cmpy  #(data_size+flags+1)  ; while (k <= size) (+1 correction for tst ,x+)
+8060 220A             (byte_sieve_6809.a):00180           bhi   clr_flags_loop_done
+8062                  (byte_sieve_6809.a):00181         clr_flags_loop
+8062 6F3F             (byte_sieve_6809.a):00182           clr   -1,y                  ; flags[k] = false; (-1 correction for tst ,x+)
+8064 31AB             (byte_sieve_6809.a):00183           leay  d,y                   ; X = k += prime
+8066 108CA0BD         (byte_sieve_6809.a):00184           cmpy  #(data_size+flags+1)  ; while (k <= size) (+1 correction for tst ,x+)
+806A 23F6             (byte_sieve_6809.a):00185           bls   clr_flags_loop        ; Could unroll this loop...
+806C                  (byte_sieve_6809.a):00186         clr_flags_loop_done
+                      (byte_sieve_6809.a):00187         
+806C 3341             (byte_sieve_6809.a):00188           leau  1,u
+                      (byte_sieve_6809.a):00189         
+806E C30002           (byte_sieve_6809.a):00190           addd  #2
+8071 8CA0BC           (byte_sieve_6809.a):00191           cmpx  #(flags+data_size)
+8074 23D2             (byte_sieve_6809.a):00192           bls   find_primes_loop
+8076                  (byte_sieve_6809.a):00193         find_primes_loop_done_1
+                      (byte_sieve_6809.a):00194           
+8076 6AE4             (byte_sieve_6809.a):00195           dec   ,s
+8078 269A             (byte_sieve_6809.a):00196           bne   interation_loop
+807A                  (byte_sieve_6809.a):00197         interation_loop_done_1
+                      (byte_sieve_6809.a):00198         
+                      (byte_sieve_6809.a):00199         ; ////////////////////////////////////////////////////////////////////////////
+                      (byte_sieve_6809.a):00200         
+                      (byte_sieve_6809.a):00201         
+807A                  (byte_sieve_6809.a):00202         main_done:
+                      (byte_sieve_6809.a):00203         
+                      (byte_sieve_6809.a):00204           IFDEF _COCO
+                      (byte_sieve_6809.a):00205           ELSE
+                      (byte_sieve_6809.a):00206         ; //////////////////////// Stop Clock Counter / Test Bench
+807A B60000           (byte_sieve_6809.a):00207           lda   >output_port
+807D 8A40             (byte_sieve_6809.a):00208           ora   #$40
+807F B70000           (byte_sieve_6809.a):00209           sta   >output_port
+                      (byte_sieve_6809.a):00210           ENDC
+                      (byte_sieve_6809.a):00211         
+                      (byte_sieve_6809.a):00212         ; //////////////////////// Print Primes Found
+8082 8EA0CC           (byte_sieve_6809.a):00213           ldx   #primes_found
+8085 BDA197           (byte_sieve_6809.a):00214           jsr   print_x
+8088 1F30             (byte_sieve_6809.a):00215           tfr   u,d
+808A BDA1E1           (byte_sieve_6809.a):00216           jsr   puthex_16bit
+808D 860A             (byte_sieve_6809.a):00217           lda   #LF
+808F BDA17D           (byte_sieve_6809.a):00218           jsr   putchar_a
+                      (byte_sieve_6809.a):00219         
+                      (byte_sieve_6809.a):00220         ; ////////; //////////////////////// Number of Iterations
+8092 8EA165           (byte_sieve_6809.a):00221           ldx   #num_iter
+8095 BDA197           (byte_sieve_6809.a):00222           jsr   print_x
+8098 860A             (byte_sieve_6809.a):00223           lda   #iter
+809A BDA1D4           (byte_sieve_6809.a):00224           jsr   puthex_byte
+809D 860A             (byte_sieve_6809.a):00225           lda   #LF
+809F BDA17D           (byte_sieve_6809.a):00226           jsr   putchar_a
+                      (byte_sieve_6809.a):00227          
+                      (byte_sieve_6809.a):00228           
+                      (byte_sieve_6809.a):00229         ; //////////////// Print Clock Count
+80A2 8EA0BD           (byte_sieve_6809.a):00230           ldx   #clk_cnt_output
+80A5 BDA197           (byte_sieve_6809.a):00231           jsr   print_x
+80A8 FC0004           (byte_sieve_6809.a):00232           ldd   >clk_cnt
+80AB BDA1E1           (byte_sieve_6809.a):00233           jsr   puthex_16bit
+                      (byte_sieve_6809.a):00234         
+                      (byte_sieve_6809.a):00235           IFDEF _COCO
+                      (byte_sieve_6809.a):00236           ldx   #clk_cnt_unit
+                      (byte_sieve_6809.a):00237           jsr   print_x
+                      (byte_sieve_6809.a):00238           ELSE
+80AE FC0006           (byte_sieve_6809.a):00239           ldd   >(clk_cnt+2)
+80B1 BDA1E1           (byte_sieve_6809.a):00240           jsr   puthex_16bit
+                      (byte_sieve_6809.a):00241           ENDC
+                      (byte_sieve_6809.a):00242           
+80B4 860A             (byte_sieve_6809.a):00243           lda   #LF
+80B6 BDA17D           (byte_sieve_6809.a):00244           jsr   putchar_a
+                      (byte_sieve_6809.a):00245           
+80B9 3261             (byte_sieve_6809.a):00246           leas  1,s
+80BB 7EA194           (byte_sieve_6809.a):00247           jmp   terminate_prog
+                      (byte_sieve_6809.a):00248         
+                      (byte_sieve_6809.a):00249         
+                      (byte_sieve_6809.a):00250         ; ////////////////////////////////////////////////////////////////////////////
+                      (byte_sieve_6809.a):00251         ;                               Data Block
+                      (byte_sieve_6809.a):00252         ; ////////////////////////////////////////////////////////////////////////////
+                      (byte_sieve_6809.a):00253         
+80BE                  (byte_sieve_6809.a):00254         data_addr:
+                      (byte_sieve_6809.a):00255         
+80BE                  (byte_sieve_6809.a):00256         flags:  .blkb  (data_size+1)
+                      (byte_sieve_6809.a):00257         
+                      (byte_sieve_6809.a):00258         
+A0BD                  (byte_sieve_6809.a):00259         data_end:
+                      (byte_sieve_6809.a):00260         
+A0BD                  (byte_sieve_6809.a):00261         clk_cnt_output
+A0BD 436C6F636B20636F (byte_sieve_6809.a):00262           fcc  "Clock count: $"
+     756E743A2024
+A0CB 00               (byte_sieve_6809.a):00263           fcb  $00
+                      (byte_sieve_6809.a):00264         
+                      (byte_sieve_6809.a):00265           IFDEF _COCO
+A0CC                  (byte_sieve_6809.a):00266         clk_cnt_unit
+                      (byte_sieve_6809.a):00267           fcc  " 16.67ms cycles"
+                      (byte_sieve_6809.a):00268           fcb $00
+                      (byte_sieve_6809.a):00269           ENDC
+                      (byte_sieve_6809.a):00270         
+A0CC                  (byte_sieve_6809.a):00271         primes_found
+A0CC 5072696D65732066 (byte_sieve_6809.a):00272           fcc  "Primes found: $"
+     6F756E643A2024
+A0DB 00               (byte_sieve_6809.a):00273           fcb  $00
+                      (byte_sieve_6809.a):00274         
+A0DC                  (byte_sieve_6809.a):00275         prog_title:
+A0DC 0A               (byte_sieve_6809.a):00276           fcb   $0a
+A0DD 4259544520536965 (byte_sieve_6809.a):00277           fcc   "BYTE Sieve Benchmark (Language: 6809 ASM)"
+     76652042656E6368
+     6D61726B20284C61
+     6E67756167653A20
+     363830392041534D
+     29
+A106 0A               (byte_sieve_6809.a):00278           fcb   $0a
+A107 4F726967696E616C (byte_sieve_6809.a):00279           fcc   "Originally published in BYTE magazine September 1981"
+     6C79207075626C69
+     7368656420696E20
+     42595445206D6167
+     617A696E65205365
+     7074656D62657220
+     31393831
+A13B 0A               (byte_sieve_6809.a):00280           fcb   $0a
+A13C 3638303920417373 (byte_sieve_6809.a):00281           fcc   "6809 Assembly port by Kevin Phillipson"
+     656D626C7920706F
+     7274206279204B65
+     76696E205068696C
+     6C6970736F6E
+A162 0A               (byte_sieve_6809.a):00282           fcb   $0a
+A163 0A               (byte_sieve_6809.a):00283           fcb   $0a
+A164 00               (byte_sieve_6809.a):00284           fcb   $00
+                      (byte_sieve_6809.a):00285         
+A165                  (byte_sieve_6809.a):00286         num_iter:
+A165 4E756D626572206F (byte_sieve_6809.a):00287           fcc   "Number of iterations: $"
+     6620697465726174
+     696F6E733A2024
+A17C 00               (byte_sieve_6809.a):00288           fcb   $00
+                      (byte_sieve_6809.a):00289         
+                      (byte_sieve_6809.a):00290         
+                      (byte_sieve_6809.a):00291           IFDEF _COCO
+                      (byte_sieve_6809.a):00292           include coco_sys_io.asm
+                      (byte_sieve_6809.a):00293           ELSE
+                      (byte_sieve_6809.a):00294           include turbo9_sys_io.asm
+                      (turbo9_sys_io.asm):00001         ; [TURBO9_HEADER_START]
+                      (turbo9_sys_io.asm):00002         ; ////////////////////////////////////////////////////////////////////////////
+                      (turbo9_sys_io.asm):00003         ;                          Turbo9 Microprocessor IP
+                      (turbo9_sys_io.asm):00004         ; ////////////////////////////////////////////////////////////////////////////
+                      (turbo9_sys_io.asm):00005         ; Website: www.turbo9.org
+                      (turbo9_sys_io.asm):00006         ; Contact: team[at]turbo9[dot]org
+                      (turbo9_sys_io.asm):00007         ; ////////////////////////////////////////////////////////////////////////////
+                      (turbo9_sys_io.asm):00008         ; [TURBO9_LICENSE_START]
+                      (turbo9_sys_io.asm):00009         ; BSD-1-Clause
+                      (turbo9_sys_io.asm):00010         ;
+                      (turbo9_sys_io.asm):00011         ; Copyright (c) 2020-2023
+                      (turbo9_sys_io.asm):00012         ; Kevin Phillipson
+                      (turbo9_sys_io.asm):00013         ; Michael Rywalt
+                      (turbo9_sys_io.asm):00014         ; All rights reserved.
+                      (turbo9_sys_io.asm):00015         ;
+                      (turbo9_sys_io.asm):00016         ; Redistribution and use in source and binary forms, with or without
+                      (turbo9_sys_io.asm):00017         ; modification, are permitted provided that the following conditions are met:
+                      (turbo9_sys_io.asm):00018         ;
+                      (turbo9_sys_io.asm):00019         ; 1. Redistributions of source code must retain the above copyright notice,
+                      (turbo9_sys_io.asm):00020         ;    this list of conditions and the following disclaimer.
+                      (turbo9_sys_io.asm):00021         ;
+                      (turbo9_sys_io.asm):00022         ; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+                      (turbo9_sys_io.asm):00023         ; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+                      (turbo9_sys_io.asm):00024         ; IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+                      (turbo9_sys_io.asm):00025         ; ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS AND CONTRIBUTORS BE
+                      (turbo9_sys_io.asm):00026         ; LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+                      (turbo9_sys_io.asm):00027         ; CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+                      (turbo9_sys_io.asm):00028         ; SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+                      (turbo9_sys_io.asm):00029         ; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+                      (turbo9_sys_io.asm):00030         ; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+                      (turbo9_sys_io.asm):00031         ; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+                      (turbo9_sys_io.asm):00032         ; POSSIBILITY OF SUCH DAMAGE.
+                      (turbo9_sys_io.asm):00033         ; [TURBO9_LICENSE_END]
+                      (turbo9_sys_io.asm):00034         ; ////////////////////////////////////////////////////////////////////////////
+                      (turbo9_sys_io.asm):00035         ; Engineer: Kevin Phillipson
+                      (turbo9_sys_io.asm):00036         ; Description: Basic putchar and getchar system I/O using the bootloader SWI
+                      (turbo9_sys_io.asm):00037         ; functions
+                      (turbo9_sys_io.asm):00038         ;
+                      (turbo9_sys_io.asm):00039         ; ////////////////////////////////////////////////////////////////////////////
+                      (turbo9_sys_io.asm):00040         ; History:
+                      (turbo9_sys_io.asm):00041         ; 07.14.2023 - Kevin Phillipson
+                      (turbo9_sys_io.asm):00042         ;   File header added
+                      (turbo9_sys_io.asm):00043         ;
+                      (turbo9_sys_io.asm):00044         ; ////////////////////////////////////////////////////////////////////////////
+                      (turbo9_sys_io.asm):00045         ; [TURBO9_HEADER_END]
+                      (turbo9_sys_io.asm):00046         
+                      (turbo9_sys_io.asm):00047         ; ////////////////////////////////////////////////////////////////////////////
+                      (turbo9_sys_io.asm):00048         ;                          System I/O Functions
+                      (turbo9_sys_io.asm):00049         ; ////////////////////////////////////////////////////////////////////////////
+                      (turbo9_sys_io.asm):00050         
+A17D                  (turbo9_sys_io.asm):00051         putchar_a
+A17D 3406             (turbo9_sys_io.asm):00052           pshs  a,b
+A17F 1F89             (turbo9_sys_io.asm):00053           tfr   a,b
+A181 8603             (turbo9_sys_io.asm):00054           lda   #3
+A183 3F               (turbo9_sys_io.asm):00055           swi
+A184 3586             (turbo9_sys_io.asm):00056           puls  a,b,pc
+                      (turbo9_sys_io.asm):00057         
+A186                  (turbo9_sys_io.asm):00058         getchar_a
+A186 3410             (turbo9_sys_io.asm):00059           pshs  x
+A188 8604             (turbo9_sys_io.asm):00060           lda   #4
+A18A 8EA193           (turbo9_sys_io.asm):00061           ldx   #getchar_byte_buf
+A18D 3F               (turbo9_sys_io.asm):00062           swi
+A18E B6A193           (turbo9_sys_io.asm):00063           lda   >getchar_byte_buf
+A191 3590             (turbo9_sys_io.asm):00064           puls  x,pc
+A193                  (turbo9_sys_io.asm):00065         getchar_byte_buf
+A193 00               (turbo9_sys_io.asm):00066           fcb   $00
+                      (turbo9_sys_io.asm):00067         
+A194                  (turbo9_sys_io.asm):00068         terminate_prog
+A194 8600             (turbo9_sys_io.asm):00069           lda   #0
+A196 3F               (turbo9_sys_io.asm):00070           swi
+                      (turbo9_sys_io.asm):00071         
+                      (turbo9_sys_io.asm):00072         ; ////////////////////////////////////////////////////////////////////////////
+                      (turbo9_sys_io.asm):00073         
+                      (turbo9_sys_io.asm):00074         
+                      (byte_sieve_6809.a):00295           ENDC
+                      (byte_sieve_6809.a):00296         
+                      (byte_sieve_6809.a):00297           include common_io.asm
+                      (    common_io.asm):00001         ; [TURBO9_HEADER_START]
+                      (    common_io.asm):00002         ; ////////////////////////////////////////////////////////////////////////////
+                      (    common_io.asm):00003         ;                          Turbo9 Microprocessor IP
+                      (    common_io.asm):00004         ; ////////////////////////////////////////////////////////////////////////////
+                      (    common_io.asm):00005         ; Website: www.turbo9.org
+                      (    common_io.asm):00006         ; Contact: team[at]turbo9[dot]org
+                      (    common_io.asm):00007         ; ////////////////////////////////////////////////////////////////////////////
+                      (    common_io.asm):00008         ; [TURBO9_LICENSE_START]
+                      (    common_io.asm):00009         ; BSD-1-Clause
+                      (    common_io.asm):00010         ;
+                      (    common_io.asm):00011         ; Copyright (c) 2020-2023
+                      (    common_io.asm):00012         ; Kevin Phillipson
+                      (    common_io.asm):00013         ; Michael Rywalt
+                      (    common_io.asm):00014         ; All rights reserved.
+                      (    common_io.asm):00015         ;
+                      (    common_io.asm):00016         ; Redistribution and use in source and binary forms, with or without
+                      (    common_io.asm):00017         ; modification, are permitted provided that the following conditions are met:
+                      (    common_io.asm):00018         ;
+                      (    common_io.asm):00019         ; 1. Redistributions of source code must retain the above copyright notice,
+                      (    common_io.asm):00020         ;    this list of conditions and the following disclaimer.
+                      (    common_io.asm):00021         ;
+                      (    common_io.asm):00022         ; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+                      (    common_io.asm):00023         ; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+                      (    common_io.asm):00024         ; IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+                      (    common_io.asm):00025         ; ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS AND CONTRIBUTORS BE
+                      (    common_io.asm):00026         ; LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+                      (    common_io.asm):00027         ; CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+                      (    common_io.asm):00028         ; SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+                      (    common_io.asm):00029         ; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+                      (    common_io.asm):00030         ; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+                      (    common_io.asm):00031         ; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+                      (    common_io.asm):00032         ; POSSIBILITY OF SUCH DAMAGE.
+                      (    common_io.asm):00033         ; [TURBO9_LICENSE_END]
+                      (    common_io.asm):00034         ; ////////////////////////////////////////////////////////////////////////////
+                      (    common_io.asm):00035         ; Engineer: Kevin Phillipson
+                      (    common_io.asm):00036         ; Description: Input / Output Library
+                      (    common_io.asm):00037         ;
+                      (    common_io.asm):00038         ; ////////////////////////////////////////////////////////////////////////////
+                      (    common_io.asm):00039         ; History:
+                      (    common_io.asm):00040         ; 07.14.2023 - Kevin Phillipson
+                      (    common_io.asm):00041         ;   File header added
+                      (    common_io.asm):00042         ;
+                      (    common_io.asm):00043         ; ////////////////////////////////////////////////////////////////////////////
+                      (    common_io.asm):00044         ; [TURBO9_HEADER_END]
+                      (    common_io.asm):00045         
+                      (    common_io.asm):00046         ; ////////////////////////////////////////////////////////////////////////////
+                      (    common_io.asm):00047         ;                             Common I/O Functions
+                      (    common_io.asm):00048         ; ////////////////////////////////////////////////////////////////////////////
+                      (    common_io.asm):00049         
+                      (    common_io.asm):00050         ; You must provide a putchar_a & getchar_a function for this library.
+                      (    common_io.asm):00051         ; Requirement for putchar_a & getchar_a
+                      (    common_io.asm):00052         ;  - byte in A to be recieved / sent
+                      (    common_io.asm):00053         ;  - all other registers need to be maintained through function call
+                      (    common_io.asm):00054         ;
+                      (    common_io.asm):00055         
+                      (    common_io.asm):00056         
+                      (    common_io.asm):00057         
+                      (    common_io.asm):00058         ; ////////////////////// Print null terminated string pointed to by X
+                      (    common_io.asm):00059         ;
+A197                  (    common_io.asm):00060         print_x
+A197 3412             (    common_io.asm):00061           pshs  a,x
+A199                  (    common_io.asm):00062         apx_loop
+A199 A680             (    common_io.asm):00063           lda   ,x+
+A19B 2705             (    common_io.asm):00064           beq   apx_end
+A19D BDA17D           (    common_io.asm):00065           jsr   putchar_a
+A1A0 20F7             (    common_io.asm):00066           bra   apx_loop
+A1A2                  (    common_io.asm):00067         apx_end
+A1A2 3592             (    common_io.asm):00068           puls  a,x,pc
+                      (    common_io.asm):00069         
+                      (    common_io.asm):00070         ; ////////////////////// Put Hex Digit
+                      (    common_io.asm):00071         ;
+A1A4                  (    common_io.asm):00072         puthex_digit
+A1A4 3402             (    common_io.asm):00073           pshs  a
+A1A6 840F             (    common_io.asm):00074           anda  #$0f
+A1A8 810A             (    common_io.asm):00075           cmpa  #$0a
+A1AA 2504             (    common_io.asm):00076           blo   puthex_digit1
+A1AC 8B37             (    common_io.asm):00077           adda  #$37
+A1AE 2002             (    common_io.asm):00078           bra   puthex_digit2
+A1B0                  (    common_io.asm):00079         puthex_digit1
+A1B0 8B30             (    common_io.asm):00080           adda  #$30
+A1B2                  (    common_io.asm):00081         puthex_digit2
+A1B2 BDA17D           (    common_io.asm):00082           jsr   putchar_a
+A1B5 3582             (    common_io.asm):00083           puls  a,pc
+                      (    common_io.asm):00084         
+                      (    common_io.asm):00085         ; ////////////////////// Get Hex Digit
+                      (    common_io.asm):00086         ;
+                      (    common_io.asm):00087         ; Get hex digit and convert
+                      (    common_io.asm):00088         ; to binary nibble. Return in A
+                      (    common_io.asm):00089         ;
+A1B7                  (    common_io.asm):00090         gethex_digit
+A1B7 BDA186           (    common_io.asm):00091           jsr   getchar_a
+A1BA 8D2E             (    common_io.asm):00092           bsr   ucase_a
+A1BC 8141             (    common_io.asm):00093           cmpa  #'A'         ; uppercase A to F?
+A1BE 2404             (    common_io.asm):00094           bhs   ghd_AtoF
+A1C0                  (    common_io.asm):00095         ghd_0to9
+A1C0 8030             (    common_io.asm):00096           suba  #'0'         ; else 0 to 9
+A1C2 2002             (    common_io.asm):00097           bra   ghd_done
+A1C4                  (    common_io.asm):00098         ghd_AtoF
+A1C4 8037             (    common_io.asm):00099           suba  #$37
+A1C6                  (    common_io.asm):00100         ghd_done
+A1C6 39               (    common_io.asm):00101           rts
+                      (    common_io.asm):00102         
+                      (    common_io.asm):00103         
+                      (    common_io.asm):00104         ; ////////////////////// Get Hex Byte
+                      (    common_io.asm):00105         ; 
+                      (    common_io.asm):00106         ; Get 2 hex digit and convert
+                      (    common_io.asm):00107         ; to binary byte. Return in A
+                      (    common_io.asm):00108         ;
+A1C7                  (    common_io.asm):00109         gethex_byte
+A1C7 8DEE             (    common_io.asm):00110           bsr   gethex_digit
+A1C9 48               (    common_io.asm):00111           lsla
+A1CA 48               (    common_io.asm):00112           lsla
+A1CB 48               (    common_io.asm):00113           lsla
+A1CC 48               (    common_io.asm):00114           lsla
+A1CD 3402             (    common_io.asm):00115           pshs  a
+A1CF 8DE6             (    common_io.asm):00116           bsr   gethex_digit
+A1D1 AAE0             (    common_io.asm):00117           ora   ,s+
+A1D3 39               (    common_io.asm):00118           rts
+                      (    common_io.asm):00119         
+                      (    common_io.asm):00120         ; ////////////////////// Put Hex Byte
+                      (    common_io.asm):00121         ;
+                      (    common_io.asm):00122         ; Print hex value in A
+                      (    common_io.asm):00123         ;
+A1D4                  (    common_io.asm):00124         puthex_byte
+A1D4 3402             (    common_io.asm):00125           pshs  a
+A1D6 44               (    common_io.asm):00126           lsra
+A1D7 44               (    common_io.asm):00127           lsra
+A1D8 44               (    common_io.asm):00128           lsra
+A1D9 44               (    common_io.asm):00129           lsra
+A1DA 8DC8             (    common_io.asm):00130           bsr   puthex_digit
+A1DC 3502             (    common_io.asm):00131           puls  a
+A1DE 8DC4             (    common_io.asm):00132           bsr   puthex_digit
+A1E0 39               (    common_io.asm):00133           rts
+                      (    common_io.asm):00134         
+                      (    common_io.asm):00135         ; ////////////////////// Put Hex 16bit
+                      (    common_io.asm):00136         ;
+                      (    common_io.asm):00137         ; Print hex value in D
+                      (    common_io.asm):00138         ;
+A1E1                  (    common_io.asm):00139         puthex_16bit
+A1E1 8DF1             (    common_io.asm):00140           bsr   puthex_byte
+A1E3 1E89             (    common_io.asm):00141           exg   a,b
+A1E5 8DED             (    common_io.asm):00142           bsr   puthex_byte
+A1E7 1E89             (    common_io.asm):00143           exg   a,b
+A1E9 39               (    common_io.asm):00144           rts
+                      (    common_io.asm):00145         
+                      (    common_io.asm):00146         ; ////////////////////// Ucase A
+                      (    common_io.asm):00147         ;
+A1EA                  (    common_io.asm):00148         ucase_a
+A1EA 8161             (    common_io.asm):00149           cmpa  #'a'
+A1EC 2506             (    common_io.asm):00150           blo   uca_done
+A1EE 817A             (    common_io.asm):00151           cmpa  #'z'
+A1F0 2202             (    common_io.asm):00152           bhi   uca_done
+A1F2 8020             (    common_io.asm):00153           suba  #$20
+A1F4                  (    common_io.asm):00154         uca_done
+A1F4 39               (    common_io.asm):00155           rts
+                      (    common_io.asm):00156         
+                      (    common_io.asm):00157         ; ////////////////////////////////////////////////////////////////////////////
+                      (    common_io.asm):00158         
+                      (    common_io.asm):00159         
+                      (byte_sieve_6809.a):00298         
+                      (byte_sieve_6809.a):00299           IFDEF _COCO
+                      (byte_sieve_6809.a):00300           endsect
+                      (byte_sieve_6809.a):00301           ENDC
+                      (byte_sieve_6809.a):00302         

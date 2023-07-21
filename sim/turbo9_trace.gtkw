@@ -1,0 +1,44 @@
+[*]
+[*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
+[*] Thu Nov  4 20:45:07 2021
+[*]
+[dumpfile] "/home/kevinp/work/turbo9dev/sim/tb_dv_top/tb_dv_run_code/tb_dv_run_code.vcd"
+[dumpfile_mtime] "Thu Nov  4 20:22:51 2021"
+[dumpfile_size] 5311578
+[savefile] "/home/kevinp/work/turbo9dev/sim/tb_dv_top/tb_dv_run_code/turbo9_trace.gtkw"
+[timestart] 189525000
+[size] 2004 728
+[pos] -1 -1
+*-15.797717 189695000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] tb_dv_top.
+[treeopen] tb_dv_top.I_soc_top.
+[treeopen] tb_dv_top.I_soc_top.I_turbo9.
+[treeopen] tb_dv_top.I_soc_top.I_turbo9.I_turbo9_decode_stage.
+[treeopen] tb_dv_top.I_soc_top.I_turbo9.I_turbo9_decode_stage.I_turbo9_uop_generator.
+[treeopen] tb_dv_top.I_soc_top.I_turbo9.I_turbo9_execute_stage.
+[treeopen] tb_dv_top.I_tb_dv_6809_model.
+[sst_width] 333
+[signals_width] 355
+[sst_expanded] 1
+[sst_vpaned_height] 228
+@22
+tb_dv_top.I_soc_top.I_turbo9.I_turbo9_execute_stage.I_turbo9_register_array.pc_reg[15:0]
+tb_dv_top.I_soc_top.I_turbo9.I_turbo9_decode_stage.I_turbo9_instr_format_decode.QUEUE_D0_I[7:0]
+[color] 5
+tb_dv_top.I_soc_top.I_turbo9.I_turbo9_execute_stage.I_turbo9_register_array.s_reg[15:0]
+tb_dv_top.I_soc_top.I_turbo9.I_turbo9_execute_stage.I_turbo9_register_array.x_reg[15:0]
+[color] 1
+tb_dv_top.I_soc_top.I_turbo9.I_turbo9_execute_stage.I_turbo9_register_array.a_reg[7:0]
+[color] 2
+tb_dv_top.I_soc_top.I_turbo9.I_turbo9_execute_stage.I_turbo9_register_array.b_reg[7:0]
+tb_dv_top.I_soc_top.OUTPUT_PORT_O[7:0]
+tb_dv_top.I_soc_top.I_syncram_8bit.\ram[32751][7:0]
+tb_dv_top.I_soc_top.I_turbo9.I_turbo9_execute_stage.I_turbo9_address_alu.ADDR_ALU_REG_I[15:0]
+tb_dv_top.I_soc_top.I_turbo9.I_turbo9_execute_stage.I_turbo9_address_alu.ADDR_ALU_OFFSET_I[15:0]
+tb_dv_top.I_soc_top.I_syncram_8bit.\ram[10362][7:0]
+tb_dv_top.I_soc_top.I_syncram_8bit.\ram[32161][7:0]
+tb_dv_top.I_soc_top.I_syncram_8bit.\ram[32162][7:0]
+tb_dv_top.I_soc_top.I_syncram_8bit.\ram[32169][7:0]
+tb_dv_top.I_soc_top.I_syncram_8bit.\ram[32170][7:0]
+[pattern_trace] 1
+[pattern_trace] 0

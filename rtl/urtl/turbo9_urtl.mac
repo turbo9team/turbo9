@@ -1,0 +1,526 @@
+; [TURBO9_HEADER_START]
+; ////////////////////////////////////////////////////////////////////////////
+;                          Turbo9 Microprocessor IP
+; ////////////////////////////////////////////////////////////////////////////
+; Website: www.turbo9.org
+; Contact: team[at]turbo9[dot]org
+; ////////////////////////////////////////////////////////////////////////////
+; [TURBO9_LICENSE_START]
+; BSD-1-Clause
+;
+; Copyright (c) 2020-2023
+; Kevin Phillipson
+; Michael Rywalt
+; All rights reserved.
+;
+; Redistribution and use in source and binary forms, with or without
+; modification, are permitted provided that the following conditions are met:
+;
+; 1. Redistributions of source code must retain the above copyright notice,
+;    this list of conditions and the following disclaimer.
+;
+; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+; IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+; ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS AND CONTRIBUTORS BE
+; LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+; CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+; SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+; POSSIBILITY OF SUCH DAMAGE.
+; [TURBO9_LICENSE_END]
+; ////////////////////////////////////////////////////////////////////////////
+; Engineer: Kevin Phillipson
+; Description: Macro definition file for the Turbo9 uRTL microcode 
+;
+; ////////////////////////////////////////////////////////////////////////////
+; History:
+; 07.14.2023 - Kevin Phillipson
+;   File header added
+;
+; ////////////////////////////////////////////////////////////////////////////
+; [TURBO9_HEADER_END]
+
+
+; ////////////////////////////////////////////////////////////////////////////
+;                    MICROPROGRAM WORD FORMAT & DEPTH
+; ////////////////////////////////////////////////////////////////////////////
+
+microprogram_word_begin
+  INIT  cv_MICRO_SEQ_OP           ; 3 bits
+  INIT  cv_MICRO_SEQ_BRANCH_ADDR  ; 8 bits
+  INIT  cv_DATA_ALU_A_SEL         ; 4 bits
+  INIT  cv_DATA_ALU_B_SEL         ; 3 bits
+  INIT  cv_DATA_ALU_WR_SEL        ; 4 bits
+  INIT  cv_ADDR_ALU_REG_SEL       ; 4 bits
+  INIT  cv_DATA_ALU_OP            ; 3 bits
+  INIT  cv_DATA_WIDTH_SEL         ; 2 bits
+  INIT  cv_DATA_ALU_SAU_EN        ; 1 bit
+  INIT  cv_CCR_OP                 ; 4 bits
+  INIT  cv_DATA_ALU_COND_SEL      ; 2 bits
+  INIT  cv_MICRO_SEQ_COND_SEL     ; 4 bits
+  INIT  cv_DMEM_OP                ; 2 bits
+  INIT  cv_STACK_OP               ; 2 bits
+microprogram_word_end
+
+microprogram_addr_width 8
+
+; ////////////////////////////////////////////////////////////////////////////
+
+
+
+; ////////////////////////////////////////////////////////////////////////////
+;                            CONTROL VECTOR DEFINES
+; ////////////////////////////////////////////////////////////////////////////
+
+
+; ///////////////////////////////////////// cv_MICRO_SEQ_OP definition
+; // Note this encoding is critical.
+; // OP_JUMP_TABLE_A_NEXT_PC is partially decoded for speed
+ctrl_vec_begin cv_MICRO_SEQ_OP 3 
+  OP_CONTINUE               EQU $0 ; = 3'b000;
+  OP_JUMP                   EQU $1 ; = 3'b001;
+  OP_CALL                   EQU $2 ; = 3'b010;
+  OP_RETURN                 EQU $3 ; = 3'b011;
+  OP_JUMP_TABLE_B           EQU $4 ; = 3'b100;
+  OP_JUMP_TABLE_A_NEXT_PC   EQU $5 ; = 3'b1?1;
+ctrl_vec_end
+; /////////////////////////////////////////
+
+
+; ///////////////////////////////////////// cv_MICRO_SEQ_BRANCH_ADDR definition
+ctrl_vec_addr_begin cv_MICRO_SEQ_BRANCH_ADDR 8
+  ;
+  ; no equates
+  ;
+ctrl_vec_addr_end
+; /////////////////////////////////////////
+
+
+; ///////////////////////////////////////// cv_DATA_ALU_A_SEL definition
+ctrl_vec_begin cv_DATA_ALU_A_SEL 4
+  ZERO         EQU $F ; = 4'b1111,
+  IDATA        EQU $E ; = 4'b1110,
+  DMEM_RD      EQU $D ; = 4'b1101,
+  EA           EQU $C ; = 4'b1100,
+  R1           EQU $8 ; = 4'b10xx, // Partially decoded!
+  R2           EQU $4 ; = 4'b01xx, // Partially decoded!
+  STACK_REG    EQU $0 ; = 4'b00xx, // Partially decoded!
+ctrl_vec_end
+; /////////////////////////////////////////
+
+
+; ///////////////////////////////////////// cv_DATA_ALU_B_SEL definition
+ctrl_vec_begin cv_DATA_ALU_B_SEL 3
+  ZERO         EQU $7 ; = 3'b111,
+  IDATA        EQU $6 ; = 3'b110,
+  DMEM_RD      EQU $5 ; = 3'b101,
+  EA           EQU $4 ; = 3'b100,
+  R2           EQU $0 ; = 3'b0xx, // Partially decoded!
+ctrl_vec_end
+; /////////////////////////////////////////
+
+
+; ///////////////////////////////////////// cv_DATA_ALU_WR_SEL definition
+ctrl_vec_begin cv_DATA_ALU_WR_SEL 4
+  ZERO         EQU $F ; = 4'b1111,
+  IDATA        EQU $E ; = 4'b1110,
+  DMEM_RD      EQU $D ; = 4'b1101,
+  EA           EQU $C ; = 4'b1100,
+  R1           EQU $8 ; = 4'b10xx, // Partially decoded!
+  R2           EQU $4 ; = 4'b01xx, // Partially decoded!
+  STACK_REG    EQU $0 ; = 4'b00xx, // Partially decoded!
+ctrl_vec_end
+; /////////////////////////////////////////
+
+
+; ///////////////////////////////////////// cv_ADDR_ALU_REG_SEL definition
+ctrl_vec_begin cv_ADDR_ALU_REG_SEL 4
+  ZERO         EQU $F ; = 4'b1111,
+  IDATA        EQU $E ; = 4'b1110,
+  DMEM_RD      EQU $D ; = 4'b1101,
+  EA           EQU $C ; = 4'b1100,
+  AR           EQU $8 ; = 4'b1000, // Partially decoded!
+ ;INDEXED      EQU $4 ; = 4'b0100, // Partially decoded!
+  INDEXED      EQU $0 ; = 4'b0000, // Partially decoded!
+ctrl_vec_end
+; /////////////////////////////////////////
+
+
+; ///////////////////////////////////////// cv_DATA_ALU_OP definition
+; // Note this encoding is critical for partial decoding
+ctrl_vec_begin cv_DATA_ALU_OP 3
+  A_PLUS_B      EQU $0 ; Y = A + B
+  A_PLUS_NOT_B  EQU $1 ; Y = A + ~B
+  LSHIFT_A      EQU $2 ; Y = A >> 1
+  RSHIFT_A      EQU $3 ; Y = A << 1
+  A_AND_B       EQU $4 ; Y = A & B
+  A_OR_B        EQU $5 ; Y = A | B
+  A_XOR_B       EQU $6 ; Y = A ^ B
+  SAU           EQU $7 ; Y = SAU_Y
+ctrl_vec_end
+; /////////////////////////////////////////
+
+
+; ///////////////////////////////////////// cv_DATA_WIDTH_SEL definition
+ctrl_vec_begin cv_DATA_WIDTH_SEL 2 
+  W_R1        EQU $0 ; 2'h0;
+  W_R1_OR_IND EQU $1 ; 2'h1;
+  W_STACK_REG EQU $2 ; 2'h2;
+  W_16        EQU $3 ; 2'h3;
+ctrl_vec_end
+; /////////////////////////////////////////
+
+
+; ///////////////////////////////////////// cv_DATA_ALU_SAU_EN definition
+ctrl_vec_begin cv_DATA_ALU_SAU_EN 1 
+  FALSE   EQU $0 ; 1'h0;
+  TRUE    EQU $1 ; 1'h1;
+ctrl_vec_end
+; /////////////////////////////////////////
+
+
+; ///////////////////////////////////////// cv_CCR_OP definition
+ctrl_vec_begin cv_CCR_OP 4
+  OP_oooooooo  EQU $0 ; = 4'h0,
+  OP_oooooXoo  EQU $1 ; = 4'h1,
+  OP_ooooXXXX  EQU $2 ; = 4'h2,
+  OP_oooooXoX  EQU $3 ; = 4'h3,
+  OP_ooooXXXo  EQU $4 ; = 4'h4,
+  OP_ooXoXXXX  EQU $5 ; = 4'h5,
+  OP_ooooXXoX  EQU $6 ; = 4'h6,
+  OP_1ooooooo  EQU $7 ; = 4'h7,
+  OP_o1o1oooo  EQU $8 ; = 4'h8,
+  OP_XXXXXXXX  EQU $9 ; = 4'h9
+ctrl_vec_end
+; /////////////////////////////////////////
+
+
+; ///////////////////////////////////////// cv_DATA_ALU_COND_SEL definition
+ctrl_vec_begin cv_DATA_ALU_COND_SEL 2
+  ZERO_BIT  EQU $0 ; = 2'b00,
+  ONE_BIT   EQU $1 ; = 2'b01,
+  CARRY_BIT EQU $2 ; = 2'b10,
+  SIGN_BIT  EQU $3 ; = 2'b11
+ctrl_vec_end
+; /////////////////////////////////////////
+
+
+; ///////////////////////////////////////// cv_MICRO_SEQ_COND_SEL definition
+ctrl_vec_begin cv_MICRO_SEQ_COND_SEL 4
+  TRUE              EQU $1
+  NOT_INDIRECT      EQU $0
+  STACK_DONE        EQU $2
+  STACK_NEXT        EQU $3
+  SAU_NOT_DONE      EQU $4
+  E_CLEAR           EQU $5
+  BRANCH_COND       EQU $8 ; One hot encoded!
+ctrl_vec_end
+; /////////////////////////////////////////
+
+
+; ///////////////////////////////////////// cv_DMEM_OP definition
+; // Note this encoding is critical.
+; // MSB is a "one-hot"
+ctrl_vec_begin cv_DMEM_OP 2 
+  DMEM_OP_IDLE     EQU $0 ; = 2'b00; 
+  DMEM_OP_RD       EQU $2 ; = 2'b10; 
+  DMEM_OP_WR       EQU $3 ; = 2'b11; 
+ctrl_vec_end
+; /////////////////////////////////////////
+
+
+; ///////////////////////////////////////// cv_STACK_OP definition
+; // Note this encoding is critical.
+ctrl_vec_begin cv_STACK_OP 2 
+  STACK_OP_IDLE     EQU $0 ; = 2'b00; 
+  STACK_OP_PULL     EQU $1 ; = 2'b01; 
+  STACK_OP_PUSH     EQU $2 ; = 2'b10; 
+ctrl_vec_end
+; /////////////////////////////////////////
+
+
+; ////////////////////////////////////////////////////////////////////////////
+
+
+; ////////////////////////////////////////////////////////////////////////////
+;                              DECODE TABLE VECTORS
+; ////////////////////////////////////////////////////////////////////////////
+
+; Note: R1_SEL is used for DATA_ALU_A input and DATA_ALU_WR output
+; Also the MSB of R1_SEL sets the width for CCR flags. 1 = 8bit, 0 = 16bit
+; The width setting does not change the actual datapath width, only the flags.
+ctrl_vec_begin cv_R1_SEL 4
+  ZERO         EQU $F ; = 4'b1111, ; 8bit width for CCR
+  IDATA        EQU $E ; = 4'b1110, ; 8bit width for CCR
+  DMEM_RD      EQU $D ; = 4'b1101, ; 8bit width for CCR
+  EA           EQU $C ; = 4'b1100, ; 8bit width for CCR
+  ;
+  DPR          EQU $B ; = 4'b1011,
+  CCR          EQU $A ; = 4'b1010,
+  B            EQU $9 ; = 4'b1001,
+  A            EQU $8 ; = 4'b1000,
+  ;
+  SEXB         EQU $7 ; = 4'b0111,
+  ;            EQU $6 ; = 4'b0110,
+  PC           EQU $5 ; = 4'b0101,
+  S            EQU $4 ; = 4'b0100,
+  ;
+  U            EQU $3 ; = 4'b0011,
+  Y            EQU $2 ; = 4'b0010,
+  X            EQU $1 ; = 4'b0001,
+  D            EQU $0 ; = 4'b0000
+ctrl_vec_end 
+
+; Note: R2_SEL is used for DATA_ALU_A, DATA_ALU_B & DATA_ALU_WR
+ctrl_vec_begin cv_R2_SEL 4
+  ZERO         EQU $F ; = 4'b1111,
+  IDATA        EQU $E ; = 4'b1110,
+  DMEM_RD      EQU $D ; = 4'b1101,
+  EA           EQU $C ; = 4'b1100,
+  ;
+  DPR          EQU $B ; = 4'b1011,
+  CCR          EQU $A ; = 4'b1010,
+  B            EQU $9 ; = 4'b1001,
+  A            EQU $8 ; = 4'b1000,
+  ;
+  SEXB         EQU $7 ; = 4'b0111,
+  ;            EQU $6 ; = 4'b0110,
+  PC           EQU $5 ; = 4'b0101,
+  S            EQU $4 ; = 4'b0100,
+  ;
+  U            EQU $3 ; = 4'b0011,
+  Y            EQU $2 ; = 4'b0010,
+  X            EQU $1 ; = 4'b0001,
+  D            EQU $0 ; = 4'b0000
+ctrl_vec_end 
+
+; Note: AR_SEL is used for ADDR_ALU input
+ctrl_vec_begin cv_AR_SEL 4
+  ZERO         EQU $F ; = 4'b1111,
+  IDATA        EQU $E ; = 4'b1110,
+  DMEM_RD      EQU $D ; = 4'b1101,
+  EA           EQU $C ; = 4'b1100,
+  ;
+  ;DPR         EQU $B ; = 4'b1011,
+  ;CCR         EQU $A ; = 4'b1010,
+  ;B           EQU $9 ; = 4'b1001,
+  ;A           EQU $8 ; = 4'b1000,
+  ;
+ ;SEXB         EQU $7 ; = 4'b0111,
+  ;            EQU $6 ; = 4'b0110,
+  PC           EQU $5 ; = 4'b0101,
+  S            EQU $4 ; = 4'b0100,
+  ;
+  U            EQU $3 ; = 4'b0011,
+  Y            EQU $2 ; = 4'b0010,
+  X            EQU $1 ; = 4'b0001,
+ ;D            EQU $0 ; = 4'b0000
+ctrl_vec_end 
+
+; ////////////////////////////////////////////////////////////////////////////
+
+
+; ////////////////////////////////////////////////////////////////////////////
+;                              HIGH LEVEL MACROS
+; ////////////////////////////////////////////////////////////////////////////
+
+; ///////////////////////////////////////// Next Address Marcos
+macro_begin JUMP
+  cv_MICRO_SEQ_OP   set OP_JUMP
+  cv_MICRO_SEQ_BRANCH_ADDR      arg 0
+macro_end
+
+macro_begin CALL
+  cv_MICRO_SEQ_OP   set OP_CALL
+  cv_MICRO_SEQ_BRANCH_ADDR      arg 0
+macro_end
+
+macro_begin RETURN
+  cv_MICRO_SEQ_OP    set OP_RETURN
+macro_end
+
+macro_begin JUMP_TABLE_B
+  cv_MICRO_SEQ_OP    set OP_JUMP_TABLE_B
+macro_end
+
+macro_begin JUMP_TABLE_A_NEXT_PC
+  cv_MICRO_SEQ_OP    set OP_JUMP_TABLE_A_NEXT_PC
+macro_end
+; /////////////////////////////////////////
+
+
+; ///////////////////////////////////////// Conditional Macros
+macro_begin SET_DATA_WIDTH
+  cv_DATA_WIDTH_SEL   arg 0
+macro_end
+; /////////////////////////////////////////
+
+
+; ///////////////////////////////////////// Conditional Macros
+macro_begin IF
+  cv_MICRO_SEQ_COND_SEL   arg 0
+macro_end
+; /////////////////////////////////////////
+
+
+; ///////////////////////////////////////// Address ALU Macros
+macro_begin ADDR_PASS
+  cv_ADDR_ALU_REG_SEL arg 0
+macro_end
+
+macro_begin ADDR_INX_OR_LOAD_IND  ; FIXME
+  cv_DATA_WIDTH_SEL   set W_R1_OR_IND
+  cv_ADDR_ALU_REG_SEL set INDEXED
+macro_end
+
+macro_begin STACK_PULL
+  cv_ADDR_ALU_REG_SEL arg 0
+  cv_STACK_OP set STACK_OP_PULL
+macro_end
+
+macro_begin STACK_PUSH
+  cv_ADDR_ALU_REG_SEL arg 0
+  cv_STACK_OP set STACK_OP_PUSH
+macro_end
+; /////////////////////////////////////////
+
+
+; ///////////////////////////////////////// Data ALU Macros
+macro_begin DATA_PASS_A
+  cv_DATA_ALU_COND_SEL  set ZERO_BIT
+  cv_DATA_ALU_OP        set A_PLUS_B
+  cv_DATA_ALU_A_SEL     arg 0
+  cv_DATA_ALU_B_SEL     set ZERO
+macro_end
+
+macro_begin DATA_PASS_B
+  cv_DATA_ALU_COND_SEL  set ZERO_BIT
+  cv_DATA_ALU_OP        set A_PLUS_B
+  cv_DATA_ALU_A_SEL     set ZERO
+  cv_DATA_ALU_B_SEL     arg 0
+macro_end
+
+macro_begin DATA_INC
+  cv_DATA_ALU_COND_SEL  set ONE_BIT
+  cv_DATA_ALU_OP        set A_PLUS_B
+  cv_DATA_ALU_A_SEL     arg 0
+  cv_DATA_ALU_B_SEL     set ZERO
+macro_end
+
+macro_begin DATA_DEC
+  cv_DATA_ALU_COND_SEL  set ONE_BIT
+  cv_DATA_ALU_OP        set A_PLUS_NOT_B
+  cv_DATA_ALU_A_SEL     arg 0
+  cv_DATA_ALU_B_SEL     set ZERO
+macro_end
+
+macro_begin DATA_INVERT_B
+  cv_DATA_ALU_COND_SEL  set ONE_BIT
+  cv_DATA_ALU_OP        set A_PLUS_NOT_B
+  cv_DATA_ALU_A_SEL     set ZERO
+  cv_DATA_ALU_B_SEL     arg 0
+macro_end
+
+macro_begin DATA_LSHIFT_W 
+  cv_DATA_ALU_COND_SEL  arg 1
+  cv_DATA_ALU_OP        set LSHIFT_A
+  cv_DATA_ALU_A_SEL     arg 0
+  cv_DATA_ALU_B_SEL     set ZERO
+macro_end
+
+macro_begin DATA_RSHIFT_W 
+  cv_DATA_ALU_COND_SEL  arg 0
+  cv_DATA_ALU_OP        set RSHIFT_A
+  cv_DATA_ALU_A_SEL     arg 1
+  cv_DATA_ALU_B_SEL     set ZERO
+macro_end
+
+macro_begin DATA_SUB
+  cv_DATA_ALU_COND_SEL  set ZERO_BIT
+  cv_DATA_ALU_OP        set A_PLUS_NOT_B
+  cv_DATA_ALU_A_SEL     arg 0
+  cv_DATA_ALU_B_SEL     arg 1
+macro_end
+
+macro_begin DATA_ADD
+  cv_DATA_ALU_COND_SEL  set ZERO_BIT
+  cv_DATA_ALU_OP        set A_PLUS_B
+  cv_DATA_ALU_A_SEL     arg 0
+  cv_DATA_ALU_B_SEL     arg 1
+macro_end
+
+macro_begin DATA_ADDC
+  cv_DATA_ALU_COND_SEL  set CARRY_BIT
+  cv_DATA_ALU_OP        set A_PLUS_B
+  cv_DATA_ALU_A_SEL     arg 0
+  cv_DATA_ALU_B_SEL     arg 1
+macro_end
+
+macro_begin DATA_SUBC
+  cv_DATA_ALU_COND_SEL  set CARRY_BIT
+  cv_DATA_ALU_OP        set A_PLUS_NOT_B
+  cv_DATA_ALU_A_SEL     arg 0
+  cv_DATA_ALU_B_SEL     arg 1
+macro_end
+
+macro_begin DATA_OR
+  cv_DATA_ALU_COND_SEL  set ZERO_BIT
+  cv_DATA_ALU_OP        set A_OR_B
+  cv_DATA_ALU_A_SEL     arg 0
+  cv_DATA_ALU_B_SEL     arg 1
+macro_end
+
+macro_begin DATA_XOR
+  cv_DATA_ALU_COND_SEL  set ZERO_BIT
+  cv_DATA_ALU_OP        set A_XOR_B
+  cv_DATA_ALU_A_SEL     arg 0
+  cv_DATA_ALU_B_SEL     arg 1
+macro_end
+
+macro_begin DATA_AND
+  cv_DATA_ALU_COND_SEL  set ZERO_BIT
+  cv_DATA_ALU_OP        set A_AND_B
+  cv_DATA_ALU_A_SEL     arg 0
+  cv_DATA_ALU_B_SEL     arg 1
+macro_end
+
+macro_begin DATA_SAU_EN
+  cv_DATA_ALU_SAU_EN set TRUE
+macro_end
+
+macro_begin DATA_SAU_DONE
+  cv_DATA_ALU_OP        set SAU
+macro_end
+
+macro_begin DATA_WRITE
+  cv_DATA_ALU_WR_SEL  arg 0
+macro_end
+; /////////////////////////////////////////
+
+
+; ///////////////////////////////////////// Condition Code Register Macros
+macro_begin CCR_OP_W
+  cv_CCR_OP     arg 0
+macro_end
+; /////////////////////////////////////////
+
+
+; ///////////////////////////////////////// Data Memory Controller Macros
+macro_begin DMEM_LOAD_W
+  cv_DMEM_OP        set DMEM_OP_RD
+macro_end
+
+macro_begin DMEM_STORE_W
+  cv_DMEM_OP        set DMEM_OP_WR
+macro_end
+; /////////////////////////////////////////
+
+
+; ////////////////////////////////////////////////////////////////////////////
+
+
+
+

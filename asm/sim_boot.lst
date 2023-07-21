@@ -1,0 +1,517 @@
+                      (     sim_boot.asm):00001         ; [TURBO9_HEADER_START]
+                      (     sim_boot.asm):00002         ; ////////////////////////////////////////////////////////////////////////////
+                      (     sim_boot.asm):00003         ;                          Turbo9 Microprocessor IP
+                      (     sim_boot.asm):00004         ; ////////////////////////////////////////////////////////////////////////////
+                      (     sim_boot.asm):00005         ; Website: www.turbo9.org
+                      (     sim_boot.asm):00006         ; Contact: team[at]turbo9[dot]org
+                      (     sim_boot.asm):00007         ; ////////////////////////////////////////////////////////////////////////////
+                      (     sim_boot.asm):00008         ; [TURBO9_LICENSE_START]
+                      (     sim_boot.asm):00009         ; BSD-1-Clause
+                      (     sim_boot.asm):00010         ;
+                      (     sim_boot.asm):00011         ; Copyright (c) 2020-2023
+                      (     sim_boot.asm):00012         ; Kevin Phillipson
+                      (     sim_boot.asm):00013         ; Michael Rywalt
+                      (     sim_boot.asm):00014         ; All rights reserved.
+                      (     sim_boot.asm):00015         ;
+                      (     sim_boot.asm):00016         ; Redistribution and use in source and binary forms, with or without
+                      (     sim_boot.asm):00017         ; modification, are permitted provided that the following conditions are met:
+                      (     sim_boot.asm):00018         ;
+                      (     sim_boot.asm):00019         ; 1. Redistributions of source code must retain the above copyright notice,
+                      (     sim_boot.asm):00020         ;    this list of conditions and the following disclaimer.
+                      (     sim_boot.asm):00021         ;
+                      (     sim_boot.asm):00022         ; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+                      (     sim_boot.asm):00023         ; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+                      (     sim_boot.asm):00024         ; IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+                      (     sim_boot.asm):00025         ; ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS AND CONTRIBUTORS BE
+                      (     sim_boot.asm):00026         ; LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+                      (     sim_boot.asm):00027         ; CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+                      (     sim_boot.asm):00028         ; SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+                      (     sim_boot.asm):00029         ; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+                      (     sim_boot.asm):00030         ; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+                      (     sim_boot.asm):00031         ; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+                      (     sim_boot.asm):00032         ; POSSIBILITY OF SUCH DAMAGE.
+                      (     sim_boot.asm):00033         ; [TURBO9_LICENSE_END]
+                      (     sim_boot.asm):00034         ; ////////////////////////////////////////////////////////////////////////////
+                      (     sim_boot.asm):00035         ; Engineer:
+                      (     sim_boot.asm):00036         ; Description:
+                      (     sim_boot.asm):00037         ;
+                      (     sim_boot.asm):00038         ; ////////////////////////////////////////////////////////////////////////////
+                      (     sim_boot.asm):00039         ; History:
+                      (     sim_boot.asm):00040         ; 07.14.2023 - Kevin Phillipson
+                      (     sim_boot.asm):00041         ;   File header added
+                      (     sim_boot.asm):00042         ;
+                      (     sim_boot.asm):00043         ; ////////////////////////////////////////////////////////////////////////////
+                      (     sim_boot.asm):00044         ; [TURBO9_HEADER_END]
+                      (     sim_boot.asm):00045         ;
+                      (     sim_boot.asm):00046         ; Turbo9 S19 Bootloader
+                      (     sim_boot.asm):00047         ;
+                      (     sim_boot.asm):00048         ; Kevin Phillipson
+                      (     sim_boot.asm):00049         ;
+                      (     sim_boot.asm):00050         
+     0000             (     sim_boot.asm):00051         output_port equ   $0000
+     0002             (     sim_boot.asm):00052         acia_data   equ   $0002
+     0003             (     sim_boot.asm):00053         acia_status equ   $0003
+     FE00             (     sim_boot.asm):00054         boot_start  equ   $fe00  ; bootloader location
+     FE00             (     sim_boot.asm):00055         boot_stack  equ   $fe00  ; stack location
+     8000             (     sim_boot.asm):00056         prog_start  equ   $8000  ; loaded program should start here
+     000A             (     sim_boot.asm):00057         LF          equ   $0a
+                      (     sim_boot.asm):00058         
+                      (     sim_boot.asm):00059         
+                      (     sim_boot.asm):00060         ; ////////////////////////////////////////////////////////////////////////////
+                      (     sim_boot.asm):00061         ;                            Main Program
+                      (     sim_boot.asm):00062         ; ////////////////////////////////////////////////////////////////////////////
+                      (     sim_boot.asm):00063         
+                      (     sim_boot.asm):00064           org   boot_start
+                      (     sim_boot.asm):00065         
+FE00 7F0000           (     sim_boot.asm):00066           clr   >output_port  ; clear outport to communicate with TB
+                      (     sim_boot.asm):00067         
+FE03 10CEFE00         (     sim_boot.asm):00068           lds   #boot_stack 
+                      (     sim_boot.asm):00069         
+FE07 8EFF0E           (     sim_boot.asm):00070           ldx   #prompt
+FE0A BDFF88           (     sim_boot.asm):00071           jsr   print_x
+                      (     sim_boot.asm):00072         
+FE0D 160086           (     sim_boot.asm):00073           lbra   call_prog_start  ; sed in asm32k will change this to bra for sim_boot.asm
+                      (     sim_boot.asm):00074         
+                      (     sim_boot.asm):00075           ; A = general purpose
+                      (     sim_boot.asm):00076           ; S = stack pointer
+                      (     sim_boot.asm):00077         
+                      (     sim_boot.asm):00078           ; B = byte_cnt,     S1 record byte count
+                      (     sim_boot.asm):00079           ; X = checksum,
+                      (     sim_boot.asm):00080           ; Y = write_addr,   Write address
+                      (     sim_boot.asm):00081           ; U = total_bytes,  Total bytes written
+                      (     sim_boot.asm):00082           
+FE10 CE0000           (     sim_boot.asm):00083           ldu   #$0000        ; clear total_bytes
+FE13 8E0000           (     sim_boot.asm):00084           ldx   #$0000        ; clear checksum
+                      (     sim_boot.asm):00085         
+FE16                  (     sim_boot.asm):00086         main_loop
+FE16 BDFED7           (     sim_boot.asm):00087           jsr   getchar_a
+                      (     sim_boot.asm):00088         
+FE19 8153             (     sim_boot.asm):00089           cmpa  #'S'
+FE1B 26F9             (     sim_boot.asm):00090           bne   main_loop
+                      (     sim_boot.asm):00091         
+FE1D BDFED7           (     sim_boot.asm):00092           jsr   getchar_a
+                      (     sim_boot.asm):00093         
+FE20 8131             (     sim_boot.asm):00094           cmpa  #'1'
+FE22 2706             (     sim_boot.asm):00095           beq   s1_record
+                      (     sim_boot.asm):00096         
+FE24 8139             (     sim_boot.asm):00097           cmpa  #'9'
+FE26 2745             (     sim_boot.asm):00098           beq   s9_record
+                      (     sim_boot.asm):00099         
+FE28 20EC             (     sim_boot.asm):00100           bra   main_loop
+                      (     sim_boot.asm):00101         
+FE2A                  (     sim_boot.asm):00102         s1_record
+FE2A 3084             (     sim_boot.asm):00103           leax  ,x            ; checksum still ok?
+FE2C 26E8             (     sim_boot.asm):00104           bne   main_loop
+FE2E 862E             (     sim_boot.asm):00105           lda   #'.'
+FE30 BDFEAF           (     sim_boot.asm):00106           jsr   putchar_a     ; Print progress bar
+FE33 BDFFB8           (     sim_boot.asm):00107           jsr   gethex_byte   ; Read length
+FE36 3086             (     sim_boot.asm):00108           leax  a,x           ; add_checksum
+FE38 8003             (     sim_boot.asm):00109           suba  #3            ; minus 16bit address & checksum equals number of data bytes
+FE3A A7E2             (     sim_boot.asm):00110           sta   ,-s           ; push A (byte_cnt)
+FE3C BDFFB8           (     sim_boot.asm):00111           jsr   gethex_byte
+FE3F 3086             (     sim_boot.asm):00112           leax  a,x           ; add_checksum
+FE41 1F89             (     sim_boot.asm):00113           tfr   a,b           ; put write_addr[15:8] in B
+FE43 BDFFB8           (     sim_boot.asm):00114           jsr   gethex_byte
+FE46 3086             (     sim_boot.asm):00115           leax  a,x           ; add_checksum
+FE48 1E89             (     sim_boot.asm):00116           exg   a,b           ; D = write_addr
+FE4A 1F02             (     sim_boot.asm):00117           tfr   d,y           ; Y = write_addr
+FE4C E6E0             (     sim_boot.asm):00118           ldb   ,s+           ; pull B (byte_cnt)
+                      (     sim_boot.asm):00119           ;
+FE4E                  (     sim_boot.asm):00120         s1r_loop
+FE4E 5A               (     sim_boot.asm):00121           decb                ; dec byte_cnt
+FE4F 2B0B             (     sim_boot.asm):00122           bmi   s1r_checkit
+FE51 BDFFB8           (     sim_boot.asm):00123           jsr   gethex_byte
+FE54 3086             (     sim_boot.asm):00124           leax  a,x           ; add_checksum
+FE56 A7A0             (     sim_boot.asm):00125           sta   ,y+           ; write byte to write_addr; write_addr + 1
+FE58 3341             (     sim_boot.asm):00126           leau  1,u           ; U = total_bytes + 1
+FE5A 20F2             (     sim_boot.asm):00127           bra   s1r_loop
+                      (     sim_boot.asm):00128           ;
+FE5C                  (     sim_boot.asm):00129         s1r_checkit
+                      (     sim_boot.asm):00130           ; the S1 checksum should equal the one's complement of our running checksum in x[7:0]
+FE5C BDFFB8           (     sim_boot.asm):00131           jsr   gethex_byte   ; read S1 checksum
+FE5F A7E2             (     sim_boot.asm):00132           sta   ,-s           ; push S1 checksum onto stack
+FE61 1F10             (     sim_boot.asm):00133           tfr   x,d
+FE63 E8E4             (     sim_boot.asm):00134           eorb  ,s            ; B = $FF if correct
+FE65 5C               (     sim_boot.asm):00135           incb                ; B = $00 if correct
+FE66 4F               (     sim_boot.asm):00136           clra
+FE67 1F01             (     sim_boot.asm):00137           tfr   d,x           ; X = $0000 if correct
+FE69 3261             (     sim_boot.asm):00138           leas  1,s           ; clean up stack
+FE6B 20A9             (     sim_boot.asm):00139           bra   main_loop
+                      (     sim_boot.asm):00140         
+                      (     sim_boot.asm):00141         
+FE6D                  (     sim_boot.asm):00142         s9_record
+FE6D 3084             (     sim_boot.asm):00143           leax  ,x            ; checksum ok?
+FE6F 2709             (     sim_boot.asm):00144           beq   s9r_good_load
+FE71 8EFF2E           (     sim_boot.asm):00145           ldx   #load_bad
+FE74 BDFF88           (     sim_boot.asm):00146           jsr   print_x
+FE77 7EFE00           (     sim_boot.asm):00147           jmp   boot_start
+FE7A                  (     sim_boot.asm):00148         s9r_good_load
+FE7A 8EFF3E           (     sim_boot.asm):00149           ldx   #load_good0
+FE7D BDFF88           (     sim_boot.asm):00150           jsr   print_x
+FE80 1F30             (     sim_boot.asm):00151           tfr   u,d           ; A:B = total_bytes
+FE82 BDFFD2           (     sim_boot.asm):00152           jsr   puthex_16bit
+FE85 8EFF50           (     sim_boot.asm):00153           ldx   #load_good1
+FE88 BDFF88           (     sim_boot.asm):00154           jsr   print_x
+FE8B CC8000           (     sim_boot.asm):00155           ldd   #prog_start
+FE8E BDFFD2           (     sim_boot.asm):00156           jsr   puthex_16bit
+FE91 860A             (     sim_boot.asm):00157           lda   #LF
+FE93 BDFEAF           (     sim_boot.asm):00158           jsr   putchar_a
+                      (     sim_boot.asm):00159         
+FE96                  (     sim_boot.asm):00160         call_prog_start
+FE96 7C0000           (     sim_boot.asm):00161           inc   >output_port  ; set outport[0] = 1 to tell TB test has begun 
+FE99 BD8000           (     sim_boot.asm):00162           jsr  prog_start  
+                      (     sim_boot.asm):00163         
+FE9C                  (     sim_boot.asm):00164         boot_return
+FE9C 8EFF6C           (     sim_boot.asm):00165           ldx   #return_msg
+FE9F BDFF88           (     sim_boot.asm):00166           jsr   print_x
+FEA2 B60000           (     sim_boot.asm):00167           lda   >output_port
+FEA5 8A80             (     sim_boot.asm):00168           ora   #$80
+FEA7 B70000           (     sim_boot.asm):00169           sta   >output_port  ;  set outport[7] = 1 to tell TB test has finished
+FEAA                  (     sim_boot.asm):00170         boot_sim_stop
+FEAA 20FE             (     sim_boot.asm):00171           bra   boot_sim_stop ; sed in asm32k will change this to bra for sim_boot.asm
+FEAC 7EFE00           (     sim_boot.asm):00172           jmp   boot_start
+                      (     sim_boot.asm):00173         
+                      (     sim_boot.asm):00174         ; ////////////////////////////////////////////////////////////////////////////
+                      (     sim_boot.asm):00175         
+                      (     sim_boot.asm):00176         
+                      (     sim_boot.asm):00177         ; ////////////////////////////////////////////////////////////////////////////
+                      (     sim_boot.asm):00178         ;                              Utility Functions
+                      (     sim_boot.asm):00179         ; ////////////////////////////////////////////////////////////////////////////
+                      (     sim_boot.asm):00180         
+                      (     sim_boot.asm):00181         
+                      (     sim_boot.asm):00182         ; ////////////////////// Send byte contained in A
+                      (     sim_boot.asm):00183         ;
+FEAF                  (     sim_boot.asm):00184         putchar_a
+FEAF 7DFFED           (     sim_boot.asm):00185           tst   >sim_detect
+FEB2 2619             (     sim_boot.asm):00186           bne   pca_sim_out
+FEB4 810A             (     sim_boot.asm):00187           cmpa  #$0a  ; LF
+FEB6 2606             (     sim_boot.asm):00188           bne   pca_not_lf
+FEB8 860D             (     sim_boot.asm):00189           lda   #$0d  ; CR
+FEBA 8D02             (     sim_boot.asm):00190           bsr   acia_putchar_a
+FEBC 860A             (     sim_boot.asm):00191           lda   #$0a  ; LF
+FEBE                  (     sim_boot.asm):00192         pca_not_lf
+                      (     sim_boot.asm):00193         ; fall through
+FEBE                  (     sim_boot.asm):00194         acia_putchar_a
+FEBE 3402             (     sim_boot.asm):00195           pshs  a
+FEC0                  (     sim_boot.asm):00196         apa_wait
+FEC0 B60003           (     sim_boot.asm):00197           lda   >acia_status
+FEC3 8510             (     sim_boot.asm):00198           bita  #$10
+FEC5 27F9             (     sim_boot.asm):00199           beq   apa_wait
+FEC7 3502             (     sim_boot.asm):00200           puls  a
+FEC9 B70002           (     sim_boot.asm):00201           sta   >acia_data
+FECC 39               (     sim_boot.asm):00202           rts
+                      (     sim_boot.asm):00203         
+FECD                  (     sim_boot.asm):00204         pca_sim_out
+FECD B7FFEF           (     sim_boot.asm):00205           sta   >sim_putchar_buf
+FED0 7FFFEE           (     sim_boot.asm):00206           clr   >sim_putchar_en
+FED3 73FFEE           (     sim_boot.asm):00207           com   >sim_putchar_en ; on bit0 posedge simulator writes to console.txt
+FED6 39               (     sim_boot.asm):00208           rts
+                      (     sim_boot.asm):00209         
+                      (     sim_boot.asm):00210         
+                      (     sim_boot.asm):00211         ; ////////////////////// Recieve byte and return in A
+                      (     sim_boot.asm):00212         ;
+FED7                  (     sim_boot.asm):00213         getchar_a
+FED7 B60003           (     sim_boot.asm):00214           lda   >acia_status
+FEDA 8508             (     sim_boot.asm):00215           bita  #$08
+FEDC 27F9             (     sim_boot.asm):00216           beq   getchar_a
+FEDE B60002           (     sim_boot.asm):00217           lda   >acia_data
+FEE1 39               (     sim_boot.asm):00218           rts
+                      (     sim_boot.asm):00219         
+                      (     sim_boot.asm):00220         ; ////////////////////////////////////////////////////////////////////////////
+                      (     sim_boot.asm):00221         
+                      (     sim_boot.asm):00222         
+                      (     sim_boot.asm):00223         ; ////////////////////////////////////////////////////////////////////////////
+                      (     sim_boot.asm):00224         ;                              SWI Handler
+                      (     sim_boot.asm):00225         ; ////////////////////////////////////////////////////////////////////////////
+                      (     sim_boot.asm):00226         
+FEE2                  (     sim_boot.asm):00227         swi_handler
+FEE2 8104             (     sim_boot.asm):00228           cmpa  #$04
+FEE4 2606             (     sim_boot.asm):00229           bne   swi_handler_3
+FEE6 8DEF             (     sim_boot.asm):00230           bsr   getchar_a
+FEE8 A784             (     sim_boot.asm):00231           sta   ,x
+FEEA 35FF             (     sim_boot.asm):00232           puls  pc,u,y,x,dp,b,a,cc
+                      (     sim_boot.asm):00233         
+FEEC                  (     sim_boot.asm):00234         swi_handler_3
+FEEC 8103             (     sim_boot.asm):00235           cmpa  #$03
+FEEE 2606             (     sim_boot.asm):00236           bne   swi_handler_2
+FEF0 1F98             (     sim_boot.asm):00237           tfr   b,a
+FEF2 8DBB             (     sim_boot.asm):00238           bsr   putchar_a
+FEF4 35FF             (     sim_boot.asm):00239           puls  pc,u,y,x,dp,b,a,cc
+                      (     sim_boot.asm):00240         
+FEF6                  (     sim_boot.asm):00241         swi_handler_2
+FEF6 8102             (     sim_boot.asm):00242           cmpa  #$02
+FEF8 2608             (     sim_boot.asm):00243           bne   swi_handler_1
+FEFA 8EFF68           (     sim_boot.asm):00244           ldx   #input_prompt
+FEFD BDFF88           (     sim_boot.asm):00245           jsr   print_x
+FF00 35FF             (     sim_boot.asm):00246           puls  pc,u,y,x,dp,b,a,cc
+                      (     sim_boot.asm):00247         
+FF02                  (     sim_boot.asm):00248         swi_handler_1
+FF02 8101             (     sim_boot.asm):00249           cmpa  #$01
+FF04 2605             (     sim_boot.asm):00250           bne   swi_handler_exit
+FF06 BDFF88           (     sim_boot.asm):00251           jsr   print_x
+FF09 35FF             (     sim_boot.asm):00252           puls  pc,u,y,x,dp,b,a,cc
+                      (     sim_boot.asm):00253         
+FF0B                  (     sim_boot.asm):00254         swi_handler_exit
+FF0B 7EFE9C           (     sim_boot.asm):00255           jmp   boot_return
+                      (     sim_boot.asm):00256         
+                      (     sim_boot.asm):00257         ; ////////////////////////////////////////////////////////////////////////////
+                      (     sim_boot.asm):00258         
+                      (     sim_boot.asm):00259         
+                      (     sim_boot.asm):00260         ; ////////////////////////////////////////////////////////////////////////////
+                      (     sim_boot.asm):00261         ;                              Data Block
+                      (     sim_boot.asm):00262         ; ////////////////////////////////////////////////////////////////////////////
+                      (     sim_boot.asm):00263         
+FF0E                  (     sim_boot.asm):00264         prompt
+FF0E 0A               (     sim_boot.asm):00265           fcb  $0a
+FF0F 2F2F2F2054757262 (     sim_boot.asm):00266           fcc  "/// Turbo9 S19 Bootloader ///"
+     6F39205331392042
+     6F6F746C6F616465
+     72202F2F2F
+FF2C 0A               (     sim_boot.asm):00267           fcb  $0a
+FF2D 00               (     sim_boot.asm):00268           fcb  $00
+                      (     sim_boot.asm):00269         
+FF2E                  (     sim_boot.asm):00270         load_bad
+FF2E 0A               (     sim_boot.asm):00271           fcb  $0a
+FF2F 436865636B73756D (     sim_boot.asm):00272           fcc  "Checksum FAIL"
+     204641494C
+FF3C 0A               (     sim_boot.asm):00273           fcb  $0a
+FF3D 00               (     sim_boot.asm):00274           fcb  $00
+                      (     sim_boot.asm):00275         
+FF3E                  (     sim_boot.asm):00276         load_good0
+FF3E 0A               (     sim_boot.asm):00277           fcb  $0a
+FF3F 4279746573207265 (     sim_boot.asm):00278           fcc  "Bytes received $"
+     6365697665642024
+FF4F 00               (     sim_boot.asm):00279           fcb  $00
+                      (     sim_boot.asm):00280         
+FF50                  (     sim_boot.asm):00281         load_good1
+FF50 0A               (     sim_boot.asm):00282           fcb  $0a
+FF51 436865636B73756D (     sim_boot.asm):00283           fcc  "Checksum PASS"
+     2050415353
+FF5E 0A               (     sim_boot.asm):00284           fcb  $0a
+FF5F 4A535220746F2024 (     sim_boot.asm):00285           fcc  "JSR to $"
+FF67 00               (     sim_boot.asm):00286           fcb  $00
+                      (     sim_boot.asm):00287         
+FF68                  (     sim_boot.asm):00288         input_prompt
+FF68 424144           (     sim_boot.asm):00289           fcc  "BAD"
+FF6B 00               (     sim_boot.asm):00290           fcb  $00
+                      (     sim_boot.asm):00291         
+FF6C                  (     sim_boot.asm):00292         return_msg
+FF6C 0A               (     sim_boot.asm):00293           fcb  $0a
+FF6D 52657475726E6564 (     sim_boot.asm):00294           fcc  "Returned to bootloader..."
+     20746F20626F6F74
+     6C6F616465722E2E
+     2E
+FF86 0A               (     sim_boot.asm):00295           fcb  $0a
+FF87 00               (     sim_boot.asm):00296           fcb  $00
+                      (     sim_boot.asm):00297         
+                      (     sim_boot.asm):00298         ; ////////////////////////////////////////////////////////////////////////////
+                      (     sim_boot.asm):00299         
+                      (     sim_boot.asm):00300         
+                      (     sim_boot.asm):00301         ; ////////////////////////////////////////////////////////////////////////////
+                      (     sim_boot.asm):00302         ;                       Common I/O Function Library
+                      (     sim_boot.asm):00303         ; ////////////////////////////////////////////////////////////////////////////
+                      (     sim_boot.asm):00304           
+                      (     sim_boot.asm):00305           include   common_io.asm
+                      (    common_io.asm):00001         ; [TURBO9_HEADER_START]
+                      (    common_io.asm):00002         ; ////////////////////////////////////////////////////////////////////////////
+                      (    common_io.asm):00003         ;                          Turbo9 Microprocessor IP
+                      (    common_io.asm):00004         ; ////////////////////////////////////////////////////////////////////////////
+                      (    common_io.asm):00005         ; Website: www.turbo9.org
+                      (    common_io.asm):00006         ; Contact: team[at]turbo9[dot]org
+                      (    common_io.asm):00007         ; ////////////////////////////////////////////////////////////////////////////
+                      (    common_io.asm):00008         ; [TURBO9_LICENSE_START]
+                      (    common_io.asm):00009         ; BSD-1-Clause
+                      (    common_io.asm):00010         ;
+                      (    common_io.asm):00011         ; Copyright (c) 2020-2023
+                      (    common_io.asm):00012         ; Kevin Phillipson
+                      (    common_io.asm):00013         ; Michael Rywalt
+                      (    common_io.asm):00014         ; All rights reserved.
+                      (    common_io.asm):00015         ;
+                      (    common_io.asm):00016         ; Redistribution and use in source and binary forms, with or without
+                      (    common_io.asm):00017         ; modification, are permitted provided that the following conditions are met:
+                      (    common_io.asm):00018         ;
+                      (    common_io.asm):00019         ; 1. Redistributions of source code must retain the above copyright notice,
+                      (    common_io.asm):00020         ;    this list of conditions and the following disclaimer.
+                      (    common_io.asm):00021         ;
+                      (    common_io.asm):00022         ; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+                      (    common_io.asm):00023         ; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+                      (    common_io.asm):00024         ; IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+                      (    common_io.asm):00025         ; ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS AND CONTRIBUTORS BE
+                      (    common_io.asm):00026         ; LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+                      (    common_io.asm):00027         ; CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+                      (    common_io.asm):00028         ; SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+                      (    common_io.asm):00029         ; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+                      (    common_io.asm):00030         ; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+                      (    common_io.asm):00031         ; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+                      (    common_io.asm):00032         ; POSSIBILITY OF SUCH DAMAGE.
+                      (    common_io.asm):00033         ; [TURBO9_LICENSE_END]
+                      (    common_io.asm):00034         ; ////////////////////////////////////////////////////////////////////////////
+                      (    common_io.asm):00035         ; Engineer: Kevin Phillipson
+                      (    common_io.asm):00036         ; Description: Input / Output Library
+                      (    common_io.asm):00037         ;
+                      (    common_io.asm):00038         ; ////////////////////////////////////////////////////////////////////////////
+                      (    common_io.asm):00039         ; History:
+                      (    common_io.asm):00040         ; 07.14.2023 - Kevin Phillipson
+                      (    common_io.asm):00041         ;   File header added
+                      (    common_io.asm):00042         ;
+                      (    common_io.asm):00043         ; ////////////////////////////////////////////////////////////////////////////
+                      (    common_io.asm):00044         ; [TURBO9_HEADER_END]
+                      (    common_io.asm):00045         
+                      (    common_io.asm):00046         ; ////////////////////////////////////////////////////////////////////////////
+                      (    common_io.asm):00047         ;                             Common I/O Functions
+                      (    common_io.asm):00048         ; ////////////////////////////////////////////////////////////////////////////
+                      (    common_io.asm):00049         
+                      (    common_io.asm):00050         ; You must provide a putchar_a & getchar_a function for this library.
+                      (    common_io.asm):00051         ; Requirement for putchar_a & getchar_a
+                      (    common_io.asm):00052         ;  - byte in A to be recieved / sent
+                      (    common_io.asm):00053         ;  - all other registers need to be maintained through function call
+                      (    common_io.asm):00054         ;
+                      (    common_io.asm):00055         
+                      (    common_io.asm):00056         
+                      (    common_io.asm):00057         
+                      (    common_io.asm):00058         ; ////////////////////// Print null terminated string pointed to by X
+                      (    common_io.asm):00059         ;
+FF88                  (    common_io.asm):00060         print_x
+FF88 3412             (    common_io.asm):00061           pshs  a,x
+FF8A                  (    common_io.asm):00062         apx_loop
+FF8A A680             (    common_io.asm):00063           lda   ,x+
+FF8C 2705             (    common_io.asm):00064           beq   apx_end
+FF8E BDFEAF           (    common_io.asm):00065           jsr   putchar_a
+FF91 20F7             (    common_io.asm):00066           bra   apx_loop
+FF93                  (    common_io.asm):00067         apx_end
+FF93 3592             (    common_io.asm):00068           puls  a,x,pc
+                      (    common_io.asm):00069         
+                      (    common_io.asm):00070         ; ////////////////////// Put Hex Digit
+                      (    common_io.asm):00071         ;
+FF95                  (    common_io.asm):00072         puthex_digit
+FF95 3402             (    common_io.asm):00073           pshs  a
+FF97 840F             (    common_io.asm):00074           anda  #$0f
+FF99 810A             (    common_io.asm):00075           cmpa  #$0a
+FF9B 2504             (    common_io.asm):00076           blo   puthex_digit1
+FF9D 8B37             (    common_io.asm):00077           adda  #$37
+FF9F 2002             (    common_io.asm):00078           bra   puthex_digit2
+FFA1                  (    common_io.asm):00079         puthex_digit1
+FFA1 8B30             (    common_io.asm):00080           adda  #$30
+FFA3                  (    common_io.asm):00081         puthex_digit2
+FFA3 BDFEAF           (    common_io.asm):00082           jsr   putchar_a
+FFA6 3582             (    common_io.asm):00083           puls  a,pc
+                      (    common_io.asm):00084         
+                      (    common_io.asm):00085         ; ////////////////////// Get Hex Digit
+                      (    common_io.asm):00086         ;
+                      (    common_io.asm):00087         ; Get hex digit and convert
+                      (    common_io.asm):00088         ; to binary nibble. Return in A
+                      (    common_io.asm):00089         ;
+FFA8                  (    common_io.asm):00090         gethex_digit
+FFA8 BDFED7           (    common_io.asm):00091           jsr   getchar_a
+FFAB 8D2E             (    common_io.asm):00092           bsr   ucase_a
+FFAD 8141             (    common_io.asm):00093           cmpa  #'A'         ; uppercase A to F?
+FFAF 2404             (    common_io.asm):00094           bhs   ghd_AtoF
+FFB1                  (    common_io.asm):00095         ghd_0to9
+FFB1 8030             (    common_io.asm):00096           suba  #'0'         ; else 0 to 9
+FFB3 2002             (    common_io.asm):00097           bra   ghd_done
+FFB5                  (    common_io.asm):00098         ghd_AtoF
+FFB5 8037             (    common_io.asm):00099           suba  #$37
+FFB7                  (    common_io.asm):00100         ghd_done
+FFB7 39               (    common_io.asm):00101           rts
+                      (    common_io.asm):00102         
+                      (    common_io.asm):00103         
+                      (    common_io.asm):00104         ; ////////////////////// Get Hex Byte
+                      (    common_io.asm):00105         ; 
+                      (    common_io.asm):00106         ; Get 2 hex digit and convert
+                      (    common_io.asm):00107         ; to binary byte. Return in A
+                      (    common_io.asm):00108         ;
+FFB8                  (    common_io.asm):00109         gethex_byte
+FFB8 8DEE             (    common_io.asm):00110           bsr   gethex_digit
+FFBA 48               (    common_io.asm):00111           lsla
+FFBB 48               (    common_io.asm):00112           lsla
+FFBC 48               (    common_io.asm):00113           lsla
+FFBD 48               (    common_io.asm):00114           lsla
+FFBE 3402             (    common_io.asm):00115           pshs  a
+FFC0 8DE6             (    common_io.asm):00116           bsr   gethex_digit
+FFC2 AAE0             (    common_io.asm):00117           ora   ,s+
+FFC4 39               (    common_io.asm):00118           rts
+                      (    common_io.asm):00119         
+                      (    common_io.asm):00120         ; ////////////////////// Put Hex Byte
+                      (    common_io.asm):00121         ;
+                      (    common_io.asm):00122         ; Print hex value in A
+                      (    common_io.asm):00123         ;
+FFC5                  (    common_io.asm):00124         puthex_byte
+FFC5 3402             (    common_io.asm):00125           pshs  a
+FFC7 44               (    common_io.asm):00126           lsra
+FFC8 44               (    common_io.asm):00127           lsra
+FFC9 44               (    common_io.asm):00128           lsra
+FFCA 44               (    common_io.asm):00129           lsra
+FFCB 8DC8             (    common_io.asm):00130           bsr   puthex_digit
+FFCD 3502             (    common_io.asm):00131           puls  a
+FFCF 8DC4             (    common_io.asm):00132           bsr   puthex_digit
+FFD1 39               (    common_io.asm):00133           rts
+                      (    common_io.asm):00134         
+                      (    common_io.asm):00135         ; ////////////////////// Put Hex 16bit
+                      (    common_io.asm):00136         ;
+                      (    common_io.asm):00137         ; Print hex value in D
+                      (    common_io.asm):00138         ;
+FFD2                  (    common_io.asm):00139         puthex_16bit
+FFD2 8DF1             (    common_io.asm):00140           bsr   puthex_byte
+FFD4 1E89             (    common_io.asm):00141           exg   a,b
+FFD6 8DED             (    common_io.asm):00142           bsr   puthex_byte
+FFD8 1E89             (    common_io.asm):00143           exg   a,b
+FFDA 39               (    common_io.asm):00144           rts
+                      (    common_io.asm):00145         
+                      (    common_io.asm):00146         ; ////////////////////// Ucase A
+                      (    common_io.asm):00147         ;
+FFDB                  (    common_io.asm):00148         ucase_a
+FFDB 8161             (    common_io.asm):00149           cmpa  #'a'
+FFDD 2506             (    common_io.asm):00150           blo   uca_done
+FFDF 817A             (    common_io.asm):00151           cmpa  #'z'
+FFE1 2202             (    common_io.asm):00152           bhi   uca_done
+FFE3 8020             (    common_io.asm):00153           suba  #$20
+FFE5                  (    common_io.asm):00154         uca_done
+FFE5 39               (    common_io.asm):00155           rts
+                      (    common_io.asm):00156         
+                      (    common_io.asm):00157         ; ////////////////////////////////////////////////////////////////////////////
+                      (    common_io.asm):00158         
+                      (    common_io.asm):00159         
+                      (     sim_boot.asm):00306         
+                      (     sim_boot.asm):00307         ; ////////////////////////////////////////////////////////////////////////////
+                      (     sim_boot.asm):00308         
+                      (     sim_boot.asm):00309         
+                      (     sim_boot.asm):00310         ; ////////////////////////////////////////////////////////////////////////////
+                      (     sim_boot.asm):00311         ;                     Simulation Output Interface
+                      (     sim_boot.asm):00312         ; ////////////////////////////////////////////////////////////////////////////
+                      (     sim_boot.asm):00313         
+                      (     sim_boot.asm):00314           org   boot_vector_table-3
+FFED                  (     sim_boot.asm):00315         sim_detect
+FFED 01               (     sim_boot.asm):00316           fcb   $01   ;sed replace tag_sim_detect
+FFEE                  (     sim_boot.asm):00317         sim_putchar_en
+FFEE 00               (     sim_boot.asm):00318           fcb   $00 
+FFEF                  (     sim_boot.asm):00319         sim_putchar_buf
+FFEF 00               (     sim_boot.asm):00320           fcb   $00
+                      (     sim_boot.asm):00321         
+                      (     sim_boot.asm):00322         ; ////////////////////////////////////////////////////////////////////////////
+                      (     sim_boot.asm):00323         
+                      (     sim_boot.asm):00324         
+                      (     sim_boot.asm):00325         ; ////////////////////////////////////////////////////////////////////////////
+                      (     sim_boot.asm):00326         ;                      Reset / Interrupt Vector Table
+                      (     sim_boot.asm):00327         ; ////////////////////////////////////////////////////////////////////////////
+                      (     sim_boot.asm):00328         
+                      (     sim_boot.asm):00329           org  $fff0
+FFF0                  (     sim_boot.asm):00330         boot_vector_table:
+                      (     sim_boot.asm):00331         
+FFF0                  (     sim_boot.asm):00332         boot_reserved_vector:
+FFF0 FE00             (     sim_boot.asm):00333           fdb boot_start
+FFF2                  (     sim_boot.asm):00334         boot_swi3_vector:
+FFF2 FE00             (     sim_boot.asm):00335           fdb boot_start
+FFF4                  (     sim_boot.asm):00336         boot_swi2_vector:
+FFF4 FE00             (     sim_boot.asm):00337           fdb boot_start
+FFF6                  (     sim_boot.asm):00338         boot_firq_vector:
+FFF6 FE00             (     sim_boot.asm):00339           fdb boot_start
+FFF8                  (     sim_boot.asm):00340         boot_irq_vector:
+FFF8 FE00             (     sim_boot.asm):00341           fdb boot_start
+FFFA                  (     sim_boot.asm):00342         boot_swi_vector:
+FFFA FEE2             (     sim_boot.asm):00343           fdb swi_handler
+FFFC                  (     sim_boot.asm):00344         boot_nmi_vector:
+FFFC FE00             (     sim_boot.asm):00345           fdb boot_start
+FFFE                  (     sim_boot.asm):00346         boot_reset_vector:
+FFFE FE00             (     sim_boot.asm):00347           fdb boot_start
+                      (     sim_boot.asm):00348         
+                      (     sim_boot.asm):00349         ; ////////////////////////////////////////////////////////////////////////////

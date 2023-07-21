@@ -1,0 +1,235 @@
+                      (    tb_dv_asm.asm):00001         ; [TURBO9_HEADER_START]
+                      (    tb_dv_asm.asm):00002         ; ////////////////////////////////////////////////////////////////////////////
+                      (    tb_dv_asm.asm):00003         ;                          Turbo9 Microprocessor IP
+                      (    tb_dv_asm.asm):00004         ; ////////////////////////////////////////////////////////////////////////////
+                      (    tb_dv_asm.asm):00005         ; Website: www.turbo9.org
+                      (    tb_dv_asm.asm):00006         ; Contact: team[at]turbo9[dot]org
+                      (    tb_dv_asm.asm):00007         ; ////////////////////////////////////////////////////////////////////////////
+                      (    tb_dv_asm.asm):00008         ; [TURBO9_LICENSE_START]
+                      (    tb_dv_asm.asm):00009         ; BSD-1-Clause
+                      (    tb_dv_asm.asm):00010         ;
+                      (    tb_dv_asm.asm):00011         ; Copyright (c) 2020-2023
+                      (    tb_dv_asm.asm):00012         ; Kevin Phillipson
+                      (    tb_dv_asm.asm):00013         ; Michael Rywalt
+                      (    tb_dv_asm.asm):00014         ; All rights reserved.
+                      (    tb_dv_asm.asm):00015         ;
+                      (    tb_dv_asm.asm):00016         ; Redistribution and use in source and binary forms, with or without
+                      (    tb_dv_asm.asm):00017         ; modification, are permitted provided that the following conditions are met:
+                      (    tb_dv_asm.asm):00018         ;
+                      (    tb_dv_asm.asm):00019         ; 1. Redistributions of source code must retain the above copyright notice,
+                      (    tb_dv_asm.asm):00020         ;    this list of conditions and the following disclaimer.
+                      (    tb_dv_asm.asm):00021         ;
+                      (    tb_dv_asm.asm):00022         ; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+                      (    tb_dv_asm.asm):00023         ; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+                      (    tb_dv_asm.asm):00024         ; IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+                      (    tb_dv_asm.asm):00025         ; ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS AND CONTRIBUTORS BE
+                      (    tb_dv_asm.asm):00026         ; LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+                      (    tb_dv_asm.asm):00027         ; CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+                      (    tb_dv_asm.asm):00028         ; SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+                      (    tb_dv_asm.asm):00029         ; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+                      (    tb_dv_asm.asm):00030         ; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+                      (    tb_dv_asm.asm):00031         ; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+                      (    tb_dv_asm.asm):00032         ; POSSIBILITY OF SUCH DAMAGE.
+                      (    tb_dv_asm.asm):00033         ; [TURBO9_LICENSE_END]
+                      (    tb_dv_asm.asm):00034         ; ////////////////////////////////////////////////////////////////////////////
+                      (    tb_dv_asm.asm):00035         ; Engineer: Kevin Phillipson
+                      (    tb_dv_asm.asm):00036         ; Description: Template assemply program used by the DV testbench
+                      (    tb_dv_asm.asm):00037         ;
+                      (    tb_dv_asm.asm):00038         ; ////////////////////////////////////////////////////////////////////////////
+                      (    tb_dv_asm.asm):00039         ; History:
+                      (    tb_dv_asm.asm):00040         ; 07.14.2023 - Kevin Phillipson
+                      (    tb_dv_asm.asm):00041         ;   File header added
+                      (    tb_dv_asm.asm):00042         ;
+                      (    tb_dv_asm.asm):00043         ; ////////////////////////////////////////////////////////////////////////////
+                      (    tb_dv_asm.asm):00044         ; [TURBO9_HEADER_END]
+                      (    tb_dv_asm.asm):00045         
+                      (    tb_dv_asm.asm):00046         ; ////////////////////////////////////////////////////////////////////////////
+                      (    tb_dv_asm.asm):00047         ;                       Turbo9 / 6809 testbench program
+                      (    tb_dv_asm.asm):00048         ; ////////////////////////////////////////////////////////////////////////////
+                      (    tb_dv_asm.asm):00049         
+     0000             (    tb_dv_asm.asm):00050         output_port equ $0000
+                      (    tb_dv_asm.asm):00051         
+                      (    tb_dv_asm.asm):00052           org  $fc00
+                      (    tb_dv_asm.asm):00053         
+                      (    tb_dv_asm.asm):00054         ; ////////////////////////////////////////////////////////////////////////////
+                      (    tb_dv_asm.asm):00055         ;                    Testbench Program Start (S Stack Pointer)
+                      (    tb_dv_asm.asm):00056         ; ////////////////////////////////////////////////////////////////////////////
+FC00                  (    tb_dv_asm.asm):00057         start_s_ptr:
+                      (    tb_dv_asm.asm):00058         
+                      (    tb_dv_asm.asm):00059           ; initalize output_port[7:0] = 8'h00
+FC00 8600             (    tb_dv_asm.asm):00060           lda   #$00
+FC02 B70000           (    tb_dv_asm.asm):00061           sta   >output_port
+                      (    tb_dv_asm.asm):00062         
+                      (    tb_dv_asm.asm):00063           ; Delay a few cycles
+FC05 12               (    tb_dv_asm.asm):00064           nop
+FC06 12               (    tb_dv_asm.asm):00065           nop
+FC07 12               (    tb_dv_asm.asm):00066           nop
+FC08 12               (    tb_dv_asm.asm):00067           nop
+                      (    tb_dv_asm.asm):00068         
+                      (    tb_dv_asm.asm):00069           ; set start flag (output_port[0] = 1'b1)
+FC09 8601             (    tb_dv_asm.asm):00070           lda   #$01
+FC0B B70000           (    tb_dv_asm.asm):00071           sta   >output_port
+                      (    tb_dv_asm.asm):00072         
+                      (    tb_dv_asm.asm):00073           ; Use S as stack pointer
+FC0E 10CEFFE4         (    tb_dv_asm.asm):00074           lds   #init_stack_data
+FC12 35FF             (    tb_dv_asm.asm):00075           puls  pc,u,y,x,dp,b,a,cc ; pulling PC will jump to code_under_test
+                      (    tb_dv_asm.asm):00076         
+                      (    tb_dv_asm.asm):00077         
+                      (    tb_dv_asm.asm):00078         ; ////////////////////////////////////////////////////////////////////////////
+                      (    tb_dv_asm.asm):00079         ;                    Testbench Program Start (U Stack Pointer)
+                      (    tb_dv_asm.asm):00080         ; ////////////////////////////////////////////////////////////////////////////
+FC14                  (    tb_dv_asm.asm):00081         start_u_ptr:
+                      (    tb_dv_asm.asm):00082         
+                      (    tb_dv_asm.asm):00083           ; initalize output_port[7:0] = 8'h00
+FC14 8600             (    tb_dv_asm.asm):00084           lda   #$00
+FC16 B70000           (    tb_dv_asm.asm):00085           sta   >output_port
+                      (    tb_dv_asm.asm):00086         
+                      (    tb_dv_asm.asm):00087           ; Delay a few cycles
+FC19 12               (    tb_dv_asm.asm):00088           nop
+FC1A 12               (    tb_dv_asm.asm):00089           nop
+FC1B 12               (    tb_dv_asm.asm):00090           nop
+FC1C 12               (    tb_dv_asm.asm):00091           nop
+                      (    tb_dv_asm.asm):00092         
+                      (    tb_dv_asm.asm):00093           ; set start flag (output_port[0] = 1'b1)
+FC1D 8601             (    tb_dv_asm.asm):00094           lda   #$01
+FC1F B70000           (    tb_dv_asm.asm):00095           sta   >output_port
+                      (    tb_dv_asm.asm):00096         
+                      (    tb_dv_asm.asm):00097           ; Use U as stack pointer
+FC22 CEFFE4           (    tb_dv_asm.asm):00098           ldu   #init_stack_data
+FC25 37FF             (    tb_dv_asm.asm):00099           pulu  pc,s,y,x,dp,b,a,cc ; pulling PC will jump to code_under_test
+                      (    tb_dv_asm.asm):00100         
+                      (    tb_dv_asm.asm):00101         
+                      (    tb_dv_asm.asm):00102         ; ////////////////////////////////////////////////////////////////////////////
+                      (    tb_dv_asm.asm):00103         ;                     Testbench Program Done (S Stack Pointer)
+                      (    tb_dv_asm.asm):00104         ; ////////////////////////////////////////////////////////////////////////////
+FC27                  (    tb_dv_asm.asm):00105         done_s_ptr
+FC27 34FF             (    tb_dv_asm.asm):00106           pshs  pc,u,y,x,dp,b,a,cc
+                      (    tb_dv_asm.asm):00107         
+                      (    tb_dv_asm.asm):00108           ; set done flag (output_port[7] = 1'b1)
+FC29 B60000           (    tb_dv_asm.asm):00109           lda   >output_port
+FC2C 8A80             (    tb_dv_asm.asm):00110           ora   #$80
+FC2E B70000           (    tb_dv_asm.asm):00111           sta   >output_port
+                      (    tb_dv_asm.asm):00112         
+FC31                  (    tb_dv_asm.asm):00113         done_s_ptr_loop:
+FC31 12               (    tb_dv_asm.asm):00114           nop   ; make the PC change in sim model
+FC32 20FD             (    tb_dv_asm.asm):00115           bra   done_s_ptr_loop
+                      (    tb_dv_asm.asm):00116         
+                      (    tb_dv_asm.asm):00117         
+                      (    tb_dv_asm.asm):00118         ; ////////////////////////////////////////////////////////////////////////////
+                      (    tb_dv_asm.asm):00119         ;                     Testbench Program Done (U Stack Pointer)
+                      (    tb_dv_asm.asm):00120         ; ////////////////////////////////////////////////////////////////////////////
+FC34                  (    tb_dv_asm.asm):00121         done_u_ptr
+FC34 36FF             (    tb_dv_asm.asm):00122           pshu  pc,s,y,x,dp,b,a,cc
+                      (    tb_dv_asm.asm):00123         
+                      (    tb_dv_asm.asm):00124           ; set done flag (output_port[7] = 1'b1)
+FC36 B60000           (    tb_dv_asm.asm):00125           lda   >output_port
+FC39 8A80             (    tb_dv_asm.asm):00126           ora   #$80
+FC3B B70000           (    tb_dv_asm.asm):00127           sta   >output_port
+                      (    tb_dv_asm.asm):00128         
+FC3E                  (    tb_dv_asm.asm):00129         done_u_ptr_loop:
+FC3E 12               (    tb_dv_asm.asm):00130           nop   ; make the PC change in sim model
+FC3F 20FD             (    tb_dv_asm.asm):00131           bra   done_u_ptr_loop
+                      (    tb_dv_asm.asm):00132         
+                      (    tb_dv_asm.asm):00133         
+                      (    tb_dv_asm.asm):00134         ; ////////////////////////////////////////////////////////////////////////////
+                      (    tb_dv_asm.asm):00135         ;                             Code Under Test
+                      (    tb_dv_asm.asm):00136         ; ////////////////////////////////////////////////////////////////////////////
+FC41                  (    tb_dv_asm.asm):00137         code_under_test:
+                      (    tb_dv_asm.asm):00138         
+                      (    tb_dv_asm.asm):00139         ; replace the following with code to test
+FC41 7EFC27           (    tb_dv_asm.asm):00140           jmp   done_s_ptr
+                      (    tb_dv_asm.asm):00141         
+                      (    tb_dv_asm.asm):00142           org code_under_test_mid-128+2
+FD8A                  (    tb_dv_asm.asm):00143         code_under_test_br_bwd
+                      (    tb_dv_asm.asm):00144         ; the maximum range for branching backward
+FD8A 4C               (    tb_dv_asm.asm):00145           inca
+FD8B 7EFC27           (    tb_dv_asm.asm):00146           jmp   done_s_ptr
+                      (    tb_dv_asm.asm):00147         
+                      (    tb_dv_asm.asm):00148           org code_under_test_mid-128+3
+FD8B                  (    tb_dv_asm.asm):00149         code_under_test_idx_pc8_bwd
+                      (    tb_dv_asm.asm):00150         ; the maximum range for pc8 index backward
+                      (    tb_dv_asm.asm):00151         
+                      (    tb_dv_asm.asm):00152           org   (code_under_test+data_block_end)/2
+FE08                  (    tb_dv_asm.asm):00153         code_under_test_mid
+                      (    tb_dv_asm.asm):00154         ; a midpoint in the code/data block
+FE08 2780             (    tb_dv_asm.asm):00155           beq   code_under_test_br_bwd
+FE0A 7EFC27           (    tb_dv_asm.asm):00156           jmp   done_s_ptr
+                      (    tb_dv_asm.asm):00157         
+                      (    tb_dv_asm.asm):00158           org code_under_test_mid+127+2
+FE89                  (    tb_dv_asm.asm):00159         code_under_test_br_fwd
+                      (    tb_dv_asm.asm):00160         ; the maximum range for branching forward
+FE89 5C               (    tb_dv_asm.asm):00161           incb
+FE8A 7EFC27           (    tb_dv_asm.asm):00162           jmp   done_s_ptr
+                      (    tb_dv_asm.asm):00163         
+                      (    tb_dv_asm.asm):00164           org code_under_test_mid+127+3
+FE8A                  (    tb_dv_asm.asm):00165         code_under_test_idx_pc8_fwd
+                      (    tb_dv_asm.asm):00166         ; the maximum range for pc8 index forward
+                      (    tb_dv_asm.asm):00167         
+                      (    tb_dv_asm.asm):00168         
+                      (    tb_dv_asm.asm):00169         
+                      (    tb_dv_asm.asm):00170         ; ////////////////////////////////////////////////////////////////////////////
+                      (    tb_dv_asm.asm):00171         ;                               Data Block
+                      (    tb_dv_asm.asm):00172         ; ////////////////////////////////////////////////////////////////////////////
+                      (    tb_dv_asm.asm):00173         
+FE8A                  (    tb_dv_asm.asm):00174         data_addr:
+FE8A 7F               (    tb_dv_asm.asm):00175           fcb $7f
+                      (    tb_dv_asm.asm):00176         
+                      (    tb_dv_asm.asm):00177         
+                      (    tb_dv_asm.asm):00178           org  stack_end-1
+FFCF                  (    tb_dv_asm.asm):00179         data_block_last_byte:
+                      (    tb_dv_asm.asm):00180           org  stack_end
+FFD0                  (    tb_dv_asm.asm):00181         data_block_end:
+                      (    tb_dv_asm.asm):00182         
+                      (    tb_dv_asm.asm):00183         ; ////////////////////////////////////////////////////////////////////////////
+                      (    tb_dv_asm.asm):00184         ;                            Stack (32 bytes)
+                      (    tb_dv_asm.asm):00185         ; ////////////////////////////////////////////////////////////////////////////
+                      (    tb_dv_asm.asm):00186         ; Used to load initial state and save run-time data for code under test
+                      (    tb_dv_asm.asm):00187         ; and save the processor state after code under test complete
+                      (    tb_dv_asm.asm):00188         
+                      (    tb_dv_asm.asm):00189           org  vector_table-32
+FFD0                  (    tb_dv_asm.asm):00190         stack_end:
+                      (    tb_dv_asm.asm):00191         
+                      (    tb_dv_asm.asm):00192           org  vector_table-12
+FFE4                  (    tb_dv_asm.asm):00193         init_stack_data:
+FFE4                  (    tb_dv_asm.asm):00194         init_cc:
+FFE4 78               (    tb_dv_asm.asm):00195           fcb   $78   ;cc
+FFE5                  (    tb_dv_asm.asm):00196         init_a:
+FFE5 67               (    tb_dv_asm.asm):00197           fcb   $67   ;a
+FFE6                  (    tb_dv_asm.asm):00198         init_b:
+FFE6 56               (    tb_dv_asm.asm):00199           fcb   $56   ;b
+FFE7                  (    tb_dv_asm.asm):00200         init_dp:
+FFE7 FE               (    tb_dv_asm.asm):00201           fcb   data_addr/$100  ;dp
+FFE8                  (    tb_dv_asm.asm):00202         init_x:
+FFE8 3443             (    tb_dv_asm.asm):00203           fdb   $3443 ;x
+FFEA                  (    tb_dv_asm.asm):00204         init_y:
+FFEA 2332             (    tb_dv_asm.asm):00205           fdb   $2332 ;y
+FFEC                  (    tb_dv_asm.asm):00206         init_u_s:
+FFEC 1221             (    tb_dv_asm.asm):00207           fdb   $1221 ;u or s
+FFEE                  (    tb_dv_asm.asm):00208         init_pc:
+FFEE FC41             (    tb_dv_asm.asm):00209           fdb   code_under_test ;pc
+                      (    tb_dv_asm.asm):00210         
+FFF0                  (    tb_dv_asm.asm):00211         stack_start:
+                      (    tb_dv_asm.asm):00212         
+                      (    tb_dv_asm.asm):00213         ; ////////////////////////////////////////////////////////////////////////////
+                      (    tb_dv_asm.asm):00214         ;                         reset / interrupt vector 
+                      (    tb_dv_asm.asm):00215         ; ////////////////////////////////////////////////////////////////////////////
+                      (    tb_dv_asm.asm):00216           org  $fff0
+FFF0                  (    tb_dv_asm.asm):00217         vector_table:
+                      (    tb_dv_asm.asm):00218         
+FFF0                  (    tb_dv_asm.asm):00219         reserved_vector:
+FFF0 FC00             (    tb_dv_asm.asm):00220           fdb start_s_ptr
+FFF2                  (    tb_dv_asm.asm):00221         swi3_vector:
+FFF2 FC00             (    tb_dv_asm.asm):00222           fdb start_s_ptr
+FFF4                  (    tb_dv_asm.asm):00223         swi2_vector:
+FFF4 FC00             (    tb_dv_asm.asm):00224           fdb start_s_ptr
+FFF6                  (    tb_dv_asm.asm):00225         firq_vector:
+FFF6 FC00             (    tb_dv_asm.asm):00226           fdb start_s_ptr
+FFF8                  (    tb_dv_asm.asm):00227         irq_vector:
+FFF8 FC00             (    tb_dv_asm.asm):00228           fdb start_s_ptr
+FFFA                  (    tb_dv_asm.asm):00229         swi_vector:
+FFFA FC00             (    tb_dv_asm.asm):00230           fdb start_s_ptr
+FFFC                  (    tb_dv_asm.asm):00231         nmi_vector:
+FFFC FC00             (    tb_dv_asm.asm):00232           fdb start_s_ptr
+FFFE                  (    tb_dv_asm.asm):00233         reset_vector:
+FFFE FC00             (    tb_dv_asm.asm):00234           fdb start_s_ptr
+                      (    tb_dv_asm.asm):00235         

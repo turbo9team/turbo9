@@ -1,0 +1,4 @@
+section .prog_start load 0x8000
+section .text
+section .data
+section .bss

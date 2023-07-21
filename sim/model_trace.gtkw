@@ -1,0 +1,47 @@
+[*]
+[*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
+[*] Thu Nov  4 20:45:33 2021
+[*]
+[dumpfile] "/home/kevinp/work/turbo9dev/sim/tb_dv_top/tb_dv_run_code/tb_dv_run_code.vcd"
+[dumpfile_mtime] "Thu Nov  4 20:22:51 2021"
+[dumpfile_size] 5311578
+[savefile] "/home/kevinp/work/turbo9dev/sim/tb_dv_top/tb_dv_run_code/model_trace.gtkw"
+[timestart] 259780000
+[size] 2004 706
+[pos] -1 -1
+*-16.480787 260040000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] tb_dv_top.
+[treeopen] tb_dv_top.I_soc_top.
+[treeopen] tb_dv_top.I_soc_top.I_turbo9.
+[treeopen] tb_dv_top.I_soc_top.I_turbo9.I_turbo9_decode_stage.
+[treeopen] tb_dv_top.I_soc_top.I_turbo9.I_turbo9_decode_stage.I_turbo9_uop_generator.
+[treeopen] tb_dv_top.I_soc_top.I_turbo9.I_turbo9_execute_stage.
+[treeopen] tb_dv_top.I_tb_dv_6809_model.
+[sst_width] 333
+[signals_width] 355
+[sst_expanded] 1
+[sst_vpaned_height] 192
+@22
+tb_dv_top.I_tb_dv_6809_model.pc_model[15:0]
+tb_dv_top.I_tb_dv_6809_model.execute6809.instruction_reg[7:0]
+[color] 5
+tb_dv_top.I_tb_dv_6809_model.s_model[15:0]
+tb_dv_top.I_tb_dv_6809_model.x_model[15:0]
+[color] 1
+tb_dv_top.I_tb_dv_6809_model.a_model[7:0]
+[color] 2
+tb_dv_top.I_tb_dv_6809_model.b_model[7:0]
+tb_dv_top.I_tb_dv_6809_model.OUTPUT_PORT_O[7:0]
+tb_dv_top.I_tb_dv_6809_model.I_tb_dv_6809_memory.\memory[32751][7:0]
+tb_dv_top.I_tb_dv_6809_model.read_mem16.addr[15:0]
+tb_dv_top.I_tb_dv_6809_model.load_op8.ea[15:0]
+tb_dv_top.I_tb_dv_6809_model.load_op8.op8[7:0]
+tb_dv_top.I_tb_dv_6809_model.load_op16.ea[15:0]
+tb_dv_top.I_tb_dv_6809_model.load_op16.op16[15:0]
+tb_dv_top.I_tb_dv_6809_model.I_tb_dv_6809_memory.\memory[10362][7:0]
+tb_dv_top.I_tb_dv_6809_model.I_tb_dv_6809_memory.\memory[32161][7:0]
+tb_dv_top.I_tb_dv_6809_model.I_tb_dv_6809_memory.\memory[32162][7:0]
+tb_dv_top.I_tb_dv_6809_model.I_tb_dv_6809_memory.\memory[32169][7:0]
+tb_dv_top.I_tb_dv_6809_model.I_tb_dv_6809_memory.\memory[32170][7:0]
+[pattern_trace] 1
+[pattern_trace] 0

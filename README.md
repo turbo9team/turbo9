@@ -14,9 +14,13 @@
 
 ## The Basics
 * [Key Features](#key-features) 
+* [Presentations](#presentations)
+* [Publications](#publications)
 * [Directory Structure](#directory-structure)
+* [Third-Party Tools](#third-party-tools)
 * [Current Status](#current-status)
 * [Team Members](#team-members)
+* [Faculty](#faculty)
 * [Contact](#contact)
 
 ----------------------------------------
@@ -88,7 +92,7 @@ The 6809 was designed before the definition of RISC and therefore retroactively 
 
 ----------------------------------------
 
-## Directory structure
+## Directory Structure
 |                               |                                             |                                       |
 |-------------------------------|---------------------------------------------|---------------------------------------|
 | [asm/](asm/)                  |                                             | Assembly code for the Turbo9          |
@@ -144,7 +148,7 @@ The 6809 was designed before the definition of RISC and therefore retroactively 
 
 ----------------------------------------
 
-## Current status
+## Current Status
 * 99% of instructions work
 * Interrupts incomplete
 * 98% of testcases complete

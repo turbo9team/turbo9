@@ -1,0 +1,6 @@
+# ignore .swp files
+.*.swp
+
+# ignore scratch files
+scratch.*
+

@@ -17,6 +17,7 @@
 * [Directory Structure](#directory-structure)
 * [Current Status](#current-status)
 * [Team Members](#team-members)
+* [Contact](#contact)
 
 ----------------------------------------
 
@@ -72,23 +73,24 @@ The 6809 was designed before the definition of RISC and therefore retroactively 
 ----------------------------------------
 
 ### Directory structure
-|                               |                      |                                                   |
-|-------------------------------|----------------------|---------------------------------------------------|
-| [asm/](asm/)                  |                      | 6809 assembly code for testing.                   |
-| [c_code/](c_code/)            |                      | vbcc & gcc C code.                                |
-|                               | **build/**           |                                                   |
-|                               | **byte_sieve_src/**  |                                                   |
-|                               | **dhrystone_src/**   |                                                   |
-|                               | **hello_world_src/** |                                                   |
-|                               | **lib_gcc/**         |                                                   |
-|                               | **lib_vbcc/**        |                                                   |
-| [fpga/](fpga/)                |                      | FPGA project directory                            |
-| [regress/](regress/)          |                      | Nightly regression run directory                  |
-| [rtl/](rtl/)                  |                      | Verilog RTL for micro-architecture                |
-|                               | **urtl/**            | Microcode for micro-architecture                  |
-| [sim/](sim/)                  |                      | Simulation run directory                          |
-| [tb/](tb/)                    |                      | Testbench                                         |
-| [urtl_asm_src/](urtl_asm_src) |                      | Microcode assembler source code                   |
+|                               |                      |                                          |
+|-------------------------------|----------------------|------------------------------------------|
+| [asm/](asm/)                  |                      | Assembly code for the Turbo9             |
+| [c_code/](c_code/)            |                      | C code for the Turbo9                    |
+|                               | **build/**           |                                          |
+|                               | **byte_sieve_src/**  |                                          |
+|                               | **dhrystone_src/**   |                                          |
+|                               | **hello_world_src/** |                                          |
+|                               | **lib_gcc/**         |                                          |
+|                               | **lib_vbcc/**        |                                          |
+| [fpga/](fpga/)                |                      | FPGA project directory                   |
+| [regress/](regress/)          |                      | Nightly regression run directory         |
+| [rtl/](rtl/)                  |                      | Verilog RTL for micro-architecture       |
+|                               | **urtl/**            | uRTL microcode for micro-architecture    |
+| [sim/](sim/)                  |                      | Simulation run directory                 |
+| [tb/](tb/)                    |                      | Testbench & Testcases                    |
+| [urtl_asm_src/](urtl_asm_src) |                      | uRTL microcode assembler source code     |
+|                               |                      |                                          |
 
 
 ----------------------------------------
@@ -111,8 +113,56 @@ The 6809 was designed before the definition of RISC and therefore retroactively 
 ### Team Members
 #### Kevin Phillipson
 ![Kevin Phillipson](./docs/images/kevin.png)
+
+- **Project Leader**
+- Responsibilities
+  + Microarchitecture design
+  + RTL & Microcode development
+- 15 years of industry experience in ASIC design
+- Bachelors in Electrical Engineering from University of Florida 2008
+- Masters in Electrical Engineering from University of Florida in 2022
+- Currently pursuing a PhD from University of Florida
+- Masters thesis: _A Compact & Efficient Microprocessor IP for SoC Sub-Blocks and Mixed-Signal ASICs_
+
 #### Michael Rywalt
 ![Michael Rywalt](./docs/images/michael.png)
 
-![asdf]:./scratch.md
+- **Principal Contributor**
+- Responsibilities
+  + Custom uRTL microcode assembler
+  + Verification & Tools
+- 15 years of industry experience in ASIC design
+- Bachelors of science in Computer Science and software Engineering from Florida Institute of Technology 2008
+- Currently pursuing a Masters in Electrical Engineering from University of Florida
+- Masters thesis: _Verification of a compact & efficient microprocessor IP_
+
+----------------------------------------
+
+### Faculty
+#### Dr. Greg Stitt
+![Dr. Greg Stitt](./docs/images/stitt.png)
+
+- **Associate Professor**
+- NSF Center for Space, High-Performance, and Resilient Computing (SHREC)
+- Research interests: Embedded systems with an emphasis in synthesis, compilers, reconfigurable computing, hardware/software co-design
+- Website: [www.gstitt.ece.ufl.edu](http://www.gstitt.ece.ufl.edu)
+
+#### Dr. Eric M. Schwartz
+![Dr. Eric M. Schwartz](./docs/images/schwartz.png)
+
+- **Instructional Professor**
+- Machine Intelligence Laboratory Director
+- Research interests: Robotics, embedded systems, controls, autonomous mobile agents
+- Website: [mil.ufl.edu/ems](http://mil.ufl.edu/ems/)
+
+#### Dr. Martin Margala
+![Dr. Martin Margala](./docs/images/margala.png)
+
+- **Director of School of Computing and Informatics** - University of Louisiana Lafayette
+- Academia: Former Professor and Chair of the Electrical and Computer Engineering Department at the University of Massachusetts Lowell
+- Website: [people.cmix.louisiana.edu/margala/](https://people.cmix.louisiana.edu/margala/)
+----------------------------------------
+
+### Contact
+You may contact us at **team**[at]**turbo9**[dot]**org**. Thank you!
 

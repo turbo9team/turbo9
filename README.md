@@ -54,25 +54,49 @@ The 6809 was designed before the definition of RISC and therefore retroactively 
 ----------------------------------------
 
 ## Key Features
-* **Executes a Superset of the  Motorola 6809 Instruction Set**
-  - Compatible with existing Comp
+* **Professional Level IP**
+  - Modern RTL design techniques & "good practice"
+    * Fully synchronous with single clock
+    * Well defined separation of control and datapath
+    * Separate hierarchy into smaller easier to maintain modules
+    * Design for efficient synthesis into ASIC standard cell libraries & FPGAs
+    * Written in Verilog 2001 for EDA tool compatibility
+  - Optimized for speed, power and area
+    * Design for performance, but not at the expense of power and area
+    * Minimize timing paths for max clock rate
+    * Implement multi-cycle to reduce area / power
 
-* Pipelined micro-architecture
+* **Executes a Superset of the Motorola 6809 Instruction Set**
+  - Compatible with existing 6809 compilers, assemblers and code base
+  - 16/32-bit multiply & divide instruction extensions
+
+* **Modern pipelined 16-bit micro-architecture**
   - Instruction prefetch stage
-  - Decode stage (CISC to RISC micro-op translation)
+  - Advanced decode stage (CISC to RISC micro-op translation)
   - Single/Multi-cycle execute stage
 
-* Pipelined Wishbone bus
+* **Pipelined Wishbone bus**
   - Public domain industry standard
   - Internal separate Program Bus & Data Bus
   - External shared Program/Data Bus
+  - Adjustable pipeline stages w/ automatic latency adjustment
+  - Different bus configurations available:
+    + Turbo9: 8-bit shared data/program bus
+    + Turbo9S: 16-bit aligned shared data/program bus
+    + Turbo9R: 16-bit non-aligned shared data/program bus
+    + Turbo9GTR: 16-bit non-aligned dual data & program bus
 
-* Custom uRTL microcode assembler
+* **Custom uRTL microcode assembler**
   - written in C
   - macro based assembler
-  - Verilog output
+  - Verilog output for efficient synthesis into gates, no ROMs
   - Statistics output
-  - Decode table output
+  - Unlike traditional sequential microcode, it also capable of  _direct parallel_ decoding
+
+* **Professional Verification Testbench**
+  - Full self-checking Verilog testbench to verify instruction set
+  - Full randomized regression capable
+
 
 ----------------------------------------
 
@@ -135,7 +159,7 @@ The 6809 was designed before the definition of RISC and therefore retroactively 
   * makefile and library provided in [c_code/](c_code)
 
 - [gcc6809](https://launchpad.net/~tormodvolden/+archive/ubuntu/m6809)
-  * A port of the GCC for the 6809
+  * A port of the GCC compiler for the 6809
   * makefile and library provided in [c_code/](c_code/)
 
 - [CMOC 6809 C language cross-compiler](http://perso.b2b2c.ca/~sarrazip/dev/cmoc.html)

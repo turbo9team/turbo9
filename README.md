@@ -84,7 +84,7 @@ The 6809 was designed before the definition of RISC and therefore retroactively 
 
 ## Publications
 
-- [Kevin Phillipson's Masters Thesis - A Compact and Efficient Microprocessor IP for SOC Sub-Blocks and Mixed-Signal ASICs](https://ufdc.ufl.edu/UFE0058740/00001/pdf)
+- [Kevin Phillipson's Masters Thesis - **A Compact and Efficient Microprocessor IP for SOC Sub-Blocks and Mixed-Signal ASICs**](https://ufdc.ufl.edu/UFE0058740/00001/pdf)
 
 ----------------------------------------
 
@@ -92,7 +92,7 @@ The 6809 was designed before the definition of RISC and therefore retroactively 
 |                               |                                             |                                       |
 |-------------------------------|---------------------------------------------|---------------------------------------|
 | [asm/](asm/)                  |                                             | Assembly code for the Turbo9          |
-| [docs/](docs/)            |                                                 | Documents                             |
+| [docs/](docs/)                |                                             | Documents                             |
 |                               | [images/](c_code/images/)                   | Images                                |
 | [c_code/](c_code/)            |                                             | C code for the Turbo9                 |
 |                               | [build_gcc/](c_code/build_gcc/)             | build directory for GCC               |

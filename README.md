@@ -175,13 +175,14 @@ The 6809 was designed before the definition of RISC and therefore retroactively 
 ----------------------------------------
 
 ## Current Status
-The current version of the Turbo9 is capable of running C code. All the 6809 instructions and addressing modes have been implemented and tested expect SYNC and CWAI. The signed versions of the Turbo9's 16-bit divide and multiply need to be completed. Interrupts are partially implemented including SWI and Reset. We are called this version 0.9. In order to achieve version 1.0 we require the following:
+The current version of the Turbo9 is capable of running C code. All the 6809 instructions and addressing modes have been implemented and tested expect SYNC and CWAI. The signed versions of the Turbo9's 16-bit divide and multiply need to be completed. Interrupts are partially implemented including SWI and Reset. We are call this version 0.9. In order to achieve version 1.0 we require the following:
 * Finish SYNC and CWAI (6809 instructions)
 * Finish EDIVS & EMULS (Turbo9 extensions)
 * Finish Interrupts
+* Finish Turbo9S bus version
 * Implement testcases to verify the above
 
-Other known bugs:
+Other things to do:
 * fix stim bench
 * Verify pipeline bubbles on reset are benign
 

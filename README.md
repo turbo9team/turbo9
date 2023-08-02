@@ -22,7 +22,7 @@
 ----------------------------------------
 
 ## What is the Turbo9?
-The Turbo9 is a pipelined microprocessor IP written in Verilog that executes a superset of the Motorola 6809 instruction set. It is a new modern microarchitecture with 16-bit internal datapaths that balances high performance vs small area / low power. The Turbo9R with a 16-bit memory interface achieves 0.69 DMIPS/MHz which is 3.8 times faster than Motorola's original 8-bit MC6809 implementation. It is an active graduate research project at the University of Florida.
+The Turbo9 is a pipelined microprocessor IP written in Verilog that executes a superset of the Motorola 6809 instruction set. It is a new modern microarchitecture with 16-bit internal datapaths that balances high performance vs small area / low power. The Turbo9R with a 16-bit memory interface achieves 0.69 DMIPS/MHz which is 3.8 times faster than Motorola's original 8-bit MC6809 implementation. It is an active graduate research project at the [Department of Electrical & Computer Engineering](http://www.ece.ufl.edu) at the [University of Florida](http://www.ufl.edu)
 
 ![Turbo9 Microarchitecture](./docs/images/turbo9_microarchitecture_small.png)   
 
@@ -51,7 +51,7 @@ The 6809 was designed before the definition of RISC and therefore retroactively 
 
 ## Key Features
 * **Executes a Superset of the  Motorola 6809 Instruction Set**
-  - Compatiable with existing Comp
+  - Compatible with existing Comp
 
 * Pipelined micro-architecture
   - Instruction prefetch stage

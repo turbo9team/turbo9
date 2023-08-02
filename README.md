@@ -74,6 +74,8 @@ The 6809 was designed before the definition of RISC and therefore retroactively 
   - Instruction prefetch stage
   - Advanced decode stage (CISC to RISC micro-op translation)
   - Single/Multi-cycle execute stage
+  - Turbo9R with a 16-bit memory interface achieves 0.69 DMIPS/MHz 
+    * ~3.8 times faster than original 8-bit MC6809 implementation
 
 * **Pipelined Wishbone bus**
   - Public domain industry standard
@@ -173,17 +175,15 @@ The 6809 was designed before the definition of RISC and therefore retroactively 
 ----------------------------------------
 
 ## Current Status
-* 99% of instructions work
-* Interrupts incomplete
-* 98% of testcases complete
+The current version of the Turbo9 is capable of running C code. All the 6809 instructions and addressing modes have been implemented and tested expect SYNC and CWAI. The signed versions of the Turbo9's 16-bit divide and multiply need to be completed. Interrupts are partially implemented including SWI and Reset. We are called this version 0.9. In order to achieve version 1.0 we require the following:
+* Finish SYNC and CWAI (6809 instructions)
+* Finish EDIVS & EMULS (Turbo9 extensions)
+* Finish Interrupts
+* Implement testcases to verify the above
 
-### TODO List
-
-* Interrupts
-* Implement Turbo9S
-* SDIV / SMUL
+Other known bugs:
 * fix stim bench
-* pipeline bubbles on reset are benign
+* Verify pipeline bubbles on reset are benign
 
 ----------------------------------------
 

@@ -43,8 +43,8 @@
 # ////////////////////////////////////////////////////////////////////////////
 # [TURBO9_HEADER_END]
 
-SRCDIR=../../../c_code
-include ../rules_gcc.mk
+SRCDIR=../../c_code
+include rules_gcc.mk
 
 GCC=/usr/lib/gcc/m6809-unknown/4.6.4
 

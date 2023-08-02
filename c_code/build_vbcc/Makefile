@@ -43,8 +43,8 @@
 # ////////////////////////////////////////////////////////////////////////////
 # [TURBO9_HEADER_END]
 
-SRCDIR=../../../c_code
-include ../rules_vbcc.mk
+SRCDIR=../../c_code
+include rules_vbcc.mk
 
 VBCC=/opt/vbcc
 

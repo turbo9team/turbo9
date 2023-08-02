@@ -89,24 +89,28 @@ The 6809 was designed before the definition of RISC and therefore retroactively 
 ----------------------------------------
 
 ## Directory structure
-|                               |                      |                                          |
-|-------------------------------|----------------------|------------------------------------------|
-| [asm/](asm/)                  |                      | Assembly code for the Turbo9             |
-| [c_code/](c_code/)            |                      | C code for the Turbo9                    |
-|                               | **build/**           |                                          |
-|                               | **byte_sieve_src/**  |                                          |
-|                               | **dhrystone_src/**   |                                          |
-|                               | **hello_world_src/** |                                          |
-|                               | **lib_gcc/**         |                                          |
-|                               | **lib_vbcc/**        |                                          |
-| [fpga/](fpga/)                |                      | FPGA project directory                   |
-| [regress/](regress/)          |                      | Nightly regression run directory         |
-| [rtl/](rtl/)                  |                      | Verilog RTL for micro-architecture       |
-|                               | **urtl/**            | uRTL microcode for micro-architecture    |
-| [sim/](sim/)                  |                      | Simulation run directory                 |
-| [tb/](tb/)                    |                      | Testbench & Testcases                    |
-| [urtl_asm_src/](urtl_asm_src) |                      | uRTL microcode assembler source code     |
-|                               |                      |                                          |
+|                               |                                             |                                       |
+|-------------------------------|---------------------------------------------|---------------------------------------|
+| [asm/](asm/)                  |                                             | Assembly code for the Turbo9          |
+| [docs/](docs/)            |                                                 | Documents                             |
+|                               | [images/](c_code/images/)                   | Images                                |
+| [c_code/](c_code/)            |                                             | C code for the Turbo9                 |
+|                               | [build_gcc/](c_code/build_gcc/)             | build directory for GCC               |
+|                               | [build_vbcc/](c_code/build_vbcc/)           | build directory for VBCC              |
+|                               | [byte_sieve_src/](c_code/byte_sieve_src/)   | BYTE Sieve source                     |
+|                               | [dhrystone_src/](c_code/dhrystone_src/)     | Dhrystone source                      |
+|                               | [hello_world_src/](c_code/hello_world_src/) | Hello World source                    |
+|                               | [lib_gcc/](c_code/lib_gcc/)                 | Library for GCC                       |
+|                               | [lib_vbcc/](c_code/lib_vbcc/)               | Library for VBCC                      |
+| [fpga/](fpga/)                |                                             | FPGA project directory                |
+|                               | [bit_files/](fpga/bit_files/)               | .bit files for Arty A7-100T           |
+| [regress/](regress/)          |                                             | Nightly regression run directory      |
+| [rtl/](rtl/)                  |                                             | Verilog RTL for micro-architecture    |
+|                               | [urtl/](c_code/urtl/)                       | uRTL microcode for micro-architecture |
+| [sim/](sim/)                  |                                             | Simulation run directory              |
+| [tb/](tb/)                    |                                             | Testbench & Testcases                 |
+| [urtl_asm_src/](urtl_asm_src) |                                             | uRTL microcode assembler source code  |
+|                               |                                             |                                       |
 
 ----------------------------------------
 

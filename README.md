@@ -84,7 +84,7 @@ The 6809 was designed before the definition of RISC and therefore retroactively 
 
 ## Publications
 
-- [Kevin Phillipson's Masters Thesis - **A Compact and Efficient Microprocessor IP for SOC Sub-Blocks and Mixed-Signal ASICs**](https://ufdc.ufl.edu/UFE0058740/00001/pdf)
+- [Kevin Phillipson's Master's Thesis - **A Compact and Efficient Microprocessor IP for SOC Sub-Blocks and Mixed-Signal ASICs**](https://ufdc.ufl.edu/UFE0058740/00001/pdf)
 
 ----------------------------------------
 
@@ -168,10 +168,10 @@ The 6809 was designed before the definition of RISC and therefore retroactively 
   + Microarchitecture design
   + RTL & Microcode development
 - 15 years of industry experience in ASIC design
-- Bachelors in Electrical Engineering from University of Florida 2008
-- Masters in Electrical Engineering from University of Florida in 2022
+- Bachelor's Degree in Electrical Engineering from University of Florida 2008
+- Master's Degree in Electrical Engineering from University of Florida in 2022
 - Currently pursuing a PhD from University of Florida
-- Masters thesis: _A Compact & Efficient Microprocessor IP for SoC Sub-Blocks and Mixed-Signal ASICs_
+- Master's Thesis: _A Compact & Efficient Microprocessor IP for SoC Sub-Blocks and Mixed-Signal ASICs_
 
 ### Michael Rywalt
 ![Michael Rywalt](./docs/images/michael.png)
@@ -181,9 +181,9 @@ The 6809 was designed before the definition of RISC and therefore retroactively 
   + Custom uRTL microcode assembler
   + Verification & Tools
 - 15 years of industry experience in ASIC design
-- Bachelors of science in Computer Science and software Engineering from Florida Institute of Technology 2008
-- Currently pursuing a Masters in Electrical Engineering from University of Florida
-- Masters thesis: _Verification of a compact & efficient microprocessor IP_
+- Bachelor's Degree of science in Computer Science and software Engineering from Florida Institute of Technology 2008
+- Currently pursuing a Master's Degree in Electrical Engineering from University of Florida
+- Master's Thesis: _Verification of a compact & efficient microprocessor IP_
 
 ----------------------------------------
 

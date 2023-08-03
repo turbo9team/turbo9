@@ -103,11 +103,11 @@ The 6809 was designed before the definition of RISC and therefore retroactively 
 ----------------------------------------
 
 ## Presentations
-
-- [**Turbo9 - Pipelined 6809 - Overview & uRTL Presentation**](https://www.youtube.com/watch?v=LPJ4IFz4fjE&pp=ygUGdHVyYm85)
-- [**Turbo9 - Pipelined 6809 - Benchmarking & Performance**](https://www.youtube.com/watch?v=8ScT86RKopQ)
-- [**Turbo9 - Pipelined 6809 - Verification & Design Update**](https://www.youtube.com/watch?v=eTlfH86KUog)
-- [**Turbo9 - Pipelined 6809 - Introduction & Overview**](https://www.youtube.com/watch?v=6QfXNfrj19Y)
+* Youtube videos:
+  - [**Turbo9 - Pipelined 6809 - Overview & uRTL Presentation**](https://www.youtube.com/watch?v=LPJ4IFz4fjE&pp=ygUGdHVyYm85)
+  - [**Turbo9 - Pipelined 6809 - Benchmarking & Performance**](https://www.youtube.com/watch?v=8ScT86RKopQ)
+  - [**Turbo9 - Pipelined 6809 - Verification & Design Update**](https://www.youtube.com/watch?v=eTlfH86KUog)
+  - [**Turbo9 - Pipelined 6809 - Introduction & Overview**](https://www.youtube.com/watch?v=6QfXNfrj19Y)
 
 
 ----------------------------------------
@@ -175,7 +175,7 @@ The 6809 was designed before the definition of RISC and therefore retroactively 
 ----------------------------------------
 
 ## Current Status
-The current version of the Turbo9 is capable of running C code. All the 6809 instructions and addressing modes have been implemented and tested expect SYNC and CWAI. The signed versions of the Turbo9's 16-bit divide and multiply need to be completed. Interrupts are partially implemented including SWI and Reset. We are call this version 0.9. In order to achieve version 1.0 we require the following:
+The current version of the Turbo9 is thoroughly verified and is capable of running C code. However, we still consider this version v0.9 because we are missing a few items. All the 6809 instructions and addressing modes have been implemented and tested except SYNC and CWAI. The signed versions of the Turbo9's 16-bit divide and multiply need to be completed. Interrupts are partially implemented including SWI and Reset. In order to achieve version 1.0 we require the following:
 * Finish SYNC and CWAI (6809 instructions)
 * Finish EDIVS & EMULS (Turbo9 extensions)
 * Finish Interrupts

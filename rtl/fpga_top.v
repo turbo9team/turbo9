@@ -83,8 +83,10 @@ module fpga_top
 //                             INTERNAL SIGNALS
 /////////////////////////////////////////////////////////////////////////////
 
+reg         clk100_rst_meta;
+reg         clk100_rst_sync;
+
 wire        clk;
-wire        rst;
 reg         rst_meta;
 reg         rst_sync;
 
@@ -99,16 +101,27 @@ wire  [7:0] led_port;
 
 //assign clk = CLK100MHZ;
 
+// Reset Synchro
+always @(posedge CLK100MHZ, negedge ck_rst) begin
+  if (~ck_rst) begin
+    clk100_rst_meta <= 1'b1;
+    clk100_rst_sync <= 1'b1;
+  end else begin
+    clk100_rst_meta <= 1'b0;
+    clk100_rst_sync <= clk100_rst_meta;
+  end
+end
+
+
 clk_div I_clk_div
 (
   // Inputs: Clock & Reset
-  .CLK_I      (CLK100MHZ ),
+  .CLK_I      (CLK100MHZ        ),
+  .RST_I      (clk100_rst_sync  ),
+
   // Outputs
-  .CLK_DIV2   (clk       )
+  .CLK_DIV2   (clk              )
 );
-
-
-assign rst = rst_sync;
 
 
 // Reset Synchro
@@ -122,20 +135,20 @@ always @(posedge clk, negedge ck_rst) begin
   end
 end
 
-assign rst = rst_sync;
-
 /////////////////////////////////////////////////////////////////////////////
 //                                LOGIC
 /////////////////////////////////////////////////////////////////////////////
 
-soc_top
+soc_top_r
+//soc_top
 #(
   15 // MEM_ADDR_WIDTH 
 )
-I_soc_top
+I_soc_top_r
+//I_soc_top
 (
   // Inputs: Clock & Reset
-  .RST_I      (rst      ), // Reset. Active high and synchronized to CLK_I
+  .RST_I      (rst_sync ), // Reset. Active high and synchronized to CLK_I
   .CLK_I      (clk      ), // Clock
 
   .RXD_PIN_I  (uart_txd_in  ),
@@ -152,7 +165,7 @@ fpga_leds I_fpga_leds
 (
   // Inputs: Clock & Reset
   .CLK_I      (clk      ),
-  .RST_I      (rst      ),
+  .RST_I      (rst_sync ),
   //
   // Inputs 
   .LED_PORT_I (led_port ),

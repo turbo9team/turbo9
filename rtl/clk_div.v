@@ -51,6 +51,7 @@ module clk_div
 (
   // Inputs: Clock & Reset
   input  CLK_I,
+  input  RST_I,
 
   // Outputs
   output CLK_DIV2
@@ -65,8 +66,12 @@ reg  clk_div_reg;
 /////////////////////////////////////////////////////////////////////////////
 //                                REGISTERS
 /////////////////////////////////////////////////////////////////////////////
-always @(posedge CLK_I) begin
-  clk_div_reg <= ~clk_div_reg;
+always @(posedge CLK_I, posedge RST_I) begin
+  if (RST_I) begin
+    clk_div_reg <= 1'b0;
+  end else begin
+    clk_div_reg <= ~clk_div_reg;
+  end
 end
 /////////////////////////////////////////////////////////////////////////////
 

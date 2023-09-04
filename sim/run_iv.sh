@@ -54,10 +54,6 @@ set test_list = ("tc_dv_dir_instr" "tc_dv_ext_instr" "tc_dv_imm_instr" "tc_dv_re
 set name=$0
 if ($#argv <= 1) then
   echo ""
-  echo "Stim Bench:"
-  echo "Usage:    $name tb_stim_top <testcase> <rand_itr> <dump> <seed>"
-  echo "Example:  $name tb_stim_top tb_stim_test_flags"
-  echo ""
   echo "DV Testcase:"
   echo "Usage:    $name tb_dv_top <testcase> <rand_itr> <dump> <seed>"
   echo "Example:  $name tb_dv_top tc_dv_dir_instr"
@@ -74,6 +70,10 @@ if ($#argv <= 1) then
   echo "Testcase Run S19 Code:"
   echo "Usage:    $name tb_dv_top tc_dv_run_s19 <./path/file.s19> <dump>"
   echo "Example:  $name tb_dv_top tc_dv_run_s19 ../asm/byte_sieve_6809.s19 dump"
+  echo ""
+  echo "Stim Bench:"
+  echo "Usage:    $name tb_stim_top <testcase> <rand_itr> <dump> <seed>"
+  echo "Example:  $name tb_stim_top tb_stim_fpga 1 dump"
   echo ""
   echo "DV Testcase list:"
   foreach test_x ( $test_list )
@@ -258,7 +258,7 @@ foreach test_x ( $test_list )
     set s19_arg = ""
   endif
   if ($tb == "tb_stim_top") then
-    cp ../../../asm/default.hex .
+    cp ../../../rtl/default*.hex .
   endif
 
 #  set run_cmd = "../${tb}.vvp -lxt2 +${test_x} +seed=${seed} ${rand_itr} ${dump} ${hex_arg} ${s19_arg}"

@@ -50,17 +50,29 @@
 
 module tb_stim_top;
 
-  `include "tb_stim_flags.v"         // Flags
-  `include "tb_stim_fpga.v"          // FPGA
-  //`include "tb_stim_mul_div.v"       // MUL_DIV
+  ///////////////////// Select one of the following:
+  //`define TURBO9 
+  //`define TURBO9_S
+  `define TURBO9_R
+  /////////////////////
 
-  `define MEM_ADDR_WIDTH  14 //16Kbyte Memory, adjust the asm accordingly
+  `define MEM_ADDR_WIDTH  15 //32 Kbyte Memory, adjust the asm accordingly
 
+
+`ifdef TURBO9_R
+  `define dut_mem_even    I_fpga_top.I_soc_top_r.I_even_syncram_8bit.ram
+  `define dut_mem_odd     I_fpga_top.I_soc_top_r.I_odd_syncram_8bit.ram
+`else
   `define dut_mem         I_fpga_top.I_soc_top.I_syncram_8bit.ram
+`endif
 
 
   reg sys_clk;
   reg fpga_reset;
+
+  `include "tb_stim_flags.v"         // Flags
+  `include "tb_stim_fpga.v"          // FPGA
+  //`include "tb_stim_mul_div.v"       // MUL_DIV
 
   integer seed;
   integer rand_itr_total;
@@ -75,11 +87,20 @@ module tb_stim_top;
     if ($value$plusargs("dump_vcd=%s", vcd_file_name)) begin
       $dumpfile(vcd_file_name);
       $dumpvars(0,tb_stim_top);
-      for (dump_idx = 0; dump_idx < (2**`MEM_ADDR_WIDTH); dump_idx = dump_idx + 1) begin
+      /*
+      for (dump_idx = 16'h2000; dump_idx < 16'h3000; dump_idx = dump_idx + 1) begin
         $dumpvars(0, `dut_mem[dump_idx]);
+        //$dumpvars(0, `tb_mem[dump_idx]);
       end
+      
+      for (dump_idx = (2**`MEM_ADDR_WIDTH)-4096; dump_idx < (2**`MEM_ADDR_WIDTH); dump_idx = dump_idx + 1) begin
+        $dumpvars(0, `dut_mem[dump_idx]);
+        //$dumpvars(0, `tb_mem[dump_idx]);
+      end
+      */
     end
   end
+
 
 
   ////////////////////////////////////////////////////////////////////////////

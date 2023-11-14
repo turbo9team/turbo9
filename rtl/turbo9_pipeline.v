@@ -49,7 +49,8 @@
 /////////////////////////////////////////////////////////////////////////////
 module turbo9_pipeline
 #(
-  parameter PMEM_16BIT_EN = 1
+  parameter TURBO9_TYPE = 0, // Turbo9 Type: 0=Turbo9, 1=Turbo9S, 2=Turbo9R
+  parameter QUEUE_SIZE  = 6  // Fetch Queue Size: 6=Default, 4=Min, 7=Max
 )
 (
   // Inputs: Clock & Reset
@@ -69,14 +70,15 @@ module turbo9_pipeline
   input          DMEM_ACK_WIDTH_I,
   //
   // Program Memory Interface
-  input   [((PMEM_16BIT_EN*8)+7):0] PMEM_DAT_I,
+  input   [15:0] PMEM_DAT_I,
   output  [15:0] PMEM_ADR_O,
   input          PMEM_BUSY_I,
+  output         PMEM_REQ_WIDTH_O,
   output         PMEM_RD_REQ_O,
-  input          PMEM_RD_ACK_I
+  input          PMEM_RD_ACK_I,
+  input          PMEM_ACK_WIDTH_I
 
 );
-
 
 /////////////////////////////////////////////////////////////////////////////
 //                             INTERNAL SIGNALS
@@ -138,7 +140,8 @@ wire [15:0] dec_exe_new_pc;
   //////////////////////////////////////// Fetch Stage
   turbo9_fetch_stage
   #(
-    .PMEM_16BIT_EN  (PMEM_16BIT_EN)
+    .TURBO9_TYPE  (TURBO9_TYPE), // Turbo9 Type: 0=Turbo9, 1=Turbo9S, 2=Turbo9R
+    .QUEUE_SIZE   (QUEUE_SIZE)   // Fetch Queue Size: 6=Default, 4=Min, 7=Max
   )
   I_turbo9_fetch_stage
   (
@@ -164,11 +167,11 @@ wire [15:0] dec_exe_new_pc;
     .PMEM_DAT_I               (PMEM_DAT_I             ),
     .PMEM_ADR_O               (PMEM_ADR_O             ),
     .PMEM_BUSY_I              (PMEM_BUSY_I            ),
+    .PMEM_REQ_WIDTH_O         (PMEM_REQ_WIDTH_O       ),
     .PMEM_RD_REQ_O            (PMEM_RD_REQ_O          ),
-    .PMEM_RD_ACK_I            (PMEM_RD_ACK_I          )
+    .PMEM_RD_ACK_I            (PMEM_RD_ACK_I          ),
+    .PMEM_ACK_WIDTH_I         (PMEM_ACK_WIDTH_I       )
   );
-
-  
 
   //////////////////////////////////////// Decode Stage
   turbo9_decode_stage I_turbo9_decode_stage

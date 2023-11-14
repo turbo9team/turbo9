@@ -48,8 +48,8 @@
 /////////////////////////////////////////////////////////////////////////////
 module turbo9_fetch_queue
 #(
-  parameter ENABLE_16BIT = 1,
-  parameter SIZE = 4 // Min: 4, Max: 7
+  parameter TURBO9_TYPE = 0, // Turbo9 Type: 0=Turbo9, 1=Turbo9S, 2=Turbo9R
+  parameter QUEUE_SIZE  = 6  // Fetch Queue Size: 6=Default, 4=Min, 7=Max
 )
 (
   // Inputs: Clock & Reset
@@ -60,7 +60,8 @@ module turbo9_fetch_queue
   input         QUEUE_FLUSH_I,
   input         QUEUE_WR_EN_I,
   
-  input   [((ENABLE_16BIT*8)+7):0] QUEUE_DAT_I,
+  input         QUEUE_WIDTH_I,
+  input  [15:0] QUEUE_DAT_I,
   
   output  [2:0] QUEUE_LEVEL_O,
   output  [2:0] QUEUE_REJECT_LEN_O,
@@ -80,17 +81,21 @@ module turbo9_fetch_queue
 //////////////////////////////////////// WIDTH_I defines
 //
 
-localparam  CLOG2_SIZE = 3; // Solve: 2^CLOG2_SIZE >= SIZE (keep it Verilog2001!)
+localparam  CLOG2_SIZE = 3; // Solve: 2^CLOG2_SIZE >= QUEUE_SIZE (keep it Verilog2001!)
 
 // This must match the MSB of the *_REG_SEL control vectors
 localparam  WIDTH_16 =  1'b0;
 localparam  WIDTH_8  =  1'b1;
 
-wire   [(SIZE-1):0] queue_wr_en;
+wire   [(CLOG2_SIZE-1):0] size_const    = QUEUE_SIZE;
+wire   [(CLOG2_SIZE-1):0] size_m1_const = QUEUE_SIZE-1;
+
+
+wire   [(QUEUE_SIZE-1):0] queue_wr_en;
 
 wire   [(CLOG2_SIZE-1):0] queue_wr_ptr;
 
-wire   [(CLOG2_SIZE-1):0] queue_reject_len;
+reg    [(CLOG2_SIZE-1):0] queue_reject_len;
 
 wire   [(CLOG2_SIZE-1):0] queue_level_term;
 wire   [(CLOG2_SIZE-1):0] queue_level_inc;
@@ -101,13 +106,13 @@ localparam   queue_level_rst = 'd0;
 reg          prebyte_en_reg;
 localparam   prebyte_en_rst = 1'b0;
 
-reg    [7:0] queue_data_reg [(SIZE-1):0];
-wire   [7:0] queue_data_nxt [(SIZE-1):0];
+reg    [7:0] queue_data_reg [(QUEUE_SIZE-1):0];
+wire   [7:0] queue_data_nxt [(QUEUE_SIZE-1):0];
 localparam   queue_data_rst = 'd0;
 
-wire   [7:0] queue_data_shift4 [(SIZE-1):0];
-wire   [7:0] queue_data_shift2 [(SIZE-1):0];
-wire   [7:0] queue_data_shift1 [(SIZE-1):0];
+wire   [7:0] queue_data_shift4 [(QUEUE_SIZE-1):0];
+wire   [7:0] queue_data_shift2 [(QUEUE_SIZE-1):0];
+wire   [7:0] queue_data_shift1 [(QUEUE_SIZE-1):0];
 /////////////////////////////////////////////////////////////////////////////
 
 
@@ -119,13 +124,8 @@ wire   [7:0] queue_data_shift1 [(SIZE-1):0];
 
 /////////////////////////////////// Pointer & Level Calculation
 //
-generate
-  if (ENABLE_16BIT) begin
-    assign queue_level_term = 'd2;
-  end else begin
-    assign queue_level_term = 'd1;
-  end
-endgenerate
+assign queue_level_term = (QUEUE_WIDTH_I == WIDTH_16) ? 'd2 : 'd1;
+
 //
 assign queue_level_inc  = (QUEUE_WR_EN_I) ? queue_level_term : 'd0;
 assign queue_wr_ptr     = QUEUE_FLUSH_I ? 'd0 : queue_level_reg - QUEUE_RD_LEN_I;
@@ -135,16 +135,16 @@ assign queue_level_nxt  = queue_wr_ptr + queue_level_inc - queue_reject_len;
 
 /////////////////////////////////// Reject Calculation
 //
-generate
-  if (ENABLE_16BIT) begin
-    assign queue_reject_len = (QUEUE_WR_EN_I & (queue_wr_ptr==(SIZE  ))) ? 'd2 :
-                              (QUEUE_WR_EN_I & (queue_wr_ptr==(SIZE-1))) ? 'd1 :
-                                                                           'd0 ;
-  end else begin
-    assign queue_reject_len = (QUEUE_WR_EN_I & (queue_wr_ptr==(SIZE  ))) ? 'd1 :
-                                                                           'd0 ;
-  end
-endgenerate
+always @* begin
+  if      ((QUEUE_WIDTH_I==WIDTH_16) && (queue_wr_ptr==size_const   ) && QUEUE_WR_EN_I)
+    queue_reject_len = 'd2;
+  else if ((QUEUE_WIDTH_I==WIDTH_16) && (queue_wr_ptr==size_m1_const) && QUEUE_WR_EN_I)
+    queue_reject_len = 'd1;
+  else if ((QUEUE_WIDTH_I==WIDTH_8 ) && (queue_wr_ptr==size_const   ) && QUEUE_WR_EN_I)
+    queue_reject_len = 'd1;
+  else
+    queue_reject_len = 'd0;
+end
 
 
 
@@ -152,7 +152,7 @@ endgenerate
 //
 genvar i;
 generate
-  // SIZE = 7 example:
+  // QUEUE_SIZE = 7 example:
   // assign queue_wr_en[0] = (QUEUE_WR_EN_I & (queue_wr_ptr == 'd0));
   // assign queue_wr_en[1] = (QUEUE_WR_EN_I & (queue_wr_ptr == 'd1));
   // assign queue_wr_en[2] = (QUEUE_WR_EN_I & (queue_wr_ptr == 'd2));
@@ -160,7 +160,7 @@ generate
   // assign queue_wr_en[4] = (QUEUE_WR_EN_I & (queue_wr_ptr == 'd4));
   // assign queue_wr_en[5] = (QUEUE_WR_EN_I & (queue_wr_ptr == 'd5));
   // assign queue_wr_en[6] = (QUEUE_WR_EN_I & (queue_wr_ptr == 'd6));
-  for (i=0; i<SIZE; i=i+1) begin
+  for (i=0; i<QUEUE_SIZE; i=i+1) begin: q_wr_en
     assign queue_wr_en[i] = (QUEUE_WR_EN_I & (queue_wr_ptr == i));
   end
 endgenerate
@@ -171,7 +171,7 @@ endgenerate
 //
 // Shift by 4
 generate
-  // SIZE = 7 example:
+  // QUEUE_SIZE = 7 example:
   // assign queue_data_shift4[0] = QUEUE_RD_LEN_I[2] ? queue_data_reg[4] : queue_data_reg[0];
   // assign queue_data_shift4[1] = QUEUE_RD_LEN_I[2] ? queue_data_reg[5] : queue_data_reg[1];
   // assign queue_data_shift4[2] = QUEUE_RD_LEN_I[2] ? queue_data_reg[6] : queue_data_reg[2];
@@ -179,16 +179,16 @@ generate
   // assign queue_data_shift4[4] =                                         queue_data_reg[4];
   // assign queue_data_shift4[5] =                                         queue_data_reg[5];
   // assign queue_data_shift4[6] =                                         queue_data_reg[6];
-  if (SIZE > 4) begin
-    for (i=0; i<SIZE; i=i+1) begin
-      if (i<(SIZE-4)) begin
+  if (QUEUE_SIZE > 4) begin
+    for (i=0; i<QUEUE_SIZE; i=i+1) begin: q_data_shift_quadplus
+      if (i<(QUEUE_SIZE-4)) begin
         assign queue_data_shift4[i] = QUEUE_RD_LEN_I[CLOG2_SIZE-1] ? queue_data_reg[i+4] : queue_data_reg[i];
       end else begin
         assign queue_data_shift4[i] = queue_data_reg[i];
       end
     end
   end else begin
-    for (i=0; i<SIZE; i=i+1) begin
+    for (i=0; i<QUEUE_SIZE; i=i+1) begin: q_data_shift_quad
       assign queue_data_shift4[i] = queue_data_reg[i];
     end
   end
@@ -196,7 +196,7 @@ endgenerate
 //
 // Shift by 2
 generate
-  // SIZE = 7 example:
+  // QUEUE_SIZE = 7 example:
   // assign queue_data_shift2[0] = QUEUE_RD_LEN_I[1] ? queue_data_shift4[2] : queue_data_shift4[0];
   // assign queue_data_shift2[1] = QUEUE_RD_LEN_I[1] ? queue_data_shift4[3] : queue_data_shift4[1];
   // assign queue_data_shift2[2] = QUEUE_RD_LEN_I[1] ? queue_data_shift4[4] : queue_data_shift4[2];
@@ -204,8 +204,8 @@ generate
   // assign queue_data_shift2[4] = QUEUE_RD_LEN_I[1] ? queue_data_shift4[6] : queue_data_shift4[4];
   // assign queue_data_shift2[5] =                                            queue_data_shift4[5];
   // assign queue_data_shift2[6] =                                            queue_data_shift4[6];
-  for (i=0; i<SIZE; i=i+1) begin
-    if (i<(SIZE-2)) begin
+  for (i=0; i<QUEUE_SIZE; i=i+1) begin: q_data_shift_double
+    if (i<(QUEUE_SIZE-2)) begin
       assign queue_data_shift2[i] = QUEUE_RD_LEN_I[CLOG2_SIZE-2] ? queue_data_shift4[i+2] : queue_data_shift4[i];
     end else begin
       assign queue_data_shift2[i] = queue_data_shift4[i];
@@ -215,7 +215,7 @@ endgenerate
 //
 // Shift by 1
 generate
-  // SIZE = 7 example:
+  // QUEUE_SIZE = 7 example:
   // assign queue_data_shift1[0] = QUEUE_RD_LEN_I[0] ? queue_data_shift2[1] : queue_data_shift2[0];
   // assign queue_data_shift1[1] = QUEUE_RD_LEN_I[0] ? queue_data_shift2[2] : queue_data_shift2[1];
   // assign queue_data_shift1[2] = QUEUE_RD_LEN_I[0] ? queue_data_shift2[3] : queue_data_shift2[2];
@@ -223,8 +223,8 @@ generate
   // assign queue_data_shift1[4] = QUEUE_RD_LEN_I[0] ? queue_data_shift2[5] : queue_data_shift2[4];
   // assign queue_data_shift1[5] = QUEUE_RD_LEN_I[0] ? queue_data_shift2[6] : queue_data_shift2[5];
   // assign queue_data_shift1[6] =                                            queue_data_shift2[6];
-  for (i=0; i<SIZE; i=i+1) begin
-    if (i<(SIZE-1)) begin
+  for (i=0; i<QUEUE_SIZE; i=i+1) begin: q_data_shift_single
+    if (i<(QUEUE_SIZE-1)) begin
       assign queue_data_shift1[i] = QUEUE_RD_LEN_I[CLOG2_SIZE-3] ? queue_data_shift2[i+1] : queue_data_shift2[i];
     end else begin
       assign queue_data_shift1[i] = queue_data_shift2[i];
@@ -233,12 +233,24 @@ generate
 endgenerate
 
 
-
 /////////////////////////////////// Write Logic
 //
 generate
-  if (ENABLE_16BIT) begin
-    wire [7:0] queue_data_nxt_lo [(SIZE-1):0];
+  if (TURBO9_TYPE == 0) begin // 0:Turbo9, 1:Turbo9S, 2:Turbo9R
+    //
+    // Write Enable Logic (8bit)
+    // assign queue_data_nxt[0] = (queue_wr_en[0]) ? QUEUE_DAT_I[ 7:0] : queue_data_shift1[0];
+    // assign queue_data_nxt[1] = (queue_wr_en[1]) ? QUEUE_DAT_I[ 7:0] : queue_data_shift1[1];
+    // assign queue_data_nxt[2] = (queue_wr_en[2]) ? QUEUE_DAT_I[ 7:0] : queue_data_shift1[2];
+    // assign queue_data_nxt[3] = (queue_wr_en[3]) ? QUEUE_DAT_I[ 7:0] : queue_data_shift1[3];
+    // assign queue_data_nxt[4] = (queue_wr_en[4]) ? QUEUE_DAT_I[ 7:0] : queue_data_shift1[4];
+    // assign queue_data_nxt[5] = (queue_wr_en[5]) ? QUEUE_DAT_I[ 7:0] : queue_data_shift1[5];
+    // assign queue_data_nxt[6] = (queue_wr_en[6]) ? QUEUE_DAT_I[ 7:0] : queue_data_shift1[6];
+    for (i=0; i<QUEUE_SIZE; i=i+1) begin: q_write_enable
+      assign queue_data_nxt[i] = (queue_wr_en[i]) ? QUEUE_DAT_I[ 7:0] : queue_data_shift1[i];
+    end
+  end else begin
+    wire [7:0] queue_data_nxt_lo [(QUEUE_SIZE-1):0];
     //
     // Write Enable Logic (Low Byte)
     // assign queue_data_nxt_lo[0] = (queue_wr_en[0]) ? QUEUE_DAT_I[15:8] : queue_data_shift1[0];
@@ -248,7 +260,7 @@ generate
     // assign queue_data_nxt_lo[4] = (queue_wr_en[4]) ? QUEUE_DAT_I[15:8] : queue_data_shift1[4];
     // assign queue_data_nxt_lo[5] = (queue_wr_en[5]) ? QUEUE_DAT_I[15:8] : queue_data_shift1[5];
     // assign queue_data_nxt_lo[6] = (queue_wr_en[6]) ? QUEUE_DAT_I[15:8] : queue_data_shift1[6];
-    for (i=0; i<SIZE; i=i+1) begin
+    for (i=0; i<QUEUE_SIZE; i=i+1) begin: q_write_enable_lo
       assign queue_data_nxt_lo[i] = (queue_wr_en[i]) ? QUEUE_DAT_I[15:8] : queue_data_shift1[i];
     end
     //
@@ -260,35 +272,21 @@ generate
     // assign queue_data_nxt[4]    = (queue_wr_en[3]) ? QUEUE_DAT_I[ 7:0] : queue_data_nxt_lo[4];
     // assign queue_data_nxt[5]    = (queue_wr_en[4]) ? QUEUE_DAT_I[ 7:0] : queue_data_nxt_lo[5];
     // assign queue_data_nxt[6]    = (queue_wr_en[5]) ? QUEUE_DAT_I[ 7:0] : queue_data_nxt_lo[6];
-    for (i=0; i<SIZE; i=i+1) begin
+    for (i=0; i<QUEUE_SIZE; i=i+1) begin: q_write_enable_hi
       if (i==0) begin
         assign queue_data_nxt[i] = queue_data_nxt_lo[i];
       end else begin
         assign queue_data_nxt[i] = (queue_wr_en[i-1]) ? QUEUE_DAT_I[ 7:0] : queue_data_nxt_lo[i];
       end
     end
-  end else begin
-    //
-    // Write Enable Logic (8bit)
-    // assign queue_data_nxt[0] = (queue_wr_en[0]) ? QUEUE_DAT_I[ 7:0] : queue_data_shift1[0];
-    // assign queue_data_nxt[1] = (queue_wr_en[1]) ? QUEUE_DAT_I[ 7:0] : queue_data_shift1[1];
-    // assign queue_data_nxt[2] = (queue_wr_en[2]) ? QUEUE_DAT_I[ 7:0] : queue_data_shift1[2];
-    // assign queue_data_nxt[3] = (queue_wr_en[3]) ? QUEUE_DAT_I[ 7:0] : queue_data_shift1[3];
-    // assign queue_data_nxt[4] = (queue_wr_en[4]) ? QUEUE_DAT_I[ 7:0] : queue_data_shift1[4];
-    // assign queue_data_nxt[5] = (queue_wr_en[5]) ? QUEUE_DAT_I[ 7:0] : queue_data_shift1[5];
-    // assign queue_data_nxt[6] = (queue_wr_en[6]) ? QUEUE_DAT_I[ 7:0] : queue_data_shift1[6];
-    for (i=0; i<SIZE; i=i+1) begin
-      assign queue_data_nxt[i] = (queue_wr_en[i]) ? QUEUE_DAT_I[ 7:0] : queue_data_shift1[i];
-    end
   end
 endgenerate
 
 
-
-/////////////////////////////////// Queue Data Registers
+//////////////////////////////////a Queue Data Registers
 //
 generate
-  for (i=0; i<SIZE; i=i+1) begin
+  for (i=0; i<QUEUE_SIZE; i=i+1) begin: q_data_reg
     always @(posedge CLK_I, posedge RST_I) begin
       if (RST_I) begin
         queue_data_reg[i]  <= queue_data_rst;

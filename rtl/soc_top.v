@@ -109,7 +109,8 @@ wire        ram_clk;
   
   turbo9
   #(
-    .REGISTER_WB_OUTPUTS  (1)
+    .REGISTER_WB_OUTPUTS  (0), // Register Wishbone Ouputs: True=1, False=0
+    .QUEUE_SIZE           (6)  // Fetch Queue Size: 6=Default, 4=Min, 7=Max                 
   )
   I_turbo9
   (

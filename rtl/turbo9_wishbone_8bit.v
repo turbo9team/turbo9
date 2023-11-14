@@ -48,7 +48,7 @@
 /////////////////////////////////////////////////////////////////////////////
 module turbo9_wishbone_8bit
 #(
-  parameter REGISTER_WB_OUTPUTS = 1
+  parameter REGISTER_WB_OUTPUTS = 1 // Register Wishbone Ouputs: True=1, False=0
 )
 (
   // Inputs: Clock & Reset
@@ -84,9 +84,9 @@ module turbo9_wishbone_8bit
   input   [15:0] PMEM_ADR_I,
   output         PMEM_BUSY_O,
   input          PMEM_RD_REQ_I,
-  input          PMEM_REQ_WIDTH_I,
-  output         PMEM_RD_ACK_O,
-  output         PMEM_ACK_WIDTH_O
+  //input          PMEM_REQ_WIDTH_I,
+  output         PMEM_RD_ACK_O
+  //output         PMEM_ACK_WIDTH_O
 
 );
 
@@ -222,9 +222,9 @@ reg           tag_dmem_wr_o_nxt;
 localparam    tag_dmem_wr_o_rst = 1'b0;
 
 wire          tag_pmem_rd_i;
-reg           tag_pmem_rd_o_16bit_reg;
-reg           tag_pmem_rd_o_16bit_nxt;
-localparam    tag_pmem_rd_o_16bit_rst = 1'b0;
+//reg           tag_pmem_rd_o_16bit_reg;
+//reg           tag_pmem_rd_o_16bit_nxt;
+//localparam    tag_pmem_rd_o_16bit_rst = 1'b0;
 reg           tag_pmem_rd_o_reg;
 reg           tag_pmem_rd_o_nxt;
 localparam    tag_pmem_rd_o_rst = 1'b0;
@@ -267,7 +267,7 @@ always @* begin
   //
   tag_dmem_rd_o_16bit_nxt = 1'b0;
   tag_dmem_wr_o_16bit_nxt = 1'b0;
-  tag_pmem_rd_o_16bit_nxt = 1'b0;
+  //tag_pmem_rd_o_16bit_nxt = 1'b0;
   //
   tag_16bit_o_nxt = 1'b0;
   //
@@ -297,13 +297,13 @@ always @* begin
         //
       end else if (PMEM_RD_REQ_I) begin
         //
-        if (PMEM_REQ_WIDTH_I == WIDTH_16) begin
-          tag_pmem_rd_o_16bit_nxt = 1'b1;
-          tag_16bit_o_nxt       = 1'b1;
-        end else begin
+        //if (PMEM_REQ_WIDTH_I == WIDTH_16) begin // INFO 8bit only is better performance
+        //  tag_pmem_rd_o_16bit_nxt = 1'b1;
+        //  tag_16bit_o_nxt       = 1'b1;
+        //end else begin
           tag_pmem_rd_o_nxt     = 1'b1;
           tag_16bit_o_nxt       = 1'b0;
-        end
+        //end
         //
         adr_o_nxt = PMEM_ADR_I;
         we_o_nxt  = 1'b0;
@@ -325,7 +325,7 @@ always @* begin
 
       tag_dmem_rd_o_nxt = tag_dmem_rd_o_16bit_reg;
       tag_dmem_wr_o_nxt = tag_dmem_wr_o_16bit_reg;
-      tag_pmem_rd_o_nxt = tag_pmem_rd_o_16bit_reg;
+      //tag_pmem_rd_o_nxt = tag_pmem_rd_o_16bit_reg;
       tag_16bit_o_nxt   = 1'b0;  
       adr_o_nxt         = adr_o_reg + 16'h0001;       
       dat_o_nxt         = dat_o_lo_byte_reg;        
@@ -363,7 +363,7 @@ always @(posedge CLK_I, posedge RST_I) begin
     tag_pmem_rd_o_reg       <= tag_pmem_rd_o_rst;
     tag_dmem_rd_o_16bit_reg <= tag_dmem_rd_o_16bit_rst;
     tag_dmem_wr_o_16bit_reg <= tag_dmem_wr_o_16bit_rst;
-    tag_pmem_rd_o_16bit_reg <= tag_pmem_rd_o_16bit_rst;
+    //tag_pmem_rd_o_16bit_reg <= tag_pmem_rd_o_16bit_rst;
     tag_16bit_o_reg         <= tag_16bit_o_rst;  
     pending_cnt_reg         <= pending_cnt_rst;
     dat_o_lo_byte_reg       <= dat_o_lo_byte_rst;
@@ -383,7 +383,7 @@ always @(posedge CLK_I, posedge RST_I) begin
       tag_pmem_rd_o_reg       <= tag_pmem_rd_o_nxt;
       tag_dmem_rd_o_16bit_reg <= tag_dmem_rd_o_16bit_nxt;
       tag_dmem_wr_o_16bit_reg <= tag_dmem_wr_o_16bit_nxt;
-      tag_pmem_rd_o_16bit_reg <= tag_pmem_rd_o_16bit_nxt;
+      //tag_pmem_rd_o_16bit_reg <= tag_pmem_rd_o_16bit_nxt;
       tag_16bit_o_reg         <= tag_16bit_o_nxt;  
       pending_cnt_reg         <= pending_cnt_nxt;
       dat_o_lo_byte_reg       <= dat_o_lo_byte_nxt;
@@ -452,10 +452,11 @@ assign DMEM_WR_ACK_O    = tag_dmem_wr_i & ~STALL_I;
 assign DMEM_ACK_WIDTH_O = ack_width;
 
 // Program Memory Interface
-assign PMEM_DAT_O       = {dat_i_hi_byte_reg, DAT_I}; //FIXME we dont need 16bit for PMEM
+//assign PMEM_DAT_O       = {dat_i_hi_byte_reg, DAT_I};
+assign PMEM_DAT_O       = {8'h00, DAT_I}; //INFO 8bit only for PMEM, to reduce wasted cycles
 assign PMEM_BUSY_O      = DMEM_REQ_I | tag_16bit_o | STALL_I;
 assign PMEM_RD_ACK_O    = tag_pmem_rd_i & ~STALL_I;
-assign PMEM_ACK_WIDTH_O = ack_width;
+//assign PMEM_ACK_WIDTH_O = WIDTH_8; //INFO tie to constant to reduce logic.
 //
 /////////////////////////////////////////////////////////////////////////////
 

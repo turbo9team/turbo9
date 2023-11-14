@@ -51,9 +51,9 @@
 module tb_dv_top;
 
   ///////////////////// Select one of the following:
-  //`define TURBO9 
+  `define TURBO9 
   //`define TURBO9_S
-  `define TURBO9_R
+  //`define TURBO9_R
   /////////////////////
 
   `define SIM_TURBO9  // Turns on debug strings in decode table verilog files

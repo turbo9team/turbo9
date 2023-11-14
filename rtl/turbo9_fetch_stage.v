@@ -48,7 +48,8 @@
 /////////////////////////////////////////////////////////////////////////////
 module turbo9_fetch_stage
 #(
-  parameter PMEM_16BIT_EN = 1
+  parameter TURBO9_TYPE = 0, // Turbo9 Type: 0=Turbo9, 1=Turbo9S, 2=Turbo9R
+  parameter QUEUE_SIZE  = 6  // Fetch Queue Size: 6=Default, 4=Min, 7=Max
 )
 (
   // Inputs: Clock & Reset
@@ -70,12 +71,13 @@ module turbo9_fetch_stage
   output         FET_DEC_REG_PREBYTE_EN_O,
 
   // Program Memory Interface
-  input   [((PMEM_16BIT_EN*8)+7):0] PMEM_DAT_I,
+  input   [15:0] PMEM_DAT_I,
   output  [15:0] PMEM_ADR_O,
   input          PMEM_BUSY_I,
+  output         PMEM_REQ_WIDTH_O,
   output         PMEM_RD_REQ_O,
-  input          PMEM_RD_ACK_I
-
+  input          PMEM_RD_ACK_I,
+  input          PMEM_ACK_WIDTH_I
 );
 
 /////////////////////////////////////////////////////////////////////////////
@@ -87,7 +89,8 @@ module turbo9_fetch_stage
 // This must match the MSB of the *_REG_SEL control vectors
 localparam  WIDTH_16 =  1'b0;
 localparam  WIDTH_8  =  1'b1;
-localparam  QUEUE_SIZE  = 4'd6;
+
+wire   [3:0] size_const    = QUEUE_SIZE;
 
 reg         fetch_state_reg;
 reg         fetch_state_nxt;
@@ -153,14 +156,19 @@ reg   flush_ack;
 /////////////////////////////////////////////////////////////////////////////
 //
 // Program Memory Interface Logic
-assign pmem_rd_req         = (pc_offset_reg <= QUEUE_SIZE) | FET_DEC_LOAD_PC_I;
+assign pmem_rd_req         = (pc_offset_reg <= size_const) | FET_DEC_LOAD_PC_I;
 assign pmem_rd_en          = pmem_rd_req & ~PMEM_BUSY_I;
 
 generate
-  if (PMEM_16BIT_EN) begin
-    assign pmem_rd_len         = 4'h2;
-  end else begin
-    assign pmem_rd_len         = 4'h1;
+  if (TURBO9_TYPE == 0) begin // Turbo9
+    assign pmem_rd_len = 4'h1;
+    assign PMEM_REQ_WIDTH_O = WIDTH_8;
+  end else if (TURBO9_TYPE == 1) begin // Turbo9S
+    assign pmem_rd_len      = (PMEM_ADR_O[0]) ?  4'h1    : 4'h2;
+    assign PMEM_REQ_WIDTH_O = (PMEM_ADR_O[0]) ?  WIDTH_8 : WIDTH_16;
+  end else if (TURBO9_TYPE == 2) begin // Turbo9R
+    assign pmem_rd_len = 4'h2;
+    assign PMEM_REQ_WIDTH_O = WIDTH_16;
   end
 endgenerate
 
@@ -302,8 +310,8 @@ end
 
 turbo9_fetch_queue
 #(
-  .ENABLE_16BIT   (PMEM_16BIT_EN),
-  .SIZE           (QUEUE_SIZE)
+  .TURBO9_TYPE  (TURBO9_TYPE), // Turbo9 Type: 0=Turbo9, 1=Turbo9S, 2=Turbo9R
+  .QUEUE_SIZE   (QUEUE_SIZE)   // Fetch Queue Size: 6=Default, 4=Min, 7=Max
 )
 I_turbo9_fetch_queue
 (
@@ -312,6 +320,7 @@ I_turbo9_fetch_queue
   .QUEUE_RD_LEN_I     (queue_rd_len            ),
   .QUEUE_FLUSH_I      (FET_DEC_LOAD_PC_I       ),
   .QUEUE_WR_EN_I      (queue_wr_en             ),
+  .QUEUE_WIDTH_I      (PMEM_ACK_WIDTH_I        ),
   .QUEUE_DAT_I        (PMEM_DAT_I              ),
   .QUEUE_LEVEL_O      (FET_DEC_REG_QUEUE_LVL_O ),
   .QUEUE_REJECT_LEN_O (queue_reject_len        ),

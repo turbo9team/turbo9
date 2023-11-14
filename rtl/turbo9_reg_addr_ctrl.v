@@ -237,7 +237,6 @@ localparam  EQU_SUM = 1'b1;
 reg [7:0] opcode;
 reg [7:0] idx_postbyte;
 reg       idx_indirect_en;
-assign DATA_ALU_SAU_OP = {opcode[3:2],page2_en,opcode[0]} ; // INFO: Partial decode
 
 reg [7:0]   stk_postbyte;
 reg [7:0]   stk_postbyte_msk;
@@ -257,6 +256,8 @@ reg         stack_done;
 reg         page1_en;
 reg         page2_en;
 reg         page3_en;
+
+assign DATA_ALU_SAU_OP = {opcode[3:2],page2_en,opcode[0]} ; // INFO: Partial decode
 
 //////////////////////////////////////// Instruction Decoded Fields
 //

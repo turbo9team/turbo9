@@ -348,7 +348,7 @@ assign pending_cnt_nxt  = pending_cnt_reg + pending_cnt_term;
 assign dat_i_hi_byte_nxt = (tag_16bit_i) ? DAT_I : 8'h00;
 
 assign tag_16bit_i_nxt  = tag_16bit_i;
-assign ack_width        = (tag_16bit_i_reg) ? WIDTH_16 : WIDTH_8;
+assign ack_width        = (tag_16bit_i_reg) ? WIDTH_16 : WIDTH_8; // FIXME just do this like the 16bit version
 
 always @(posedge CLK_I, posedge RST_I) begin
 

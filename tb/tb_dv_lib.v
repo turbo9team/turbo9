@@ -106,6 +106,12 @@
       end else begin
         `dut_mem_odd[ptr[31:1]]   = `tb_mem[ptr];
       end
+`elsif TURBO9_S
+      if (ptr[0] == 1'b0) begin
+        `dut_mem_even[ptr[31:1]]   = `tb_mem[ptr];
+      end else begin
+        `dut_mem_odd[ptr[31:1]]   = `tb_mem[ptr];
+      end
 `else
       `dut_mem[ptr] = `tb_mem[ptr];
 `endif
@@ -127,6 +133,20 @@
     while ((ptr < (2**`MEM_ADDR_WIDTH)) && ((diff_cnt == 0) || ~stop_on_err)) begin
 
 `ifdef TURBO9_R
+      if (ptr[0] == 1'b0) begin
+        if (`dut_mem_even[ptr[31:1]] !== `model_mem[ptr]) begin
+          $display("[TB: mem_diff_cnt   ] ERROR: Memory mismatch. DUT = 0x%2x / Model = 0x%2x @ Address: 0x%4x (Memory Index %0d)",
+            `dut_mem_even[ptr[31:1]], `model_mem[ptr], {{(16-`MEM_ADDR_WIDTH){1'b1}},ptr[(`MEM_ADDR_WIDTH-1):0]}, ptr);
+          diff_cnt++;
+        end
+      end else begin
+        if (`dut_mem_odd[ptr[31:1]] !== `model_mem[ptr]) begin
+          $display("[TB: mem_diff_cnt   ] ERROR: Memory mismatch. DUT = 0x%2x / Model = 0x%2x @ Address: 0x%4x (Memory Index %0d)",
+            `dut_mem_odd[ptr[31:1]], `model_mem[ptr], {{(16-`MEM_ADDR_WIDTH){1'b1}},ptr[(`MEM_ADDR_WIDTH-1):0]}, ptr);
+          diff_cnt++;
+        end
+      end
+`elsif TURBO9_S
       if (ptr[0] == 1'b0) begin
         if (`dut_mem_even[ptr[31:1]] !== `model_mem[ptr]) begin
           $display("[TB: mem_diff_cnt   ] ERROR: Memory mismatch. DUT = 0x%2x / Model = 0x%2x @ Address: 0x%4x (Memory Index %0d)",

@@ -165,7 +165,7 @@ always @* begin
         page_sel_clear    = 1'b0;
       end else begin
         page_sel_load     = 1'b0;
-        page_sel_clear    = 1'b1; // clear page_sel for next instr
+        page_sel_clear    = ~stall_microcycle; // clear page_sel for next instr
       end
       //
     end else begin

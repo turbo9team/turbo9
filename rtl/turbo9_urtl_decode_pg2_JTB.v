@@ -59,36 +59,36 @@ module turbo9_urtl_decode_pg2_JTB(
 
 always @* begin
   case (OPCODE_I)
-    8'h20 : PG2_JTB_O = 8'h2d; // JMP         LBRA LBRN LBHI LBLS
-    8'h21 : PG2_JTB_O = 8'h2d; // JMP         LBRA LBRN LBHI LBLS
-    8'h22 : PG2_JTB_O = 8'h2d; // JMP         LBRA LBRN LBHI LBLS
-    8'h23 : PG2_JTB_O = 8'h2d; // JMP         LBRA LBRN LBHI LBLS
-    8'h24 : PG2_JTB_O = 8'h2d; // JMP         LBCC LBCS LBNE LBEQ
-    8'h25 : PG2_JTB_O = 8'h2d; // JMP         LBCC LBCS LBNE LBEQ
-    8'h26 : PG2_JTB_O = 8'h2d; // JMP         LBCC LBCS LBNE LBEQ
-    8'h27 : PG2_JTB_O = 8'h2d; // JMP         LBCC LBCS LBNE LBEQ
-    8'h28 : PG2_JTB_O = 8'h2d; // JMP         LBVC LBVS LBPL LBMI
-    8'h29 : PG2_JTB_O = 8'h2d; // JMP         LBVC LBVS LBPL LBMI
-    8'h2A : PG2_JTB_O = 8'h2d; // JMP         LBVC LBVS LBPL LBMI
-    8'h2B : PG2_JTB_O = 8'h2d; // JMP         LBVC LBVS LBPL LBMI
-    8'h2C : PG2_JTB_O = 8'h2d; // JMP         LBGE LBLT LBGT LBLE
-    8'h2D : PG2_JTB_O = 8'h2d; // JMP         LBGE LBLT LBGT LBLE
-    8'h2E : PG2_JTB_O = 8'h2d; // JMP         LBGE LBLT LBGT LBLE
-    8'h2F : PG2_JTB_O = 8'h2d; // JMP         LBGE LBLT LBGT LBLE
-    8'h93 : PG2_JTB_O = 8'h18; // CMP         CMPD (dir idx ext)
-    8'h9C : PG2_JTB_O = 8'h18; // CMP         CMPY (dir idx ext)
-    8'h9E : PG2_JTB_O = 8'h1a; // LD          LDY (dir idx ext)
-    8'hA3 : PG2_JTB_O = 8'h18; // CMP         CMPD (dir idx ext)
-    8'hAC : PG2_JTB_O = 8'h18; // CMP         CMPY (dir idx ext)
-    8'hAE : PG2_JTB_O = 8'h1a; // LD          LDY (dir idx ext)
-    8'hAF : PG2_JTB_O = 8'h1f; // ST          STY (idx)
-    8'hB3 : PG2_JTB_O = 8'h18; // CMP         CMPD (dir idx ext)
-    8'hBC : PG2_JTB_O = 8'h18; // CMP         CMPY (dir idx ext)
-    8'hBE : PG2_JTB_O = 8'h1a; // LD          LDY (dir idx ext)
-    8'hDE : PG2_JTB_O = 8'h1a; // LD          LDS (dir idx ext)
-    8'hEE : PG2_JTB_O = 8'h1a; // LD          LDS (dir idx ext)
-    8'hEF : PG2_JTB_O = 8'h1f; // ST          STS (idx)
-    8'hFE : PG2_JTB_O = 8'h1a; // LD          LDS (dir idx ext)
+    8'h20 : PG2_JTB_O = 8'h30; // JMP         LBRA LBRN LBHI LBLS
+    8'h21 : PG2_JTB_O = 8'h30; // JMP         LBRA LBRN LBHI LBLS
+    8'h22 : PG2_JTB_O = 8'h30; // JMP         LBRA LBRN LBHI LBLS
+    8'h23 : PG2_JTB_O = 8'h30; // JMP         LBRA LBRN LBHI LBLS
+    8'h24 : PG2_JTB_O = 8'h30; // JMP         LBCC LBCS LBNE LBEQ
+    8'h25 : PG2_JTB_O = 8'h30; // JMP         LBCC LBCS LBNE LBEQ
+    8'h26 : PG2_JTB_O = 8'h30; // JMP         LBCC LBCS LBNE LBEQ
+    8'h27 : PG2_JTB_O = 8'h30; // JMP         LBCC LBCS LBNE LBEQ
+    8'h28 : PG2_JTB_O = 8'h30; // JMP         LBVC LBVS LBPL LBMI
+    8'h29 : PG2_JTB_O = 8'h30; // JMP         LBVC LBVS LBPL LBMI
+    8'h2A : PG2_JTB_O = 8'h30; // JMP         LBVC LBVS LBPL LBMI
+    8'h2B : PG2_JTB_O = 8'h30; // JMP         LBVC LBVS LBPL LBMI
+    8'h2C : PG2_JTB_O = 8'h30; // JMP         LBGE LBLT LBGT LBLE
+    8'h2D : PG2_JTB_O = 8'h30; // JMP         LBGE LBLT LBGT LBLE
+    8'h2E : PG2_JTB_O = 8'h30; // JMP         LBGE LBLT LBGT LBLE
+    8'h2F : PG2_JTB_O = 8'h30; // JMP         LBGE LBLT LBGT LBLE
+    8'h93 : PG2_JTB_O = 8'h1b; // CMP         CMPD (dir idx ext)
+    8'h9C : PG2_JTB_O = 8'h1b; // CMP         CMPY (dir idx ext)
+    8'h9E : PG2_JTB_O = 8'h1d; // LD          LDY (dir idx ext)
+    8'hA3 : PG2_JTB_O = 8'h1b; // CMP         CMPD (dir idx ext)
+    8'hAC : PG2_JTB_O = 8'h1b; // CMP         CMPY (dir idx ext)
+    8'hAE : PG2_JTB_O = 8'h1d; // LD          LDY (dir idx ext)
+    8'hAF : PG2_JTB_O = 8'h22; // ST          STY (idx)
+    8'hB3 : PG2_JTB_O = 8'h1b; // CMP         CMPD (dir idx ext)
+    8'hBC : PG2_JTB_O = 8'h1b; // CMP         CMPY (dir idx ext)
+    8'hBE : PG2_JTB_O = 8'h1d; // LD          LDY (dir idx ext)
+    8'hDE : PG2_JTB_O = 8'h1d; // LD          LDS (dir idx ext)
+    8'hEE : PG2_JTB_O = 8'h1d; // LD          LDS (dir idx ext)
+    8'hEF : PG2_JTB_O = 8'h22; // ST          STS (idx)
+    8'hFE : PG2_JTB_O = 8'h1d; // LD          LDS (dir idx ext)
     default : PG2_JTB_O = 8'hFF; // from decode_init
   endcase
 end

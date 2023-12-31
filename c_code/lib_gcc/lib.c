@@ -341,6 +341,25 @@ void *memcpy(char *d, const char *s, unsigned l)
   // 6,s = *s
   // 8,s = l (9,s = l[7:0])
 
+
+__asm__
+(
+  " .area .text                       \n"
+  " .globl  _memcpy                   \n"
+  "_memcpy:                           \n"
+  "  pshs   y,u                       \n"
+  "  ldu    6,s ; *s (source)         \n"
+  "  ldd    8,s ; l  (num of bytes)   \n"
+  
+  " .byte   0x10                      \n"
+  " .byte   0x1F                      \n"
+  " .byte   0x31 ; cpy u+,x+          \n"
+
+  "  puls   y,u,pc                    \n"
+);
+
+
+/*
 __asm__
 (
   " .area .text                       \n"
@@ -400,7 +419,7 @@ __asm__
   "memcopy_done                       \n"
   "  puls   y,u,pc                    \n"
 );
-
+*/
 
 /* GCC version:
   .globl  _memcpy

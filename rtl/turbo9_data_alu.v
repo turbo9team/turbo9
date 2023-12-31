@@ -60,6 +60,7 @@ module turbo9_data_alu
   input   [15:0] DATA_ALU_B_I,
   input          DATA_ALU_WIDTH_I,
   input          DATA_ALU_SAU_EN_I,
+  input          DATA_ALU_SAU_DEC_I,
   input    [3:0] DATA_ALU_SAU_OP_I,
   input   [47:0] DATA_ALU_SAU_ABXY_I,
   input    [4:0] CCR_FLAGS_I,
@@ -253,6 +254,7 @@ turbo9_seq_arithmetic_unit I_turbo9_seq_arithmetic_unit
   .STALL_MICROCYCLE_I (STALL_MICROCYCLE_I ),
 
   .SAU_EN_I           (DATA_ALU_SAU_EN_I  ),
+  .SAU_DEC_I          (DATA_ALU_SAU_DEC_I ),
   .SAU_OP_I           (DATA_ALU_SAU_OP_I  ),
   .SAU_ABXY_I         (DATA_ALU_SAU_ABXY_I),
 

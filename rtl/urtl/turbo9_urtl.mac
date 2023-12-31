@@ -56,7 +56,7 @@ microprogram_word_begin
   INIT  cv_DATA_ALU_WR_SEL        ; 4 bits
   INIT  cv_ADDR_ALU_REG_SEL       ; 4 bits
   INIT  cv_DATA_ALU_OP            ; 3 bits
-  INIT  cv_DATA_WIDTH_SEL         ; 2 bits
+  INIT  cv_DATA_WIDTH_SEL         ; 3 bits
   INIT  cv_DATA_ALU_SAU_EN        ; 1 bit
   INIT  cv_CCR_OP                 ; 4 bits
   INIT  cv_DATA_ALU_COND_SEL      ; 2 bits
@@ -143,7 +143,7 @@ ctrl_vec_begin cv_ADDR_ALU_REG_SEL 4
   DMEM_RD      EQU $D ; = 4'b1101,
   EA           EQU $C ; = 4'b1100,
   AR           EQU $8 ; = 4'b1000, // Partially decoded!
- ;INDEXED      EQU $4 ; = 4'b0100, // Partially decoded!
+  RR1_WR2      EQU $4 ; = 4'b0100, // Partially decoded!
   INDEXED      EQU $0 ; = 4'b0000, // Partially decoded!
 ctrl_vec_end
 ; /////////////////////////////////////////
@@ -165,11 +165,12 @@ ctrl_vec_end
 
 
 ; ///////////////////////////////////////// cv_DATA_WIDTH_SEL definition
-ctrl_vec_begin cv_DATA_WIDTH_SEL 2 
-  W_R1        EQU $0 ; 2'h0;
-  W_R1_OR_IND EQU $1 ; 2'h1;
-  W_STACK_REG EQU $2 ; 2'h2;
-  W_16        EQU $3 ; 2'h3;
+ctrl_vec_begin cv_DATA_WIDTH_SEL 3 
+  W_R1        EQU $0 ; 3'h0;
+  W_R1_OR_IND EQU $1 ; 3'h1;
+  W_STACK_REG EQU $2 ; 3'h2;
+  W_16        EQU $3 ; 3'h3;
+  W_8         EQU $4 ; 3'h4;
 ctrl_vec_end
 ; /////////////////////////////////////////
 
@@ -214,8 +215,9 @@ ctrl_vec_begin cv_MICRO_SEQ_COND_SEL 4
   NOT_INDIRECT      EQU $0
   STACK_DONE        EQU $2
   STACK_NEXT        EQU $3
-  SAU_NOT_DONE      EQU $4
-  E_CLEAR           EQU $5
+  SAU_DONE          EQU $4
+  SAU_NOT_DONE      EQU $5
+  E_CLEAR           EQU $6
   BRANCH_COND       EQU $8 ; One hot encoded!
 ctrl_vec_end
 ; /////////////////////////////////////////

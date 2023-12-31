@@ -212,6 +212,7 @@ wire  [15:0] dmem_rd_data_reg;
     .DATA_ALU_B_I            (data_alu_b                        ),
     .DATA_ALU_WIDTH_I        (DEC_EXE_UOP_DATA_WIDTH_I          ),
     .DATA_ALU_SAU_EN_I       (DEC_EXE_UOP_DATA_ALU_SAU_EN_I     ),
+    .DATA_ALU_SAU_DEC_I      (DEC_EXE_UOP_DMEM_OP_I[0]          ),
     .DATA_ALU_SAU_OP_I       (DEC_EXE_UOP_DATA_ALU_SAU_OP_I     ),
     .DATA_ALU_SAU_ABXY_I     (data_alu_sau_abxy                 ),
     .CCR_FLAGS_I             (ccr_flags                         ),

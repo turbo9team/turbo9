@@ -416,6 +416,7 @@ SAU16:
 
 SAU16_DONE:
 
+  DATA_SAU_EN
   DATA_SAU_DONE
   DATA_WRITE      R2
 
@@ -439,6 +440,7 @@ SAU8:
 
 SAU8_DONE:
 
+  DATA_SAU_EN
   DATA_SAU_DONE
   DATA_WRITE      R1
 
@@ -463,6 +465,44 @@ SEX:
 
   JUMP_TABLE_A_NEXT_PC
   end_state
+
+; //////////////////////////////////////////// CPY
+; //
+CPY:
+  decode pg2_JTA CPY $1F ; CPY (inh)
+; R1 = postbyte[7:0] $1F ; CPY (inh)
+; R2 = postbyte[3:0] $1F ; CPY (inh)
+
+; TODO INFO: could combine this state with SAU states
+
+  DATA_SAU_EN ; initalize byte counter from D register
+  end_state
+  
+CPY_LOOP:
+  DATA_SAU_EN ; enable byte counter
+
+  SET_DATA_WIDTH  W_8
+
+  ADDR_PASS       RR1_WR2
+  DMEM_LOAD_W
+
+  IF              SAU_DONE
+  JUMP            GO_NEW_PC
+  end_state
+  
+  DATA_SAU_EN ; enable byte counter
+
+  SET_DATA_WIDTH  W_8
+
+  DATA_PASS_B     DMEM_RD
+
+  ADDR_PASS       RR1_WR2
+  DMEM_STORE_W
+
+  JUMP            CPY_LOOP
+  end_state
+
+
 
 ; //////////////////////////////////////////// TFR
 ; //

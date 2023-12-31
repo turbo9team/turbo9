@@ -79,6 +79,7 @@ module turbo9_seq_arithmetic_unit
   input         STALL_MICROCYCLE_I,
 
   input         SAU_EN_I,
+  input         SAU_DEC_I,
   input   [3:0] SAU_OP_I,
   input  [47:0] SAU_ABXY_I,
 
@@ -112,16 +113,17 @@ wire  ccr_c = CCR_FLAGS_I[0];
 ///////////////////// SAU_OP_I defines
 // opcode[3:0] | (Page2_en<<1)
 // Page1
-localparam SAU_EMUL  = 4'b0100; // 4
-localparam SAU_EMULS = 4'b0101; // 5
-localparam SAU_IDIV  = 4'b1000; // 8
-localparam SAU_DAA   = 4'b1001; // 9
-localparam SAU_MUL   = 4'b1101; // D
+localparam SAU_EMUL  = 4'b0100; // 4 opcode = $14
+localparam SAU_EMULS = 4'b0101; // 5 opcode = $15
+localparam SAU_IDIV  = 4'b1000; // 8 opcode = $18
+localparam SAU_DAA   = 4'b1001; // 9 opcode = $19
+localparam SAU_MUL   = 4'b1101; // D opcode = $3D
 // Page2
-localparam SAU_EDIV  = 4'b0110; // 6
-localparam SAU_EDIVS = 4'b0111; // 7
-localparam SAU_IDIVS = 4'b1010; // A
-localparam SAU_FDIV  = 4'b1011; // B
+localparam SAU_EDIV  = 4'b0110; // 6 opcode = $1014
+localparam SAU_EDIVS = 4'b0111; // 7 opcode = $1015
+localparam SAU_IDIVS = 4'b1010; // A opcode = $1018
+localparam SAU_FDIV  = 4'b1011; // B opcode = $1019
+localparam SAU_CPY   = 4'b1111; // F opcode = $101F
 
 ///////////////////// A register
 //
@@ -147,17 +149,19 @@ localparam  m_load_b_acc  = 3'h1;
 localparam  m_load_y_reg  = 3'h2;
 localparam  m_load_x_reg  = 3'h3;
 localparam  m_load_bcd_cf = 3'h4;
+localparam  m_load_neg1   = 3'h5;
 reg  [15:0] m_reg;
 reg  [15:0] m_nxt;
 localparam  m_rst = 16'h0000;
 
 ///////////////////// Q register
 //
-reg   [1:0] q_op;
-localparam  q_idle        = 2'h0;
-localparam  q_load_d_acc  = 2'h1;
-localparam  q_lshift      = 2'h2;
-localparam  q_rshift      = 2'h3;
+reg   [2:0] q_op;
+localparam  q_idle        = 3'h0;
+localparam  q_load_d_acc  = 3'h1;
+localparam  q_lshift      = 3'h2;
+localparam  q_rshift      = 3'h3;
+localparam  q_update      = 3'h4;
 reg  [15:0] q_reg;
 reg  [15:0] q_nxt;
 localparam  q_rst = 16'h0000;
@@ -203,10 +207,10 @@ wire        adder_c_out;
 
 ///////////////////// State Counter & Done
 //
-reg         cnt_load;
-reg   [4:0] cnt_reg;
-reg   [4:0] cnt_nxt;
-localparam  cnt_rst = 5'h0;
+reg         cycle_load;
+reg   [4:0] cycle_reg;
+reg   [4:0] cycle_nxt;
+localparam  cycle_rst = 5'h1F;
 //
 reg         done_reg;
 reg         done_nxt;
@@ -237,20 +241,98 @@ always @* begin
   q_op          = q_idle;
   flags_op      = flags_idle;
   adder_op      = adder_pass_a;
-  cnt_load      = 1'b0;
-  cnt_nxt       = 5'h8;
-  done_nxt      = 1'b0;
+  cycle_load      = 1'b0;
+  cycle_nxt       = 5'h0;
+  done_nxt      = done_reg;
   //
   case (SAU_OP_I)
     //
-    SAU_DAA : begin //////////////////// SAU_DAA
-      case (cnt_reg)
-        5'h0 : begin
-          if (SAU_EN_I) begin
-            q_op      = q_load_d_acc;
-            cnt_load  = 1'b1;
-            cnt_nxt   = 5'h2;
+    SAU_EMUL : begin //////////////////// SAU_EMUL
+      case (cycle_reg)
+        5'h1F : begin
+          a_op  = a_clear;
+          m_op  = m_load_y_reg;
+          q_op  = q_load_d_acc;
+          cycle_load    = 1'b1;
+          cycle_nxt     = 5'd17;
+        end
+        default : begin
+          if (q_reg[0]) begin
+            adder_op  = adder_a_plus_m;
           end
+          a_op        = a_rshift;
+          q_op        = q_rshift;
+          done_nxt    = (cycle_reg == 5'h3); // Optimal for min cycles
+          if (cycle_reg == 5'h2) begin
+            flags_op  = flags_emul;
+          end
+        end
+        5'h1 : begin
+          adder_op    = adder_pass_q;
+          a_op        = a_update;
+        end
+        5'h0 : begin
+          cycle_nxt   = 5'h0; // do nothing
+        end
+      endcase
+    end
+    //
+    SAU_IDIVS,
+    SAU_IDIV : begin //////////////////// SAU_IDIV
+      case (cycle_reg)
+        5'h1F : begin
+          a_op      = a_clear;
+          m_op      = m_load_x_reg;
+          q_op      = q_load_d_acc;
+          cycle_load  = 1'b1;
+          cycle_nxt   = 5'd17;
+        end
+        default : begin
+          q_op          = q_lshift;
+          adder_op      = adder_aq_minus_m;
+          a_op          = a_update_div;
+          done_nxt      = (cycle_reg == 5'h3); // Optimal for min cycles
+          if (cycle_reg == 5'h2) begin
+            flags_op  = flags_idiv;
+          end
+        end
+        5'h1 : begin
+          adder_op    = adder_pass_q;
+          a_op        = a_update;
+        end
+        5'h0 : begin
+          cycle_nxt   = 5'h0; // do nothing
+        end
+      endcase
+    end
+    //
+    SAU_CPY : begin //////////////////// SAU_CPY
+      case (cycle_reg)
+        5'h1F : begin
+          q_op      = q_load_d_acc;
+          m_op      = m_load_neg1;
+          done_nxt  = z_q_w16;
+          cycle_load  = 1'b1;
+          cycle_nxt   = 5'h0;
+        end
+        default : begin // 5'h0
+          adder_op  = adder_q_plus_m;
+          if (SAU_DEC_I) begin
+            q_op      = q_update;
+          end
+          if (~done_reg) begin
+            done_nxt  = z_q_w16;
+          end
+        end
+      endcase
+    end
+    //
+    SAU_DAA : begin //////////////////// SAU_DAA
+      case (cycle_reg)
+        5'h1F : begin
+          q_op      = q_load_d_acc;
+          cycle_load  = 1'b1;
+          cycle_nxt   = 5'h2;
         end
         5'h2 : begin
           m_op      = m_load_bcd_cf;
@@ -261,76 +343,20 @@ always @* begin
           a_op        = a_update;
           flags_op    = flags_daa;
         end
-      endcase
-    end
-    //
-    SAU_EMUL : begin //////////////////// SAU_EMUL
-      case (cnt_reg)
         5'h0 : begin
-          if (SAU_EN_I) begin
-            a_op  = a_clear;
-            m_op  = m_load_y_reg;
-            q_op  = q_load_d_acc;
-            cnt_load    = 1'b1;
-            cnt_nxt     = 5'd17;
-          end
-        end
-        default : begin
-          if (q_reg[0]) begin
-            adder_op  = adder_a_plus_m;
-          end
-          a_op        = a_rshift;
-          q_op        = q_rshift;
-          done_nxt    = (cnt_reg == 5'h3); // Optimal for min cycles
-          if (cnt_reg == 5'h2) begin
-            flags_op  = flags_emul;
-          end
-        end
-        5'h1 : begin
-          adder_op    = adder_pass_q;
-          a_op        = a_update;
-        end
-      endcase
-    end
-    //
-    SAU_IDIVS,
-    SAU_IDIV : begin //////////////////// SAU_IDIV
-      case (cnt_reg)
-        5'h0 : begin
-          if (SAU_EN_I) begin
-            a_op      = a_clear;
-            m_op      = m_load_x_reg;
-            q_op      = q_load_d_acc;
-            cnt_load  = 1'b1;
-            cnt_nxt   = 5'd17;
-          end
-        end
-        default : begin
-          q_op          = q_lshift;
-          adder_op      = adder_aq_minus_m;
-          a_op          = a_update_div;
-          done_nxt      = (cnt_reg == 5'h3); // Optimal for min cycles
-          if (cnt_reg == 5'h2) begin
-            flags_op  = flags_idiv;
-          end
-        end
-        5'h1 : begin
-          adder_op    = adder_pass_q;
-          a_op        = a_update;
+          cycle_nxt   = 5'h0; // do nothing
         end
       endcase
     end
     //
     default : begin //////////////////// SAU_MUL
-      case (cnt_reg)
-        5'h0 : begin
-          if (SAU_EN_I) begin
-            a_op  = a_clear;
-            m_op  = m_load_b_acc;
-            q_op  = q_load_d_acc;
-            cnt_load    = 1'b1;
-            cnt_nxt     = 5'h8;
-          end
+      case (cycle_reg)
+        5'h1F : begin
+          a_op  = a_clear;
+          m_op  = m_load_b_acc;
+          q_op  = q_load_d_acc;
+          cycle_load    = 1'b1;
+          cycle_nxt     = 5'h8;
         end
         default : begin
           if (q_reg[8]) begin
@@ -338,10 +364,13 @@ always @* begin
           end
           a_op        = a_rshift;
           q_op        = q_rshift;
-          done_nxt    = (cnt_reg == 5'h2); // Optimal for min cycles
-          if (cnt_reg == 5'h1) begin
+          done_nxt    = (cycle_reg == 5'h2); // Optimal for min cycles
+          if (cycle_reg == 5'h1) begin
             flags_op  = flags_mul;
           end
+        end
+        5'h0 : begin
+          cycle_nxt   = 5'h0; // do nothing
         end
       endcase
     end
@@ -379,6 +408,7 @@ always @* begin
     m_load_y_reg  : m_nxt = y_reg_in;
     m_load_x_reg  : m_nxt = x_reg_in;
     m_load_bcd_cf : m_nxt = {bcd_cf, 8'h00};
+    m_load_neg1   : m_nxt = 16'hFFFF;
     default       : m_nxt = m_reg; // m_idle
   endcase
 end
@@ -390,6 +420,7 @@ always @* begin
     q_load_d_acc  : q_nxt = d_acc_in;
     q_lshift      : q_nxt = {q_reg[14:0], adder_c_out};
     q_rshift      : q_nxt = {adder_y[0], q_reg[15:1]};
+    q_update      : q_nxt = adder_y;
     default       : q_nxt = q_reg; // q_idle
   endcase
 end
@@ -496,33 +527,35 @@ end
 //                             Registers
 /////////////////////////////////////////////////////////////////////////////
 //
-always @(posedge CLK_I, posedge RST_I) begin
-  if (RST_I) begin
-    // a_reg          <= a_rst;         // NO_INIT
-    // m_reg          <= m_rst;         // NO_INIT
-    // q_reg          <= q_rst;         // NO_INIT
-    // n_reg          <= n_rst;         // NO_INIT
-    // z_reg          <= z_rst;         // NO_INIT
-    // v_reg          <= v_rst;         // NO_INIT
-    // c_reg          <= c_rst;         // NO_INIT
-    cnt_reg  <= cnt_rst;
-    done_reg <= done_rst;
-  end else begin
-    if (~STALL_MICROCYCLE_I) begin
-      a_reg         <= a_nxt;
-      m_reg         <= m_nxt;
-      q_reg         <= q_nxt;
-      n_reg         <= n_nxt;
-      z_reg         <= z_nxt;
-      v_reg         <= v_nxt;
-      c_reg         <= c_nxt;
-      done_reg      <= done_nxt;
-      //
-      if (cnt_load) begin
-        cnt_reg <= cnt_nxt;
-      end else if (cnt_reg != 5'h0) begin
-        cnt_reg <= cnt_reg - 5'd1;
+always @(posedge CLK_I) begin
+  //   a_reg          <= a_rst;         // NO_INIT
+  //   m_reg          <= m_rst;         // NO_INIT
+  //   q_reg          <= q_rst;         // NO_INIT
+  //   n_reg          <= n_rst;         // NO_INIT
+  //   z_reg          <= z_rst;         // NO_INIT
+  //   v_reg          <= v_rst;         // NO_INIT
+  //   c_reg          <= c_rst;         // NO_INIT
+  //   cycle_reg      <= cycle_rst;     // NO_INIT
+  //   done_reg       <= done_rst;      // NO_INIT
+  if (~STALL_MICROCYCLE_I) begin
+    a_reg         <= a_nxt;
+    m_reg         <= m_nxt;
+    q_reg         <= q_nxt;
+    n_reg         <= n_nxt;
+    z_reg         <= z_nxt;
+    v_reg         <= v_nxt;
+    c_reg         <= c_nxt;
+    //
+    if (SAU_EN_I) begin
+      done_reg  <= done_nxt;
+      if (cycle_load) begin
+        cycle_reg <= cycle_nxt;
+      end else if (cycle_reg != 5'h0) begin
+        cycle_reg <= cycle_reg - 5'd1;
       end
+    end else begin
+      cycle_reg <= cycle_rst;
+      done_reg  <= done_rst;
     end
   end
 end

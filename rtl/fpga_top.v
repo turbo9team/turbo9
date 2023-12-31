@@ -139,15 +139,15 @@ end
 //                                LOGIC
 /////////////////////////////////////////////////////////////////////////////
 
-//soc_top_r
+soc_top_r
 //soc_top_s
-soc_top
+//soc_top
 #(
   15 // MEM_ADDR_WIDTH 
 )
-//I_soc_top_r
+I_soc_top_r
 //I_soc_top_s
-I_soc_top
+//I_soc_top
 (
   // Inputs: Clock & Reset
   .RST_I      (rst_sync ), // Reset. Active high and synchronized to CLK_I

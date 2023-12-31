@@ -70,7 +70,7 @@ module turbo9_reg_addr_ctrl
   input        [3:0] INSTR_AR_SEL_I,
 
   // Control Vector Register Selects
-  input        [1:0] CV_DATA_WIDTH_SEL_I,
+  input        [2:0] CV_DATA_WIDTH_SEL_I,
   input        [3:0] CV_DATA_ALU_A_SEL_I,
   input        [2:0] CV_DATA_ALU_B_SEL_I,
   input        [3:0] CV_DATA_ALU_WR_SEL_I,
@@ -112,12 +112,13 @@ localparam SAU_EMUL  = 4'b0100; // 4 opcode = $14
 localparam SAU_EMULS = 4'b0101; // 5 opcode = $15
 localparam SAU_IDIV  = 4'b1000; // 8 opcode = $18
 localparam SAU_DAA   = 4'b1001; // 9 opcode = $19
-localparam SAU_MUL   = 4'b1101; // D opcode = $1D
+localparam SAU_MUL   = 4'b1101; // D opcode = $3D
 // Page2
 localparam SAU_EDIV  = 4'b0110; // 6 opcode = $1014
 localparam SAU_EDIVS = 4'b0111; // 7 opcode = $1015
 localparam SAU_IDIVS = 4'b1010; // A opcode = $1018
 localparam SAU_FDIV  = 4'b1011; // B opcode = $1019
+localparam SAU_CPY   = 4'b1111; // F opcode = $101F
 //
 //assign DATA_ALU_SAU_OP = (page2_en) ? {QUEUE_D1_I[3:2],page2_en,QUEUE_D1_I[0]} : // INFO: Partial decode
 //                                      {QUEUE_D0_I[3:2],page2_en,QUEUE_D0_I[0]} ; // INFO: Partial decode
@@ -169,17 +170,18 @@ ctrl_vec_begin cv_ADDR_ALU_REG_SEL 4
   DMEM_RD      EQU $D ; = 4'b1101,
   EA           EQU $C ; = 4'b1100,
   AR           EQU $8 ; = 4'b1000, // Partially decoded!
- ;INDEXED      EQU $4 ; = 4'b0100, // Partially decoded!
+  RR1_WR2      EQU $4 ; = 4'b0100, // Partially decoded!
   INDEXED      EQU $0 ; = 4'b0000, // Partially decoded!
 ctrl_vec_end
 */
 
 //////////////////////////////////////// CV_DATA_WIDTH_SEL_I defines
 //
-localparam W_R1         = 2'h0;
-localparam W_R1_OR_IND  = 2'h1;
-localparam W_STACK_REG  = 2'h2;
-localparam W_16         = 2'h3;
+localparam W_R1         = 3'h0;
+localparam W_R1_OR_IND  = 3'h1;
+localparam W_STACK_REG  = 3'h2;
+localparam W_16         = 3'h3;
+localparam W_8          = 3'h4;
 
 //////////////////////////////////////// DATA_ALU_WIDTH_I defines
 //
@@ -236,7 +238,10 @@ localparam  EQU_SUM = 1'b1;
 
 reg [7:0] opcode;
 reg [7:0] idx_postbyte;
-reg       idx_indirect_en;
+reg       indexed_en;
+reg       idx_ind_en;
+reg       rr1_wr2_en;
+
 
 reg [7:0]   stk_postbyte;
 reg [7:0]   stk_postbyte_msk;
@@ -315,15 +320,16 @@ end
 always @* begin
   case (CV_DATA_WIDTH_SEL_I)
     W_R1          : DATA_WIDTH_O = instr_r1_sel[3];
-    W_R1_OR_IND   : DATA_WIDTH_O = (idx_indirect_en) ? WIDTH_16 : instr_r1_sel[3];
+    W_R1_OR_IND   : DATA_WIDTH_O = (idx_ind_en) ? WIDTH_16 : instr_r1_sel[3];
     W_STACK_REG   : DATA_WIDTH_O = stk_a_sel_reg[3];
-    default       : DATA_WIDTH_O = WIDTH_16; // W_16
+    W_16          : DATA_WIDTH_O = WIDTH_16;
+    default       : DATA_WIDTH_O = WIDTH_8; // W_16
   endcase
 end
 
 // Decode DMEM_OP
 always @* begin
-  if (idx_indirect_en) begin
+  if (idx_ind_en) begin
     DMEM_OP = DMEM_OP_RD;
   end else if (instr_inh_en) begin
     DMEM_OP = DMEM_OP_IDLE;
@@ -334,10 +340,32 @@ end
 
 // Decode ADDR_ALU_REG_SEL_O
 always @* begin
-  case (CV_ADDR_ALU_REG_SEL_I[3:2]) // INFO: Partial decode 
-    2'b11   : ADDR_ALU_REG_SEL_O = CV_ADDR_ALU_REG_SEL_I;
-    2'b10   : ADDR_ALU_REG_SEL_O = instr_ar_sel;
-    default : begin // 2'b0x (INDEXED)
+  // Defaults
+  ADDR_ALU_REG_SEL_O = ZERO;
+  indexed_en = 1'b0;
+  idx_ind_en = 1'b0;
+  rr1_wr2_en = 1'b0;
+
+  case (CV_ADDR_ALU_REG_SEL_I[3:2]) // INFO: Partial decode
+    //
+    2'b11 : begin
+      ADDR_ALU_REG_SEL_O = CV_ADDR_ALU_REG_SEL_I;
+    end
+    //
+    2'b10 : begin
+      ADDR_ALU_REG_SEL_O = instr_ar_sel;
+    end
+    //
+    2'b01 : begin // 2'b01 RR1_WR2
+      if (CV_DMEM_OP_I[0]) begin // INFO: Partial decode
+        ADDR_ALU_REG_SEL_O = instr_r2_sel; // DMEM_OP_WR
+      end else begin
+        ADDR_ALU_REG_SEL_O = instr_r1_sel; // DMEM_OP_RD
+      end
+      rr1_wr2_en = 1'b1;
+    end
+    //
+    default : begin // 2'b00 (INDEXED)
       if ((idx_postbyte[7] == 1'b1) && (idx_postbyte[3:2] == 2'b11)) begin
         case (idx_postbyte[1])
           1'b0    : ADDR_ALU_REG_SEL_O = PC;
@@ -351,6 +379,8 @@ always @* begin
           default : ADDR_ALU_REG_SEL_O = S; // 2'b11
         endcase
       end
+      indexed_en = 1'b1;
+      idx_ind_en = ((idx_postbyte[7] == 1'b1) && (idx_postbyte[4] == 1'b1)); // Index Indirect Decoding
     end
   endcase
 end
@@ -358,7 +388,10 @@ end
  
 // Decode ADDR_ALU_OFFSET_SEL_O
 always @* begin
-  if (~CV_ADDR_ALU_REG_SEL_I[3]) begin // Partial decode for INDEXED
+  // Defaults
+  ADDR_ALU_OFFSET_SEL_O = OFFSET_SEL_ZERO;
+
+  if (indexed_en) begin
     if (idx_postbyte[7] == 1'b1) begin
       case (idx_postbyte[3:0]) // FIXME optimize undefined
         4'b0000 : ADDR_ALU_OFFSET_SEL_O = OFFSET_SEL_POS1;  
@@ -369,21 +402,23 @@ always @* begin
         4'b0100 : ADDR_ALU_OFFSET_SEL_O = OFFSET_SEL_ZERO;
         4'b0101 : ADDR_ALU_OFFSET_SEL_O = OFFSET_SEL_B;
         4'b0110 : ADDR_ALU_OFFSET_SEL_O = OFFSET_SEL_A;
-        4'b0111 : ADDR_ALU_OFFSET_SEL_O = OFFSET_SEL_D;    
+        4'b0111 : ADDR_ALU_OFFSET_SEL_O = OFFSET_SEL_D;     // undefined 
         //
         4'b1000 : ADDR_ALU_OFFSET_SEL_O = OFFSET_SEL_IDATA; //  8 bit (signed)
         4'b1001 : ADDR_ALU_OFFSET_SEL_O = OFFSET_SEL_IDATA; // 16 bit (signed)
-        4'b1010 : ADDR_ALU_OFFSET_SEL_O = OFFSET_SEL_D;
+        4'b1010 : ADDR_ALU_OFFSET_SEL_O = OFFSET_SEL_D;     // undefined
         4'b1011 : ADDR_ALU_OFFSET_SEL_O = OFFSET_SEL_D;
         //
         4'b1100 : ADDR_ALU_OFFSET_SEL_O = OFFSET_SEL_IDATA; //  8 bit (signed)
         4'b1101 : ADDR_ALU_OFFSET_SEL_O = OFFSET_SEL_IDATA; // 16 bit (signed)
-        4'b1110 : ADDR_ALU_OFFSET_SEL_O = OFFSET_SEL_IDATA; //  8 bit (signed)
+        4'b1110 : ADDR_ALU_OFFSET_SEL_O = OFFSET_SEL_IDATA; //  8 bit (signed) undefined
         default : ADDR_ALU_OFFSET_SEL_O = OFFSET_SEL_IDATA; // 16 bit (signed) 4'b1111
       endcase
     end else begin
       ADDR_ALU_OFFSET_SEL_O = OFFSET_SEL_IDATA; //  5 bit (signed)
     end
+  end else if (rr1_wr2_en) begin
+    ADDR_ALU_OFFSET_SEL_O = OFFSET_SEL_POS1;
   end else if (CV_STACK_OP_I[1]) begin // INFO: Partial decode for STACK_OP_PUSH
     if (DATA_WIDTH_O == WIDTH_16) begin
       ADDR_ALU_OFFSET_SEL_O = OFFSET_SEL_NEG2;
@@ -404,7 +439,12 @@ end
 
 // ADDR_ALU EA & Y Decoding
 always @* begin
-  if (~CV_ADDR_ALU_REG_SEL_I[3]) begin // INFO: Partial decode for INDEXED
+  // Defaults
+  ADDR_ALU_EA_WR_EN_O  = 1'b0;
+  ADDR_ALU_EA_OP_O     = EQU_REG; // EA = Pass REG
+  ADDR_ALU_Y_OP_O      = EQU_REG; // REG not updated
+
+  if (indexed_en) begin
     //
     ADDR_ALU_EA_WR_EN_O = 1'b1; // Write EA for all indexed addressing
     //
@@ -420,31 +460,22 @@ always @* begin
       ADDR_ALU_EA_OP_O = EQU_SUM; // EA = REG + OFFSET
       ADDR_ALU_Y_OP_O  = EQU_REG; // REG not updated
     end
+  end else if (rr1_wr2_en) begin
+    ADDR_ALU_EA_WR_EN_O = 1'b0; // Dont write EA for R1/R2 addressing
+    ADDR_ALU_EA_OP_O    = EQU_REG; // POST
+    ADDR_ALU_Y_OP_O     = EQU_SUM; // Update Reg, Pre or Post
   end else if (CV_STACK_OP_I[1]) begin // INFO: Partial decode for STACK_OP_PUSH
     ADDR_ALU_EA_WR_EN_O = 1'b0; // Dont write EA for stack addressing
-    ADDR_ALU_Y_OP_O     = EQU_SUM; // Update Reg, Pre or Post
     ADDR_ALU_EA_OP_O    = EQU_SUM; // PRE
+    ADDR_ALU_Y_OP_O     = EQU_SUM; // Update Reg, Pre or Post
   end else if (CV_STACK_OP_I[0]) begin // INFO: Partial decode for STACK_OP_PULL
     ADDR_ALU_EA_WR_EN_O = 1'b0; // Dont write EA for stack addressing
-    ADDR_ALU_Y_OP_O     = EQU_SUM; // Update Reg, Pre or Post
     ADDR_ALU_EA_OP_O    = EQU_REG; // POST
+    ADDR_ALU_Y_OP_O     = EQU_SUM; // Update Reg, Pre or Post
   end else begin // Not Indexed, just pass the REG as address
     ADDR_ALU_EA_WR_EN_O  = 1'b0;
     ADDR_ALU_EA_OP_O     = EQU_REG; // EA = Pass REG
     ADDR_ALU_Y_OP_O      = EQU_REG; // REG not updated
-  end
-end
-
-// Index Indirect Decoding
-always @* begin
-  if (~CV_ADDR_ALU_REG_SEL_I[3]) begin // INFO: Partial decode for INDEXED
-    if ((idx_postbyte[7] == 1'b1) &&  (idx_postbyte[4] == 1'b1)) begin
-      idx_indirect_en = 1'b1;
-    end else begin
-      idx_indirect_en = 1'b0;
-    end
-  end else begin
-    idx_indirect_en = 1'b0;
   end
 end
 
@@ -468,32 +499,9 @@ end
 /////////////////////////////////////////////////////////////////////////////
 // Select Page 1, 2 or 3 Decoding
 always @* begin
-/*
-  case (QUEUE_D0_I)
-    stk_postbyte  = QUEUE_D1_I;
-    //
-    8'h11,        // Page 3 Instructions
-    8'h10 : begin // Page 2 Instructions
-      opcode        = QUEUE_D1_I;
-      idx_postbyte  = QUEUE_D2_I;
-      page1_en      = 1'b0;
-      page2_en      = ~QUEUE_D0_I[0];
-      page3_en      =  QUEUE_D0_I[0];
-    end
-    //
-    default : begin // Page 1 Instructions
-      opcode        = QUEUE_D0_I;
-      idx_postbyte  = QUEUE_D1_I;
-      page1_en      = 1'b1;
-      page2_en      = 1'b0;
-      page3_en      = 1'b0;
-    end
-    //
-  endcase
-*/
-  stk_postbyte  = QUEUE_D1_I;
   opcode        = QUEUE_D0_I;
   idx_postbyte  = QUEUE_D1_I;
+  stk_postbyte  = QUEUE_D1_I;
   page1_en      = ~PAGE_SEL_I[1];
   page2_en      =  PAGE_SEL_I[1] & ~PAGE_SEL_I[0];
   page3_en      =  PAGE_SEL_I[1] &  PAGE_SEL_I[0];
@@ -685,6 +693,11 @@ FF   1111 1111
 F6   1111 0110
      ???? ?11? U Stack pointer
  
+ X  Y  U  S
++X +Y +U +S
+-X -Y -U -S
+ X  Y  U  S
+ 
 
 */
 
@@ -695,7 +708,7 @@ F6   1111 0110
 /////////////////////////////////////////////////////////////////////////////
 //
 
-assign IDX_INDIRECT_EN_O = idx_indirect_en;
+assign IDX_INDIRECT_EN_O = idx_ind_en;
 assign STACK_DONE_O      = stack_done;
 
 //

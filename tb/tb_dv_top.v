@@ -51,9 +51,9 @@
 module tb_dv_top;
 
   ///////////////////// Select one of the following:
-  //`define TURBO9 
+  `define TURBO9 
   //`define TURBO9_S
-  `define TURBO9_R
+  //`define TURBO9_R
   /////////////////////
 
   `define SIM_TURBO9  // Turns on debug strings in decode table verilog files
@@ -67,6 +67,10 @@ module tb_dv_top;
   `define dut_mem_even    I_soc_top_r.I_even_syncram_8bit.ram
   `define dut_mem_odd     I_soc_top_r.I_odd_syncram_8bit.ram
   `define dut_cycle_cnt   I_soc_top_r.clk_cnt_rd_dat
+`elsif TURBO9_S
+  `define dut_mem_even    I_soc_top_s.I_even_syncram_8bit.ram
+  `define dut_mem_odd     I_soc_top_s.I_odd_syncram_8bit.ram
+  `define dut_cycle_cnt   I_soc_top_s.clk_cnt_rd_dat
 `else
   `define dut_mem         I_soc_top.I_syncram_8bit.ram
   `define dut_cycle_cnt   I_soc_top.clk_cnt_rd_dat
@@ -394,24 +398,19 @@ module tb_dv_top;
     `MEM_ADDR_WIDTH // MEM_ADDR_WIDTH 
   )
   I_soc_top_r
-  (
-    // Inputs: Clock & Reset
-    .RST_I         (turbo9_rst_sync), // Reset. Active high and synchronized to CLK_I
-    .CLK_I         (sysclk), // Clock
-    //
-    // Inputs 
-    .RXD_PIN_I     (1'b1),
-  
-    // Outputs
-    .TXD_PIN_O     (),
-    .OUTPUT_PORT_O (dut_output_port)
-  );
+`elsif TURBO9_S
+  soc_top_s
+  #(
+    `MEM_ADDR_WIDTH // MEM_ADDR_WIDTH 
+  )
+  I_soc_top_s
 `else
   soc_top
   #(
     `MEM_ADDR_WIDTH // MEM_ADDR_WIDTH 
   )
   I_soc_top
+`endif
   (
     // Inputs: Clock & Reset
     .RST_I         (turbo9_rst_sync), // Reset. Active high and synchronized to CLK_I
@@ -424,7 +423,6 @@ module tb_dv_top;
     .TXD_PIN_O     (),
     .OUTPUT_PORT_O (dut_output_port)
   );
-`endif
 
   /////////////////////////////////////////////////////////////////////////////
   // 6809 Behavioral Model
@@ -542,6 +540,12 @@ module tb_dv_top;
   wire [7:0]  model_putchar_buf = `model_mem[putchar_buf_addr];
 
 `ifdef TURBO9_R
+  wire        dut_putchar_en  = (~putchar_en_addr[0]) ? (`dut_mem_even[putchar_en_addr[15:1]][0] & console_output_en) :
+                                                        (`dut_mem_odd [putchar_en_addr[15:1]][0] & console_output_en) ;
+
+  wire [7:0]  dut_putchar_buf = (~putchar_buf_addr[0]) ? `dut_mem_even[putchar_buf_addr[15:1]] :
+                                                         `dut_mem_odd [putchar_buf_addr[15:1]] ;
+`elsif TURBO9_S
   wire        dut_putchar_en  = (~putchar_en_addr[0]) ? (`dut_mem_even[putchar_en_addr[15:1]][0] & console_output_en) :
                                                         (`dut_mem_odd [putchar_en_addr[15:1]][0] & console_output_en) ;
 

@@ -49,7 +49,8 @@
 /////////////////////////////////////////////////////////////////////////////
 module turbo9_gtr
 #(
-  parameter REGISTER_WB_OUTPUTS = 1
+  parameter REGISTER_WB_OUTPUTS = 1, // Register Wishbone Ouputs: True=1, False=0
+  parameter QUEUE_SIZE          = 6  // Fetch Queue Size: 6=Default, 4=Min, 7=Max 
 )
 (
   // Inputs: Clock & Reset
@@ -141,7 +142,8 @@ wire        pmem_rd_ack_i;
 
   turbo9_pipeline
   #(
-    .PMEM_16BIT_EN  (1)
+    .TURBO9_TYPE  (2),          // Turbo9 Type: 0=Turbo9, 1=Turbo9S, 2=Turbo9R
+    .QUEUE_SIZE   (QUEUE_SIZE)  // Fetch Queue Size: 6=Default, 4=Min, 7=Max
   )
   I_turbo9_pipeline
   (
@@ -165,9 +167,12 @@ wire        pmem_rd_ack_i;
     .PMEM_DAT_I       (pmem_dat_i       ),
     .PMEM_ADR_O       (pmem_adr_o       ),
     .PMEM_BUSY_I      (pmem_busy_i      ),
+    .PMEM_REQ_WIDTH_O (                 ),
     .PMEM_RD_REQ_O    (pmem_rd_req_o    ),
-    .PMEM_RD_ACK_I    (pmem_rd_ack_i    )
+    .PMEM_RD_ACK_I    (pmem_rd_ack_i    ),
+    .PMEM_ACK_WIDTH_I (WIDTH_16         )
   );
+
 
 
   turbo9_wishbone_2x8bit
@@ -220,9 +225,7 @@ wire        pmem_rd_ack_i;
     .PMEM_ADR_I       (pmem_adr_o    ),
     .PMEM_BUSY_O      (pmem_busy_i   ),
     .PMEM_RD_REQ_I    (pmem_rd_req_o ),
-    .PMEM_REQ_WIDTH_I (WIDTH_16      ),
-    .PMEM_RD_ACK_O    (pmem_rd_ack_i ),
-    .PMEM_ACK_WIDTH_O (              )
+    .PMEM_RD_ACK_O    (pmem_rd_ack_i )
   );
 
 
@@ -276,9 +279,7 @@ wire        pmem_rd_ack_i;
     .PMEM_ADR_I       (16'h0000         ),
     .PMEM_BUSY_O      (                 ),
     .PMEM_RD_REQ_I    (1'b0             ),
-    .PMEM_REQ_WIDTH_I (WIDTH_16         ),
-    .PMEM_RD_ACK_O    (                 ),
-    .PMEM_ACK_WIDTH_O (                 )
+    .PMEM_RD_ACK_O    (                 )
   );
 
 /////////////////////////////////////////////////////////////////////////////

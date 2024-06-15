@@ -59,8 +59,8 @@ module turbo9_urtl_decode_pg3_JTA(
 
 always @* begin
   case (OPCODE_I)
-    8'h83 : PG3_JTA_O = 8'h18; // CMP         CMPU (imm)
-    8'h8C : PG3_JTA_O = 8'h18; // CMP         CMPS (imm)
+    8'h83 : PG3_JTA_O = 8'h1b; // CMP         CMPU (imm)
+    8'h8C : PG3_JTA_O = 8'h1b; // CMP         CMPS (imm)
     8'h93 : PG3_JTA_O = 8'h1; // LD_DIR_EXT  CMPU (dir ext)
     8'h9C : PG3_JTA_O = 8'h1; // LD_DIR_EXT  CMPS (dir ext)
     8'hA3 : PG3_JTA_O = 8'h2; // LD_INDEXED  CMPU (idx)

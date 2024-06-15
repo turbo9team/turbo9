@@ -57,8 +57,8 @@ module turbo9_instr_format_decode
   output reg   [15:0] INSTR_DATA_O,
   output reg          INSTR_DIRECT_EN_O,
   output reg          INSTR_INH_EN_O,
-  output reg    [3:0] INSTR_R1_SEL_O,
-  output reg    [3:0] INSTR_R2_SEL_O,
+  output        [3:0] INSTR_R1_SEL_O,
+  output        [3:0] INSTR_R2_SEL_O,
   output reg    [3:0] INSTR_AR_SEL_O,
   output reg    [7:0] INSTR_JUMP_TABLE_A_O,
   output reg    [7:0] INSTR_JUMP_TABLE_B_O
@@ -126,8 +126,8 @@ wire  [3:0] pg1_r1;
 wire  [3:0] pg1_r2;
 wire  [3:0] pg1_ar;
 
-wire  [3:0] pg1_r1_i;
-wire  [3:0] pg1_r2_i;
+reg   [3:0] instr_r1_sel;
+reg   [3:0] instr_r2_sel;
 
 wire  [7:0] pg2_jta;
 wire  [7:0] pg2_jtb;
@@ -483,18 +483,14 @@ turbo9_urtl_decode_pg1_JTB I_turbo9_urtl_decode_pg1_JTB
 turbo9_urtl_decode_pg1_R1  I_turbo9_urtl_decode_pg1_R1
 (
   .OPCODE_I  (QUEUE_D0_I      ),
-  .PG1_R1_O  (pg1_r1_i        )
+  .PG1_R1_O  (pg1_r1          )
 );
-// Insert register pointer for TFR or EXG 
-assign pg1_r1 = ((QUEUE_D0_I == 8'h1E) || (QUEUE_D0_I == 8'h1F)) ? QUEUE_D1_I[7:4] : pg1_r1_i;
 
 turbo9_urtl_decode_pg1_R2  I_turbo9_urtl_decode_pg1_R2
 (
   .OPCODE_I  (QUEUE_D0_I      ),
-  .PG1_R2_O  (pg1_r2_i        )
+  .PG1_R2_O  (pg1_r2          )
 );
-// Insert register pointer for TFR or EXG 
-assign pg1_r2 = ((QUEUE_D0_I == 8'h1E) || (QUEUE_D0_I == 8'h1F)) ? QUEUE_D1_I[3:0] : pg1_r2_i;
 
 //
 /////////////////////////////////////////////////////////////////////////////
@@ -598,29 +594,33 @@ always @* begin
     page_sel_3 : begin // Page 3 Instructions
       INSTR_JUMP_TABLE_A_O = pg3_jta;
       INSTR_JUMP_TABLE_B_O = pg3_jtb;
-      INSTR_R1_SEL_O       = pg3_r1;
-      INSTR_R2_SEL_O       = pg3_r2;
+      instr_r1_sel         = pg3_r1;
+      instr_r2_sel         = pg3_r2;
       INSTR_AR_SEL_O       = pg3_ar;
     end
     //
     page_sel_2 : begin // Page 2 Instructions
       INSTR_JUMP_TABLE_A_O = pg2_jta;
       INSTR_JUMP_TABLE_B_O = pg2_jtb;
-      INSTR_R1_SEL_O       = pg2_r1;
-      INSTR_R2_SEL_O       = pg2_r2;
+      instr_r1_sel         = pg2_r1;
+      instr_r2_sel         = pg2_r2;
       INSTR_AR_SEL_O       = pg2_ar;
     end
     //
     default : begin // Page 1 Instructions
       INSTR_JUMP_TABLE_A_O = pg1_jta;
       INSTR_JUMP_TABLE_B_O = pg1_jtb;
-      INSTR_R1_SEL_O       = pg1_r1;
-      INSTR_R2_SEL_O       = pg1_r2;
+      instr_r1_sel         = pg1_r1;
+      instr_r2_sel         = pg1_r2;
       INSTR_AR_SEL_O       = pg1_ar;
     end
     //
   endcase
 end
+
+// Insert register pointer for TFR or EXG 
+assign INSTR_R1_SEL_O = ((QUEUE_D0_I == 8'h1E) || (QUEUE_D0_I == 8'h1F)) ? QUEUE_D1_I[7:4] : instr_r1_sel;
+assign INSTR_R2_SEL_O = ((QUEUE_D0_I == 8'h1E) || (QUEUE_D0_I == 8'h1F)) ? QUEUE_D1_I[3:0] : instr_r2_sel;
 
 /////////////////////////////////////////////////////////////////////////////
 

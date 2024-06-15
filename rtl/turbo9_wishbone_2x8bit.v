@@ -96,9 +96,9 @@ module turbo9_wishbone_2x8bit
   input   [15:0] PMEM_ADR_I,
   output         PMEM_BUSY_O,
   input          PMEM_RD_REQ_I,
-  input          PMEM_REQ_WIDTH_I,
-  output         PMEM_RD_ACK_O,
-  output         PMEM_ACK_WIDTH_O
+  //input          PMEM_REQ_WIDTH_I,
+  output         PMEM_RD_ACK_O
+  //output         PMEM_ACK_WIDTH_O
 
 );
 
@@ -256,7 +256,8 @@ wire   [2:0]  pending_cnt_nxt;
 localparam    pending_cnt_rst = 3'b000;
 wire   [2:0]  pending_cnt_term;
 
-reg   [15:0]  dat_i;
+reg   [15:0]  dmem_dat;
+reg   [15:0]  pmem_dat;
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -329,17 +330,17 @@ always @* begin
     even_tag_pmem_rd_o_nxt = 1'b1;
     even_tag_adr0_o_nxt    = pmem_adr0;
     //
-    if (PMEM_REQ_WIDTH_I == WIDTH_8) begin
-      even_tag_width_o_nxt = WIDTH_8;
-      even_stb_o_nxt       = ~pmem_adr0;
-      //
-      odd_stb_o_nxt        =  pmem_adr0;
-    end else begin
+    //if (PMEM_REQ_WIDTH_I == WIDTH_8) begin
+    //  even_tag_width_o_nxt = WIDTH_8;
+    //  even_stb_o_nxt       = ~pmem_adr0;
+    //  //
+    //  odd_stb_o_nxt        =  pmem_adr0;
+    //end else begin
       even_tag_width_o_nxt = WIDTH_16;
       even_stb_o_nxt       = 1'b1;
       //
       odd_stb_o_nxt        = 1'b1;
-    end
+    //end
     //
     even_we_o_nxt  = 1'b0;
     odd_we_o_nxt   = 1'b0;
@@ -381,43 +382,57 @@ assign pending_cnt_term = ( stb_o_nxt & ~ack_i) ? 3'b001 : // inc
                                                   3'b000 ; // hold
 assign pending_cnt_nxt  = pending_cnt_reg + pending_cnt_term;
 
+
+// Program Memory Mux
 always @* begin
   //
   // Defaults
   //
-  dat_i[15:8] = EVEN_DAT_I;
-  dat_i[ 7:0] = ODD_DAT_I;
-  // FIXME Size/Timing? seperate muxes for pmem & dmem? 
-  casez ({even_tag_pmem_rd_i, even_tag_adr0_i, even_tag_width_i})
+  pmem_dat[15:8] = EVEN_DAT_I;
+  pmem_dat[ 7:0] = ODD_DAT_I;
+  case (even_tag_adr0_i)
     //
-    3'b10? : begin  // PMEM read, even address, 16bit or 8bit
-      dat_i[15:8] = EVEN_DAT_I;
-      dat_i[ 7:0] = ODD_DAT_I;
+    1'b0 : begin  // PMEM read, even address, 16bit or 8bit
+      pmem_dat[15:8] = EVEN_DAT_I;
+      pmem_dat[ 7:0] = ODD_DAT_I;
     end
     //
-    3'b11? : begin  // PMEM read, odd address, 16bit or 8bit
-      dat_i[15:8] = ODD_DAT_I;
-      dat_i[ 7:0] = EVEN_DAT_I;
+    1'b1 : begin  // PMEM read, odd address, 16bit or 8bit
+      pmem_dat[15:8] = ODD_DAT_I;
+      pmem_dat[ 7:0] = EVEN_DAT_I;
     end
     //
-    {2'b00, WIDTH_16} : begin  // DMEM read, even address, 16bit
-      dat_i[15:8] = EVEN_DAT_I;
-      dat_i[ 7:0] = ODD_DAT_I;
+  endcase
+end
+
+
+// Data Memory Mux
+always @* begin
+  //
+  // Defaults
+  //
+  dmem_dat[15:8] = EVEN_DAT_I;
+  dmem_dat[ 7:0] = ODD_DAT_I;
+  case ({even_tag_adr0_i, even_tag_width_i})
+    //
+    {1'b0, WIDTH_16} : begin  // DMEM read, even address, 16bit
+      dmem_dat[15:8] = EVEN_DAT_I;
+      dmem_dat[ 7:0] = ODD_DAT_I;
     end
     //
-    {2'b01, WIDTH_16} : begin  // DMEM read, even address, 16bit
-      dat_i[15:8] = ODD_DAT_I;
-      dat_i[ 7:0] = EVEN_DAT_I;
+    {1'b1, WIDTH_16} : begin  // DMEM read, odd address, 16bit
+      dmem_dat[15:8] = ODD_DAT_I;
+      dmem_dat[ 7:0] = EVEN_DAT_I;
     end
     //
-    {2'b00, WIDTH_8} : begin  // DMEM read, even address, 8bit
-      dat_i[15:8] = 8'h00;    // FIXME: Do we really need to make this zero?
-      dat_i[ 7:0] = EVEN_DAT_I;
+    {1'b0, WIDTH_8} : begin  // DMEM read, even address, 8bit
+      dmem_dat[15:8] = 8'h00;
+      dmem_dat[ 7:0] = EVEN_DAT_I;
     end
     //
-    {2'b01, WIDTH_8} : begin  // DMEM read, even address, 8bit
-      dat_i[15:8] = 8'h00;
-      dat_i[ 7:0] = ODD_DAT_I;
+    {1'b1, WIDTH_8} : begin  // DMEM read, odd address, 8bit
+      dmem_dat[15:8] = 8'h00;
+      dmem_dat[ 7:0] = ODD_DAT_I;
     end
     //
   endcase
@@ -523,17 +538,17 @@ assign even_tag_width_i   = EVEN_TGD_I[0];
 //                        PROG & DATA MEM OUTPUTS
 /////////////////////////////////////////////////////////////////////////////
 // Data Memory Interface
-assign DMEM_DAT_O         = dat_i;
+assign DMEM_DAT_O         = dmem_dat;
 assign DMEM_BUSY_O        = stall_i;
 assign DMEM_RD_ACK_O      = even_tag_dmem_rd_i & ~stall_i;
 assign DMEM_WR_ACK_O      = even_tag_dmem_wr_i & ~stall_i;
 assign DMEM_ACK_WIDTH_O   = even_tag_width_i;
 
 // Program Memory Interface
-assign PMEM_DAT_O         = dat_i;
+assign PMEM_DAT_O         = pmem_dat;
 assign PMEM_BUSY_O        = DMEM_REQ_I | stall_i;
 assign PMEM_RD_ACK_O      = even_tag_pmem_rd_i & ~stall_i;
-assign PMEM_ACK_WIDTH_O   = even_tag_width_i;
+//assign PMEM_ACK_WIDTH_O   = even_tag_width_i;
 //
 /////////////////////////////////////////////////////////////////////////////
 

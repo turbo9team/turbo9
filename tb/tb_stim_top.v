@@ -62,6 +62,9 @@ module tb_stim_top;
 `ifdef TURBO9_R
   `define dut_mem_even    I_fpga_top.I_soc_top_r.I_even_syncram_8bit.ram
   `define dut_mem_odd     I_fpga_top.I_soc_top_r.I_odd_syncram_8bit.ram
+`elsif TURBO9_S
+  `define dut_mem_even    I_fpga_top.I_soc_top_r.I_even_syncram_8bit.ram
+  `define dut_mem_odd     I_fpga_top.I_soc_top_r.I_odd_syncram_8bit.ram
 `else
   `define dut_mem         I_fpga_top.I_soc_top.I_syncram_8bit.ram
 `endif

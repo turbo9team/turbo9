@@ -178,7 +178,7 @@ localparam  uop_dmem_op_rst = 2'h0;
 
 wire  [1:0] cv_stack_op;
 
-wire  [1:0] cv_data_width_sel;
+wire  [2:0] cv_data_width_sel;
 wire        data_width;
 reg         uop_data_width_reg;
 localparam  uop_data_width_rst = 1'b0;

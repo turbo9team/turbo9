@@ -59,12 +59,12 @@ module turbo9_urtl_decode_pg3_JTB(
 
 always @* begin
   case (OPCODE_I)
-    8'h93 : PG3_JTB_O = 8'h18; // CMP         CMPU (dir idx ext)
-    8'h9C : PG3_JTB_O = 8'h18; // CMP         CMPS (dir idx ext)
-    8'hA3 : PG3_JTB_O = 8'h18; // CMP         CMPU (dir idx ext)
-    8'hAC : PG3_JTB_O = 8'h18; // CMP         CMPS (dir idx ext)
-    8'hB3 : PG3_JTB_O = 8'h18; // CMP         CMPU (dir idx ext)
-    8'hBC : PG3_JTB_O = 8'h18; // CMP         CMPS (dir idx ext)
+    8'h93 : PG3_JTB_O = 8'h1b; // CMP         CMPU (dir idx ext)
+    8'h9C : PG3_JTB_O = 8'h1b; // CMP         CMPS (dir idx ext)
+    8'hA3 : PG3_JTB_O = 8'h1b; // CMP         CMPU (dir idx ext)
+    8'hAC : PG3_JTB_O = 8'h1b; // CMP         CMPS (dir idx ext)
+    8'hB3 : PG3_JTB_O = 8'h1b; // CMP         CMPU (dir idx ext)
+    8'hBC : PG3_JTB_O = 8'h1b; // CMP         CMPS (dir idx ext)
     default : PG3_JTB_O = 8'hFF; // from decode_init
   endcase
 end

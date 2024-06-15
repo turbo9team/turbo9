@@ -60,29 +60,30 @@ module turbo9_urtl_decode_pg2_JTA(
 always @* begin
   case (OPCODE_I)
     8'h18 : PG2_JTA_O = 8'hd; // SAU16       IDIVS (inh)
-    8'h20 : PG2_JTA_O = 8'h2b; // BRANCH      LBRA LBRN LBHI LBLS
-    8'h21 : PG2_JTA_O = 8'h2b; // BRANCH      LBRA LBRN LBHI LBLS
-    8'h22 : PG2_JTA_O = 8'h2b; // BRANCH      LBRA LBRN LBHI LBLS
-    8'h23 : PG2_JTA_O = 8'h2b; // BRANCH      LBRA LBRN LBHI LBLS
-    8'h24 : PG2_JTA_O = 8'h2b; // BRANCH      LBCC LBCS LBNE LBEQ
-    8'h25 : PG2_JTA_O = 8'h2b; // BRANCH      LBCC LBCS LBNE LBEQ
-    8'h26 : PG2_JTA_O = 8'h2b; // BRANCH      LBCC LBCS LBNE LBEQ
-    8'h27 : PG2_JTA_O = 8'h2b; // BRANCH      LBCC LBCS LBNE LBEQ
-    8'h28 : PG2_JTA_O = 8'h2b; // BRANCH      LBVC LBVS LBPL LBMI
-    8'h29 : PG2_JTA_O = 8'h2b; // BRANCH      LBVC LBVS LBPL LBMI
-    8'h2A : PG2_JTA_O = 8'h2b; // BRANCH      LBVC LBVS LBPL LBMI
-    8'h2B : PG2_JTA_O = 8'h2b; // BRANCH      LBVC LBVS LBPL LBMI
-    8'h2C : PG2_JTA_O = 8'h2b; // BRANCH      LBGE LBLT LBGT LBLE
-    8'h2D : PG2_JTA_O = 8'h2b; // BRANCH      LBGE LBLT LBGT LBLE
-    8'h2E : PG2_JTA_O = 8'h2b; // BRANCH      LBGE LBLT LBGT LBLE
-    8'h2F : PG2_JTA_O = 8'h2b; // BRANCH      LBGE LBLT LBGT LBLE
-    8'h83 : PG2_JTA_O = 8'h18; // CMP         CMPD (imm)
-    8'h8C : PG2_JTA_O = 8'h18; // CMP         CMPY (imm)
-    8'h8E : PG2_JTA_O = 8'h1a; // LD          LDY (imm)
+    8'h1F : PG2_JTA_O = 8'h12; // CPY         CPY (inh)
+    8'h20 : PG2_JTA_O = 8'h2e; // BRANCH      LBRA LBRN LBHI LBLS
+    8'h21 : PG2_JTA_O = 8'h2e; // BRANCH      LBRA LBRN LBHI LBLS
+    8'h22 : PG2_JTA_O = 8'h2e; // BRANCH      LBRA LBRN LBHI LBLS
+    8'h23 : PG2_JTA_O = 8'h2e; // BRANCH      LBRA LBRN LBHI LBLS
+    8'h24 : PG2_JTA_O = 8'h2e; // BRANCH      LBCC LBCS LBNE LBEQ
+    8'h25 : PG2_JTA_O = 8'h2e; // BRANCH      LBCC LBCS LBNE LBEQ
+    8'h26 : PG2_JTA_O = 8'h2e; // BRANCH      LBCC LBCS LBNE LBEQ
+    8'h27 : PG2_JTA_O = 8'h2e; // BRANCH      LBCC LBCS LBNE LBEQ
+    8'h28 : PG2_JTA_O = 8'h2e; // BRANCH      LBVC LBVS LBPL LBMI
+    8'h29 : PG2_JTA_O = 8'h2e; // BRANCH      LBVC LBVS LBPL LBMI
+    8'h2A : PG2_JTA_O = 8'h2e; // BRANCH      LBVC LBVS LBPL LBMI
+    8'h2B : PG2_JTA_O = 8'h2e; // BRANCH      LBVC LBVS LBPL LBMI
+    8'h2C : PG2_JTA_O = 8'h2e; // BRANCH      LBGE LBLT LBGT LBLE
+    8'h2D : PG2_JTA_O = 8'h2e; // BRANCH      LBGE LBLT LBGT LBLE
+    8'h2E : PG2_JTA_O = 8'h2e; // BRANCH      LBGE LBLT LBGT LBLE
+    8'h2F : PG2_JTA_O = 8'h2e; // BRANCH      LBGE LBLT LBGT LBLE
+    8'h83 : PG2_JTA_O = 8'h1b; // CMP         CMPD (imm)
+    8'h8C : PG2_JTA_O = 8'h1b; // CMP         CMPY (imm)
+    8'h8E : PG2_JTA_O = 8'h1d; // LD          LDY (imm)
     8'h93 : PG2_JTA_O = 8'h1; // LD_DIR_EXT  CMPD (dir ext)
     8'h9C : PG2_JTA_O = 8'h1; // LD_DIR_EXT  CMPY (dir ext)
     8'h9E : PG2_JTA_O = 8'h1; // LD_DIR_EXT  LDY (dir ext)
-    8'h9F : PG2_JTA_O = 8'h1f; // ST          STY (dir ext)
+    8'h9F : PG2_JTA_O = 8'h22; // ST          STY (dir ext)
     8'hA3 : PG2_JTA_O = 8'h2; // LD_INDEXED  CMPD (idx)
     8'hAC : PG2_JTA_O = 8'h2; // LD_INDEXED  CMPY (idx)
     8'hAE : PG2_JTA_O = 8'h2; // LD_INDEXED  LDY (idx)
@@ -90,14 +91,14 @@ always @* begin
     8'hB3 : PG2_JTA_O = 8'h1; // LD_DIR_EXT  CMPD (dir ext)
     8'hBC : PG2_JTA_O = 8'h1; // LD_DIR_EXT  CMPY (dir ext)
     8'hBE : PG2_JTA_O = 8'h1; // LD_DIR_EXT  LDY (dir ext)
-    8'hBF : PG2_JTA_O = 8'h1f; // ST          STY (dir ext)
-    8'hCE : PG2_JTA_O = 8'h1a; // LD          LDS (imm)
+    8'hBF : PG2_JTA_O = 8'h22; // ST          STY (dir ext)
+    8'hCE : PG2_JTA_O = 8'h1d; // LD          LDS (imm)
     8'hDE : PG2_JTA_O = 8'h1; // LD_DIR_EXT  LDS (dir ext)
-    8'hDF : PG2_JTA_O = 8'h1f; // ST          STS (dir ext)
+    8'hDF : PG2_JTA_O = 8'h22; // ST          STS (dir ext)
     8'hEE : PG2_JTA_O = 8'h2; // LD_INDEXED  LDS (idx)
     8'hEF : PG2_JTA_O = 8'h4; // ST_INDEXED  STS (idx)
     8'hFE : PG2_JTA_O = 8'h1; // LD_DIR_EXT  LDS (dir ext)
-    8'hFF : PG2_JTA_O = 8'h1f; // ST          STS (dir ext)
+    8'hFF : PG2_JTA_O = 8'h22; // ST          STS (dir ext)
     default : PG2_JTA_O = 8'hFF; // from decode_init
   endcase
 end
@@ -109,6 +110,7 @@ reg [(8*64):0] PG2_JTA_op;
 always @* begin
   case (OPCODE_I)
     8'h18 : PG2_JTA_op = "IDIVS (inh)";
+    8'h1F : PG2_JTA_op = "CPY (inh)";
     8'h20 : PG2_JTA_op = "LBRA LBRN LBHI LBLS";
     8'h21 : PG2_JTA_op = "LBRA LBRN LBHI LBLS";
     8'h22 : PG2_JTA_op = "LBRA LBRN LBHI LBLS";
@@ -156,6 +158,7 @@ reg [(8*64):0] PG2_JTA_eq;
 always @* begin
   case (OPCODE_I)
     8'h18 : PG2_JTA_eq = "SAU16";
+    8'h1F : PG2_JTA_eq = "CPY";
     8'h20 : PG2_JTA_eq = "BRANCH";
     8'h21 : PG2_JTA_eq = "BRANCH";
     8'h22 : PG2_JTA_eq = "BRANCH";

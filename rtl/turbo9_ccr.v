@@ -349,8 +349,9 @@ always @* begin // FIXME we could use an XOR to produce inverted conditions
       3'b001  : MICRO_SEQ_COND_O = 1'b1;                  // TRUE          = 3'b001
       3'b010  : MICRO_SEQ_COND_O = STACK_DONE_I;          // STACK_DONE    = 3'b010
       3'b011  : MICRO_SEQ_COND_O = ~STACK_DONE_I;         // STACK_NEXT    = 3'b011
-      3'b100  : MICRO_SEQ_COND_O = ~DATA_ALU_SAU_DONE_I;  // SAU_NOT_DONE  = 3'b100
-      default : MICRO_SEQ_COND_O = ~e_reg;                // E_CLEAR       = 3'b101
+      3'b100  : MICRO_SEQ_COND_O = DATA_ALU_SAU_DONE_I;   // SAU_DONE      = 3'b100
+      3'b101  : MICRO_SEQ_COND_O = ~DATA_ALU_SAU_DONE_I;  // SAU_NOT_DONE  = 3'b101
+      default : MICRO_SEQ_COND_O = ~e_reg;                // E_CLEAR       = 3'b110
     endcase
   end
 end

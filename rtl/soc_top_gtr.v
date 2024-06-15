@@ -178,9 +178,10 @@ wire        ram_clk;
   // Turbo9R
   turbo9_gtr
   #(
-    .REGISTER_WB_OUTPUTS  (0)
+    .REGISTER_WB_OUTPUTS  (0),
+    .QUEUE_SIZE           (6)
   )
-  I_turbo9_r
+  I_turbo9_gtr
   (
     // Inputs: Clock & Reset
     .RST_I  (RST_I),

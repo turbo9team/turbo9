@@ -34,6 +34,7 @@
 //////////////////////////////////////////////////////////////////////////////
 // Engineer: Kevin Phillipson
 // Description: Library for GCC6809
+// Provides basic std_lib functions
 //
 //////////////////////////////////////////////////////////////////////////////
 // History:
@@ -229,36 +230,6 @@ __asm__
   "  ldb   ,x+                \n"
   "  beq   strcmp_done_cond1  \n"
   "  subb  ,u+                \n"
-  "  bne   strcmp_done        \n"
-  "  ;                        \n"
-  "  ldb   ,x+                \n"
-  "  beq   strcmp_done_cond1  \n"
-  "  subb  ,u+                \n"
-  "  bne   strcmp_done        \n"
-  "  ;                        \n"
-  "  ldb   ,x+                \n"
-  "  beq   strcmp_done_cond1  \n"
-  "  subb  ,u+                \n"
-  "  bne   strcmp_done        \n"
-  "  ;                        \n"
-  "  ldb   ,x+                \n"
-  "  beq   strcmp_done_cond1  \n"
-  "  subb  ,u+                \n"
-  "  bne   strcmp_done        \n"
-  "  ;                        \n"
-  "  ldb   ,x+                \n"
-  "  beq   strcmp_done_cond1  \n"
-  "  subb  ,u+                \n"
-  "  bne   strcmp_done        \n"
-  "  ;                        \n"
-  "  ldb   ,x+                \n"
-  "  beq   strcmp_done_cond1  \n"
-  "  subb  ,u+                \n"
-  "  bne   strcmp_done        \n"
-  "  ;                        \n"
-  "  ldb   ,x+                \n"
-  "  beq   strcmp_done_cond1  \n"
-  "  subb  ,u+                \n"
   "  beq   strcmp_loop        \n"
   "strcmp_done:               \n"
   "  sex                      \n"
@@ -271,63 +242,6 @@ __asm__
   "  puls  u,pc               \n"
 );   
 
-/* GCC version:
-  .globl  _strcmp
-_strcmp:
-  pshs  y,u
-  leas  -3,s
-  leau  ,s
-  ldy  9,u
-  ldb  ,x
-  stb  ,u
-  beq  L81
-  ldb  ,y
-  stb  2,u
-  ldb  ,u
-  cmpb  2,u  ;cmpqi:
-  bne  L80
-  leax  1,x
-  bra  L78
-L77:
-  leay  1,y
-  ldb  ,y
-  stb  2,u
-  ldb  ,u
-  cmpb  2,u  ;cmpqi:
-  bne  L80
-L78:
-  ldb  ,x+
-  stb  ,u
-  bne  L77
-  ldb  1,y
-  stb  2,u
-  ldd  #0
-  std  ,u
-L75:
-  ldb  2,u
-  clra    ;zero_extendqihi: R:b -> R:d
-  tfr  d,x
-  ldd  ,u
-  pshs  x  ;subhi: R:d -= R:x
-  subd  ,s++
-  tfr  d,x
-  leas  3,s
-  puls  y,u,pc
-L80:
-  clra    ;zero_extendqihi: R:b -> R:d
-  std  ,u
-  bra  L75
-L81:
-  ldb  ,y
-  stb  2,u
-  ldd  #0
-  std  ,u
-  bra  L75
-*/
-
-
-
-
 
 
 /*
@@ -337,29 +251,7 @@ void *memcpy(char *d, const char *s, unsigned l)
 }
 */
 
-  // x   = *d
-  // 6,s = *s
-  // 8,s = l (9,s = l[7:0])
 
-
-__asm__
-(
-  " .area .text                       \n"
-  " .globl  _memcpy                   \n"
-  "_memcpy:                           \n"
-  "  pshs   y,u                       \n"
-  "  ldu    6,s ; *s (source)         \n"
-  "  ldd    8,s ; l  (num of bytes)   \n"
-  
-  " .byte   0x10                      \n"
-  " .byte   0x1F                      \n"
-  " .byte   0x31 ; cpy u+,x+          \n"
-
-  "  puls   y,u,pc                    \n"
-);
-
-
-/*
 __asm__
 (
   " .area .text                       \n"
@@ -385,64 +277,13 @@ __asm__
   "  ldd    ,u++                      \n"
   "  std    ,x++                      \n"
   "  leay   -2,y                      \n"
-  "  beq    memcopy_done              \n"
-  "  ;                                \n"
-  "  ldd    ,u++                      \n"
-  "  std    ,x++                      \n"
-  "  leay   -2,y                      \n"
-  "  beq    memcopy_done              \n"
-  "  ;                                \n"
-  "  ldd    ,u++                      \n"
-  "  std    ,x++                      \n"
-  "  leay   -2,y                      \n"
-  "  beq    memcopy_done              \n"
-  "  ;                                \n"
-  "  ldd    ,u++                      \n"
-  "  std    ,x++                      \n"
-  "  leay   -2,y                      \n"
-  "  beq    memcopy_done              \n"
-  "  ;                                \n"
-  "  ldd    ,u++                      \n"
-  "  std    ,x++                      \n"
-  "  leay   -2,y                      \n"
-  "  beq    memcopy_done              \n"
-  "  ;                                \n"
-  "  ldd    ,u++                      \n"
-  "  std    ,x++                      \n"
-  "  leay   -2,y                      \n"
-  "  beq    memcopy_done              \n"
-  "  ;                                \n"
-  "  ldd    ,u++                      \n"
-  "  std    ,x++                      \n"
-  "  leay   -2,y                      \n"
   "  bne    memcopy_16bit             \n"
   "memcopy_done                       \n"
   "  puls   y,u,pc                    \n"
 );
-*/
-
-/* GCC version:
-  .globl  _memcpy
-_memcpy:
-  pshs  y,u
-  leau  ,s
-  ldy  8,u
-  beq  L71
-  ldy  6,u
-L70:
-  ldb  ,y+
-  stb  ,x+
-  ldd  8,u
-  addd  #-1
-  std  8,u
-  bne  L70
-L71:
-  puls  y,u,pc
-*/
 
 
 /*
-// Avoid libc at all costs!
 char* strcpy(char *dst0, const char * src0)
 {
     char *s = dst0;
@@ -454,25 +295,6 @@ char* strcpy(char *dst0, const char * src0)
 }
 */
 
-/* GCC version:
-  .globl  _strcpy
-_strcpy:
-  pshs  y,u
-  leas  -2,s
-  leau  ,s
-  stx  ,u
-  ldx  8,u
-  ldy  ,u
-L83:
-  ldb  ,x+
-  stb  ,y+
-  bne  L83
-  ldx  ,u
-  leas  2,s
-  puls  y,u,pc
-*/
-
-
 __asm__
 (
   "   .area .text                 \n"
@@ -482,42 +304,6 @@ __asm__
   "   tfr   x,y                   \n"
   "   ldu  6,s                    \n"
   "strcpy_loop:                   \n"
-  "   lda   ,u+                   \n"
-  "   beq   strcpy_done_wr_8bit   \n"
-  "   ldb   ,u+                   \n"
-  "   beq   strcpy_done_wr_16bit  \n"
-  "   std   ,y++                  \n"
-  "   ;                           \n"
-  "   lda   ,u+                   \n"
-  "   beq   strcpy_done_wr_8bit   \n"
-  "   ldb   ,u+                   \n"
-  "   beq   strcpy_done_wr_16bit  \n"
-  "   std   ,y++                  \n"
-  "   ;                           \n"
-  "   lda   ,u+                   \n"
-  "   beq   strcpy_done_wr_8bit   \n"
-  "   ldb   ,u+                   \n"
-  "   beq   strcpy_done_wr_16bit  \n"
-  "   std   ,y++                  \n"
-  "   ;                           \n"
-  "   lda   ,u+                   \n"
-  "   beq   strcpy_done_wr_8bit   \n"
-  "   ldb   ,u+                   \n"
-  "   beq   strcpy_done_wr_16bit  \n"
-  "   std   ,y++                  \n"
-  "   ;                           \n"
-  "   lda   ,u+                   \n"
-  "   beq   strcpy_done_wr_8bit   \n"
-  "   ldb   ,u+                   \n"
-  "   beq   strcpy_done_wr_16bit  \n"
-  "   std   ,y++                  \n"
-  "   ;                           \n"
-  "   lda   ,u+                   \n"
-  "   beq   strcpy_done_wr_8bit   \n"
-  "   ldb   ,u+                   \n"
-  "   beq   strcpy_done_wr_16bit  \n"
-  "   std   ,y++                  \n"
-  "   ;                           \n"
   "   lda   ,u+                   \n"
   "   beq   strcpy_done_wr_8bit   \n"
   "   ldb   ,u+                   \n"

@@ -49,7 +49,7 @@ Current industry trends are to adapt 32-bit RISC IP for microcontroller use, how
 ## But wait 6809 is CISC and CISC is bad!
 The 6809 was designed before the definition of RISC and therefore retroactively is classed as a CISC processor. However, the instruction set is actually simpler than many RISC ISAs. The main rule that 6809 instruction set breaks that it is not a "load-store" architecture. It is a simple accumulator architecture where one of its operands is memory. However, the instruction set is very elegant and well thought-through. This presents the challenge of pipelining a CISC processor while remaining as small as possible and attempting to rival performance levels of RISC implementations. To do this, the Turbo9 implements a novel CISC to RISC micro-op decode stage (shown below). 
 
-![Turbo9 Decode Stage](./docs/images/turbo9_decode_stage_small.png)
+![uRTL Design Flow](./docs/images/urtl_design_flow.png)
 
 ----------------------------------------
 

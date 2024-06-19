@@ -53,6 +53,8 @@ We addressed this challenge by developing uRTL, a novel toolset for systematical
 
 |                                                                               |                                             |
 |-------------------------------------------------------------------------------|---------------------------------------------|
+| **Inputs**                                                                    |                                             |
+|-------------------------------------------------------------------------------|---------------------------------------------|
 | [rtl/urtl/turbo9_urtl.asm](rtl/urtl/turbo9_utrl.asm)                          | uRTL microcode                              |
 | [rtl/urtl/turbo9_urtl.mac](rtl/urtl/turbo9_utrl.mac)                          | uRTL macro definitions                      |
 | [rtl/urtl/turbo9_urtl_microcode.v](rtl/turbo9_urtl_microcode.v/)              | uRTL sequential decode Verilog output       |

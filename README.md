@@ -10,7 +10,7 @@
 * [What is the Turbo9?](#what-is-the-turbo9)   
 * [What are the target applications?](#what-are-the-target-applications)
 * [Why use the 6809 instruction set? Why not RISC?](#why-use-the-6809-instruction-set-why-not-risc)
-* [But wait 6809 is CISC and CISC is bad!](#but-wait-6809-is-cisc-and-cisc-is-bad)
+* [What is uRTL micro-op translation?](#what-is-urtl-micro-op-translation)
 
 ## The Basics
 * [Key Features](#key-features) 
@@ -46,10 +46,23 @@ Current industry trends are to adapt 32-bit RISC IP for microcontroller use, how
 
 ----------------------------------------
 
-## µRTL micro-op translation
-The 6809 was designed before the definition of RISC and therefore retroactively is classed as a CISC processor. However, the instruction set is actually simpler than many RISC ISAs. The main rule that 6809 instruction set breaks that it is not a "load-store" architecture. It is a simple accumulator architecture where one of its operands is memory. However, the instruction set is very elegant and well thought-through. This presents the challenge of pipelining a CISC processor while remaining as small as possible and attempting to rival performance levels of RISC implementations. To do this, the Turbo9 implements a novel CISC to RISC micro-op decode stage (shown below). 
+## What is uRTL micro-op translation?
+The 6809's elegant accumulator-style instruction set is simpler than many RISC ISAs. However, it is retroactively classified as a CISC architecture because it violates the RISC "load-store" principle, using memory as an operand in many instructions. Consequently, load and store operations with the 6809's advanced address modes are often required as steps prior to an ALU operation. This is not an issue for a  multi-cycle implementation like the original MC6809 but poses challenges for creating an efficient and high-performance pipelined microarchitecture.
 
-![µRTL Design Flow](./docs/images/urtl_design_flow.png)
+We addressed this challenge by developing uRTL, a novel toolset for systematically designing microarchitectures with hardwired micro-op translation. The uRTL methodology emphasizes direct opcode decoding from multiple synthesized Verilog blocks, in contrast to traditional microprogramming that relies on sequential decoding from a ROM. While this micro-op translation technique is common in large modern superscalar microprocessors, we have applied it to design a smaller and more efficient embedded microprocessor.
+
+|                                                                        |                                             |
+|------------------------------------------------------------------------|---------------------------------------------|
+| [rtl/urtl/turbo9_urtl.asm](rtl/urtl/turbo9_utrl.asm)                   | uRTL microcode                              |
+| [rtl/urtl/turbo9_urtl.mac](rtl/urtl/turbo9_utrl.mac)                   | uRTL macro definitions                      |
+| [rtl/urtl/turbo9_urtl_microcode.v](rtl/urtl_microcode.v/)              | uRTL sequential decode Verilog output       |
+| [rtl/urtl/turbo9_urtl_decode_pg1_JTA.v](rtl/urtl_decode_pg1_JTA.v/)    | uRTL direct decode Verilog output (1 of 15) |
+| [urtl_asm_src/](urtl_asm_src)                                          | uRTL microcode assembler source code        |
+|                                                                        |                                             |
+
+
+
+![uRTL Design Flow](./docs/images/urtl_design_flow.png)
 
 ----------------------------------------
 
@@ -105,7 +118,7 @@ The 6809 was designed before the definition of RISC and therefore retroactively 
 ## Presentations
 ![YouTube](./docs/images/youtube_logo.png)   
 * Youtube videos:
-  - [**Turbo9 - Pipelined 6809 - Overview & uRTL Presentation**](https://www.youtube.com/watch?v=LPJ4IFz4fjE&pp=ygUGdHVyYm85)
+  - [**Turbo9 - VCF Southwest @ The University of Texas at Dallas**](https://www.youtube.com/watch?v=LPJ4IFz4fjE&pp=ygUGdHVyYm85)
   - [**Turbo9 - Pipelined 6809 - Benchmarking & Performance**](https://www.youtube.com/watch?v=8ScT86RKopQ)
   - [**Turbo9 - Pipelined 6809 - Verification & Design Update**](https://www.youtube.com/watch?v=eTlfH86KUog)
   - [**Turbo9 - Pipelined 6809 - Introduction & Overview**](https://www.youtube.com/watch?v=6QfXNfrj19Y)
@@ -127,7 +140,8 @@ The 6809 was designed before the definition of RISC and therefore retroactively 
 |                               | [images/](c_code/images/)                   | Images                                |
 | [c_code/](c_code/)            |                                             | C code for the Turbo9                 |
 |                               | [build_gcc/](c_code/build_gcc/)             | build directory for GCC               |
-|                               | [build_vbcc/](c_code/build_vbcc/)           | build directory for VBCC              |
+|                               | [build_vbcc/](c_code/build_vbcc/)           | build directory for VBCC Turbo9       |
+|                               | [build_vbcc_6809/](c_code/build_vbcc_6809/) | build directory for VBCC 6809         |
 |                               | [byte_sieve_src/](c_code/byte_sieve_src/)   | BYTE Sieve source                     |
 |                               | [dhrystone_src/](c_code/dhrystone_src/)     | Dhrystone source                      |
 |                               | [hello_world_src/](c_code/hello_world_src/) | Hello World source                    |
@@ -137,7 +151,7 @@ The 6809 was designed before the definition of RISC and therefore retroactively 
 |                               | [bit_files/](fpga/bit_files/)               | .bit files for Arty A7-100T           |
 | [regress/](regress/)          |                                             | Nightly regression run directory      |
 | [rtl/](rtl/)                  |                                             | Verilog RTL for micro-architecture    |
-|                               | [urtl/](c_code/urtl/)                       | uRTL microcode for micro-architecture |
+|                               | [urtl/](rtl/urtl/)                          | uRTL microcode for micro-architecture |
 | [sim/](sim/)                  |                                             | Simulation run directory              |
 | [tb/](tb/)                    |                                             | Testbench & Testcases                 |
 | [urtl_asm_src/](urtl_asm_src) |                                             | uRTL microcode assembler source code  |

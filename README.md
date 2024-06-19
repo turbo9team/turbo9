@@ -193,16 +193,9 @@ We addressed this challenge by developing uRTL, a novel toolset for systematical
 ----------------------------------------
 
 ## Current Status
-The current version of the Turbo9 is thoroughly verified and is capable of running C code. However, we still consider this version v0.9 because we are missing a few items. All the 6809 instructions and addressing modes have been implemented and tested except SYNC and CWAI. The signed versions of the Turbo9's 16-bit divide and multiply need to be completed. Interrupts are partially implemented including SWI and Reset. In order to achieve version 1.0 we require the following:
-* Finish SYNC and CWAI (6809 instructions)
-* Finish EDIVS & EMULS (Turbo9 extensions)
-* Finish Interrupts
-* Finish Turbo9S bus version
-* Implement testcases to verify the above
+The current version of the Turbo9 is thoroughly verified and is capable of running C code.
 
-Other things to do:
-* fix stim bench
-* Verify pipeline bubbles on reset are benign
+Version 1.0 is in development and testing. Version 1.0 completes the interrupt system (SYNC and CWAI) and the Turbo9 instructions extensions (EDIVS & EMULS). The performance is also increased to 0.75 DMIPS/MHz! We will release it once verification is complete.
 
 ----------------------------------------
 

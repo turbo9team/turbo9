@@ -51,6 +51,8 @@ The 6809's elegant accumulator-style instruction set is simpler than many RISC I
 
 We addressed this challenge by developing uRTL, a novel toolset for systematically designing microarchitectures with hardwired micro-op translation. The uRTL methodology emphasizes direct opcode decoding from multiple synthesized Verilog blocks, in contrast to traditional microprogramming that relies on sequential decoding from a ROM. While this micro-op translation technique is common in large modern superscalar microprocessors, we have applied it to design a smaller and more efficient embedded microprocessor.
 
+![uRTL Design Flow](./docs/images/urtl_design_flow.png)
+
 |                                                                               |                                             |
 |-------------------------------------------------------------------------------|---------------------------------------------|
 | **uRTL Inputs**                                                               |                                             |
@@ -64,10 +66,6 @@ We addressed this challenge by developing uRTL, a novel toolset for systematical
 | **uRTL Assembler Source Code**                                                |                                             |
 | [urtl_asm_src/](urtl_asm_src)                                                 | uRTL microcode assembler source code        |
 |                                                                               |                                             |
-
-
-
-![uRTL Design Flow](./docs/images/urtl_design_flow.png)
 
 ----------------------------------------
 

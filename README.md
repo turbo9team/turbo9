@@ -60,9 +60,9 @@ We addressed this challenge by developing uRTL, a novel toolset for systematical
 | [rtl/urtl/turbo9_urtl.mac](rtl/urtl/turbo9_urtl.mac)                          | uRTL Macro Definitions                      |
 |                                                                               |                                             |
 | **uRTL Outputs**                                                              |                                             |
-| [rtl/urtl/turbo9_urtl_microcode.v](rtl/turbo9_urtl_microcode.v/)              | uRTL Sequential Decode Verilog Output       |
-| [rtl/urtl/turbo9_urtl_decode_pg1_JTA.v](rtl/turbo9_urtl_decode_pg1_JTA.v/)    | uRTL Direct Decode Verilog Output (1 of 15) |
-| [rtl/urtl/urtl_statistics.log](rtl/urtl_statistics.log/)                      | uRTL Control Signal Statistics Report       |
+| [rtl/turbo9_urtl_microcode.v](rtl/turbo9_urtl_microcode.v/)                   | uRTL Sequential Decode Verilog Output       |
+| [rtl/turbo9_urtl_decode_pg1_JTA.v](rtl/turbo9_urtl_decode_pg1_JTA.v/)         | uRTL Direct Decode Verilog Output (1 of 15) |
+| [rtl/urtl/urtl_statistics.log](rtl/urtl/urtl_statistics.log/)                 | uRTL Control Signal Statistics Report       |
 |                                                                               |                                             |
 | **uRTL Assembler Source Code**                                                |                                             |
 | [urtl_asm_src/](urtl_asm_src)                                                 | uRTL Microcode Assembler Source Code        |

@@ -92,7 +92,7 @@ RESET:
   DMEM_LOAD_W
 
   JUMP            JMP
-  end_state
+  micro_op_end
 
 ; ////////////////////////////////////////////////////////////////////////////
 ;                           LOAD ADDRESSING MODES
@@ -169,7 +169,7 @@ LD_DIR_EXT:
   DMEM_LOAD_W
 
   JUMP_TABLE_B
-  end_state
+  micro_op_end
 
 
 LD_INDEXED:
@@ -241,7 +241,7 @@ LD_INDEXED:
 
   IF              NOT_INDIRECT
   JUMP_TABLE_B
-  end_state
+  micro_op_end
 
 LD_INDIRECT:
   DATA_PASS_B     DMEM_RD
@@ -253,7 +253,7 @@ LD_INDIRECT:
   DMEM_LOAD_W
 
   JUMP_TABLE_B
-  end_state
+  micro_op_end
 ; //
 ; ////////////////////////////////////////////////////////////////////////////
 
@@ -288,14 +288,14 @@ ST_INDEXED:
 
   IF              NOT_INDIRECT
   JUMP_TABLE_B
-  end_state
+  micro_op_end
 
 ST_INDIRECT:
   DATA_PASS_B     DMEM_RD
   DATA_WRITE      EA
   
   JUMP_TABLE_B
-  end_state
+  micro_op_end
 
 ; //
 ; ////////////////////////////////////////////////////////////////////////////
@@ -317,7 +317,7 @@ ABX:
   DATA_WRITE      R1
 
   JUMP_TABLE_A_NEXT_PC
-  end_state
+  micro_op_end
 
 ; //////////////////////////////////////////// EXG
 ; //
@@ -328,13 +328,13 @@ EXG:
 
   DATA_PASS_A     R1
   DATA_WRITE      EA
-  end_state
+  micro_op_end
 
   DATA_PASS_A     R2
   DATA_WRITE      R1
   
   CCR_OP_W        OP_XXXXXXXX ; Just in case CCR is destination
-  end_state
+  micro_op_end
 
   DATA_PASS_A     EA
   DATA_WRITE      R2
@@ -342,7 +342,7 @@ EXG:
   CCR_OP_W        OP_XXXXXXXX ; Just in case CCR is destination
 
   JUMP            GO_NEW_PC ; Just in case PC is destination
-  end_state
+  micro_op_end
 
 
 ; //////////////////////////////////////////// LEA S or U
@@ -358,7 +358,7 @@ LEA_SU:
   DATA_WRITE      R1
 
   JUMP_TABLE_A_NEXT_PC
-  end_state
+  micro_op_end
 
 ; //////////////////////////////////////////// LEA X or Y
 ; //
@@ -377,7 +377,7 @@ LEA_XY:
   CCR_OP_W        OP_oooooXoo 
 
   JUMP_TABLE_A_NEXT_PC
-  end_state
+  micro_op_end
 
 ; //////////////////////////////////////////// NOP
 ; //
@@ -393,7 +393,7 @@ NOP:
   decode pg1_JTA NOP $10 ; page2 (prebyte)
 
   JUMP_TABLE_A_NEXT_PC
-  end_state
+  micro_op_end
 
 ; //////////////////////////////////////////// EMUL EMULS IDIV EDIV EDIVS IDIVS FDIV
 ; //
@@ -414,7 +414,7 @@ SAU16:
 
   IF              SAU_NOT_DONE
   JUMP            SAU16
-  end_state
+  micro_op_end
 
 SAU16_DONE:
 
@@ -423,7 +423,7 @@ SAU16_DONE:
   DATA_WRITE      R2
 
   JUMP            SAU8_DONE
-  end_state
+  micro_op_end
 
 ; //////////////////////////////////////////// DAA MUL
 ; //
@@ -438,7 +438,7 @@ SAU8:
 
   IF              SAU_NOT_DONE
   JUMP            SAU8
-  end_state
+  micro_op_end
 
 SAU8_DONE:
 
@@ -449,7 +449,7 @@ SAU8_DONE:
   CCR_OP_W        OP_ooooXXXX ; SAU masks correct bits
 
   JUMP_TABLE_A_NEXT_PC
-  end_state
+  micro_op_end
 
 ; //////////////////////////////////////////// SEX (in 1 micro-cycle!)
 ; //
@@ -466,7 +466,7 @@ SEX:
   CCR_OP_W        OP_ooooXXXo ; INFO Prog Man says V unaffected, datasheet says v=0
 
   JUMP_TABLE_A_NEXT_PC
-  end_state
+  micro_op_end
 
 ; //////////////////////////////////////////// CPY
 ; //
@@ -478,7 +478,7 @@ CPY:
 ; TODO INFO: could combine this state with SAU states
 
   DATA_SAU_EN ; initalize byte counter from D register
-  end_state
+  micro_op_end
   
 CPY_LOOP:
   DATA_SAU_EN ; enable byte counter
@@ -490,7 +490,7 @@ CPY_LOOP:
 
   IF              SAU_DONE
   JUMP            GO_NEW_PC
-  end_state
+  micro_op_end
   
   DATA_SAU_EN ; enable byte counter
 
@@ -502,7 +502,7 @@ CPY_LOOP:
   DMEM_STORE_W
 
   JUMP            CPY_LOOP
-  end_state
+  micro_op_end
 
 
 
@@ -519,7 +519,7 @@ TFR:
   CCR_OP_W        OP_XXXXXXXX ; Just in case CCR is destination
 
   JUMP            GO_NEW_PC ; Just in case PC is destination
-  end_state
+  micro_op_end
 
 ; //
 ; ////////////////////////////////////////////////////////////////////////////
@@ -556,7 +556,7 @@ ADC:
   CCR_OP_W        OP_ooXoXXXX ; H is masked for 16bit
 
   JUMP_TABLE_A_NEXT_PC
-  end_state
+  micro_op_end
 
 ; //////////////////////////////////////////// ADD
 ; //
@@ -593,7 +593,7 @@ ADD:
   CCR_OP_W        OP_ooXoXXXX ; H is masked for 16bit
 
   JUMP_TABLE_A_NEXT_PC
-  end_state
+  micro_op_end
 
 
 ; //////////////////////////////////////////// AND
@@ -623,7 +623,7 @@ AND:
   CCR_OP_W        OP_ooooXXXo 
 
   JUMP_TABLE_A_NEXT_PC
-  end_state
+  micro_op_end
 
 ANDCC:
   decode pg1_JTA ANDCC $1C ; ANDCC (imm)
@@ -638,7 +638,7 @@ ANDCC:
   CCR_OP_W        OP_XXXXXXXX 
 
   JUMP_TABLE_A_NEXT_PC
-  end_state
+  micro_op_end
 
 ; //////////////////////////////////////////// BIT
 ; //
@@ -666,7 +666,7 @@ BIT:
   CCR_OP_W        OP_ooooXXXo 
 
   JUMP_TABLE_A_NEXT_PC
-  end_state
+  micro_op_end
 
 ; //////////////////////////////////////////// CMP
 ; //
@@ -734,7 +734,7 @@ CMP:
   CCR_OP_W        OP_ooooXXXX ; INFO: Spec H Undefined, Turbo9 H not affected
 
   JUMP_TABLE_A_NEXT_PC
-  end_state
+  micro_op_end
 
 ; //////////////////////////////////////////// EOR
 ; //
@@ -763,7 +763,7 @@ EOR:
   CCR_OP_W        OP_ooooXXXo 
 
   JUMP_TABLE_A_NEXT_PC
-  end_state
+  micro_op_end
 
 ; //////////////////////////////////////////// LD
 ; //
@@ -832,7 +832,7 @@ LD:
   CCR_OP_W        OP_ooooXXXo
 
   JUMP_TABLE_A_NEXT_PC
-  end_state
+  micro_op_end
 
 ; //////////////////////////////////////////// OR
 ; //
@@ -861,7 +861,7 @@ OR:
   CCR_OP_W        OP_ooooXXXo 
 
   JUMP_TABLE_A_NEXT_PC
-  end_state
+  micro_op_end
 
 ORCC:
   decode pg1_JTA ORCC  $1A ; ORCC (imm)
@@ -876,7 +876,7 @@ ORCC:
   CCR_OP_W        OP_XXXXXXXX 
 
   JUMP_TABLE_A_NEXT_PC
-  end_state
+  micro_op_end
 
 ; //////////////////////////////////////////// SBC
 ; //
@@ -905,7 +905,7 @@ SBC:
   CCR_OP_W        OP_ooooXXXX ; INFO: Spec H Undefined, Turbo9 H not affected
 
   JUMP_TABLE_A_NEXT_PC
-  end_state
+  micro_op_end
 
 ; //////////////////////////////////////////// SUB
 ; //
@@ -942,7 +942,7 @@ SUB:
   CCR_OP_W        OP_ooooXXXX ; INFO: Spec H Undefined, Turbo9 H not affected (8-bit)
 
   JUMP_TABLE_A_NEXT_PC
-  end_state
+  micro_op_end
 
 
 ; //
@@ -1023,7 +1023,7 @@ ST:
   DMEM_STORE_W
 
   JUMP_TABLE_A_NEXT_PC
-  end_state
+  micro_op_end
 
 ; //
 ; ////////////////////////////////////////////////////////////////////////////
@@ -1057,7 +1057,7 @@ ASL_LSL:
   DMEM_STORE_W ; Disabled for inherent addressing modes
 
   JUMP_TABLE_A_NEXT_PC
-  end_state
+  micro_op_end
 
 ; //////////////////////////////////////////// ASR
 ; //
@@ -1082,7 +1082,7 @@ ASR:
   DMEM_STORE_W  ; Disabled for inherent addressing modes
 
   JUMP_TABLE_A_NEXT_PC
-  end_state
+  micro_op_end
 
 ; //////////////////////////////////////////// CLR
 ; //
@@ -1116,7 +1116,7 @@ CLR:
   DMEM_STORE_W  ; Disabled for inherent addressing modes
 
   JUMP_TABLE_A_NEXT_PC
-  end_state
+  micro_op_end
 
 ; //////////////////////////////////////////// COM
 ; //
@@ -1144,7 +1144,7 @@ COM:
   DMEM_STORE_W ; Disabled for inherent addressing modes
 
   JUMP_TABLE_A_NEXT_PC
-  end_state
+  micro_op_end
 
 ; //////////////////////////////////////////// DEC
 ; //
@@ -1169,7 +1169,7 @@ DEC:
   DMEM_STORE_W ; Disabled for inherent addressing modes
 
   JUMP_TABLE_A_NEXT_PC
-  end_state
+  micro_op_end
 
 ; //////////////////////////////////////////// INC
 ; //
@@ -1194,7 +1194,7 @@ INC:
   DMEM_STORE_W ; Disabled for inherent addressing modes
 
   JUMP_TABLE_A_NEXT_PC
-  end_state
+  micro_op_end
 
 ; //////////////////////////////////////////// LSR
 ; //
@@ -1219,7 +1219,7 @@ LSR:
   DMEM_STORE_W ; Disabled for inherent addressing modes
 
   JUMP_TABLE_A_NEXT_PC
-  end_state
+  micro_op_end
 
 ; //////////////////////////////////////////// NEG
 ; //
@@ -1247,7 +1247,7 @@ NEG:
   DMEM_STORE_W ; Disabled for inherent addressing modes
 
   JUMP_TABLE_A_NEXT_PC
-  end_state
+  micro_op_end
 
 ; //////////////////////////////////////////// ROL
 ; //
@@ -1272,7 +1272,7 @@ ROL:
   DMEM_STORE_W ; Disabled for inherent addressing modes
 
   JUMP_TABLE_A_NEXT_PC
-  end_state
+  micro_op_end
 
 ; //////////////////////////////////////////// ROR
 ; //
@@ -1297,7 +1297,7 @@ ROR:
   DMEM_STORE_W ; Disabled for inherent addressing modes
 
   JUMP_TABLE_A_NEXT_PC
-  end_state
+  micro_op_end
 
 ; //////////////////////////////////////////// TST
 ; //
@@ -1318,7 +1318,7 @@ TST:
   CCR_OP_W        OP_ooooXXXo
 
   JUMP_TABLE_A_NEXT_PC
-  end_state
+  micro_op_end
 
 ; //
 ; ////////////////////////////////////////////////////////////////////////////
@@ -1392,11 +1392,11 @@ BRANCH:
 
   IF              BRANCH_COND
   JUMP_TABLE_B
-  end_state
+  micro_op_end
 
 GO_NEW_PC:
   JUMP_TABLE_A_NEXT_PC
-  end_state
+  micro_op_end
 
 ; //////////////////////////////////////////// JMP
 ; //
@@ -1413,7 +1413,7 @@ JMP:
   DATA_WRITE      R1 ; PC
 
   JUMP            GO_NEW_PC ; PC must be written before "JUMP_TABLE_A_NEXT_PC"
-  end_state
+  micro_op_end
 
 
 ; ////////////////////////////////////////////////////////////////////////////
@@ -1447,7 +1447,7 @@ JSR:
   DMEM_STORE_W
 
   JUMP            JMP 
-  end_state
+  micro_op_end
 
 ; //////////////////////////////////////////// RTS
 ; //
@@ -1463,7 +1463,7 @@ RTS:
   DMEM_LOAD_W
   
   JUMP            JMP
-  end_state
+  micro_op_end
 
 ; //////////////////////////////////////////// RTI
 ; //
@@ -1474,25 +1474,25 @@ RTI:
   decode pg1_AR  S        $3B ; RTI
   
   STACK_PULL      ZERO  ; Prime the decode pipeline!
-  end_state
+  micro_op_end
 
   SET_DATA_WIDTH  W_STACK_REG
   
   STACK_PULL      AR
   DMEM_LOAD_W
-  end_state
+  micro_op_end
 
 RTI_CCR:
   DATA_PASS_B     DMEM_RD
   DATA_WRITE      STACK_REG
 
   CCR_OP_W        OP_XXXXXXXX ; FIXME get rid of this requirement
-  end_state
+  micro_op_end
 
 RTI_TEST_E:
   IF              E_CLEAR
   JUMP            RTS
-  end_state
+  micro_op_end
 
 RTI_PUL_ALL:
   SET_DATA_WIDTH  W_STACK_REG
@@ -1501,7 +1501,7 @@ RTI_PUL_ALL:
   DMEM_LOAD_W
   
   JUMP            PUL_LOOP
-  end_state
+  micro_op_end
 
 
 ; //////////////////////////////////////////// PULS PULU
@@ -1518,7 +1518,7 @@ PUL:
   
   IF              STACK_DONE
   JUMP            NOP
-  end_state
+  micro_op_end
   
   SET_DATA_WIDTH  W_STACK_REG
   
@@ -1527,7 +1527,7 @@ PUL:
   
   IF              STACK_DONE
   JUMP            PUL_DONE
-  end_state
+  micro_op_end
 
 PUL_LOOP:
   DATA_PASS_B     DMEM_RD
@@ -1542,7 +1542,7 @@ PUL_LOOP:
 
   IF              STACK_NEXT
   JUMP            PUL_LOOP
-  end_state
+  micro_op_end
 
 PUL_DONE:
   DATA_PASS_B     DMEM_RD
@@ -1551,7 +1551,7 @@ PUL_DONE:
   CCR_OP_W        OP_XXXXXXXX ; FIXME get rid of this requirement
 
   JUMP            GO_NEW_PC ; PC must be written before "JUMP_TABLE_A_NEXT_PC" FIXME?
-  end_state
+  micro_op_end
 
 
 ; //////////////////////////////////////////// PSHS PSHU
@@ -1567,7 +1567,7 @@ PSH:
 
   IF              STACK_DONE
   JUMP            NOP
-  end_state
+  micro_op_end
   
 PSH_LOOP:
   DATA_PASS_A     STACK_REG
@@ -1579,10 +1579,10 @@ PSH_LOOP:
 
   IF              STACK_NEXT
   JUMP            PSH_LOOP
-  end_state
+  micro_op_end
 
   JUMP_TABLE_A_NEXT_PC
-  end_state
+  micro_op_end
 
 
 ; //////////////////////////////////////////// SWI
@@ -1596,7 +1596,7 @@ SWI:
   STACK_PUSH      ZERO  ; Prime the decode pipeline!
 
   CCR_OP_W        OP_1ooooooo ; Set E
-  end_state
+  micro_op_end
   
 SWI_LOOP:
   DATA_PASS_A     STACK_REG
@@ -1608,7 +1608,7 @@ SWI_LOOP:
 
   IF              STACK_NEXT
   JUMP            SWI_LOOP
-  end_state
+  micro_op_end
 
   ; R1 is PC
   ; R2 is DMEM_RD
@@ -1621,7 +1621,7 @@ SWI_LOOP:
   CCR_OP_W        OP_o1o1oooo ; Set I & F
 
   JUMP            JMP
-  end_state
+  micro_op_end
 
 
 
@@ -1633,5 +1633,5 @@ SWI_LOOP:
 TRAP:
 
   JUMP            TRAP
-  end_state
+  micro_op_end
 

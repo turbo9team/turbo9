@@ -128,7 +128,7 @@ s16 assemble(macro_ctx_t *macro_ctx, char *asm_file_name, s16 (*f)(u32, ctrl_vec
         goto done;
       }
     }
-    else if(strstr(line, "end_state"))
+    else if(strstr(line, "micro_op_end"))
     {
       u08 idx;
       // TODO: Here is where you want to call whatever function to 
@@ -148,7 +148,7 @@ s16 assemble(macro_ctx_t *macro_ctx, char *asm_file_name, s16 (*f)(u32, ctrl_vec
       }
 
       WRITE_LOG_NF(LOG_HIGH, "###############################################################\n");
-      WRITE_LOG_NF(LOG_HIGH, "STATE OF CONTROL VECTORS AT end_state\n");
+      WRITE_LOG_NF(LOG_HIGH, "STATE OF CONTROL VECTORS AT micro_op_end\n");
       print_ctrl_vec_list_equ_sel(cv_ctx);
       printf("------------------------------------------------------------------\n");
 

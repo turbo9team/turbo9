@@ -3207,7 +3207,7 @@
 [build_macro_list]: state: 0  	macro_total: 0  	
 [build_macro_list]: state: 0  	macro_total: 0  	
 [build_macro_list]: state: 0  	macro_total: 0  	macro_begin JUMP
-[build_macro_list]: Found macro_begin name PÁ÷8V
+[build_macro_list]: Found macro_begin name P!ÞšÒU
 [build_macro_list]: state: 1  	macro_total: 1  	cv_MICRO_SEQ_OP set OP_JUMP
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_MICRO_SEQ_OP, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = OP_JUMP, its value = 1
@@ -3218,7 +3218,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 1  	
 [build_macro_list]: state: 0  	macro_total: 1  	macro_begin CALL
-[build_macro_list]: Found macro_begin name PÁ÷8V
+[build_macro_list]: Found macro_begin name P!ÞšÒU
 [build_macro_list]: state: 1  	macro_total: 2  	cv_MICRO_SEQ_OP set OP_CALL
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_MICRO_SEQ_OP, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = OP_CALL, its value = 2
@@ -3229,7 +3229,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 2  	
 [build_macro_list]: state: 0  	macro_total: 2  	macro_begin RETURN
-[build_macro_list]: Found macro_begin name PÁ÷8V
+[build_macro_list]: Found macro_begin name P!ÞšÒU
 [build_macro_list]: state: 1  	macro_total: 3  	cv_MICRO_SEQ_OP set OP_RETURN
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_MICRO_SEQ_OP, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = OP_RETURN, its value = 3
@@ -3237,7 +3237,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 3  	
 [build_macro_list]: state: 0  	macro_total: 3  	macro_begin JUMP_TABLE_B
-[build_macro_list]: Found macro_begin name PÁ÷8V
+[build_macro_list]: Found macro_begin name P!ÞšÒU
 [build_macro_list]: state: 1  	macro_total: 4  	cv_MICRO_SEQ_OP set OP_JUMP_TABLE_B
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_MICRO_SEQ_OP, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = OP_JUMP_TABLE_B, its value = 4
@@ -3245,7 +3245,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 4  	
 [build_macro_list]: state: 0  	macro_total: 4  	macro_begin JUMP_TABLE_A_NEXT_PC
-[build_macro_list]: Found macro_begin name PÁ÷8V
+[build_macro_list]: Found macro_begin name P!ÞšÒU
 [build_macro_list]: state: 1  	macro_total: 5  	cv_MICRO_SEQ_OP set OP_JUMP_TABLE_A_NEXT_PC
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_MICRO_SEQ_OP, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = OP_JUMP_TABLE_A_NEXT_PC, its value = 5
@@ -3254,7 +3254,7 @@
 [build_macro_list]: state: 0  	macro_total: 5  	
 [build_macro_list]: state: 0  	macro_total: 5  	
 [build_macro_list]: state: 0  	macro_total: 5  	macro_begin SET_DATA_WIDTH
-[build_macro_list]: Found macro_begin name PÁ÷8V
+[build_macro_list]: Found macro_begin name P!ÞšÒU
 [build_macro_list]: state: 1  	macro_total: 6  	cv_DATA_WIDTH_SEL arg 0
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_DATA_WIDTH_SEL, type: arg
 [add_ctrl_vec_def_by_macro]: ARG add ctrl_vec_def_by_macro: data value: 0, arg_num = 0
@@ -3263,7 +3263,7 @@
 [build_macro_list]: state: 0  	macro_total: 6  	
 [build_macro_list]: state: 0  	macro_total: 6  	
 [build_macro_list]: state: 0  	macro_total: 6  	macro_begin IF
-[build_macro_list]: Found macro_begin name PÁ÷8V
+[build_macro_list]: Found macro_begin name P!ÞšÒU
 [build_macro_list]: state: 1  	macro_total: 7  	cv_MICRO_SEQ_COND_SEL arg 0
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_MICRO_SEQ_COND_SEL, type: arg
 [add_ctrl_vec_def_by_macro]: ARG add ctrl_vec_def_by_macro: data value: 0, arg_num = 0
@@ -3272,7 +3272,7 @@
 [build_macro_list]: state: 0  	macro_total: 7  	
 [build_macro_list]: state: 0  	macro_total: 7  	
 [build_macro_list]: state: 0  	macro_total: 7  	macro_begin ADDR_PASS
-[build_macro_list]: Found macro_begin name PÁ÷8V
+[build_macro_list]: Found macro_begin name P!ÞšÒU
 [build_macro_list]: state: 1  	macro_total: 8  	cv_ADDR_ALU_REG_SEL arg 0
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_ADDR_ALU_REG_SEL, type: arg
 [add_ctrl_vec_def_by_macro]: ARG add ctrl_vec_def_by_macro: data value: 0, arg_num = 0
@@ -3280,7 +3280,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 8  	
 [build_macro_list]: state: 0  	macro_total: 8  	macro_begin ADDR_INX_OR_LOAD_IND 
-[build_macro_list]: Found macro_begin name PÁ÷8V
+[build_macro_list]: Found macro_begin name P!ÞšÒU
 [build_macro_list]: state: 1  	macro_total: 9  	cv_DATA_WIDTH_SEL set W_R1_OR_IND
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_DATA_WIDTH_SEL, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = W_R1_OR_IND, its value = 1
@@ -3291,7 +3291,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 9  	
 [build_macro_list]: state: 0  	macro_total: 9  	macro_begin STACK_PULL
-[build_macro_list]: Found macro_begin name PÁ÷8V
+[build_macro_list]: Found macro_begin name P!ÞšÒU
 [build_macro_list]: state: 1  	macro_total: 10  	cv_ADDR_ALU_REG_SEL arg 0
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_ADDR_ALU_REG_SEL, type: arg
 [add_ctrl_vec_def_by_macro]: ARG add ctrl_vec_def_by_macro: data value: 0, arg_num = 0
@@ -3302,7 +3302,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 10  	
 [build_macro_list]: state: 0  	macro_total: 10  	macro_begin STACK_PUSH
-[build_macro_list]: Found macro_begin name PÁ÷8V
+[build_macro_list]: Found macro_begin name P!ÞšÒU
 [build_macro_list]: state: 1  	macro_total: 11  	cv_ADDR_ALU_REG_SEL arg 0
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_ADDR_ALU_REG_SEL, type: arg
 [add_ctrl_vec_def_by_macro]: ARG add ctrl_vec_def_by_macro: data value: 0, arg_num = 0
@@ -3314,7 +3314,7 @@
 [build_macro_list]: state: 0  	macro_total: 11  	
 [build_macro_list]: state: 0  	macro_total: 11  	
 [build_macro_list]: state: 0  	macro_total: 11  	macro_begin DATA_PASS_A
-[build_macro_list]: Found macro_begin name PÁ÷8V
+[build_macro_list]: Found macro_begin name P!ÞšÒU
 [build_macro_list]: state: 1  	macro_total: 12  	cv_DATA_ALU_COND_SEL set ZERO_BIT
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_DATA_ALU_COND_SEL, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = ZERO_BIT, its value = 0
@@ -3331,7 +3331,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 12  	
 [build_macro_list]: state: 0  	macro_total: 12  	macro_begin DATA_PASS_B
-[build_macro_list]: Found macro_begin name PÁ÷8V
+[build_macro_list]: Found macro_begin name P!ÞšÒU
 [build_macro_list]: state: 1  	macro_total: 13  	cv_DATA_ALU_COND_SEL set ZERO_BIT
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_DATA_ALU_COND_SEL, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = ZERO_BIT, its value = 0
@@ -3348,7 +3348,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 13  	
 [build_macro_list]: state: 0  	macro_total: 13  	macro_begin DATA_INC
-[build_macro_list]: Found macro_begin name PÁ÷8V
+[build_macro_list]: Found macro_begin name P!ÞšÒU
 [build_macro_list]: state: 1  	macro_total: 14  	cv_DATA_ALU_COND_SEL set ONE_BIT
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_DATA_ALU_COND_SEL, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = ONE_BIT, its value = 1
@@ -3365,7 +3365,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 14  	
 [build_macro_list]: state: 0  	macro_total: 14  	macro_begin DATA_DEC
-[build_macro_list]: Found macro_begin name PÁ÷8V
+[build_macro_list]: Found macro_begin name P!ÞšÒU
 [build_macro_list]: state: 1  	macro_total: 15  	cv_DATA_ALU_COND_SEL set ONE_BIT
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_DATA_ALU_COND_SEL, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = ONE_BIT, its value = 1
@@ -3382,7 +3382,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 15  	
 [build_macro_list]: state: 0  	macro_total: 15  	macro_begin DATA_INVERT_B
-[build_macro_list]: Found macro_begin name PÁ÷8V
+[build_macro_list]: Found macro_begin name P!ÞšÒU
 [build_macro_list]: state: 1  	macro_total: 16  	cv_DATA_ALU_COND_SEL set ONE_BIT
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_DATA_ALU_COND_SEL, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = ONE_BIT, its value = 1
@@ -3399,7 +3399,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 16  	
 [build_macro_list]: state: 0  	macro_total: 16  	macro_begin DATA_LSHIFT_W 
-[build_macro_list]: Found macro_begin name PÁ÷8V
+[build_macro_list]: Found macro_begin name P!ÞšÒU
 [build_macro_list]: state: 1  	macro_total: 17  	cv_DATA_ALU_COND_SEL arg 1
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_DATA_ALU_COND_SEL, type: arg
 [add_ctrl_vec_def_by_macro]: ARG add ctrl_vec_def_by_macro: data value: 1, arg_num = 0
@@ -3416,7 +3416,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 17  	
 [build_macro_list]: state: 0  	macro_total: 17  	macro_begin DATA_RSHIFT_W 
-[build_macro_list]: Found macro_begin name PÁ÷8V
+[build_macro_list]: Found macro_begin name P!ÞšÒU
 [build_macro_list]: state: 1  	macro_total: 18  	cv_DATA_ALU_COND_SEL arg 0
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_DATA_ALU_COND_SEL, type: arg
 [add_ctrl_vec_def_by_macro]: ARG add ctrl_vec_def_by_macro: data value: 0, arg_num = 0
@@ -3433,7 +3433,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 18  	
 [build_macro_list]: state: 0  	macro_total: 18  	macro_begin DATA_SUB
-[build_macro_list]: Found macro_begin name PÁ÷8V
+[build_macro_list]: Found macro_begin name P!ÞšÒU
 [build_macro_list]: state: 1  	macro_total: 19  	cv_DATA_ALU_COND_SEL set ZERO_BIT
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_DATA_ALU_COND_SEL, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = ZERO_BIT, its value = 0
@@ -3450,7 +3450,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 19  	
 [build_macro_list]: state: 0  	macro_total: 19  	macro_begin DATA_ADD
-[build_macro_list]: Found macro_begin name PÁ÷8V
+[build_macro_list]: Found macro_begin name P!ÞšÒU
 [build_macro_list]: state: 1  	macro_total: 20  	cv_DATA_ALU_COND_SEL set ZERO_BIT
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_DATA_ALU_COND_SEL, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = ZERO_BIT, its value = 0
@@ -3467,7 +3467,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 20  	
 [build_macro_list]: state: 0  	macro_total: 20  	macro_begin DATA_ADDC
-[build_macro_list]: Found macro_begin name PÁ÷8V
+[build_macro_list]: Found macro_begin name P!ÞšÒU
 [build_macro_list]: state: 1  	macro_total: 21  	cv_DATA_ALU_COND_SEL set CARRY_BIT
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_DATA_ALU_COND_SEL, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = CARRY_BIT, its value = 2
@@ -3484,7 +3484,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 21  	
 [build_macro_list]: state: 0  	macro_total: 21  	macro_begin DATA_SUBC
-[build_macro_list]: Found macro_begin name PÁ÷8V
+[build_macro_list]: Found macro_begin name P!ÞšÒU
 [build_macro_list]: state: 1  	macro_total: 22  	cv_DATA_ALU_COND_SEL set CARRY_BIT
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_DATA_ALU_COND_SEL, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = CARRY_BIT, its value = 2
@@ -3501,7 +3501,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 22  	
 [build_macro_list]: state: 0  	macro_total: 22  	macro_begin DATA_OR
-[build_macro_list]: Found macro_begin name PÁ÷8V
+[build_macro_list]: Found macro_begin name P!ÞšÒU
 [build_macro_list]: state: 1  	macro_total: 23  	cv_DATA_ALU_COND_SEL set ZERO_BIT
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_DATA_ALU_COND_SEL, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = ZERO_BIT, its value = 0
@@ -3518,7 +3518,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 23  	
 [build_macro_list]: state: 0  	macro_total: 23  	macro_begin DATA_XOR
-[build_macro_list]: Found macro_begin name PÁ÷8V
+[build_macro_list]: Found macro_begin name P!ÞšÒU
 [build_macro_list]: state: 1  	macro_total: 24  	cv_DATA_ALU_COND_SEL set ZERO_BIT
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_DATA_ALU_COND_SEL, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = ZERO_BIT, its value = 0
@@ -3535,7 +3535,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 24  	
 [build_macro_list]: state: 0  	macro_total: 24  	macro_begin DATA_AND
-[build_macro_list]: Found macro_begin name PÁ÷8V
+[build_macro_list]: Found macro_begin name P!ÞšÒU
 [build_macro_list]: state: 1  	macro_total: 25  	cv_DATA_ALU_COND_SEL set ZERO_BIT
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_DATA_ALU_COND_SEL, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = ZERO_BIT, its value = 0
@@ -3552,7 +3552,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 25  	
 [build_macro_list]: state: 0  	macro_total: 25  	macro_begin DATA_SAU_EN
-[build_macro_list]: Found macro_begin name PÁ÷8V
+[build_macro_list]: Found macro_begin name P!ÞšÒU
 [build_macro_list]: state: 1  	macro_total: 26  	cv_DATA_ALU_SAU_EN set TRUE
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_DATA_ALU_SAU_EN, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = TRUE, its value = 1
@@ -3560,7 +3560,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 26  	
 [build_macro_list]: state: 0  	macro_total: 26  	macro_begin DATA_SAU_DONE
-[build_macro_list]: Found macro_begin name PÁ÷8V
+[build_macro_list]: Found macro_begin name P!ÞšÒU
 [build_macro_list]: state: 1  	macro_total: 27  	cv_DATA_ALU_OP set SAU
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_DATA_ALU_OP, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = SAU, its value = 7
@@ -3568,7 +3568,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 27  	
 [build_macro_list]: state: 0  	macro_total: 27  	macro_begin DATA_WRITE
-[build_macro_list]: Found macro_begin name PÁ÷8V
+[build_macro_list]: Found macro_begin name P!ÞšÒU
 [build_macro_list]: state: 1  	macro_total: 28  	cv_DATA_ALU_WR_SEL arg 0
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_DATA_ALU_WR_SEL, type: arg
 [add_ctrl_vec_def_by_macro]: ARG add ctrl_vec_def_by_macro: data value: 0, arg_num = 0
@@ -3577,7 +3577,7 @@
 [build_macro_list]: state: 0  	macro_total: 28  	
 [build_macro_list]: state: 0  	macro_total: 28  	
 [build_macro_list]: state: 0  	macro_total: 28  	macro_begin CCR_OP_W
-[build_macro_list]: Found macro_begin name PÁ÷8V
+[build_macro_list]: Found macro_begin name P!ÞšÒU
 [build_macro_list]: state: 1  	macro_total: 29  	cv_CCR_OP arg 0
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_CCR_OP, type: arg
 [add_ctrl_vec_def_by_macro]: ARG add ctrl_vec_def_by_macro: data value: 0, arg_num = 0
@@ -3586,7 +3586,7 @@
 [build_macro_list]: state: 0  	macro_total: 29  	
 [build_macro_list]: state: 0  	macro_total: 29  	
 [build_macro_list]: state: 0  	macro_total: 29  	macro_begin DMEM_LOAD_W
-[build_macro_list]: Found macro_begin name PÁ÷8V
+[build_macro_list]: Found macro_begin name P!ÞšÒU
 [build_macro_list]: state: 1  	macro_total: 30  	cv_DMEM_OP set DMEM_OP_RD
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_DMEM_OP, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = DMEM_OP_RD, its value = 2
@@ -3594,7 +3594,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 30  	
 [build_macro_list]: state: 0  	macro_total: 30  	macro_begin DMEM_STORE_W
-[build_macro_list]: Found macro_begin name PÁ÷8V
+[build_macro_list]: Found macro_begin name P!ÞšÒU
 [build_macro_list]: state: 1  	macro_total: 31  	cv_DMEM_OP set DMEM_OP_WR
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_DMEM_OP, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = DMEM_OP_WR, its value = 3
@@ -3607,7 +3607,7 @@
 [build_macro_list]: state: 0  	macro_total: 31  	
 [build_macro_list]: state: 0  	macro_total: 31  	
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -3833,7 +3833,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -4059,7 +4059,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -4285,7 +4285,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -4511,7 +4511,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -4737,7 +4737,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -4963,7 +4963,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -5189,7 +5189,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -5415,7 +5415,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -5641,7 +5641,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -5867,7 +5867,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -6093,7 +6093,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -6319,7 +6319,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -6545,7 +6545,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -6771,7 +6771,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -6997,7 +6997,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -7223,7 +7223,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -7449,7 +7449,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -7675,7 +7675,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -7901,7 +7901,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -8127,7 +8127,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -8353,7 +8353,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -8579,7 +8579,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -8805,7 +8805,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -9031,7 +9031,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -9257,7 +9257,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -9483,7 +9483,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -9709,7 +9709,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -9935,7 +9935,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -10161,7 +10161,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -10387,7 +10387,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -10613,7 +10613,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -10839,7 +10839,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -11065,7 +11065,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -11291,7 +11291,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -11517,7 +11517,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -11743,7 +11743,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -11969,7 +11969,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -12195,7 +12195,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -12421,7 +12421,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -12647,7 +12647,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -12873,7 +12873,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -13099,7 +13099,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -13325,7 +13325,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -13551,7 +13551,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -13777,7 +13777,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -14003,7 +14003,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -14229,7 +14229,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -14455,7 +14455,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -14681,7 +14681,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -14907,7 +14907,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -15133,7 +15133,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -15359,7 +15359,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -15585,7 +15585,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -15811,7 +15811,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -16037,7 +16037,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -16263,7 +16263,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -16489,7 +16489,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -16715,7 +16715,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -16941,7 +16941,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -17167,7 +17167,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -17393,7 +17393,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -17619,7 +17619,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -17845,7 +17845,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -18071,7 +18071,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -18297,7 +18297,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17
@@ -18523,7 +18523,7 @@ EQU used 0 times
 EQU used 0 times in decode
 =============================
 ###############################################################
-STATE OF CONTROL VECTORS AT end_state
+STATE OF CONTROL VECTORS AT micro_op_end
 
 [print_ctrl_vec_list_equ_sel]: Control Vector equ_sel list dump follows:
 [print_ctrl_vec_list_equ_sel]: total ctrl_vec count: 17

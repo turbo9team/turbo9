@@ -293,7 +293,7 @@ s16 init_ctrl_vec_ctx(ctrl_vec_ctx_t *ctx)
 
     // Upon init, always set the "equ_sel" to the default 0th EQU.
     // When assembling, this entry will change as arguments are read
-    // and then it will be reset back to 0 after an end_state.
+    // and then it will be reset back to 0 after an micro_op_end.
     ctx->list[idx].equ_sel = &ctx->list[idx].equ[0];
     ctx->list[idx].equ_is_coded = 0;
   }
@@ -706,7 +706,7 @@ s16 load_labels_to_context_from_asm_file(ctrl_vec_ctx_t *ctx, char *asm_filename
       WRITE_LOG(LOG_HIGH, "Found ORG, setting address to %x (%d)\n", value, value);
       //printf("Found ORG, setting address to %x (%d)\n", value, value);
     }
-    else if(check_field(line, "end_state", 1, 0) == ERR_OK)
+    else if(check_field(line, "micro_op_end", 1, 0) == ERR_OK)
     {
       value++;
     }

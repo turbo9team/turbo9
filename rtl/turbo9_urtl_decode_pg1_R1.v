@@ -72,6 +72,7 @@ always @* begin
     8'h0E : PG1_R1_O = 4'h5; // PC          JMP (dir ext)
     8'h0F : PG1_R1_O = 4'hd; // DMEM_RD     CLR (dir ext) sets 8bit width
     8'h14 : PG1_R1_O = 4'h0; // D           EMUL (inh)
+    8'h15 : PG1_R1_O = 4'h0; // D           EMULS (inh)
     8'h16 : PG1_R1_O = 4'h5; // PC          LBRA 
     8'h17 : PG1_R1_O = 4'h5; // PC          BSR LBSR
     8'h18 : PG1_R1_O = 4'h1; // X           IDIV (inh)
@@ -296,6 +297,7 @@ always @* begin
     8'h0E : PG1_R1_op = "JMP (dir ext)";
     8'h0F : PG1_R1_op = "CLR (dir ext) sets 8bit width";
     8'h14 : PG1_R1_op = "EMUL (inh)";
+    8'h15 : PG1_R1_op = "EMULS (inh)";
     8'h16 : PG1_R1_op = "LBRA ";
     8'h17 : PG1_R1_op = "BSR LBSR";
     8'h18 : PG1_R1_op = "IDIV (inh)";
@@ -518,6 +520,7 @@ always @* begin
     8'h0E : PG1_R1_eq = "PC";
     8'h0F : PG1_R1_eq = "DMEM_RD";
     8'h14 : PG1_R1_eq = "D";
+    8'h15 : PG1_R1_eq = "D";
     8'h16 : PG1_R1_eq = "PC";
     8'h17 : PG1_R1_eq = "PC";
     8'h18 : PG1_R1_eq = "X";

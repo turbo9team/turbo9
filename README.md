@@ -40,7 +40,7 @@ The target applications are SoC sub-blocks or small mixed-signal ASICs that requ
 ----------------------------------------
 
 ## Why use the 6809 instruction set? Why not RISC?
-Current industry trends are to adapt 32-bit RISC IP for microcontroller use, however their large 32x32 register files and loosely encoded instructions limit their absolute minimum footprint. So with the goal of a creating a performance _and_ _compact_ microprocessor IP, we need an 16-bit instruction set architecture (ISA). Also, we want an architecture that is capable of running C code effectively. Given these requirements, the Motorola 6809 ISA stands out with its minimal number of registers (shown below), orthogonal instruction set, and powerful indexed and indirect addressing modes that map well to C concepts, such as arrays and pointers. 
+Current industry trends are to adapt 32-bit RISC IP for microcontroller use, however their large 32x32 register files and loosely encoded instructions limit their absolute minimum footprint. So with the goal of a creating a high performance _and_ _compact_ microprocessor IP, we need an 16-bit instruction set architecture (ISA). Also, we want an architecture that is capable of running C code effectively. Given these requirements, the Motorola 6809 ISA stands out with its minimal number of registers (shown below), orthogonal instruction set, and powerful indexed and indirect addressing modes that map well to C concepts, such as arrays and pointers. 
 
 ![Turbo9 Programming Model](./docs/images/turbo9_programming_model_small.png)
 
@@ -53,20 +53,34 @@ We addressed this challenge by developing uRTL, a novel toolset for systematical
 
 ![uRTL Design Flow](./docs/images/urtl_design_flow.png)
 
-|                                                                               |                                             |
-|-------------------------------------------------------------------------------|---------------------------------------------|
-| **uRTL Inputs**                                                               |                                             |
-| [rtl/urtl/turbo9_urtl.asm](rtl/urtl/turbo9_urtl.asm)                          | uRTL Microcode Assembly                     |
-| [rtl/urtl/turbo9_urtl.mac](rtl/urtl/turbo9_urtl.mac)                          | uRTL Macro Definitions                      |
-|                                                                               |                                             |
-| **uRTL Outputs**                                                              |                                             |
-| [rtl/turbo9_urtl_microcode.v](rtl/turbo9_urtl_microcode.v/)                   | uRTL Sequential Decode Verilog Output       |
-| [rtl/turbo9_urtl_decode_pg1_JTA.v](rtl/turbo9_urtl_decode_pg1_JTA.v/)         | uRTL Direct Decode Verilog Output (1 of 15) |
-| [rtl/urtl/urtl_statistics.log](rtl/urtl/urtl_statistics.log/)                 | uRTL Control Signal Statistics Report       |
-|                                                                               |                                             |
-| **uRTL Assembler Source Code**                                                |                                             |
-| [urtl_asm_src/](urtl_asm_src)                                                 | uRTL Microcode Assembler Source Code        |
-|                                                                               |                                             |
+|                                                                               |                                                                    |
+|-------------------------------------------------------------------------------|--------------------------------------------------------------------|
+| **uRTL Inputs**                                                               |                                                                    |
+| [rtl/urtl/turbo9_urtl.asm](rtl/urtl/turbo9_urtl.asm)                          | uRTL Microcode Assembly                                            |
+| [rtl/urtl/turbo9_urtl.mac](rtl/urtl/turbo9_urtl.mac)                          | uRTL Macro Definitions                                             |
+|                                                                               |                                                                    |
+| **uRTL Outputs**                                                              |                                                                    |
+| [rtl/turbo9_urtl_microcode.v      ](rtl/turbo9_urtl_microcode.v/     )        | uRTL Sequential Decode Verilog Output                              |
+| [rtl/turbo9_urtl_decode_pg1_AR.v  ](rtl/turbo9_urtl_decode_pg1_AR.v  )        | uRTL Direct Decode Verilog Output (Page1 Address Register Pointer) |
+| [rtl/turbo9_urtl_decode_pg1_JTA.v ](rtl/turbo9_urtl_decode_pg1_JTA.v )        | uRTL Direct Decode Verilog Output (Page1 Jump Table A)             |
+| [rtl/turbo9_urtl_decode_pg1_JTB.v ](rtl/turbo9_urtl_decode_pg1_JTB.v )        | uRTL Direct Decode Verilog Output (Page1 Jump Table B)             |
+| [rtl/turbo9_urtl_decode_pg1_R1.v  ](rtl/turbo9_urtl_decode_pg1_R1.v  )        | uRTL Direct Decode Verilog Output (Page1 Register 1 Pointer)       |
+| [rtl/turbo9_urtl_decode_pg1_R2.v  ](rtl/turbo9_urtl_decode_pg1_R2.v  )        | uRTL Direct Decode Verilog Output (Page1 Register 2 Pointer)       |
+| [rtl/turbo9_urtl_decode_pg2_AR.v  ](rtl/turbo9_urtl_decode_pg2_AR.v  )        | uRTL Direct Decode Verilog Output (Page2 Address Register Pointer) |
+| [rtl/turbo9_urtl_decode_pg2_JTA.v ](rtl/turbo9_urtl_decode_pg2_JTA.v )        | uRTL Direct Decode Verilog Output (Page2 Jump Table A)             |
+| [rtl/turbo9_urtl_decode_pg2_JTB.v ](rtl/turbo9_urtl_decode_pg2_JTB.v )        | uRTL Direct Decode Verilog Output (Page2 Jump Table B)             |
+| [rtl/turbo9_urtl_decode_pg2_R1.v  ](rtl/turbo9_urtl_decode_pg2_R1.v  )        | uRTL Direct Decode Verilog Output (Page2 Register 1 Pointer)       |
+| [rtl/turbo9_urtl_decode_pg2_R2.v  ](rtl/turbo9_urtl_decode_pg2_R2.v  )        | uRTL Direct Decode Verilog Output (Page2 Register 2 Pointer)       |
+| [rtl/turbo9_urtl_decode_pg3_AR.v  ](rtl/turbo9_urtl_decode_pg3_AR.v  )        | uRTL Direct Decode Verilog Output (Page3 Address Register Pointer) |
+| [rtl/turbo9_urtl_decode_pg3_JTA.v ](rtl/turbo9_urtl_decode_pg3_JTA.v )        | uRTL Direct Decode Verilog Output (Page3 Jump Table A)             |
+| [rtl/turbo9_urtl_decode_pg3_JTB.v ](rtl/turbo9_urtl_decode_pg3_JTB.v )        | uRTL Direct Decode Verilog Output (Page3 Jump Table B)             |
+| [rtl/turbo9_urtl_decode_pg3_R1.v  ](rtl/turbo9_urtl_decode_pg3_R1.v  )        | uRTL Direct Decode Verilog Output (Page3 Register 1 Pointer)       |
+| [rtl/turbo9_urtl_decode_pg3_R2.v  ](rtl/turbo9_urtl_decode_pg3_R2.v  )        | uRTL Direct Decode Verilog Output (Page3 Register 2 Pointer)       |
+| [rtl/urtl/urtl_statistics.log     ](rtl/urtl/urtl_statistics.log/    )        | uRTL Control Signal Statistics Report                              |
+|                                                                               |                                                                    |
+| **uRTL Assembler Source Code**                                                |                                                                    |
+| [urtl_asm_src/](urtl_asm_src)                                                 | uRTL Microcode Assembler Source Code                               |
+|                                                                               |                                                                    |
 
 ----------------------------------------
 

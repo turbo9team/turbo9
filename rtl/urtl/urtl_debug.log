@@ -1042,12 +1042,21 @@
 [build_decode_table]: idx = 4, opcode 14 for table: pg1_R1, EQU: D
 [find_table_by_name]: Table index 0, found table pg1_JTA!
 [add_opcode_to_table]: table pg1_JTA len: 126, alloc size: 3048
-[build_decode_table]: idx = 4, opcode 18 for table: pg1_JTA, EQU: SAU16
+[build_decode_table]: idx = 4, opcode 15 for table: pg1_JTA, EQU: SAU16
 [find_table_by_name]: Table index 9, found table pg1_R2!
 [add_opcode_to_table]: table pg1_R2 len: 2, alloc size: 72
-[build_decode_table]: idx = 4, opcode 18 for table: pg1_R2, EQU: D
+[build_decode_table]: idx = 4, opcode 15 for table: pg1_R2, EQU: Y
 [find_table_by_name]: Table index 6, found table pg1_R1!
 [add_opcode_to_table]: table pg1_R1 len: 6, alloc size: 168
+[build_decode_table]: idx = 4, opcode 15 for table: pg1_R1, EQU: D
+[find_table_by_name]: Table index 0, found table pg1_JTA!
+[add_opcode_to_table]: table pg1_JTA len: 127, alloc size: 3072
+[build_decode_table]: idx = 4, opcode 18 for table: pg1_JTA, EQU: SAU16
+[find_table_by_name]: Table index 9, found table pg1_R2!
+[add_opcode_to_table]: table pg1_R2 len: 3, alloc size: 96
+[build_decode_table]: idx = 4, opcode 18 for table: pg1_R2, EQU: D
+[find_table_by_name]: Table index 6, found table pg1_R1!
+[add_opcode_to_table]: table pg1_R1 len: 7, alloc size: 192
 [build_decode_table]: idx = 4, opcode 18 for table: pg1_R1, EQU: X
 [find_table_by_name]: Table index 1, found table pg2_JTA!
 [add_opcode_to_table]: table pg2_JTA len: 14, alloc size: 360
@@ -1059,49 +1068,49 @@
 [add_opcode_to_table]: table pg2_R1 len: 0, alloc size: 24
 [build_decode_table]: idx = 4, opcode 18 for table: pg2_R1, EQU: X
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 127, alloc size: 3072
+[add_opcode_to_table]: table pg1_JTA len: 128, alloc size: 3096
 [build_decode_table]: idx = 4, opcode 19 for table: pg1_JTA, EQU: SAU8
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 7, alloc size: 192
+[add_opcode_to_table]: table pg1_R1 len: 8, alloc size: 216
 [build_decode_table]: idx = 4, opcode 19 for table: pg1_R1, EQU: D
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 128, alloc size: 3096
+[add_opcode_to_table]: table pg1_JTA len: 129, alloc size: 3120
 [build_decode_table]: idx = 4, opcode 3d for table: pg1_JTA, EQU: SAU8
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 8, alloc size: 216
+[add_opcode_to_table]: table pg1_R1 len: 9, alloc size: 240
 [build_decode_table]: idx = 4, opcode 3d for table: pg1_R1, EQU: D
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 129, alloc size: 3120
+[add_opcode_to_table]: table pg1_JTA len: 130, alloc size: 3144
 [build_decode_table]: idx = 4, opcode 1d for table: pg1_JTA, EQU: SEX
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 9, alloc size: 240
+[add_opcode_to_table]: table pg1_R1 len: 10, alloc size: 264
 [build_decode_table]: idx = 4, opcode 1d for table: pg1_R1, EQU: D
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 3, alloc size: 96
+[add_opcode_to_table]: table pg1_R2 len: 4, alloc size: 120
 [build_decode_table]: idx = 4, opcode 1d for table: pg1_R2, EQU: SEXB
 [find_table_by_name]: Table index 1, found table pg2_JTA!
 [add_opcode_to_table]: table pg2_JTA len: 15, alloc size: 384
 [build_decode_table]: idx = 4, opcode 1f for table: pg2_JTA, EQU: CPY
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 130, alloc size: 3144
+[add_opcode_to_table]: table pg1_JTA len: 131, alloc size: 3168
 [build_decode_table]: idx = 4, opcode 1f for table: pg1_JTA, EQU: TFR
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 131, alloc size: 3168
+[add_opcode_to_table]: table pg1_JTA len: 132, alloc size: 3192
 [build_decode_table]: idx = 4, opcode 89 for table: pg1_JTA, EQU: ADC
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 10, alloc size: 264
+[add_opcode_to_table]: table pg1_R1 len: 11, alloc size: 288
 [build_decode_table]: idx = 4, opcode 89 for table: pg1_R1, EQU: A
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 4, alloc size: 120
+[add_opcode_to_table]: table pg1_R2 len: 5, alloc size: 144
 [build_decode_table]: idx = 4, opcode 89 for table: pg1_R2, EQU: IDATA
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 132, alloc size: 3192
+[add_opcode_to_table]: table pg1_JTA len: 133, alloc size: 3216
 [build_decode_table]: idx = 4, opcode c9 for table: pg1_JTA, EQU: ADC
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 11, alloc size: 288
+[add_opcode_to_table]: table pg1_R1 len: 12, alloc size: 312
 [build_decode_table]: idx = 4, opcode c9 for table: pg1_R1, EQU: B
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 5, alloc size: 144
+[add_opcode_to_table]: table pg1_R2 len: 6, alloc size: 168
 [build_decode_table]: idx = 4, opcode c9 for table: pg1_R2, EQU: IDATA
 [find_table_by_name]: Table index 3, found table pg1_JTB!
 [add_opcode_to_table]: table pg1_JTB len: 4, alloc size: 120
@@ -1111,18 +1120,18 @@
 [add_opcode_to_table]: table pg1_JTB len: 6, alloc size: 168
 [build_decode_table]: idx = 6, opcode b9 for table: pg1_JTB, EQU: ADC
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 12, alloc size: 312
-[build_decode_table]: idx = 4, opcode 99 for table: pg1_R1, EQU: A
 [add_opcode_to_table]: table pg1_R1 len: 13, alloc size: 336
-[build_decode_table]: idx = 5, opcode a9 for table: pg1_R1, EQU: A
+[build_decode_table]: idx = 4, opcode 99 for table: pg1_R1, EQU: A
 [add_opcode_to_table]: table pg1_R1 len: 14, alloc size: 360
+[build_decode_table]: idx = 5, opcode a9 for table: pg1_R1, EQU: A
+[add_opcode_to_table]: table pg1_R1 len: 15, alloc size: 384
 [build_decode_table]: idx = 6, opcode b9 for table: pg1_R1, EQU: A
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 6, alloc size: 168
-[build_decode_table]: idx = 4, opcode 99 for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 7, alloc size: 192
-[build_decode_table]: idx = 5, opcode a9 for table: pg1_R2, EQU: DMEM_RD
+[build_decode_table]: idx = 4, opcode 99 for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 8, alloc size: 216
+[build_decode_table]: idx = 5, opcode a9 for table: pg1_R2, EQU: DMEM_RD
+[add_opcode_to_table]: table pg1_R2 len: 9, alloc size: 240
 [build_decode_table]: idx = 6, opcode b9 for table: pg1_R2, EQU: DMEM_RD
 [find_table_by_name]: Table index 3, found table pg1_JTB!
 [add_opcode_to_table]: table pg1_JTB len: 7, alloc size: 192
@@ -1132,45 +1141,45 @@
 [add_opcode_to_table]: table pg1_JTB len: 9, alloc size: 240
 [build_decode_table]: idx = 6, opcode f9 for table: pg1_JTB, EQU: ADC
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 15, alloc size: 384
-[build_decode_table]: idx = 4, opcode d9 for table: pg1_R1, EQU: B
 [add_opcode_to_table]: table pg1_R1 len: 16, alloc size: 408
-[build_decode_table]: idx = 5, opcode e9 for table: pg1_R1, EQU: B
+[build_decode_table]: idx = 4, opcode d9 for table: pg1_R1, EQU: B
 [add_opcode_to_table]: table pg1_R1 len: 17, alloc size: 432
+[build_decode_table]: idx = 5, opcode e9 for table: pg1_R1, EQU: B
+[add_opcode_to_table]: table pg1_R1 len: 18, alloc size: 456
 [build_decode_table]: idx = 6, opcode f9 for table: pg1_R1, EQU: B
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 9, alloc size: 240
-[build_decode_table]: idx = 4, opcode d9 for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 10, alloc size: 264
-[build_decode_table]: idx = 5, opcode e9 for table: pg1_R2, EQU: DMEM_RD
+[build_decode_table]: idx = 4, opcode d9 for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 11, alloc size: 288
+[build_decode_table]: idx = 5, opcode e9 for table: pg1_R2, EQU: DMEM_RD
+[add_opcode_to_table]: table pg1_R2 len: 12, alloc size: 312
 [build_decode_table]: idx = 6, opcode f9 for table: pg1_R2, EQU: DMEM_RD
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 133, alloc size: 3216
+[add_opcode_to_table]: table pg1_JTA len: 134, alloc size: 3240
 [build_decode_table]: idx = 4, opcode 8b for table: pg1_JTA, EQU: ADD
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 18, alloc size: 456
+[add_opcode_to_table]: table pg1_R1 len: 19, alloc size: 480
 [build_decode_table]: idx = 4, opcode 8b for table: pg1_R1, EQU: A
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 12, alloc size: 312
+[add_opcode_to_table]: table pg1_R2 len: 13, alloc size: 336
 [build_decode_table]: idx = 4, opcode 8b for table: pg1_R2, EQU: IDATA
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 134, alloc size: 3240
+[add_opcode_to_table]: table pg1_JTA len: 135, alloc size: 3264
 [build_decode_table]: idx = 4, opcode cb for table: pg1_JTA, EQU: ADD
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 19, alloc size: 480
+[add_opcode_to_table]: table pg1_R1 len: 20, alloc size: 504
 [build_decode_table]: idx = 4, opcode cb for table: pg1_R1, EQU: B
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 13, alloc size: 336
+[add_opcode_to_table]: table pg1_R2 len: 14, alloc size: 360
 [build_decode_table]: idx = 4, opcode cb for table: pg1_R2, EQU: IDATA
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 135, alloc size: 3264
+[add_opcode_to_table]: table pg1_JTA len: 136, alloc size: 3288
 [build_decode_table]: idx = 4, opcode c3 for table: pg1_JTA, EQU: ADD
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 20, alloc size: 504
+[add_opcode_to_table]: table pg1_R1 len: 21, alloc size: 528
 [build_decode_table]: idx = 4, opcode c3 for table: pg1_R1, EQU: D
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 14, alloc size: 360
+[add_opcode_to_table]: table pg1_R2 len: 15, alloc size: 384
 [build_decode_table]: idx = 4, opcode c3 for table: pg1_R2, EQU: IDATA
 [find_table_by_name]: Table index 3, found table pg1_JTB!
 [add_opcode_to_table]: table pg1_JTB len: 10, alloc size: 264
@@ -1180,18 +1189,18 @@
 [add_opcode_to_table]: table pg1_JTB len: 12, alloc size: 312
 [build_decode_table]: idx = 6, opcode bb for table: pg1_JTB, EQU: ADD
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 21, alloc size: 528
-[build_decode_table]: idx = 4, opcode 9b for table: pg1_R1, EQU: A
 [add_opcode_to_table]: table pg1_R1 len: 22, alloc size: 552
-[build_decode_table]: idx = 5, opcode ab for table: pg1_R1, EQU: A
+[build_decode_table]: idx = 4, opcode 9b for table: pg1_R1, EQU: A
 [add_opcode_to_table]: table pg1_R1 len: 23, alloc size: 576
+[build_decode_table]: idx = 5, opcode ab for table: pg1_R1, EQU: A
+[add_opcode_to_table]: table pg1_R1 len: 24, alloc size: 600
 [build_decode_table]: idx = 6, opcode bb for table: pg1_R1, EQU: A
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 15, alloc size: 384
-[build_decode_table]: idx = 4, opcode 9b for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 16, alloc size: 408
-[build_decode_table]: idx = 5, opcode ab for table: pg1_R2, EQU: DMEM_RD
+[build_decode_table]: idx = 4, opcode 9b for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 17, alloc size: 432
+[build_decode_table]: idx = 5, opcode ab for table: pg1_R2, EQU: DMEM_RD
+[add_opcode_to_table]: table pg1_R2 len: 18, alloc size: 456
 [build_decode_table]: idx = 6, opcode bb for table: pg1_R2, EQU: DMEM_RD
 [find_table_by_name]: Table index 3, found table pg1_JTB!
 [add_opcode_to_table]: table pg1_JTB len: 13, alloc size: 336
@@ -1201,18 +1210,18 @@
 [add_opcode_to_table]: table pg1_JTB len: 15, alloc size: 384
 [build_decode_table]: idx = 6, opcode fb for table: pg1_JTB, EQU: ADD
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 24, alloc size: 600
-[build_decode_table]: idx = 4, opcode db for table: pg1_R1, EQU: B
 [add_opcode_to_table]: table pg1_R1 len: 25, alloc size: 624
-[build_decode_table]: idx = 5, opcode eb for table: pg1_R1, EQU: B
+[build_decode_table]: idx = 4, opcode db for table: pg1_R1, EQU: B
 [add_opcode_to_table]: table pg1_R1 len: 26, alloc size: 648
+[build_decode_table]: idx = 5, opcode eb for table: pg1_R1, EQU: B
+[add_opcode_to_table]: table pg1_R1 len: 27, alloc size: 672
 [build_decode_table]: idx = 6, opcode fb for table: pg1_R1, EQU: B
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 18, alloc size: 456
-[build_decode_table]: idx = 4, opcode db for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 19, alloc size: 480
-[build_decode_table]: idx = 5, opcode eb for table: pg1_R2, EQU: DMEM_RD
+[build_decode_table]: idx = 4, opcode db for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 20, alloc size: 504
+[build_decode_table]: idx = 5, opcode eb for table: pg1_R2, EQU: DMEM_RD
+[add_opcode_to_table]: table pg1_R2 len: 21, alloc size: 528
 [build_decode_table]: idx = 6, opcode fb for table: pg1_R2, EQU: DMEM_RD
 [find_table_by_name]: Table index 3, found table pg1_JTB!
 [add_opcode_to_table]: table pg1_JTB len: 16, alloc size: 408
@@ -1222,36 +1231,36 @@
 [add_opcode_to_table]: table pg1_JTB len: 18, alloc size: 456
 [build_decode_table]: idx = 6, opcode f3 for table: pg1_JTB, EQU: ADD
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 27, alloc size: 672
-[build_decode_table]: idx = 4, opcode d3 for table: pg1_R1, EQU: D
 [add_opcode_to_table]: table pg1_R1 len: 28, alloc size: 696
-[build_decode_table]: idx = 5, opcode e3 for table: pg1_R1, EQU: D
+[build_decode_table]: idx = 4, opcode d3 for table: pg1_R1, EQU: D
 [add_opcode_to_table]: table pg1_R1 len: 29, alloc size: 720
+[build_decode_table]: idx = 5, opcode e3 for table: pg1_R1, EQU: D
+[add_opcode_to_table]: table pg1_R1 len: 30, alloc size: 744
 [build_decode_table]: idx = 6, opcode f3 for table: pg1_R1, EQU: D
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 21, alloc size: 528
-[build_decode_table]: idx = 4, opcode d3 for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 22, alloc size: 552
-[build_decode_table]: idx = 5, opcode e3 for table: pg1_R2, EQU: DMEM_RD
+[build_decode_table]: idx = 4, opcode d3 for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 23, alloc size: 576
+[build_decode_table]: idx = 5, opcode e3 for table: pg1_R2, EQU: DMEM_RD
+[add_opcode_to_table]: table pg1_R2 len: 24, alloc size: 600
 [build_decode_table]: idx = 6, opcode f3 for table: pg1_R2, EQU: DMEM_RD
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 136, alloc size: 3288
+[add_opcode_to_table]: table pg1_JTA len: 137, alloc size: 3312
 [build_decode_table]: idx = 4, opcode 84 for table: pg1_JTA, EQU: AND
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 30, alloc size: 744
+[add_opcode_to_table]: table pg1_R1 len: 31, alloc size: 768
 [build_decode_table]: idx = 4, opcode 84 for table: pg1_R1, EQU: A
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 24, alloc size: 600
+[add_opcode_to_table]: table pg1_R2 len: 25, alloc size: 624
 [build_decode_table]: idx = 4, opcode 84 for table: pg1_R2, EQU: IDATA
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 137, alloc size: 3312
+[add_opcode_to_table]: table pg1_JTA len: 138, alloc size: 3336
 [build_decode_table]: idx = 4, opcode c4 for table: pg1_JTA, EQU: AND
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 31, alloc size: 768
+[add_opcode_to_table]: table pg1_R1 len: 32, alloc size: 792
 [build_decode_table]: idx = 4, opcode c4 for table: pg1_R1, EQU: B
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 25, alloc size: 624
+[add_opcode_to_table]: table pg1_R2 len: 26, alloc size: 648
 [build_decode_table]: idx = 4, opcode c4 for table: pg1_R2, EQU: IDATA
 [find_table_by_name]: Table index 3, found table pg1_JTB!
 [add_opcode_to_table]: table pg1_JTB len: 19, alloc size: 480
@@ -1261,18 +1270,18 @@
 [add_opcode_to_table]: table pg1_JTB len: 21, alloc size: 528
 [build_decode_table]: idx = 6, opcode b4 for table: pg1_JTB, EQU: AND
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 32, alloc size: 792
-[build_decode_table]: idx = 4, opcode 94 for table: pg1_R1, EQU: A
 [add_opcode_to_table]: table pg1_R1 len: 33, alloc size: 816
-[build_decode_table]: idx = 5, opcode a4 for table: pg1_R1, EQU: A
+[build_decode_table]: idx = 4, opcode 94 for table: pg1_R1, EQU: A
 [add_opcode_to_table]: table pg1_R1 len: 34, alloc size: 840
+[build_decode_table]: idx = 5, opcode a4 for table: pg1_R1, EQU: A
+[add_opcode_to_table]: table pg1_R1 len: 35, alloc size: 864
 [build_decode_table]: idx = 6, opcode b4 for table: pg1_R1, EQU: A
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 26, alloc size: 648
-[build_decode_table]: idx = 4, opcode 94 for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 27, alloc size: 672
-[build_decode_table]: idx = 5, opcode a4 for table: pg1_R2, EQU: DMEM_RD
+[build_decode_table]: idx = 4, opcode 94 for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 28, alloc size: 696
+[build_decode_table]: idx = 5, opcode a4 for table: pg1_R2, EQU: DMEM_RD
+[add_opcode_to_table]: table pg1_R2 len: 29, alloc size: 720
 [build_decode_table]: idx = 6, opcode b4 for table: pg1_R2, EQU: DMEM_RD
 [find_table_by_name]: Table index 3, found table pg1_JTB!
 [add_opcode_to_table]: table pg1_JTB len: 22, alloc size: 552
@@ -1282,45 +1291,45 @@
 [add_opcode_to_table]: table pg1_JTB len: 24, alloc size: 600
 [build_decode_table]: idx = 6, opcode f4 for table: pg1_JTB, EQU: AND
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 35, alloc size: 864
-[build_decode_table]: idx = 4, opcode d4 for table: pg1_R1, EQU: B
 [add_opcode_to_table]: table pg1_R1 len: 36, alloc size: 888
-[build_decode_table]: idx = 5, opcode e4 for table: pg1_R1, EQU: B
+[build_decode_table]: idx = 4, opcode d4 for table: pg1_R1, EQU: B
 [add_opcode_to_table]: table pg1_R1 len: 37, alloc size: 912
+[build_decode_table]: idx = 5, opcode e4 for table: pg1_R1, EQU: B
+[add_opcode_to_table]: table pg1_R1 len: 38, alloc size: 936
 [build_decode_table]: idx = 6, opcode f4 for table: pg1_R1, EQU: B
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 29, alloc size: 720
-[build_decode_table]: idx = 4, opcode d4 for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 30, alloc size: 744
-[build_decode_table]: idx = 5, opcode e4 for table: pg1_R2, EQU: DMEM_RD
+[build_decode_table]: idx = 4, opcode d4 for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 31, alloc size: 768
+[build_decode_table]: idx = 5, opcode e4 for table: pg1_R2, EQU: DMEM_RD
+[add_opcode_to_table]: table pg1_R2 len: 32, alloc size: 792
 [build_decode_table]: idx = 6, opcode f4 for table: pg1_R2, EQU: DMEM_RD
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 138, alloc size: 3336
+[add_opcode_to_table]: table pg1_JTA len: 139, alloc size: 3360
 [build_decode_table]: idx = 4, opcode 1c for table: pg1_JTA, EQU: ANDCC
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 38, alloc size: 936
+[add_opcode_to_table]: table pg1_R1 len: 39, alloc size: 960
 [build_decode_table]: idx = 4, opcode 1c for table: pg1_R1, EQU: CCR
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 32, alloc size: 792
+[add_opcode_to_table]: table pg1_R2 len: 33, alloc size: 816
 [build_decode_table]: idx = 4, opcode 1c for table: pg1_R2, EQU: IDATA
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 139, alloc size: 3360
+[add_opcode_to_table]: table pg1_JTA len: 140, alloc size: 3384
 [build_decode_table]: idx = 4, opcode 85 for table: pg1_JTA, EQU: BIT
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 39, alloc size: 960
+[add_opcode_to_table]: table pg1_R1 len: 40, alloc size: 984
 [build_decode_table]: idx = 4, opcode 85 for table: pg1_R1, EQU: A
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 33, alloc size: 816
+[add_opcode_to_table]: table pg1_R2 len: 34, alloc size: 840
 [build_decode_table]: idx = 4, opcode 85 for table: pg1_R2, EQU: IDATA
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 140, alloc size: 3384
+[add_opcode_to_table]: table pg1_JTA len: 141, alloc size: 3408
 [build_decode_table]: idx = 4, opcode c5 for table: pg1_JTA, EQU: BIT
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 40, alloc size: 984
+[add_opcode_to_table]: table pg1_R1 len: 41, alloc size: 1008
 [build_decode_table]: idx = 4, opcode c5 for table: pg1_R1, EQU: B
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 34, alloc size: 840
+[add_opcode_to_table]: table pg1_R2 len: 35, alloc size: 864
 [build_decode_table]: idx = 4, opcode c5 for table: pg1_R2, EQU: IDATA
 [find_table_by_name]: Table index 3, found table pg1_JTB!
 [add_opcode_to_table]: table pg1_JTB len: 25, alloc size: 624
@@ -1330,18 +1339,18 @@
 [add_opcode_to_table]: table pg1_JTB len: 27, alloc size: 672
 [build_decode_table]: idx = 6, opcode b5 for table: pg1_JTB, EQU: BIT
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 41, alloc size: 1008
-[build_decode_table]: idx = 4, opcode 95 for table: pg1_R1, EQU: A
 [add_opcode_to_table]: table pg1_R1 len: 42, alloc size: 1032
-[build_decode_table]: idx = 5, opcode a5 for table: pg1_R1, EQU: A
+[build_decode_table]: idx = 4, opcode 95 for table: pg1_R1, EQU: A
 [add_opcode_to_table]: table pg1_R1 len: 43, alloc size: 1056
+[build_decode_table]: idx = 5, opcode a5 for table: pg1_R1, EQU: A
+[add_opcode_to_table]: table pg1_R1 len: 44, alloc size: 1080
 [build_decode_table]: idx = 6, opcode b5 for table: pg1_R1, EQU: A
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 35, alloc size: 864
-[build_decode_table]: idx = 4, opcode 95 for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 36, alloc size: 888
-[build_decode_table]: idx = 5, opcode a5 for table: pg1_R2, EQU: DMEM_RD
+[build_decode_table]: idx = 4, opcode 95 for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 37, alloc size: 912
+[build_decode_table]: idx = 5, opcode a5 for table: pg1_R2, EQU: DMEM_RD
+[add_opcode_to_table]: table pg1_R2 len: 38, alloc size: 936
 [build_decode_table]: idx = 6, opcode b5 for table: pg1_R2, EQU: DMEM_RD
 [find_table_by_name]: Table index 3, found table pg1_JTB!
 [add_opcode_to_table]: table pg1_JTB len: 28, alloc size: 696
@@ -1351,36 +1360,36 @@
 [add_opcode_to_table]: table pg1_JTB len: 30, alloc size: 744
 [build_decode_table]: idx = 6, opcode f5 for table: pg1_JTB, EQU: BIT
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 44, alloc size: 1080
-[build_decode_table]: idx = 4, opcode d5 for table: pg1_R1, EQU: B
 [add_opcode_to_table]: table pg1_R1 len: 45, alloc size: 1104
-[build_decode_table]: idx = 5, opcode e5 for table: pg1_R1, EQU: B
+[build_decode_table]: idx = 4, opcode d5 for table: pg1_R1, EQU: B
 [add_opcode_to_table]: table pg1_R1 len: 46, alloc size: 1128
+[build_decode_table]: idx = 5, opcode e5 for table: pg1_R1, EQU: B
+[add_opcode_to_table]: table pg1_R1 len: 47, alloc size: 1152
 [build_decode_table]: idx = 6, opcode f5 for table: pg1_R1, EQU: B
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 38, alloc size: 936
-[build_decode_table]: idx = 4, opcode d5 for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 39, alloc size: 960
-[build_decode_table]: idx = 5, opcode e5 for table: pg1_R2, EQU: DMEM_RD
+[build_decode_table]: idx = 4, opcode d5 for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 40, alloc size: 984
+[build_decode_table]: idx = 5, opcode e5 for table: pg1_R2, EQU: DMEM_RD
+[add_opcode_to_table]: table pg1_R2 len: 41, alloc size: 1008
 [build_decode_table]: idx = 6, opcode f5 for table: pg1_R2, EQU: DMEM_RD
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 141, alloc size: 3408
+[add_opcode_to_table]: table pg1_JTA len: 142, alloc size: 3432
 [build_decode_table]: idx = 4, opcode 81 for table: pg1_JTA, EQU: CMP
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 47, alloc size: 1152
+[add_opcode_to_table]: table pg1_R1 len: 48, alloc size: 1176
 [build_decode_table]: idx = 4, opcode 81 for table: pg1_R1, EQU: A
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 41, alloc size: 1008
+[add_opcode_to_table]: table pg1_R2 len: 42, alloc size: 1032
 [build_decode_table]: idx = 4, opcode 81 for table: pg1_R2, EQU: IDATA
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 142, alloc size: 3432
+[add_opcode_to_table]: table pg1_JTA len: 143, alloc size: 3456
 [build_decode_table]: idx = 4, opcode c1 for table: pg1_JTA, EQU: CMP
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 48, alloc size: 1176
+[add_opcode_to_table]: table pg1_R1 len: 49, alloc size: 1200
 [build_decode_table]: idx = 4, opcode c1 for table: pg1_R1, EQU: B
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 42, alloc size: 1032
+[add_opcode_to_table]: table pg1_R2 len: 43, alloc size: 1056
 [build_decode_table]: idx = 4, opcode c1 for table: pg1_R2, EQU: IDATA
 [find_table_by_name]: Table index 1, found table pg2_JTA!
 [add_opcode_to_table]: table pg2_JTA len: 16, alloc size: 408
@@ -1410,13 +1419,13 @@
 [add_opcode_to_table]: table pg3_R2 len: 1, alloc size: 48
 [build_decode_table]: idx = 4, opcode 83 for table: pg3_R2, EQU: IDATA
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 143, alloc size: 3456
+[add_opcode_to_table]: table pg1_JTA len: 144, alloc size: 3480
 [build_decode_table]: idx = 4, opcode 8c for table: pg1_JTA, EQU: CMP
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 49, alloc size: 1200
+[add_opcode_to_table]: table pg1_R1 len: 50, alloc size: 1224
 [build_decode_table]: idx = 4, opcode 8c for table: pg1_R1, EQU: X
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 43, alloc size: 1056
+[add_opcode_to_table]: table pg1_R2 len: 44, alloc size: 1080
 [build_decode_table]: idx = 4, opcode 8c for table: pg1_R2, EQU: IDATA
 [find_table_by_name]: Table index 1, found table pg2_JTA!
 [add_opcode_to_table]: table pg2_JTA len: 17, alloc size: 432
@@ -1435,18 +1444,18 @@
 [add_opcode_to_table]: table pg1_JTB len: 33, alloc size: 816
 [build_decode_table]: idx = 6, opcode b1 for table: pg1_JTB, EQU: CMP
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 50, alloc size: 1224
-[build_decode_table]: idx = 4, opcode 91 for table: pg1_R1, EQU: A
 [add_opcode_to_table]: table pg1_R1 len: 51, alloc size: 1248
-[build_decode_table]: idx = 5, opcode a1 for table: pg1_R1, EQU: A
+[build_decode_table]: idx = 4, opcode 91 for table: pg1_R1, EQU: A
 [add_opcode_to_table]: table pg1_R1 len: 52, alloc size: 1272
+[build_decode_table]: idx = 5, opcode a1 for table: pg1_R1, EQU: A
+[add_opcode_to_table]: table pg1_R1 len: 53, alloc size: 1296
 [build_decode_table]: idx = 6, opcode b1 for table: pg1_R1, EQU: A
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 44, alloc size: 1080
-[build_decode_table]: idx = 4, opcode 91 for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 45, alloc size: 1104
-[build_decode_table]: idx = 5, opcode a1 for table: pg1_R2, EQU: DMEM_RD
+[build_decode_table]: idx = 4, opcode 91 for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 46, alloc size: 1128
+[build_decode_table]: idx = 5, opcode a1 for table: pg1_R2, EQU: DMEM_RD
+[add_opcode_to_table]: table pg1_R2 len: 47, alloc size: 1152
 [build_decode_table]: idx = 6, opcode b1 for table: pg1_R2, EQU: DMEM_RD
 [find_table_by_name]: Table index 3, found table pg1_JTB!
 [add_opcode_to_table]: table pg1_JTB len: 34, alloc size: 840
@@ -1456,18 +1465,18 @@
 [add_opcode_to_table]: table pg1_JTB len: 36, alloc size: 888
 [build_decode_table]: idx = 6, opcode f1 for table: pg1_JTB, EQU: CMP
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 53, alloc size: 1296
-[build_decode_table]: idx = 4, opcode d1 for table: pg1_R1, EQU: B
 [add_opcode_to_table]: table pg1_R1 len: 54, alloc size: 1320
-[build_decode_table]: idx = 5, opcode e1 for table: pg1_R1, EQU: B
+[build_decode_table]: idx = 4, opcode d1 for table: pg1_R1, EQU: B
 [add_opcode_to_table]: table pg1_R1 len: 55, alloc size: 1344
+[build_decode_table]: idx = 5, opcode e1 for table: pg1_R1, EQU: B
+[add_opcode_to_table]: table pg1_R1 len: 56, alloc size: 1368
 [build_decode_table]: idx = 6, opcode f1 for table: pg1_R1, EQU: B
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 47, alloc size: 1152
-[build_decode_table]: idx = 4, opcode d1 for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 48, alloc size: 1176
-[build_decode_table]: idx = 5, opcode e1 for table: pg1_R2, EQU: DMEM_RD
+[build_decode_table]: idx = 4, opcode d1 for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 49, alloc size: 1200
+[build_decode_table]: idx = 5, opcode e1 for table: pg1_R2, EQU: DMEM_RD
+[add_opcode_to_table]: table pg1_R2 len: 50, alloc size: 1224
 [build_decode_table]: idx = 6, opcode f1 for table: pg1_R2, EQU: DMEM_RD
 [find_table_by_name]: Table index 4, found table pg2_JTB!
 [add_opcode_to_table]: table pg2_JTB len: 0, alloc size: 24
@@ -1540,18 +1549,18 @@
 [add_opcode_to_table]: table pg1_JTB len: 39, alloc size: 960
 [build_decode_table]: idx = 6, opcode bc for table: pg1_JTB, EQU: CMP
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 56, alloc size: 1368
-[build_decode_table]: idx = 4, opcode 9c for table: pg1_R1, EQU: X
 [add_opcode_to_table]: table pg1_R1 len: 57, alloc size: 1392
-[build_decode_table]: idx = 5, opcode ac for table: pg1_R1, EQU: X
+[build_decode_table]: idx = 4, opcode 9c for table: pg1_R1, EQU: X
 [add_opcode_to_table]: table pg1_R1 len: 58, alloc size: 1416
+[build_decode_table]: idx = 5, opcode ac for table: pg1_R1, EQU: X
+[add_opcode_to_table]: table pg1_R1 len: 59, alloc size: 1440
 [build_decode_table]: idx = 6, opcode bc for table: pg1_R1, EQU: X
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 50, alloc size: 1224
-[build_decode_table]: idx = 4, opcode 9c for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 51, alloc size: 1248
-[build_decode_table]: idx = 5, opcode ac for table: pg1_R2, EQU: DMEM_RD
+[build_decode_table]: idx = 4, opcode 9c for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 52, alloc size: 1272
+[build_decode_table]: idx = 5, opcode ac for table: pg1_R2, EQU: DMEM_RD
+[add_opcode_to_table]: table pg1_R2 len: 53, alloc size: 1296
 [build_decode_table]: idx = 6, opcode bc for table: pg1_R2, EQU: DMEM_RD
 [find_table_by_name]: Table index 4, found table pg2_JTB!
 [add_opcode_to_table]: table pg2_JTB len: 3, alloc size: 96
@@ -1575,22 +1584,22 @@
 [add_opcode_to_table]: table pg2_R2 len: 8, alloc size: 216
 [build_decode_table]: idx = 6, opcode bc for table: pg2_R2, EQU: DMEM_RD
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 144, alloc size: 3480
+[add_opcode_to_table]: table pg1_JTA len: 145, alloc size: 3504
 [build_decode_table]: idx = 4, opcode 88 for table: pg1_JTA, EQU: EOR
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 59, alloc size: 1440
+[add_opcode_to_table]: table pg1_R1 len: 60, alloc size: 1464
 [build_decode_table]: idx = 4, opcode 88 for table: pg1_R1, EQU: A
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 53, alloc size: 1296
+[add_opcode_to_table]: table pg1_R2 len: 54, alloc size: 1320
 [build_decode_table]: idx = 4, opcode 88 for table: pg1_R2, EQU: IDATA
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 145, alloc size: 3504
+[add_opcode_to_table]: table pg1_JTA len: 146, alloc size: 3528
 [build_decode_table]: idx = 4, opcode c8 for table: pg1_JTA, EQU: EOR
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 60, alloc size: 1464
+[add_opcode_to_table]: table pg1_R1 len: 61, alloc size: 1488
 [build_decode_table]: idx = 4, opcode c8 for table: pg1_R1, EQU: B
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 54, alloc size: 1320
+[add_opcode_to_table]: table pg1_R2 len: 55, alloc size: 1344
 [build_decode_table]: idx = 4, opcode c8 for table: pg1_R2, EQU: IDATA
 [find_table_by_name]: Table index 3, found table pg1_JTB!
 [add_opcode_to_table]: table pg1_JTB len: 40, alloc size: 984
@@ -1600,18 +1609,18 @@
 [add_opcode_to_table]: table pg1_JTB len: 42, alloc size: 1032
 [build_decode_table]: idx = 6, opcode b8 for table: pg1_JTB, EQU: EOR
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 61, alloc size: 1488
-[build_decode_table]: idx = 4, opcode 98 for table: pg1_R1, EQU: A
 [add_opcode_to_table]: table pg1_R1 len: 62, alloc size: 1512
-[build_decode_table]: idx = 5, opcode a8 for table: pg1_R1, EQU: A
+[build_decode_table]: idx = 4, opcode 98 for table: pg1_R1, EQU: A
 [add_opcode_to_table]: table pg1_R1 len: 63, alloc size: 1536
+[build_decode_table]: idx = 5, opcode a8 for table: pg1_R1, EQU: A
+[add_opcode_to_table]: table pg1_R1 len: 64, alloc size: 1560
 [build_decode_table]: idx = 6, opcode b8 for table: pg1_R1, EQU: A
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 55, alloc size: 1344
-[build_decode_table]: idx = 4, opcode 98 for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 56, alloc size: 1368
-[build_decode_table]: idx = 5, opcode a8 for table: pg1_R2, EQU: DMEM_RD
+[build_decode_table]: idx = 4, opcode 98 for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 57, alloc size: 1392
+[build_decode_table]: idx = 5, opcode a8 for table: pg1_R2, EQU: DMEM_RD
+[add_opcode_to_table]: table pg1_R2 len: 58, alloc size: 1416
 [build_decode_table]: idx = 6, opcode b8 for table: pg1_R2, EQU: DMEM_RD
 [find_table_by_name]: Table index 3, found table pg1_JTB!
 [add_opcode_to_table]: table pg1_JTB len: 43, alloc size: 1056
@@ -1621,45 +1630,45 @@
 [add_opcode_to_table]: table pg1_JTB len: 45, alloc size: 1104
 [build_decode_table]: idx = 6, opcode f8 for table: pg1_JTB, EQU: EOR
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 64, alloc size: 1560
-[build_decode_table]: idx = 4, opcode d8 for table: pg1_R1, EQU: B
 [add_opcode_to_table]: table pg1_R1 len: 65, alloc size: 1584
-[build_decode_table]: idx = 5, opcode e8 for table: pg1_R1, EQU: B
+[build_decode_table]: idx = 4, opcode d8 for table: pg1_R1, EQU: B
 [add_opcode_to_table]: table pg1_R1 len: 66, alloc size: 1608
+[build_decode_table]: idx = 5, opcode e8 for table: pg1_R1, EQU: B
+[add_opcode_to_table]: table pg1_R1 len: 67, alloc size: 1632
 [build_decode_table]: idx = 6, opcode f8 for table: pg1_R1, EQU: B
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 58, alloc size: 1416
-[build_decode_table]: idx = 4, opcode d8 for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 59, alloc size: 1440
-[build_decode_table]: idx = 5, opcode e8 for table: pg1_R2, EQU: DMEM_RD
+[build_decode_table]: idx = 4, opcode d8 for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 60, alloc size: 1464
+[build_decode_table]: idx = 5, opcode e8 for table: pg1_R2, EQU: DMEM_RD
+[add_opcode_to_table]: table pg1_R2 len: 61, alloc size: 1488
 [build_decode_table]: idx = 6, opcode f8 for table: pg1_R2, EQU: DMEM_RD
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 146, alloc size: 3528
+[add_opcode_to_table]: table pg1_JTA len: 147, alloc size: 3552
 [build_decode_table]: idx = 4, opcode 86 for table: pg1_JTA, EQU: LD
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 67, alloc size: 1632
+[add_opcode_to_table]: table pg1_R1 len: 68, alloc size: 1656
 [build_decode_table]: idx = 4, opcode 86 for table: pg1_R1, EQU: A
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 61, alloc size: 1488
+[add_opcode_to_table]: table pg1_R2 len: 62, alloc size: 1512
 [build_decode_table]: idx = 4, opcode 86 for table: pg1_R2, EQU: IDATA
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 147, alloc size: 3552
+[add_opcode_to_table]: table pg1_JTA len: 148, alloc size: 3576
 [build_decode_table]: idx = 4, opcode c6 for table: pg1_JTA, EQU: LD
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 68, alloc size: 1656
+[add_opcode_to_table]: table pg1_R1 len: 69, alloc size: 1680
 [build_decode_table]: idx = 4, opcode c6 for table: pg1_R1, EQU: B
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 62, alloc size: 1512
+[add_opcode_to_table]: table pg1_R2 len: 63, alloc size: 1536
 [build_decode_table]: idx = 4, opcode c6 for table: pg1_R2, EQU: IDATA
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 148, alloc size: 3576
+[add_opcode_to_table]: table pg1_JTA len: 149, alloc size: 3600
 [build_decode_table]: idx = 4, opcode cc for table: pg1_JTA, EQU: LD
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 69, alloc size: 1680
+[add_opcode_to_table]: table pg1_R1 len: 70, alloc size: 1704
 [build_decode_table]: idx = 4, opcode cc for table: pg1_R1, EQU: D
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 63, alloc size: 1536
+[add_opcode_to_table]: table pg1_R2 len: 64, alloc size: 1560
 [build_decode_table]: idx = 4, opcode cc for table: pg1_R2, EQU: IDATA
 [find_table_by_name]: Table index 1, found table pg2_JTA!
 [add_opcode_to_table]: table pg2_JTA len: 18, alloc size: 456
@@ -1671,22 +1680,22 @@
 [add_opcode_to_table]: table pg2_R2 len: 9, alloc size: 240
 [build_decode_table]: idx = 4, opcode ce for table: pg2_R2, EQU: IDATA
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 149, alloc size: 3600
+[add_opcode_to_table]: table pg1_JTA len: 150, alloc size: 3624
 [build_decode_table]: idx = 4, opcode ce for table: pg1_JTA, EQU: LD
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 70, alloc size: 1704
+[add_opcode_to_table]: table pg1_R1 len: 71, alloc size: 1728
 [build_decode_table]: idx = 4, opcode ce for table: pg1_R1, EQU: U
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 64, alloc size: 1560
+[add_opcode_to_table]: table pg1_R2 len: 65, alloc size: 1584
 [build_decode_table]: idx = 4, opcode ce for table: pg1_R2, EQU: IDATA
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 150, alloc size: 3624
+[add_opcode_to_table]: table pg1_JTA len: 151, alloc size: 3648
 [build_decode_table]: idx = 4, opcode 8e for table: pg1_JTA, EQU: LD
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 71, alloc size: 1728
+[add_opcode_to_table]: table pg1_R1 len: 72, alloc size: 1752
 [build_decode_table]: idx = 4, opcode 8e for table: pg1_R1, EQU: X
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 65, alloc size: 1584
+[add_opcode_to_table]: table pg1_R2 len: 66, alloc size: 1608
 [build_decode_table]: idx = 4, opcode 8e for table: pg1_R2, EQU: IDATA
 [find_table_by_name]: Table index 1, found table pg2_JTA!
 [add_opcode_to_table]: table pg2_JTA len: 19, alloc size: 480
@@ -1705,18 +1714,18 @@
 [add_opcode_to_table]: table pg1_JTB len: 48, alloc size: 1176
 [build_decode_table]: idx = 6, opcode b6 for table: pg1_JTB, EQU: LD
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 72, alloc size: 1752
-[build_decode_table]: idx = 4, opcode 96 for table: pg1_R1, EQU: A
 [add_opcode_to_table]: table pg1_R1 len: 73, alloc size: 1776
-[build_decode_table]: idx = 5, opcode a6 for table: pg1_R1, EQU: A
+[build_decode_table]: idx = 4, opcode 96 for table: pg1_R1, EQU: A
 [add_opcode_to_table]: table pg1_R1 len: 74, alloc size: 1800
+[build_decode_table]: idx = 5, opcode a6 for table: pg1_R1, EQU: A
+[add_opcode_to_table]: table pg1_R1 len: 75, alloc size: 1824
 [build_decode_table]: idx = 6, opcode b6 for table: pg1_R1, EQU: A
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 66, alloc size: 1608
-[build_decode_table]: idx = 4, opcode 96 for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 67, alloc size: 1632
-[build_decode_table]: idx = 5, opcode a6 for table: pg1_R2, EQU: DMEM_RD
+[build_decode_table]: idx = 4, opcode 96 for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 68, alloc size: 1656
+[build_decode_table]: idx = 5, opcode a6 for table: pg1_R2, EQU: DMEM_RD
+[add_opcode_to_table]: table pg1_R2 len: 69, alloc size: 1680
 [build_decode_table]: idx = 6, opcode b6 for table: pg1_R2, EQU: DMEM_RD
 [find_table_by_name]: Table index 3, found table pg1_JTB!
 [add_opcode_to_table]: table pg1_JTB len: 49, alloc size: 1200
@@ -1726,18 +1735,18 @@
 [add_opcode_to_table]: table pg1_JTB len: 51, alloc size: 1248
 [build_decode_table]: idx = 6, opcode f6 for table: pg1_JTB, EQU: LD
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 75, alloc size: 1824
-[build_decode_table]: idx = 4, opcode d6 for table: pg1_R1, EQU: B
 [add_opcode_to_table]: table pg1_R1 len: 76, alloc size: 1848
-[build_decode_table]: idx = 5, opcode e6 for table: pg1_R1, EQU: B
+[build_decode_table]: idx = 4, opcode d6 for table: pg1_R1, EQU: B
 [add_opcode_to_table]: table pg1_R1 len: 77, alloc size: 1872
+[build_decode_table]: idx = 5, opcode e6 for table: pg1_R1, EQU: B
+[add_opcode_to_table]: table pg1_R1 len: 78, alloc size: 1896
 [build_decode_table]: idx = 6, opcode f6 for table: pg1_R1, EQU: B
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 69, alloc size: 1680
-[build_decode_table]: idx = 4, opcode d6 for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 70, alloc size: 1704
-[build_decode_table]: idx = 5, opcode e6 for table: pg1_R2, EQU: DMEM_RD
+[build_decode_table]: idx = 4, opcode d6 for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 71, alloc size: 1728
+[build_decode_table]: idx = 5, opcode e6 for table: pg1_R2, EQU: DMEM_RD
+[add_opcode_to_table]: table pg1_R2 len: 72, alloc size: 1752
 [build_decode_table]: idx = 6, opcode f6 for table: pg1_R2, EQU: DMEM_RD
 [find_table_by_name]: Table index 3, found table pg1_JTB!
 [add_opcode_to_table]: table pg1_JTB len: 52, alloc size: 1272
@@ -1747,18 +1756,18 @@
 [add_opcode_to_table]: table pg1_JTB len: 54, alloc size: 1320
 [build_decode_table]: idx = 6, opcode fc for table: pg1_JTB, EQU: LD
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 78, alloc size: 1896
-[build_decode_table]: idx = 4, opcode dc for table: pg1_R1, EQU: D
 [add_opcode_to_table]: table pg1_R1 len: 79, alloc size: 1920
-[build_decode_table]: idx = 5, opcode ec for table: pg1_R1, EQU: D
+[build_decode_table]: idx = 4, opcode dc for table: pg1_R1, EQU: D
 [add_opcode_to_table]: table pg1_R1 len: 80, alloc size: 1944
+[build_decode_table]: idx = 5, opcode ec for table: pg1_R1, EQU: D
+[add_opcode_to_table]: table pg1_R1 len: 81, alloc size: 1968
 [build_decode_table]: idx = 6, opcode fc for table: pg1_R1, EQU: D
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 72, alloc size: 1752
-[build_decode_table]: idx = 4, opcode dc for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 73, alloc size: 1776
-[build_decode_table]: idx = 5, opcode ec for table: pg1_R2, EQU: DMEM_RD
+[build_decode_table]: idx = 4, opcode dc for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 74, alloc size: 1800
+[build_decode_table]: idx = 5, opcode ec for table: pg1_R2, EQU: DMEM_RD
+[add_opcode_to_table]: table pg1_R2 len: 75, alloc size: 1824
 [build_decode_table]: idx = 6, opcode fc for table: pg1_R2, EQU: DMEM_RD
 [find_table_by_name]: Table index 4, found table pg2_JTB!
 [add_opcode_to_table]: table pg2_JTB len: 6, alloc size: 168
@@ -1789,18 +1798,18 @@
 [add_opcode_to_table]: table pg1_JTB len: 57, alloc size: 1392
 [build_decode_table]: idx = 6, opcode fe for table: pg1_JTB, EQU: LD
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 81, alloc size: 1968
-[build_decode_table]: idx = 4, opcode de for table: pg1_R1, EQU: U
 [add_opcode_to_table]: table pg1_R1 len: 82, alloc size: 1992
-[build_decode_table]: idx = 5, opcode ee for table: pg1_R1, EQU: U
+[build_decode_table]: idx = 4, opcode de for table: pg1_R1, EQU: U
 [add_opcode_to_table]: table pg1_R1 len: 83, alloc size: 2016
+[build_decode_table]: idx = 5, opcode ee for table: pg1_R1, EQU: U
+[add_opcode_to_table]: table pg1_R1 len: 84, alloc size: 2040
 [build_decode_table]: idx = 6, opcode fe for table: pg1_R1, EQU: U
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 75, alloc size: 1824
-[build_decode_table]: idx = 4, opcode de for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 76, alloc size: 1848
-[build_decode_table]: idx = 5, opcode ee for table: pg1_R2, EQU: DMEM_RD
+[build_decode_table]: idx = 4, opcode de for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 77, alloc size: 1872
+[build_decode_table]: idx = 5, opcode ee for table: pg1_R2, EQU: DMEM_RD
+[add_opcode_to_table]: table pg1_R2 len: 78, alloc size: 1896
 [build_decode_table]: idx = 6, opcode fe for table: pg1_R2, EQU: DMEM_RD
 [find_table_by_name]: Table index 3, found table pg1_JTB!
 [add_opcode_to_table]: table pg1_JTB len: 58, alloc size: 1416
@@ -1810,18 +1819,18 @@
 [add_opcode_to_table]: table pg1_JTB len: 60, alloc size: 1464
 [build_decode_table]: idx = 6, opcode be for table: pg1_JTB, EQU: LD
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 84, alloc size: 2040
-[build_decode_table]: idx = 4, opcode 9e for table: pg1_R1, EQU: X
 [add_opcode_to_table]: table pg1_R1 len: 85, alloc size: 2064
-[build_decode_table]: idx = 5, opcode ae for table: pg1_R1, EQU: X
+[build_decode_table]: idx = 4, opcode 9e for table: pg1_R1, EQU: X
 [add_opcode_to_table]: table pg1_R1 len: 86, alloc size: 2088
+[build_decode_table]: idx = 5, opcode ae for table: pg1_R1, EQU: X
+[add_opcode_to_table]: table pg1_R1 len: 87, alloc size: 2112
 [build_decode_table]: idx = 6, opcode be for table: pg1_R1, EQU: X
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 78, alloc size: 1896
-[build_decode_table]: idx = 4, opcode 9e for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 79, alloc size: 1920
-[build_decode_table]: idx = 5, opcode ae for table: pg1_R2, EQU: DMEM_RD
+[build_decode_table]: idx = 4, opcode 9e for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 80, alloc size: 1944
+[build_decode_table]: idx = 5, opcode ae for table: pg1_R2, EQU: DMEM_RD
+[add_opcode_to_table]: table pg1_R2 len: 81, alloc size: 1968
 [build_decode_table]: idx = 6, opcode be for table: pg1_R2, EQU: DMEM_RD
 [find_table_by_name]: Table index 4, found table pg2_JTB!
 [add_opcode_to_table]: table pg2_JTB len: 9, alloc size: 240
@@ -1845,22 +1854,22 @@
 [add_opcode_to_table]: table pg2_R2 len: 16, alloc size: 408
 [build_decode_table]: idx = 6, opcode be for table: pg2_R2, EQU: DMEM_RD
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 151, alloc size: 3648
+[add_opcode_to_table]: table pg1_JTA len: 152, alloc size: 3672
 [build_decode_table]: idx = 4, opcode 8a for table: pg1_JTA, EQU: OR
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 87, alloc size: 2112
+[add_opcode_to_table]: table pg1_R1 len: 88, alloc size: 2136
 [build_decode_table]: idx = 4, opcode 8a for table: pg1_R1, EQU: A
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 81, alloc size: 1968
+[add_opcode_to_table]: table pg1_R2 len: 82, alloc size: 1992
 [build_decode_table]: idx = 4, opcode 8a for table: pg1_R2, EQU: IDATA
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 152, alloc size: 3672
+[add_opcode_to_table]: table pg1_JTA len: 153, alloc size: 3696
 [build_decode_table]: idx = 4, opcode ca for table: pg1_JTA, EQU: OR
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 88, alloc size: 2136
+[add_opcode_to_table]: table pg1_R1 len: 89, alloc size: 2160
 [build_decode_table]: idx = 4, opcode ca for table: pg1_R1, EQU: B
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 82, alloc size: 1992
+[add_opcode_to_table]: table pg1_R2 len: 83, alloc size: 2016
 [build_decode_table]: idx = 4, opcode ca for table: pg1_R2, EQU: IDATA
 [find_table_by_name]: Table index 3, found table pg1_JTB!
 [add_opcode_to_table]: table pg1_JTB len: 61, alloc size: 1488
@@ -1870,18 +1879,18 @@
 [add_opcode_to_table]: table pg1_JTB len: 63, alloc size: 1536
 [build_decode_table]: idx = 6, opcode ba for table: pg1_JTB, EQU: OR
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 89, alloc size: 2160
-[build_decode_table]: idx = 4, opcode 9a for table: pg1_R1, EQU: A
 [add_opcode_to_table]: table pg1_R1 len: 90, alloc size: 2184
-[build_decode_table]: idx = 5, opcode aa for table: pg1_R1, EQU: A
+[build_decode_table]: idx = 4, opcode 9a for table: pg1_R1, EQU: A
 [add_opcode_to_table]: table pg1_R1 len: 91, alloc size: 2208
+[build_decode_table]: idx = 5, opcode aa for table: pg1_R1, EQU: A
+[add_opcode_to_table]: table pg1_R1 len: 92, alloc size: 2232
 [build_decode_table]: idx = 6, opcode ba for table: pg1_R1, EQU: A
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 83, alloc size: 2016
-[build_decode_table]: idx = 4, opcode 9a for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 84, alloc size: 2040
-[build_decode_table]: idx = 5, opcode aa for table: pg1_R2, EQU: DMEM_RD
+[build_decode_table]: idx = 4, opcode 9a for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 85, alloc size: 2064
+[build_decode_table]: idx = 5, opcode aa for table: pg1_R2, EQU: DMEM_RD
+[add_opcode_to_table]: table pg1_R2 len: 86, alloc size: 2088
 [build_decode_table]: idx = 6, opcode ba for table: pg1_R2, EQU: DMEM_RD
 [find_table_by_name]: Table index 3, found table pg1_JTB!
 [add_opcode_to_table]: table pg1_JTB len: 64, alloc size: 1560
@@ -1891,45 +1900,45 @@
 [add_opcode_to_table]: table pg1_JTB len: 66, alloc size: 1608
 [build_decode_table]: idx = 6, opcode fa for table: pg1_JTB, EQU: OR
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 92, alloc size: 2232
-[build_decode_table]: idx = 4, opcode da for table: pg1_R1, EQU: B
 [add_opcode_to_table]: table pg1_R1 len: 93, alloc size: 2256
-[build_decode_table]: idx = 5, opcode ea for table: pg1_R1, EQU: B
+[build_decode_table]: idx = 4, opcode da for table: pg1_R1, EQU: B
 [add_opcode_to_table]: table pg1_R1 len: 94, alloc size: 2280
+[build_decode_table]: idx = 5, opcode ea for table: pg1_R1, EQU: B
+[add_opcode_to_table]: table pg1_R1 len: 95, alloc size: 2304
 [build_decode_table]: idx = 6, opcode fa for table: pg1_R1, EQU: B
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 86, alloc size: 2088
-[build_decode_table]: idx = 4, opcode da for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 87, alloc size: 2112
-[build_decode_table]: idx = 5, opcode ea for table: pg1_R2, EQU: DMEM_RD
+[build_decode_table]: idx = 4, opcode da for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 88, alloc size: 2136
+[build_decode_table]: idx = 5, opcode ea for table: pg1_R2, EQU: DMEM_RD
+[add_opcode_to_table]: table pg1_R2 len: 89, alloc size: 2160
 [build_decode_table]: idx = 6, opcode fa for table: pg1_R2, EQU: DMEM_RD
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 153, alloc size: 3696
+[add_opcode_to_table]: table pg1_JTA len: 154, alloc size: 3720
 [build_decode_table]: idx = 4, opcode 1a for table: pg1_JTA, EQU: ORCC
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 95, alloc size: 2304
+[add_opcode_to_table]: table pg1_R1 len: 96, alloc size: 2328
 [build_decode_table]: idx = 4, opcode 1a for table: pg1_R1, EQU: CCR
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 89, alloc size: 2160
+[add_opcode_to_table]: table pg1_R2 len: 90, alloc size: 2184
 [build_decode_table]: idx = 4, opcode 1a for table: pg1_R2, EQU: IDATA
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 154, alloc size: 3720
+[add_opcode_to_table]: table pg1_JTA len: 155, alloc size: 3744
 [build_decode_table]: idx = 4, opcode 82 for table: pg1_JTA, EQU: SBC
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 96, alloc size: 2328
+[add_opcode_to_table]: table pg1_R1 len: 97, alloc size: 2352
 [build_decode_table]: idx = 4, opcode 82 for table: pg1_R1, EQU: A
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 90, alloc size: 2184
+[add_opcode_to_table]: table pg1_R2 len: 91, alloc size: 2208
 [build_decode_table]: idx = 4, opcode 82 for table: pg1_R2, EQU: IDATA
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 155, alloc size: 3744
+[add_opcode_to_table]: table pg1_JTA len: 156, alloc size: 3768
 [build_decode_table]: idx = 4, opcode c2 for table: pg1_JTA, EQU: SBC
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 97, alloc size: 2352
+[add_opcode_to_table]: table pg1_R1 len: 98, alloc size: 2376
 [build_decode_table]: idx = 4, opcode c2 for table: pg1_R1, EQU: B
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 91, alloc size: 2208
+[add_opcode_to_table]: table pg1_R2 len: 92, alloc size: 2232
 [build_decode_table]: idx = 4, opcode c2 for table: pg1_R2, EQU: IDATA
 [find_table_by_name]: Table index 3, found table pg1_JTB!
 [add_opcode_to_table]: table pg1_JTB len: 67, alloc size: 1632
@@ -1939,18 +1948,18 @@
 [add_opcode_to_table]: table pg1_JTB len: 69, alloc size: 1680
 [build_decode_table]: idx = 6, opcode b2 for table: pg1_JTB, EQU: SBC
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 98, alloc size: 2376
-[build_decode_table]: idx = 4, opcode 92 for table: pg1_R1, EQU: A
 [add_opcode_to_table]: table pg1_R1 len: 99, alloc size: 2400
-[build_decode_table]: idx = 5, opcode a2 for table: pg1_R1, EQU: A
+[build_decode_table]: idx = 4, opcode 92 for table: pg1_R1, EQU: A
 [add_opcode_to_table]: table pg1_R1 len: 100, alloc size: 2424
+[build_decode_table]: idx = 5, opcode a2 for table: pg1_R1, EQU: A
+[add_opcode_to_table]: table pg1_R1 len: 101, alloc size: 2448
 [build_decode_table]: idx = 6, opcode b2 for table: pg1_R1, EQU: A
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 92, alloc size: 2232
-[build_decode_table]: idx = 4, opcode 92 for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 93, alloc size: 2256
-[build_decode_table]: idx = 5, opcode a2 for table: pg1_R2, EQU: DMEM_RD
+[build_decode_table]: idx = 4, opcode 92 for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 94, alloc size: 2280
+[build_decode_table]: idx = 5, opcode a2 for table: pg1_R2, EQU: DMEM_RD
+[add_opcode_to_table]: table pg1_R2 len: 95, alloc size: 2304
 [build_decode_table]: idx = 6, opcode b2 for table: pg1_R2, EQU: DMEM_RD
 [find_table_by_name]: Table index 3, found table pg1_JTB!
 [add_opcode_to_table]: table pg1_JTB len: 70, alloc size: 1704
@@ -1960,45 +1969,45 @@
 [add_opcode_to_table]: table pg1_JTB len: 72, alloc size: 1752
 [build_decode_table]: idx = 6, opcode f2 for table: pg1_JTB, EQU: SBC
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 101, alloc size: 2448
-[build_decode_table]: idx = 4, opcode d2 for table: pg1_R1, EQU: B
 [add_opcode_to_table]: table pg1_R1 len: 102, alloc size: 2472
-[build_decode_table]: idx = 5, opcode e2 for table: pg1_R1, EQU: B
+[build_decode_table]: idx = 4, opcode d2 for table: pg1_R1, EQU: B
 [add_opcode_to_table]: table pg1_R1 len: 103, alloc size: 2496
+[build_decode_table]: idx = 5, opcode e2 for table: pg1_R1, EQU: B
+[add_opcode_to_table]: table pg1_R1 len: 104, alloc size: 2520
 [build_decode_table]: idx = 6, opcode f2 for table: pg1_R1, EQU: B
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 95, alloc size: 2304
-[build_decode_table]: idx = 4, opcode d2 for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 96, alloc size: 2328
-[build_decode_table]: idx = 5, opcode e2 for table: pg1_R2, EQU: DMEM_RD
+[build_decode_table]: idx = 4, opcode d2 for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 97, alloc size: 2352
+[build_decode_table]: idx = 5, opcode e2 for table: pg1_R2, EQU: DMEM_RD
+[add_opcode_to_table]: table pg1_R2 len: 98, alloc size: 2376
 [build_decode_table]: idx = 6, opcode f2 for table: pg1_R2, EQU: DMEM_RD
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 156, alloc size: 3768
+[add_opcode_to_table]: table pg1_JTA len: 157, alloc size: 3792
 [build_decode_table]: idx = 4, opcode 80 for table: pg1_JTA, EQU: SUB
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 104, alloc size: 2520
+[add_opcode_to_table]: table pg1_R1 len: 105, alloc size: 2544
 [build_decode_table]: idx = 4, opcode 80 for table: pg1_R1, EQU: A
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 98, alloc size: 2376
+[add_opcode_to_table]: table pg1_R2 len: 99, alloc size: 2400
 [build_decode_table]: idx = 4, opcode 80 for table: pg1_R2, EQU: IDATA
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 157, alloc size: 3792
+[add_opcode_to_table]: table pg1_JTA len: 158, alloc size: 3816
 [build_decode_table]: idx = 4, opcode c0 for table: pg1_JTA, EQU: SUB
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 105, alloc size: 2544
+[add_opcode_to_table]: table pg1_R1 len: 106, alloc size: 2568
 [build_decode_table]: idx = 4, opcode c0 for table: pg1_R1, EQU: B
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 99, alloc size: 2400
+[add_opcode_to_table]: table pg1_R2 len: 100, alloc size: 2424
 [build_decode_table]: idx = 4, opcode c0 for table: pg1_R2, EQU: IDATA
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 158, alloc size: 3816
+[add_opcode_to_table]: table pg1_JTA len: 159, alloc size: 3840
 [build_decode_table]: idx = 4, opcode 83 for table: pg1_JTA, EQU: SUB
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 106, alloc size: 2568
+[add_opcode_to_table]: table pg1_R1 len: 107, alloc size: 2592
 [build_decode_table]: idx = 4, opcode 83 for table: pg1_R1, EQU: D
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 100, alloc size: 2424
+[add_opcode_to_table]: table pg1_R2 len: 101, alloc size: 2448
 [build_decode_table]: idx = 4, opcode 83 for table: pg1_R2, EQU: IDATA
 [find_table_by_name]: Table index 3, found table pg1_JTB!
 [add_opcode_to_table]: table pg1_JTB len: 73, alloc size: 1776
@@ -2008,18 +2017,18 @@
 [add_opcode_to_table]: table pg1_JTB len: 75, alloc size: 1824
 [build_decode_table]: idx = 6, opcode b0 for table: pg1_JTB, EQU: SUB
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 107, alloc size: 2592
-[build_decode_table]: idx = 4, opcode 90 for table: pg1_R1, EQU: A
 [add_opcode_to_table]: table pg1_R1 len: 108, alloc size: 2616
-[build_decode_table]: idx = 5, opcode a0 for table: pg1_R1, EQU: A
+[build_decode_table]: idx = 4, opcode 90 for table: pg1_R1, EQU: A
 [add_opcode_to_table]: table pg1_R1 len: 109, alloc size: 2640
+[build_decode_table]: idx = 5, opcode a0 for table: pg1_R1, EQU: A
+[add_opcode_to_table]: table pg1_R1 len: 110, alloc size: 2664
 [build_decode_table]: idx = 6, opcode b0 for table: pg1_R1, EQU: A
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 101, alloc size: 2448
-[build_decode_table]: idx = 4, opcode 90 for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 102, alloc size: 2472
-[build_decode_table]: idx = 5, opcode a0 for table: pg1_R2, EQU: DMEM_RD
+[build_decode_table]: idx = 4, opcode 90 for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 103, alloc size: 2496
+[build_decode_table]: idx = 5, opcode a0 for table: pg1_R2, EQU: DMEM_RD
+[add_opcode_to_table]: table pg1_R2 len: 104, alloc size: 2520
 [build_decode_table]: idx = 6, opcode b0 for table: pg1_R2, EQU: DMEM_RD
 [find_table_by_name]: Table index 3, found table pg1_JTB!
 [add_opcode_to_table]: table pg1_JTB len: 76, alloc size: 1848
@@ -2029,18 +2038,18 @@
 [add_opcode_to_table]: table pg1_JTB len: 78, alloc size: 1896
 [build_decode_table]: idx = 6, opcode f0 for table: pg1_JTB, EQU: SUB
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 110, alloc size: 2664
-[build_decode_table]: idx = 4, opcode d0 for table: pg1_R1, EQU: B
 [add_opcode_to_table]: table pg1_R1 len: 111, alloc size: 2688
-[build_decode_table]: idx = 5, opcode e0 for table: pg1_R1, EQU: B
+[build_decode_table]: idx = 4, opcode d0 for table: pg1_R1, EQU: B
 [add_opcode_to_table]: table pg1_R1 len: 112, alloc size: 2712
+[build_decode_table]: idx = 5, opcode e0 for table: pg1_R1, EQU: B
+[add_opcode_to_table]: table pg1_R1 len: 113, alloc size: 2736
 [build_decode_table]: idx = 6, opcode f0 for table: pg1_R1, EQU: B
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 104, alloc size: 2520
-[build_decode_table]: idx = 4, opcode d0 for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 105, alloc size: 2544
-[build_decode_table]: idx = 5, opcode e0 for table: pg1_R2, EQU: DMEM_RD
+[build_decode_table]: idx = 4, opcode d0 for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 106, alloc size: 2568
+[build_decode_table]: idx = 5, opcode e0 for table: pg1_R2, EQU: DMEM_RD
+[add_opcode_to_table]: table pg1_R2 len: 107, alloc size: 2592
 [build_decode_table]: idx = 6, opcode f0 for table: pg1_R2, EQU: DMEM_RD
 [find_table_by_name]: Table index 3, found table pg1_JTB!
 [add_opcode_to_table]: table pg1_JTB len: 79, alloc size: 1920
@@ -2050,28 +2059,28 @@
 [add_opcode_to_table]: table pg1_JTB len: 81, alloc size: 1968
 [build_decode_table]: idx = 6, opcode b3 for table: pg1_JTB, EQU: SUB
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 113, alloc size: 2736
-[build_decode_table]: idx = 4, opcode 93 for table: pg1_R1, EQU: D
 [add_opcode_to_table]: table pg1_R1 len: 114, alloc size: 2760
-[build_decode_table]: idx = 5, opcode a3 for table: pg1_R1, EQU: D
+[build_decode_table]: idx = 4, opcode 93 for table: pg1_R1, EQU: D
 [add_opcode_to_table]: table pg1_R1 len: 115, alloc size: 2784
+[build_decode_table]: idx = 5, opcode a3 for table: pg1_R1, EQU: D
+[add_opcode_to_table]: table pg1_R1 len: 116, alloc size: 2808
 [build_decode_table]: idx = 6, opcode b3 for table: pg1_R1, EQU: D
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 107, alloc size: 2592
-[build_decode_table]: idx = 4, opcode 93 for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 108, alloc size: 2616
-[build_decode_table]: idx = 5, opcode a3 for table: pg1_R2, EQU: DMEM_RD
+[build_decode_table]: idx = 4, opcode 93 for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 109, alloc size: 2640
+[build_decode_table]: idx = 5, opcode a3 for table: pg1_R2, EQU: DMEM_RD
+[add_opcode_to_table]: table pg1_R2 len: 110, alloc size: 2664
 [build_decode_table]: idx = 6, opcode b3 for table: pg1_R2, EQU: DMEM_RD
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 159, alloc size: 3840
-[build_decode_table]: idx = 4, opcode 97 for table: pg1_JTA, EQU: ST
 [add_opcode_to_table]: table pg1_JTA len: 160, alloc size: 3864
+[build_decode_table]: idx = 4, opcode 97 for table: pg1_JTA, EQU: ST
+[add_opcode_to_table]: table pg1_JTA len: 161, alloc size: 3888
 [build_decode_table]: idx = 5, opcode b7 for table: pg1_JTA, EQU: ST
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 116, alloc size: 2808
-[build_decode_table]: idx = 4, opcode 97 for table: pg1_R1, EQU: A
 [add_opcode_to_table]: table pg1_R1 len: 117, alloc size: 2832
+[build_decode_table]: idx = 4, opcode 97 for table: pg1_R1, EQU: A
+[add_opcode_to_table]: table pg1_R1 len: 118, alloc size: 2856
 [build_decode_table]: idx = 5, opcode b7 for table: pg1_R1, EQU: A
 [find_table_by_name]: Table index 12, found table pg1_AR!
 [add_opcode_to_table]: table pg1_AR len: 0, alloc size: 24
@@ -2079,14 +2088,14 @@
 [add_opcode_to_table]: table pg1_AR len: 1, alloc size: 48
 [build_decode_table]: idx = 5, opcode b7 for table: pg1_AR, EQU: IDATA
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 161, alloc size: 3888
-[build_decode_table]: idx = 4, opcode d7 for table: pg1_JTA, EQU: ST
 [add_opcode_to_table]: table pg1_JTA len: 162, alloc size: 3912
+[build_decode_table]: idx = 4, opcode d7 for table: pg1_JTA, EQU: ST
+[add_opcode_to_table]: table pg1_JTA len: 163, alloc size: 3936
 [build_decode_table]: idx = 5, opcode f7 for table: pg1_JTA, EQU: ST
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 118, alloc size: 2856
-[build_decode_table]: idx = 4, opcode d7 for table: pg1_R1, EQU: B
 [add_opcode_to_table]: table pg1_R1 len: 119, alloc size: 2880
+[build_decode_table]: idx = 4, opcode d7 for table: pg1_R1, EQU: B
+[add_opcode_to_table]: table pg1_R1 len: 120, alloc size: 2904
 [build_decode_table]: idx = 5, opcode f7 for table: pg1_R1, EQU: B
 [find_table_by_name]: Table index 12, found table pg1_AR!
 [add_opcode_to_table]: table pg1_AR len: 2, alloc size: 72
@@ -2094,14 +2103,14 @@
 [add_opcode_to_table]: table pg1_AR len: 3, alloc size: 96
 [build_decode_table]: idx = 5, opcode f7 for table: pg1_AR, EQU: IDATA
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 163, alloc size: 3936
-[build_decode_table]: idx = 4, opcode dd for table: pg1_JTA, EQU: ST
 [add_opcode_to_table]: table pg1_JTA len: 164, alloc size: 3960
+[build_decode_table]: idx = 4, opcode dd for table: pg1_JTA, EQU: ST
+[add_opcode_to_table]: table pg1_JTA len: 165, alloc size: 3984
 [build_decode_table]: idx = 5, opcode fd for table: pg1_JTA, EQU: ST
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 120, alloc size: 2904
-[build_decode_table]: idx = 4, opcode dd for table: pg1_R1, EQU: D
 [add_opcode_to_table]: table pg1_R1 len: 121, alloc size: 2928
+[build_decode_table]: idx = 4, opcode dd for table: pg1_R1, EQU: D
+[add_opcode_to_table]: table pg1_R1 len: 122, alloc size: 2952
 [build_decode_table]: idx = 5, opcode fd for table: pg1_R1, EQU: D
 [find_table_by_name]: Table index 12, found table pg1_AR!
 [add_opcode_to_table]: table pg1_AR len: 4, alloc size: 120
@@ -2124,14 +2133,14 @@
 [add_opcode_to_table]: table pg2_AR len: 1, alloc size: 48
 [build_decode_table]: idx = 5, opcode ff for table: pg2_AR, EQU: IDATA
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 165, alloc size: 3984
-[build_decode_table]: idx = 4, opcode df for table: pg1_JTA, EQU: ST
 [add_opcode_to_table]: table pg1_JTA len: 166, alloc size: 4008
+[build_decode_table]: idx = 4, opcode df for table: pg1_JTA, EQU: ST
+[add_opcode_to_table]: table pg1_JTA len: 167, alloc size: 4032
 [build_decode_table]: idx = 5, opcode ff for table: pg1_JTA, EQU: ST
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 122, alloc size: 2952
-[build_decode_table]: idx = 4, opcode df for table: pg1_R1, EQU: U
 [add_opcode_to_table]: table pg1_R1 len: 123, alloc size: 2976
+[build_decode_table]: idx = 4, opcode df for table: pg1_R1, EQU: U
+[add_opcode_to_table]: table pg1_R1 len: 124, alloc size: 3000
 [build_decode_table]: idx = 5, opcode ff for table: pg1_R1, EQU: U
 [find_table_by_name]: Table index 12, found table pg1_AR!
 [add_opcode_to_table]: table pg1_AR len: 6, alloc size: 168
@@ -2139,14 +2148,14 @@
 [add_opcode_to_table]: table pg1_AR len: 7, alloc size: 192
 [build_decode_table]: idx = 5, opcode ff for table: pg1_AR, EQU: IDATA
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 167, alloc size: 4032
-[build_decode_table]: idx = 4, opcode 9f for table: pg1_JTA, EQU: ST
 [add_opcode_to_table]: table pg1_JTA len: 168, alloc size: 4056
+[build_decode_table]: idx = 4, opcode 9f for table: pg1_JTA, EQU: ST
+[add_opcode_to_table]: table pg1_JTA len: 169, alloc size: 4080
 [build_decode_table]: idx = 5, opcode bf for table: pg1_JTA, EQU: ST
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 124, alloc size: 3000
-[build_decode_table]: idx = 4, opcode 9f for table: pg1_R1, EQU: X
 [add_opcode_to_table]: table pg1_R1 len: 125, alloc size: 3024
+[build_decode_table]: idx = 4, opcode 9f for table: pg1_R1, EQU: X
+[add_opcode_to_table]: table pg1_R1 len: 126, alloc size: 3048
 [build_decode_table]: idx = 5, opcode bf for table: pg1_R1, EQU: X
 [find_table_by_name]: Table index 12, found table pg1_AR!
 [add_opcode_to_table]: table pg1_AR len: 8, alloc size: 216
@@ -2172,7 +2181,7 @@
 [add_opcode_to_table]: table pg1_JTB len: 82, alloc size: 1992
 [build_decode_table]: idx = 4, opcode a7 for table: pg1_JTB, EQU: ST
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 126, alloc size: 3048
+[add_opcode_to_table]: table pg1_R1 len: 127, alloc size: 3072
 [build_decode_table]: idx = 4, opcode a7 for table: pg1_R1, EQU: A
 [find_table_by_name]: Table index 12, found table pg1_AR!
 [add_opcode_to_table]: table pg1_AR len: 10, alloc size: 264
@@ -2181,7 +2190,7 @@
 [add_opcode_to_table]: table pg1_JTB len: 83, alloc size: 2016
 [build_decode_table]: idx = 4, opcode e7 for table: pg1_JTB, EQU: ST
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 127, alloc size: 3072
+[add_opcode_to_table]: table pg1_R1 len: 128, alloc size: 3096
 [build_decode_table]: idx = 4, opcode e7 for table: pg1_R1, EQU: B
 [find_table_by_name]: Table index 12, found table pg1_AR!
 [add_opcode_to_table]: table pg1_AR len: 11, alloc size: 288
@@ -2190,7 +2199,7 @@
 [add_opcode_to_table]: table pg1_JTB len: 84, alloc size: 2040
 [build_decode_table]: idx = 4, opcode ed for table: pg1_JTB, EQU: ST
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 128, alloc size: 3096
+[add_opcode_to_table]: table pg1_R1 len: 129, alloc size: 3120
 [build_decode_table]: idx = 4, opcode ed for table: pg1_R1, EQU: D
 [find_table_by_name]: Table index 12, found table pg1_AR!
 [add_opcode_to_table]: table pg1_AR len: 12, alloc size: 312
@@ -2208,7 +2217,7 @@
 [add_opcode_to_table]: table pg1_JTB len: 85, alloc size: 2064
 [build_decode_table]: idx = 4, opcode ef for table: pg1_JTB, EQU: ST
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 129, alloc size: 3120
+[add_opcode_to_table]: table pg1_R1 len: 130, alloc size: 3144
 [build_decode_table]: idx = 4, opcode ef for table: pg1_R1, EQU: U
 [find_table_by_name]: Table index 12, found table pg1_AR!
 [add_opcode_to_table]: table pg1_AR len: 13, alloc size: 336
@@ -2217,7 +2226,7 @@
 [add_opcode_to_table]: table pg1_JTB len: 86, alloc size: 2088
 [build_decode_table]: idx = 4, opcode af for table: pg1_JTB, EQU: ST
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 130, alloc size: 3144
+[add_opcode_to_table]: table pg1_R1 len: 131, alloc size: 3168
 [build_decode_table]: idx = 4, opcode af for table: pg1_R1, EQU: X
 [find_table_by_name]: Table index 12, found table pg1_AR!
 [add_opcode_to_table]: table pg1_AR len: 14, alloc size: 360
@@ -2232,16 +2241,16 @@
 [add_opcode_to_table]: table pg2_AR len: 5, alloc size: 144
 [build_decode_table]: idx = 4, opcode af for table: pg2_AR, EQU: EA
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 169, alloc size: 4080
+[add_opcode_to_table]: table pg1_JTA len: 170, alloc size: 4104
 [build_decode_table]: idx = 4, opcode 48 for table: pg1_JTA, EQU: ASL_LSL
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 131, alloc size: 3168
+[add_opcode_to_table]: table pg1_R1 len: 132, alloc size: 3192
 [build_decode_table]: idx = 4, opcode 48 for table: pg1_R1, EQU: A
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 170, alloc size: 4104
+[add_opcode_to_table]: table pg1_JTA len: 171, alloc size: 4128
 [build_decode_table]: idx = 4, opcode 58 for table: pg1_JTA, EQU: ASL_LSL
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 132, alloc size: 3192
+[add_opcode_to_table]: table pg1_R1 len: 133, alloc size: 3216
 [build_decode_table]: idx = 4, opcode 58 for table: pg1_R1, EQU: B
 [find_table_by_name]: Table index 3, found table pg1_JTB!
 [add_opcode_to_table]: table pg1_JTB len: 87, alloc size: 2112
@@ -2251,23 +2260,23 @@
 [add_opcode_to_table]: table pg1_JTB len: 89, alloc size: 2160
 [build_decode_table]: idx = 6, opcode 78 for table: pg1_JTB, EQU: ASL_LSL
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 133, alloc size: 3216
-[build_decode_table]: idx = 4, opcode 8 for table: pg1_R1, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R1 len: 134, alloc size: 3240
-[build_decode_table]: idx = 5, opcode 68 for table: pg1_R1, EQU: DMEM_RD
+[build_decode_table]: idx = 4, opcode 8 for table: pg1_R1, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R1 len: 135, alloc size: 3264
+[build_decode_table]: idx = 5, opcode 68 for table: pg1_R1, EQU: DMEM_RD
+[add_opcode_to_table]: table pg1_R1 len: 136, alloc size: 3288
 [build_decode_table]: idx = 6, opcode 78 for table: pg1_R1, EQU: DMEM_RD
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 171, alloc size: 4128
+[add_opcode_to_table]: table pg1_JTA len: 172, alloc size: 4152
 [build_decode_table]: idx = 4, opcode 47 for table: pg1_JTA, EQU: ASR
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 136, alloc size: 3288
+[add_opcode_to_table]: table pg1_R1 len: 137, alloc size: 3312
 [build_decode_table]: idx = 4, opcode 47 for table: pg1_R1, EQU: A
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 172, alloc size: 4152
+[add_opcode_to_table]: table pg1_JTA len: 173, alloc size: 4176
 [build_decode_table]: idx = 4, opcode 57 for table: pg1_JTA, EQU: ASR
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 137, alloc size: 3312
+[add_opcode_to_table]: table pg1_R1 len: 138, alloc size: 3336
 [build_decode_table]: idx = 4, opcode 57 for table: pg1_R1, EQU: B
 [find_table_by_name]: Table index 3, found table pg1_JTB!
 [add_opcode_to_table]: table pg1_JTB len: 90, alloc size: 2184
@@ -2277,33 +2286,33 @@
 [add_opcode_to_table]: table pg1_JTB len: 92, alloc size: 2232
 [build_decode_table]: idx = 6, opcode 77 for table: pg1_JTB, EQU: ASR
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 138, alloc size: 3336
-[build_decode_table]: idx = 4, opcode 7 for table: pg1_R1, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R1 len: 139, alloc size: 3360
-[build_decode_table]: idx = 5, opcode 67 for table: pg1_R1, EQU: DMEM_RD
+[build_decode_table]: idx = 4, opcode 7 for table: pg1_R1, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R1 len: 140, alloc size: 3384
+[build_decode_table]: idx = 5, opcode 67 for table: pg1_R1, EQU: DMEM_RD
+[add_opcode_to_table]: table pg1_R1 len: 141, alloc size: 3408
 [build_decode_table]: idx = 6, opcode 77 for table: pg1_R1, EQU: DMEM_RD
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 173, alloc size: 4176
+[add_opcode_to_table]: table pg1_JTA len: 174, alloc size: 4200
 [build_decode_table]: idx = 4, opcode 4f for table: pg1_JTA, EQU: CLR
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 141, alloc size: 3408
+[add_opcode_to_table]: table pg1_R1 len: 142, alloc size: 3432
 [build_decode_table]: idx = 4, opcode 4f for table: pg1_R1, EQU: A
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 174, alloc size: 4200
+[add_opcode_to_table]: table pg1_JTA len: 175, alloc size: 4224
 [build_decode_table]: idx = 4, opcode 5f for table: pg1_JTA, EQU: CLR
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 142, alloc size: 3432
+[add_opcode_to_table]: table pg1_R1 len: 143, alloc size: 3456
 [build_decode_table]: idx = 4, opcode 5f for table: pg1_R1, EQU: B
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 175, alloc size: 4224
-[build_decode_table]: idx = 4, opcode f for table: pg1_JTA, EQU: CLR
 [add_opcode_to_table]: table pg1_JTA len: 176, alloc size: 4248
+[build_decode_table]: idx = 4, opcode f for table: pg1_JTA, EQU: CLR
+[add_opcode_to_table]: table pg1_JTA len: 177, alloc size: 4272
 [build_decode_table]: idx = 5, opcode 7f for table: pg1_JTA, EQU: CLR
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 143, alloc size: 3456
-[build_decode_table]: idx = 4, opcode f for table: pg1_R1, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R1 len: 144, alloc size: 3480
+[build_decode_table]: idx = 4, opcode f for table: pg1_R1, EQU: DMEM_RD
+[add_opcode_to_table]: table pg1_R1 len: 145, alloc size: 3504
 [build_decode_table]: idx = 5, opcode 7f for table: pg1_R1, EQU: DMEM_RD
 [find_table_by_name]: Table index 12, found table pg1_AR!
 [add_opcode_to_table]: table pg1_AR len: 15, alloc size: 384
@@ -2314,28 +2323,28 @@
 [add_opcode_to_table]: table pg1_JTB len: 93, alloc size: 2256
 [build_decode_table]: idx = 4, opcode 6f for table: pg1_JTB, EQU: CLR
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 145, alloc size: 3504
+[add_opcode_to_table]: table pg1_R1 len: 146, alloc size: 3528
 [build_decode_table]: idx = 4, opcode 6f for table: pg1_R1, EQU: DMEM_RD
 [find_table_by_name]: Table index 12, found table pg1_AR!
 [add_opcode_to_table]: table pg1_AR len: 17, alloc size: 432
 [build_decode_table]: idx = 4, opcode 6f for table: pg1_AR, EQU: EA
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 177, alloc size: 4272
+[add_opcode_to_table]: table pg1_JTA len: 178, alloc size: 4296
 [build_decode_table]: idx = 4, opcode 43 for table: pg1_JTA, EQU: COM
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 146, alloc size: 3528
+[add_opcode_to_table]: table pg1_R1 len: 147, alloc size: 3552
 [build_decode_table]: idx = 4, opcode 43 for table: pg1_R1, EQU: A
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 110, alloc size: 2664
+[add_opcode_to_table]: table pg1_R2 len: 111, alloc size: 2688
 [build_decode_table]: idx = 4, opcode 43 for table: pg1_R2, EQU: A
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 178, alloc size: 4296
+[add_opcode_to_table]: table pg1_JTA len: 179, alloc size: 4320
 [build_decode_table]: idx = 4, opcode 53 for table: pg1_JTA, EQU: COM
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 147, alloc size: 3552
+[add_opcode_to_table]: table pg1_R1 len: 148, alloc size: 3576
 [build_decode_table]: idx = 4, opcode 53 for table: pg1_R1, EQU: B
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 111, alloc size: 2688
+[add_opcode_to_table]: table pg1_R2 len: 112, alloc size: 2712
 [build_decode_table]: idx = 4, opcode 53 for table: pg1_R2, EQU: B
 [find_table_by_name]: Table index 3, found table pg1_JTB!
 [add_opcode_to_table]: table pg1_JTB len: 94, alloc size: 2280
@@ -2345,30 +2354,30 @@
 [add_opcode_to_table]: table pg1_JTB len: 96, alloc size: 2328
 [build_decode_table]: idx = 6, opcode 73 for table: pg1_JTB, EQU: COM
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 148, alloc size: 3576
-[build_decode_table]: idx = 4, opcode 3 for table: pg1_R1, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R1 len: 149, alloc size: 3600
-[build_decode_table]: idx = 5, opcode 63 for table: pg1_R1, EQU: DMEM_RD
+[build_decode_table]: idx = 4, opcode 3 for table: pg1_R1, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R1 len: 150, alloc size: 3624
+[build_decode_table]: idx = 5, opcode 63 for table: pg1_R1, EQU: DMEM_RD
+[add_opcode_to_table]: table pg1_R1 len: 151, alloc size: 3648
 [build_decode_table]: idx = 6, opcode 73 for table: pg1_R1, EQU: DMEM_RD
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 112, alloc size: 2712
-[build_decode_table]: idx = 4, opcode 3 for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 113, alloc size: 2736
-[build_decode_table]: idx = 5, opcode 63 for table: pg1_R2, EQU: DMEM_RD
+[build_decode_table]: idx = 4, opcode 3 for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 114, alloc size: 2760
+[build_decode_table]: idx = 5, opcode 63 for table: pg1_R2, EQU: DMEM_RD
+[add_opcode_to_table]: table pg1_R2 len: 115, alloc size: 2784
 [build_decode_table]: idx = 6, opcode 73 for table: pg1_R2, EQU: DMEM_RD
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 179, alloc size: 4320
+[add_opcode_to_table]: table pg1_JTA len: 180, alloc size: 4344
 [build_decode_table]: idx = 4, opcode 4a for table: pg1_JTA, EQU: DEC
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 151, alloc size: 3648
+[add_opcode_to_table]: table pg1_R1 len: 152, alloc size: 3672
 [build_decode_table]: idx = 4, opcode 4a for table: pg1_R1, EQU: A
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 180, alloc size: 4344
+[add_opcode_to_table]: table pg1_JTA len: 181, alloc size: 4368
 [build_decode_table]: idx = 4, opcode 5a for table: pg1_JTA, EQU: DEC
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 152, alloc size: 3672
+[add_opcode_to_table]: table pg1_R1 len: 153, alloc size: 3696
 [build_decode_table]: idx = 4, opcode 5a for table: pg1_R1, EQU: B
 [find_table_by_name]: Table index 3, found table pg1_JTB!
 [add_opcode_to_table]: table pg1_JTB len: 97, alloc size: 2352
@@ -2378,23 +2387,23 @@
 [add_opcode_to_table]: table pg1_JTB len: 99, alloc size: 2400
 [build_decode_table]: idx = 6, opcode 7a for table: pg1_JTB, EQU: DEC
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 153, alloc size: 3696
-[build_decode_table]: idx = 4, opcode a for table: pg1_R1, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R1 len: 154, alloc size: 3720
-[build_decode_table]: idx = 5, opcode 6a for table: pg1_R1, EQU: DMEM_RD
+[build_decode_table]: idx = 4, opcode a for table: pg1_R1, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R1 len: 155, alloc size: 3744
+[build_decode_table]: idx = 5, opcode 6a for table: pg1_R1, EQU: DMEM_RD
+[add_opcode_to_table]: table pg1_R1 len: 156, alloc size: 3768
 [build_decode_table]: idx = 6, opcode 7a for table: pg1_R1, EQU: DMEM_RD
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 181, alloc size: 4368
+[add_opcode_to_table]: table pg1_JTA len: 182, alloc size: 4392
 [build_decode_table]: idx = 4, opcode 4c for table: pg1_JTA, EQU: INC
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 156, alloc size: 3768
+[add_opcode_to_table]: table pg1_R1 len: 157, alloc size: 3792
 [build_decode_table]: idx = 4, opcode 4c for table: pg1_R1, EQU: A
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 182, alloc size: 4392
+[add_opcode_to_table]: table pg1_JTA len: 183, alloc size: 4416
 [build_decode_table]: idx = 4, opcode 5c for table: pg1_JTA, EQU: INC
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 157, alloc size: 3792
+[add_opcode_to_table]: table pg1_R1 len: 158, alloc size: 3816
 [build_decode_table]: idx = 4, opcode 5c for table: pg1_R1, EQU: B
 [find_table_by_name]: Table index 3, found table pg1_JTB!
 [add_opcode_to_table]: table pg1_JTB len: 100, alloc size: 2424
@@ -2404,23 +2413,23 @@
 [add_opcode_to_table]: table pg1_JTB len: 102, alloc size: 2472
 [build_decode_table]: idx = 6, opcode 7c for table: pg1_JTB, EQU: INC
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 158, alloc size: 3816
-[build_decode_table]: idx = 4, opcode c for table: pg1_R1, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R1 len: 159, alloc size: 3840
-[build_decode_table]: idx = 5, opcode 6c for table: pg1_R1, EQU: DMEM_RD
+[build_decode_table]: idx = 4, opcode c for table: pg1_R1, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R1 len: 160, alloc size: 3864
+[build_decode_table]: idx = 5, opcode 6c for table: pg1_R1, EQU: DMEM_RD
+[add_opcode_to_table]: table pg1_R1 len: 161, alloc size: 3888
 [build_decode_table]: idx = 6, opcode 7c for table: pg1_R1, EQU: DMEM_RD
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 183, alloc size: 4416
+[add_opcode_to_table]: table pg1_JTA len: 184, alloc size: 4440
 [build_decode_table]: idx = 4, opcode 44 for table: pg1_JTA, EQU: LSR
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 161, alloc size: 3888
+[add_opcode_to_table]: table pg1_R1 len: 162, alloc size: 3912
 [build_decode_table]: idx = 4, opcode 44 for table: pg1_R1, EQU: A
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 184, alloc size: 4440
+[add_opcode_to_table]: table pg1_JTA len: 185, alloc size: 4464
 [build_decode_table]: idx = 4, opcode 54 for table: pg1_JTA, EQU: LSR
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 162, alloc size: 3912
+[add_opcode_to_table]: table pg1_R1 len: 163, alloc size: 3936
 [build_decode_table]: idx = 4, opcode 54 for table: pg1_R1, EQU: B
 [find_table_by_name]: Table index 3, found table pg1_JTB!
 [add_opcode_to_table]: table pg1_JTB len: 103, alloc size: 2496
@@ -2430,29 +2439,29 @@
 [add_opcode_to_table]: table pg1_JTB len: 105, alloc size: 2544
 [build_decode_table]: idx = 6, opcode 74 for table: pg1_JTB, EQU: LSR
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 163, alloc size: 3936
-[build_decode_table]: idx = 4, opcode 4 for table: pg1_R1, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R1 len: 164, alloc size: 3960
-[build_decode_table]: idx = 5, opcode 64 for table: pg1_R1, EQU: DMEM_RD
+[build_decode_table]: idx = 4, opcode 4 for table: pg1_R1, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R1 len: 165, alloc size: 3984
+[build_decode_table]: idx = 5, opcode 64 for table: pg1_R1, EQU: DMEM_RD
+[add_opcode_to_table]: table pg1_R1 len: 166, alloc size: 4008
 [build_decode_table]: idx = 6, opcode 74 for table: pg1_R1, EQU: DMEM_RD
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 185, alloc size: 4464
+[add_opcode_to_table]: table pg1_JTA len: 186, alloc size: 4488
 [build_decode_table]: idx = 4, opcode 40 for table: pg1_JTA, EQU: NEG
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 166, alloc size: 4008
+[add_opcode_to_table]: table pg1_R1 len: 167, alloc size: 4032
 [build_decode_table]: idx = 4, opcode 40 for table: pg1_R1, EQU: A
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 115, alloc size: 2784
+[add_opcode_to_table]: table pg1_R2 len: 116, alloc size: 2808
 [build_decode_table]: idx = 4, opcode 40 for table: pg1_R2, EQU: A
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 186, alloc size: 4488
+[add_opcode_to_table]: table pg1_JTA len: 187, alloc size: 4512
 [build_decode_table]: idx = 4, opcode 50 for table: pg1_JTA, EQU: NEG
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 167, alloc size: 4032
+[add_opcode_to_table]: table pg1_R1 len: 168, alloc size: 4056
 [build_decode_table]: idx = 4, opcode 50 for table: pg1_R1, EQU: B
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 116, alloc size: 2808
+[add_opcode_to_table]: table pg1_R2 len: 117, alloc size: 2832
 [build_decode_table]: idx = 4, opcode 50 for table: pg1_R2, EQU: B
 [find_table_by_name]: Table index 3, found table pg1_JTB!
 [add_opcode_to_table]: table pg1_JTB len: 106, alloc size: 2568
@@ -2462,30 +2471,30 @@
 [add_opcode_to_table]: table pg1_JTB len: 108, alloc size: 2616
 [build_decode_table]: idx = 6, opcode 70 for table: pg1_JTB, EQU: NEG
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 168, alloc size: 4056
-[build_decode_table]: idx = 4, opcode 0 for table: pg1_R1, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R1 len: 169, alloc size: 4080
-[build_decode_table]: idx = 5, opcode 60 for table: pg1_R1, EQU: DMEM_RD
+[build_decode_table]: idx = 4, opcode 0 for table: pg1_R1, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R1 len: 170, alloc size: 4104
+[build_decode_table]: idx = 5, opcode 60 for table: pg1_R1, EQU: DMEM_RD
+[add_opcode_to_table]: table pg1_R1 len: 171, alloc size: 4128
 [build_decode_table]: idx = 6, opcode 70 for table: pg1_R1, EQU: DMEM_RD
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 117, alloc size: 2832
-[build_decode_table]: idx = 4, opcode 0 for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 118, alloc size: 2856
-[build_decode_table]: idx = 5, opcode 60 for table: pg1_R2, EQU: DMEM_RD
+[build_decode_table]: idx = 4, opcode 0 for table: pg1_R2, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R2 len: 119, alloc size: 2880
+[build_decode_table]: idx = 5, opcode 60 for table: pg1_R2, EQU: DMEM_RD
+[add_opcode_to_table]: table pg1_R2 len: 120, alloc size: 2904
 [build_decode_table]: idx = 6, opcode 70 for table: pg1_R2, EQU: DMEM_RD
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 187, alloc size: 4512
+[add_opcode_to_table]: table pg1_JTA len: 188, alloc size: 4536
 [build_decode_table]: idx = 4, opcode 49 for table: pg1_JTA, EQU: ROL
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 171, alloc size: 4128
+[add_opcode_to_table]: table pg1_R1 len: 172, alloc size: 4152
 [build_decode_table]: idx = 4, opcode 49 for table: pg1_R1, EQU: A
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 188, alloc size: 4536
+[add_opcode_to_table]: table pg1_JTA len: 189, alloc size: 4560
 [build_decode_table]: idx = 4, opcode 59 for table: pg1_JTA, EQU: ROL
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 172, alloc size: 4152
+[add_opcode_to_table]: table pg1_R1 len: 173, alloc size: 4176
 [build_decode_table]: idx = 4, opcode 59 for table: pg1_R1, EQU: B
 [find_table_by_name]: Table index 3, found table pg1_JTB!
 [add_opcode_to_table]: table pg1_JTB len: 109, alloc size: 2640
@@ -2495,23 +2504,23 @@
 [add_opcode_to_table]: table pg1_JTB len: 111, alloc size: 2688
 [build_decode_table]: idx = 6, opcode 79 for table: pg1_JTB, EQU: ROL
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 173, alloc size: 4176
-[build_decode_table]: idx = 4, opcode 9 for table: pg1_R1, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R1 len: 174, alloc size: 4200
-[build_decode_table]: idx = 5, opcode 69 for table: pg1_R1, EQU: DMEM_RD
+[build_decode_table]: idx = 4, opcode 9 for table: pg1_R1, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R1 len: 175, alloc size: 4224
+[build_decode_table]: idx = 5, opcode 69 for table: pg1_R1, EQU: DMEM_RD
+[add_opcode_to_table]: table pg1_R1 len: 176, alloc size: 4248
 [build_decode_table]: idx = 6, opcode 79 for table: pg1_R1, EQU: DMEM_RD
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 189, alloc size: 4560
+[add_opcode_to_table]: table pg1_JTA len: 190, alloc size: 4584
 [build_decode_table]: idx = 4, opcode 46 for table: pg1_JTA, EQU: ROR
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 176, alloc size: 4248
+[add_opcode_to_table]: table pg1_R1 len: 177, alloc size: 4272
 [build_decode_table]: idx = 4, opcode 46 for table: pg1_R1, EQU: A
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 190, alloc size: 4584
+[add_opcode_to_table]: table pg1_JTA len: 191, alloc size: 4608
 [build_decode_table]: idx = 4, opcode 56 for table: pg1_JTA, EQU: ROR
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 177, alloc size: 4272
+[add_opcode_to_table]: table pg1_R1 len: 178, alloc size: 4296
 [build_decode_table]: idx = 4, opcode 56 for table: pg1_R1, EQU: B
 [find_table_by_name]: Table index 3, found table pg1_JTB!
 [add_opcode_to_table]: table pg1_JTB len: 112, alloc size: 2712
@@ -2521,23 +2530,23 @@
 [add_opcode_to_table]: table pg1_JTB len: 114, alloc size: 2760
 [build_decode_table]: idx = 6, opcode 76 for table: pg1_JTB, EQU: ROR
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 178, alloc size: 4296
-[build_decode_table]: idx = 4, opcode 6 for table: pg1_R1, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R1 len: 179, alloc size: 4320
-[build_decode_table]: idx = 5, opcode 66 for table: pg1_R1, EQU: DMEM_RD
+[build_decode_table]: idx = 4, opcode 6 for table: pg1_R1, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R1 len: 180, alloc size: 4344
+[build_decode_table]: idx = 5, opcode 66 for table: pg1_R1, EQU: DMEM_RD
+[add_opcode_to_table]: table pg1_R1 len: 181, alloc size: 4368
 [build_decode_table]: idx = 6, opcode 76 for table: pg1_R1, EQU: DMEM_RD
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 191, alloc size: 4608
+[add_opcode_to_table]: table pg1_JTA len: 192, alloc size: 4632
 [build_decode_table]: idx = 4, opcode 4d for table: pg1_JTA, EQU: TST
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 181, alloc size: 4368
+[add_opcode_to_table]: table pg1_R1 len: 182, alloc size: 4392
 [build_decode_table]: idx = 4, opcode 4d for table: pg1_R1, EQU: A
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 192, alloc size: 4632
+[add_opcode_to_table]: table pg1_JTA len: 193, alloc size: 4656
 [build_decode_table]: idx = 4, opcode 5d for table: pg1_JTA, EQU: TST
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 182, alloc size: 4392
+[add_opcode_to_table]: table pg1_R1 len: 183, alloc size: 4416
 [build_decode_table]: idx = 4, opcode 5d for table: pg1_R1, EQU: B
 [find_table_by_name]: Table index 3, found table pg1_JTB!
 [add_opcode_to_table]: table pg1_JTB len: 115, alloc size: 2784
@@ -2547,20 +2556,20 @@
 [add_opcode_to_table]: table pg1_JTB len: 117, alloc size: 2832
 [build_decode_table]: idx = 6, opcode 7d for table: pg1_JTB, EQU: TST
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 183, alloc size: 4416
-[build_decode_table]: idx = 4, opcode d for table: pg1_R1, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R1 len: 184, alloc size: 4440
-[build_decode_table]: idx = 5, opcode 6d for table: pg1_R1, EQU: DMEM_RD
+[build_decode_table]: idx = 4, opcode d for table: pg1_R1, EQU: DMEM_RD
 [add_opcode_to_table]: table pg1_R1 len: 185, alloc size: 4464
+[build_decode_table]: idx = 5, opcode 6d for table: pg1_R1, EQU: DMEM_RD
+[add_opcode_to_table]: table pg1_R1 len: 186, alloc size: 4488
 [build_decode_table]: idx = 6, opcode 7d for table: pg1_R1, EQU: DMEM_RD
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 193, alloc size: 4656
-[build_decode_table]: idx = 4, opcode 20 for table: pg1_JTA, EQU: BRANCH
 [add_opcode_to_table]: table pg1_JTA len: 194, alloc size: 4680
-[build_decode_table]: idx = 5, opcode 21 for table: pg1_JTA, EQU: BRANCH
+[build_decode_table]: idx = 4, opcode 20 for table: pg1_JTA, EQU: BRANCH
 [add_opcode_to_table]: table pg1_JTA len: 195, alloc size: 4704
-[build_decode_table]: idx = 6, opcode 22 for table: pg1_JTA, EQU: BRANCH
+[build_decode_table]: idx = 5, opcode 21 for table: pg1_JTA, EQU: BRANCH
 [add_opcode_to_table]: table pg1_JTA len: 196, alloc size: 4728
+[build_decode_table]: idx = 6, opcode 22 for table: pg1_JTA, EQU: BRANCH
+[add_opcode_to_table]: table pg1_JTA len: 197, alloc size: 4752
 [build_decode_table]: idx = 7, opcode 23 for table: pg1_JTA, EQU: BRANCH
 [find_table_by_name]: Table index 3, found table pg1_JTB!
 [add_opcode_to_table]: table pg1_JTB len: 118, alloc size: 2856
@@ -2572,31 +2581,31 @@
 [add_opcode_to_table]: table pg1_JTB len: 121, alloc size: 2928
 [build_decode_table]: idx = 7, opcode 23 for table: pg1_JTB, EQU: JMP
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 186, alloc size: 4488
-[build_decode_table]: idx = 4, opcode 20 for table: pg1_R1, EQU: PC
 [add_opcode_to_table]: table pg1_R1 len: 187, alloc size: 4512
-[build_decode_table]: idx = 5, opcode 21 for table: pg1_R1, EQU: PC
+[build_decode_table]: idx = 4, opcode 20 for table: pg1_R1, EQU: PC
 [add_opcode_to_table]: table pg1_R1 len: 188, alloc size: 4536
-[build_decode_table]: idx = 6, opcode 22 for table: pg1_R1, EQU: PC
+[build_decode_table]: idx = 5, opcode 21 for table: pg1_R1, EQU: PC
 [add_opcode_to_table]: table pg1_R1 len: 189, alloc size: 4560
+[build_decode_table]: idx = 6, opcode 22 for table: pg1_R1, EQU: PC
+[add_opcode_to_table]: table pg1_R1 len: 190, alloc size: 4584
 [build_decode_table]: idx = 7, opcode 23 for table: pg1_R1, EQU: PC
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 120, alloc size: 2904
-[build_decode_table]: idx = 4, opcode 20 for table: pg1_R2, EQU: EA
 [add_opcode_to_table]: table pg1_R2 len: 121, alloc size: 2928
-[build_decode_table]: idx = 5, opcode 21 for table: pg1_R2, EQU: EA
+[build_decode_table]: idx = 4, opcode 20 for table: pg1_R2, EQU: EA
 [add_opcode_to_table]: table pg1_R2 len: 122, alloc size: 2952
-[build_decode_table]: idx = 6, opcode 22 for table: pg1_R2, EQU: EA
+[build_decode_table]: idx = 5, opcode 21 for table: pg1_R2, EQU: EA
 [add_opcode_to_table]: table pg1_R2 len: 123, alloc size: 2976
+[build_decode_table]: idx = 6, opcode 22 for table: pg1_R2, EQU: EA
+[add_opcode_to_table]: table pg1_R2 len: 124, alloc size: 3000
 [build_decode_table]: idx = 7, opcode 23 for table: pg1_R2, EQU: EA
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 197, alloc size: 4752
-[build_decode_table]: idx = 4, opcode 24 for table: pg1_JTA, EQU: BRANCH
 [add_opcode_to_table]: table pg1_JTA len: 198, alloc size: 4776
-[build_decode_table]: idx = 5, opcode 25 for table: pg1_JTA, EQU: BRANCH
+[build_decode_table]: idx = 4, opcode 24 for table: pg1_JTA, EQU: BRANCH
 [add_opcode_to_table]: table pg1_JTA len: 199, alloc size: 4800
-[build_decode_table]: idx = 6, opcode 26 for table: pg1_JTA, EQU: BRANCH
+[build_decode_table]: idx = 5, opcode 25 for table: pg1_JTA, EQU: BRANCH
 [add_opcode_to_table]: table pg1_JTA len: 200, alloc size: 4824
+[build_decode_table]: idx = 6, opcode 26 for table: pg1_JTA, EQU: BRANCH
+[add_opcode_to_table]: table pg1_JTA len: 201, alloc size: 4848
 [build_decode_table]: idx = 7, opcode 27 for table: pg1_JTA, EQU: BRANCH
 [find_table_by_name]: Table index 3, found table pg1_JTB!
 [add_opcode_to_table]: table pg1_JTB len: 122, alloc size: 2952
@@ -2608,31 +2617,31 @@
 [add_opcode_to_table]: table pg1_JTB len: 125, alloc size: 3024
 [build_decode_table]: idx = 7, opcode 27 for table: pg1_JTB, EQU: JMP
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 190, alloc size: 4584
-[build_decode_table]: idx = 4, opcode 24 for table: pg1_R1, EQU: PC
 [add_opcode_to_table]: table pg1_R1 len: 191, alloc size: 4608
-[build_decode_table]: idx = 5, opcode 25 for table: pg1_R1, EQU: PC
+[build_decode_table]: idx = 4, opcode 24 for table: pg1_R1, EQU: PC
 [add_opcode_to_table]: table pg1_R1 len: 192, alloc size: 4632
-[build_decode_table]: idx = 6, opcode 26 for table: pg1_R1, EQU: PC
+[build_decode_table]: idx = 5, opcode 25 for table: pg1_R1, EQU: PC
 [add_opcode_to_table]: table pg1_R1 len: 193, alloc size: 4656
+[build_decode_table]: idx = 6, opcode 26 for table: pg1_R1, EQU: PC
+[add_opcode_to_table]: table pg1_R1 len: 194, alloc size: 4680
 [build_decode_table]: idx = 7, opcode 27 for table: pg1_R1, EQU: PC
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 124, alloc size: 3000
-[build_decode_table]: idx = 4, opcode 24 for table: pg1_R2, EQU: EA
 [add_opcode_to_table]: table pg1_R2 len: 125, alloc size: 3024
-[build_decode_table]: idx = 5, opcode 25 for table: pg1_R2, EQU: EA
+[build_decode_table]: idx = 4, opcode 24 for table: pg1_R2, EQU: EA
 [add_opcode_to_table]: table pg1_R2 len: 126, alloc size: 3048
-[build_decode_table]: idx = 6, opcode 26 for table: pg1_R2, EQU: EA
+[build_decode_table]: idx = 5, opcode 25 for table: pg1_R2, EQU: EA
 [add_opcode_to_table]: table pg1_R2 len: 127, alloc size: 3072
+[build_decode_table]: idx = 6, opcode 26 for table: pg1_R2, EQU: EA
+[add_opcode_to_table]: table pg1_R2 len: 128, alloc size: 3096
 [build_decode_table]: idx = 7, opcode 27 for table: pg1_R2, EQU: EA
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 201, alloc size: 4848
-[build_decode_table]: idx = 4, opcode 28 for table: pg1_JTA, EQU: BRANCH
 [add_opcode_to_table]: table pg1_JTA len: 202, alloc size: 4872
-[build_decode_table]: idx = 5, opcode 29 for table: pg1_JTA, EQU: BRANCH
+[build_decode_table]: idx = 4, opcode 28 for table: pg1_JTA, EQU: BRANCH
 [add_opcode_to_table]: table pg1_JTA len: 203, alloc size: 4896
-[build_decode_table]: idx = 6, opcode 2a for table: pg1_JTA, EQU: BRANCH
+[build_decode_table]: idx = 5, opcode 29 for table: pg1_JTA, EQU: BRANCH
 [add_opcode_to_table]: table pg1_JTA len: 204, alloc size: 4920
+[build_decode_table]: idx = 6, opcode 2a for table: pg1_JTA, EQU: BRANCH
+[add_opcode_to_table]: table pg1_JTA len: 205, alloc size: 4944
 [build_decode_table]: idx = 7, opcode 2b for table: pg1_JTA, EQU: BRANCH
 [find_table_by_name]: Table index 3, found table pg1_JTB!
 [add_opcode_to_table]: table pg1_JTB len: 126, alloc size: 3048
@@ -2644,31 +2653,31 @@
 [add_opcode_to_table]: table pg1_JTB len: 129, alloc size: 3120
 [build_decode_table]: idx = 7, opcode 2b for table: pg1_JTB, EQU: JMP
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 194, alloc size: 4680
-[build_decode_table]: idx = 4, opcode 28 for table: pg1_R1, EQU: PC
 [add_opcode_to_table]: table pg1_R1 len: 195, alloc size: 4704
-[build_decode_table]: idx = 5, opcode 29 for table: pg1_R1, EQU: PC
+[build_decode_table]: idx = 4, opcode 28 for table: pg1_R1, EQU: PC
 [add_opcode_to_table]: table pg1_R1 len: 196, alloc size: 4728
-[build_decode_table]: idx = 6, opcode 2a for table: pg1_R1, EQU: PC
+[build_decode_table]: idx = 5, opcode 29 for table: pg1_R1, EQU: PC
 [add_opcode_to_table]: table pg1_R1 len: 197, alloc size: 4752
+[build_decode_table]: idx = 6, opcode 2a for table: pg1_R1, EQU: PC
+[add_opcode_to_table]: table pg1_R1 len: 198, alloc size: 4776
 [build_decode_table]: idx = 7, opcode 2b for table: pg1_R1, EQU: PC
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 128, alloc size: 3096
-[build_decode_table]: idx = 4, opcode 28 for table: pg1_R2, EQU: EA
 [add_opcode_to_table]: table pg1_R2 len: 129, alloc size: 3120
-[build_decode_table]: idx = 5, opcode 29 for table: pg1_R2, EQU: EA
+[build_decode_table]: idx = 4, opcode 28 for table: pg1_R2, EQU: EA
 [add_opcode_to_table]: table pg1_R2 len: 130, alloc size: 3144
-[build_decode_table]: idx = 6, opcode 2a for table: pg1_R2, EQU: EA
+[build_decode_table]: idx = 5, opcode 29 for table: pg1_R2, EQU: EA
 [add_opcode_to_table]: table pg1_R2 len: 131, alloc size: 3168
+[build_decode_table]: idx = 6, opcode 2a for table: pg1_R2, EQU: EA
+[add_opcode_to_table]: table pg1_R2 len: 132, alloc size: 3192
 [build_decode_table]: idx = 7, opcode 2b for table: pg1_R2, EQU: EA
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 205, alloc size: 4944
-[build_decode_table]: idx = 4, opcode 2c for table: pg1_JTA, EQU: BRANCH
 [add_opcode_to_table]: table pg1_JTA len: 206, alloc size: 4968
-[build_decode_table]: idx = 5, opcode 2d for table: pg1_JTA, EQU: BRANCH
+[build_decode_table]: idx = 4, opcode 2c for table: pg1_JTA, EQU: BRANCH
 [add_opcode_to_table]: table pg1_JTA len: 207, alloc size: 4992
-[build_decode_table]: idx = 6, opcode 2e for table: pg1_JTA, EQU: BRANCH
+[build_decode_table]: idx = 5, opcode 2d for table: pg1_JTA, EQU: BRANCH
 [add_opcode_to_table]: table pg1_JTA len: 208, alloc size: 5016
+[build_decode_table]: idx = 6, opcode 2e for table: pg1_JTA, EQU: BRANCH
+[add_opcode_to_table]: table pg1_JTA len: 209, alloc size: 5040
 [build_decode_table]: idx = 7, opcode 2f for table: pg1_JTA, EQU: BRANCH
 [find_table_by_name]: Table index 3, found table pg1_JTB!
 [add_opcode_to_table]: table pg1_JTB len: 130, alloc size: 3144
@@ -2680,39 +2689,39 @@
 [add_opcode_to_table]: table pg1_JTB len: 133, alloc size: 3216
 [build_decode_table]: idx = 7, opcode 2f for table: pg1_JTB, EQU: JMP
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 198, alloc size: 4776
-[build_decode_table]: idx = 4, opcode 2c for table: pg1_R1, EQU: PC
 [add_opcode_to_table]: table pg1_R1 len: 199, alloc size: 4800
-[build_decode_table]: idx = 5, opcode 2d for table: pg1_R1, EQU: PC
+[build_decode_table]: idx = 4, opcode 2c for table: pg1_R1, EQU: PC
 [add_opcode_to_table]: table pg1_R1 len: 200, alloc size: 4824
-[build_decode_table]: idx = 6, opcode 2e for table: pg1_R1, EQU: PC
+[build_decode_table]: idx = 5, opcode 2d for table: pg1_R1, EQU: PC
 [add_opcode_to_table]: table pg1_R1 len: 201, alloc size: 4848
+[build_decode_table]: idx = 6, opcode 2e for table: pg1_R1, EQU: PC
+[add_opcode_to_table]: table pg1_R1 len: 202, alloc size: 4872
 [build_decode_table]: idx = 7, opcode 2f for table: pg1_R1, EQU: PC
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 132, alloc size: 3192
-[build_decode_table]: idx = 4, opcode 2c for table: pg1_R2, EQU: EA
 [add_opcode_to_table]: table pg1_R2 len: 133, alloc size: 3216
-[build_decode_table]: idx = 5, opcode 2d for table: pg1_R2, EQU: EA
+[build_decode_table]: idx = 4, opcode 2c for table: pg1_R2, EQU: EA
 [add_opcode_to_table]: table pg1_R2 len: 134, alloc size: 3240
-[build_decode_table]: idx = 6, opcode 2e for table: pg1_R2, EQU: EA
+[build_decode_table]: idx = 5, opcode 2d for table: pg1_R2, EQU: EA
 [add_opcode_to_table]: table pg1_R2 len: 135, alloc size: 3264
+[build_decode_table]: idx = 6, opcode 2e for table: pg1_R2, EQU: EA
+[add_opcode_to_table]: table pg1_R2 len: 136, alloc size: 3288
 [build_decode_table]: idx = 7, opcode 2f for table: pg1_R2, EQU: EA
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 209, alloc size: 5040
+[add_opcode_to_table]: table pg1_JTA len: 210, alloc size: 5064
 [build_decode_table]: idx = 4, opcode 16 for table: pg1_JTA, EQU: BRANCH
 [find_table_by_name]: Table index 3, found table pg1_JTB!
 [add_opcode_to_table]: table pg1_JTB len: 134, alloc size: 3240
 [build_decode_table]: idx = 4, opcode 16 for table: pg1_JTB, EQU: JMP
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 202, alloc size: 4872
+[add_opcode_to_table]: table pg1_R1 len: 203, alloc size: 4896
 [build_decode_table]: idx = 4, opcode 16 for table: pg1_R1, EQU: PC
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 136, alloc size: 3288
+[add_opcode_to_table]: table pg1_R2 len: 137, alloc size: 3312
 [build_decode_table]: idx = 4, opcode 16 for table: pg1_R2, EQU: EA
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 210, alloc size: 5064
-[build_decode_table]: idx = 4, opcode 8d for table: pg1_JTA, EQU: BRANCH
 [add_opcode_to_table]: table pg1_JTA len: 211, alloc size: 5088
+[build_decode_table]: idx = 4, opcode 8d for table: pg1_JTA, EQU: BRANCH
+[add_opcode_to_table]: table pg1_JTA len: 212, alloc size: 5112
 [build_decode_table]: idx = 5, opcode 17 for table: pg1_JTA, EQU: BRANCH
 [find_table_by_name]: Table index 3, found table pg1_JTB!
 [add_opcode_to_table]: table pg1_JTB len: 135, alloc size: 3264
@@ -2720,14 +2729,14 @@
 [add_opcode_to_table]: table pg1_JTB len: 136, alloc size: 3288
 [build_decode_table]: idx = 5, opcode 17 for table: pg1_JTB, EQU: JSR
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 203, alloc size: 4896
-[build_decode_table]: idx = 4, opcode 8d for table: pg1_R1, EQU: PC
 [add_opcode_to_table]: table pg1_R1 len: 204, alloc size: 4920
+[build_decode_table]: idx = 4, opcode 8d for table: pg1_R1, EQU: PC
+[add_opcode_to_table]: table pg1_R1 len: 205, alloc size: 4944
 [build_decode_table]: idx = 5, opcode 17 for table: pg1_R1, EQU: PC
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 137, alloc size: 3312
-[build_decode_table]: idx = 4, opcode 8d for table: pg1_R2, EQU: EA
 [add_opcode_to_table]: table pg1_R2 len: 138, alloc size: 3336
+[build_decode_table]: idx = 4, opcode 8d for table: pg1_R2, EQU: EA
+[add_opcode_to_table]: table pg1_R2 len: 139, alloc size: 3360
 [build_decode_table]: idx = 5, opcode 17 for table: pg1_R2, EQU: EA
 [find_table_by_name]: Table index 12, found table pg1_AR!
 [add_opcode_to_table]: table pg1_AR len: 18, alloc size: 456
@@ -2879,43 +2888,43 @@
 [add_opcode_to_table]: table pg2_R2 len: 32, alloc size: 792
 [build_decode_table]: idx = 7, opcode 2f for table: pg2_R2, EQU: EA
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 212, alloc size: 5112
-[build_decode_table]: idx = 4, opcode e for table: pg1_JTA, EQU: JMP
 [add_opcode_to_table]: table pg1_JTA len: 213, alloc size: 5136
+[build_decode_table]: idx = 4, opcode e for table: pg1_JTA, EQU: JMP
+[add_opcode_to_table]: table pg1_JTA len: 214, alloc size: 5160
 [build_decode_table]: idx = 5, opcode 7e for table: pg1_JTA, EQU: JMP
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 205, alloc size: 4944
-[build_decode_table]: idx = 4, opcode e for table: pg1_R1, EQU: PC
 [add_opcode_to_table]: table pg1_R1 len: 206, alloc size: 4968
+[build_decode_table]: idx = 4, opcode e for table: pg1_R1, EQU: PC
+[add_opcode_to_table]: table pg1_R1 len: 207, alloc size: 4992
 [build_decode_table]: idx = 5, opcode 7e for table: pg1_R1, EQU: PC
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 139, alloc size: 3360
-[build_decode_table]: idx = 4, opcode e for table: pg1_R2, EQU: IDATA
 [add_opcode_to_table]: table pg1_R2 len: 140, alloc size: 3384
+[build_decode_table]: idx = 4, opcode e for table: pg1_R2, EQU: IDATA
+[add_opcode_to_table]: table pg1_R2 len: 141, alloc size: 3408
 [build_decode_table]: idx = 5, opcode 7e for table: pg1_R2, EQU: IDATA
 [find_table_by_name]: Table index 3, found table pg1_JTB!
 [add_opcode_to_table]: table pg1_JTB len: 137, alloc size: 3312
 [build_decode_table]: idx = 4, opcode 6e for table: pg1_JTB, EQU: JMP
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 207, alloc size: 4992
+[add_opcode_to_table]: table pg1_R1 len: 208, alloc size: 5016
 [build_decode_table]: idx = 4, opcode 6e for table: pg1_R1, EQU: PC
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 141, alloc size: 3408
+[add_opcode_to_table]: table pg1_R2 len: 142, alloc size: 3432
 [build_decode_table]: idx = 4, opcode 6e for table: pg1_R2, EQU: EA
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 214, alloc size: 5160
-[build_decode_table]: idx = 4, opcode 9d for table: pg1_JTA, EQU: JSR
 [add_opcode_to_table]: table pg1_JTA len: 215, alloc size: 5184
+[build_decode_table]: idx = 4, opcode 9d for table: pg1_JTA, EQU: JSR
+[add_opcode_to_table]: table pg1_JTA len: 216, alloc size: 5208
 [build_decode_table]: idx = 5, opcode bd for table: pg1_JTA, EQU: JSR
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 208, alloc size: 5016
-[build_decode_table]: idx = 4, opcode 9d for table: pg1_R1, EQU: PC
 [add_opcode_to_table]: table pg1_R1 len: 209, alloc size: 5040
+[build_decode_table]: idx = 4, opcode 9d for table: pg1_R1, EQU: PC
+[add_opcode_to_table]: table pg1_R1 len: 210, alloc size: 5064
 [build_decode_table]: idx = 5, opcode bd for table: pg1_R1, EQU: PC
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 142, alloc size: 3432
-[build_decode_table]: idx = 4, opcode 9d for table: pg1_R2, EQU: IDATA
 [add_opcode_to_table]: table pg1_R2 len: 143, alloc size: 3456
+[build_decode_table]: idx = 4, opcode 9d for table: pg1_R2, EQU: IDATA
+[add_opcode_to_table]: table pg1_R2 len: 144, alloc size: 3480
 [build_decode_table]: idx = 5, opcode bd for table: pg1_R2, EQU: IDATA
 [find_table_by_name]: Table index 12, found table pg1_AR!
 [add_opcode_to_table]: table pg1_AR len: 20, alloc size: 504
@@ -2926,73 +2935,73 @@
 [add_opcode_to_table]: table pg1_JTB len: 138, alloc size: 3336
 [build_decode_table]: idx = 4, opcode ad for table: pg1_JTB, EQU: JSR
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 210, alloc size: 5064
+[add_opcode_to_table]: table pg1_R1 len: 211, alloc size: 5088
 [build_decode_table]: idx = 4, opcode ad for table: pg1_R1, EQU: PC
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 144, alloc size: 3480
+[add_opcode_to_table]: table pg1_R2 len: 145, alloc size: 3504
 [build_decode_table]: idx = 4, opcode ad for table: pg1_R2, EQU: EA
 [find_table_by_name]: Table index 12, found table pg1_AR!
 [add_opcode_to_table]: table pg1_AR len: 22, alloc size: 552
 [build_decode_table]: idx = 4, opcode ad for table: pg1_AR, EQU: S
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 216, alloc size: 5208
+[add_opcode_to_table]: table pg1_JTA len: 217, alloc size: 5232
 [build_decode_table]: idx = 4, opcode 39 for table: pg1_JTA, EQU: RTS
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 211, alloc size: 5088
+[add_opcode_to_table]: table pg1_R1 len: 212, alloc size: 5112
 [build_decode_table]: idx = 4, opcode 39 for table: pg1_R1, EQU: PC
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 145, alloc size: 3504
+[add_opcode_to_table]: table pg1_R2 len: 146, alloc size: 3528
 [build_decode_table]: idx = 4, opcode 39 for table: pg1_R2, EQU: DMEM_RD
 [find_table_by_name]: Table index 12, found table pg1_AR!
 [add_opcode_to_table]: table pg1_AR len: 23, alloc size: 576
 [build_decode_table]: idx = 4, opcode 39 for table: pg1_AR, EQU: S
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 217, alloc size: 5232
+[add_opcode_to_table]: table pg1_JTA len: 218, alloc size: 5256
 [build_decode_table]: idx = 4, opcode 3b for table: pg1_JTA, EQU: RTI
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 212, alloc size: 5112
+[add_opcode_to_table]: table pg1_R1 len: 213, alloc size: 5136
 [build_decode_table]: idx = 4, opcode 3b for table: pg1_R1, EQU: PC
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 146, alloc size: 3528
+[add_opcode_to_table]: table pg1_R2 len: 147, alloc size: 3552
 [build_decode_table]: idx = 4, opcode 3b for table: pg1_R2, EQU: DMEM_RD
 [find_table_by_name]: Table index 12, found table pg1_AR!
 [add_opcode_to_table]: table pg1_AR len: 24, alloc size: 600
 [build_decode_table]: idx = 4, opcode 3b for table: pg1_AR, EQU: S
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 218, alloc size: 5256
+[add_opcode_to_table]: table pg1_JTA len: 219, alloc size: 5280
 [build_decode_table]: idx = 4, opcode 35 for table: pg1_JTA, EQU: PUL
 [find_table_by_name]: Table index 12, found table pg1_AR!
 [add_opcode_to_table]: table pg1_AR len: 25, alloc size: 624
 [build_decode_table]: idx = 4, opcode 35 for table: pg1_AR, EQU: S
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 219, alloc size: 5280
+[add_opcode_to_table]: table pg1_JTA len: 220, alloc size: 5304
 [build_decode_table]: idx = 4, opcode 37 for table: pg1_JTA, EQU: PUL
 [find_table_by_name]: Table index 12, found table pg1_AR!
 [add_opcode_to_table]: table pg1_AR len: 26, alloc size: 648
 [build_decode_table]: idx = 4, opcode 37 for table: pg1_AR, EQU: U
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 220, alloc size: 5304
+[add_opcode_to_table]: table pg1_JTA len: 221, alloc size: 5328
 [build_decode_table]: idx = 4, opcode 34 for table: pg1_JTA, EQU: PSH
 [find_table_by_name]: Table index 12, found table pg1_AR!
 [add_opcode_to_table]: table pg1_AR len: 27, alloc size: 672
 [build_decode_table]: idx = 4, opcode 34 for table: pg1_AR, EQU: S
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 221, alloc size: 5328
+[add_opcode_to_table]: table pg1_JTA len: 222, alloc size: 5352
 [build_decode_table]: idx = 4, opcode 36 for table: pg1_JTA, EQU: PSH
 [find_table_by_name]: Table index 12, found table pg1_AR!
 [add_opcode_to_table]: table pg1_AR len: 28, alloc size: 696
 [build_decode_table]: idx = 4, opcode 36 for table: pg1_AR, EQU: U
 [find_table_by_name]: Table index 0, found table pg1_JTA!
-[add_opcode_to_table]: table pg1_JTA len: 222, alloc size: 5352
+[add_opcode_to_table]: table pg1_JTA len: 223, alloc size: 5376
 [build_decode_table]: idx = 4, opcode 3f for table: pg1_JTA, EQU: SWI
 [find_table_by_name]: Table index 12, found table pg1_AR!
 [add_opcode_to_table]: table pg1_AR len: 29, alloc size: 720
 [build_decode_table]: idx = 4, opcode 3f for table: pg1_AR, EQU: S
 [find_table_by_name]: Table index 6, found table pg1_R1!
-[add_opcode_to_table]: table pg1_R1 len: 213, alloc size: 5136
+[add_opcode_to_table]: table pg1_R1 len: 214, alloc size: 5160
 [build_decode_table]: idx = 4, opcode 3f for table: pg1_R1, EQU: PC
 [find_table_by_name]: Table index 9, found table pg1_R2!
-[add_opcode_to_table]: table pg1_R2 len: 147, alloc size: 3552
+[add_opcode_to_table]: table pg1_R2 len: 148, alloc size: 3576
 [build_decode_table]: idx = 4, opcode 3f for table: pg1_R2, EQU: DMEM_RD
 [build_macro_list]: state: 0  	macro_total: 0  	
 [build_macro_list]: state: 0  	macro_total: 0  	
@@ -3207,7 +3216,7 @@
 [build_macro_list]: state: 0  	macro_total: 0  	
 [build_macro_list]: state: 0  	macro_total: 0  	
 [build_macro_list]: state: 0  	macro_total: 0  	macro_begin JUMP
-[build_macro_list]: Found macro_begin name P!ﬁö“U
+[build_macro_list]: Found macro_begin name PQÓJV
 [build_macro_list]: state: 1  	macro_total: 1  	cv_MICRO_SEQ_OP set OP_JUMP
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_MICRO_SEQ_OP, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = OP_JUMP, its value = 1
@@ -3218,7 +3227,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 1  	
 [build_macro_list]: state: 0  	macro_total: 1  	macro_begin CALL
-[build_macro_list]: Found macro_begin name P!ﬁö“U
+[build_macro_list]: Found macro_begin name PQÓJV
 [build_macro_list]: state: 1  	macro_total: 2  	cv_MICRO_SEQ_OP set OP_CALL
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_MICRO_SEQ_OP, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = OP_CALL, its value = 2
@@ -3229,7 +3238,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 2  	
 [build_macro_list]: state: 0  	macro_total: 2  	macro_begin RETURN
-[build_macro_list]: Found macro_begin name P!ﬁö“U
+[build_macro_list]: Found macro_begin name PQÓJV
 [build_macro_list]: state: 1  	macro_total: 3  	cv_MICRO_SEQ_OP set OP_RETURN
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_MICRO_SEQ_OP, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = OP_RETURN, its value = 3
@@ -3237,7 +3246,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 3  	
 [build_macro_list]: state: 0  	macro_total: 3  	macro_begin JUMP_TABLE_B
-[build_macro_list]: Found macro_begin name P!ﬁö“U
+[build_macro_list]: Found macro_begin name PQÓJV
 [build_macro_list]: state: 1  	macro_total: 4  	cv_MICRO_SEQ_OP set OP_JUMP_TABLE_B
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_MICRO_SEQ_OP, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = OP_JUMP_TABLE_B, its value = 4
@@ -3245,7 +3254,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 4  	
 [build_macro_list]: state: 0  	macro_total: 4  	macro_begin JUMP_TABLE_A_NEXT_PC
-[build_macro_list]: Found macro_begin name P!ﬁö“U
+[build_macro_list]: Found macro_begin name PQÓJV
 [build_macro_list]: state: 1  	macro_total: 5  	cv_MICRO_SEQ_OP set OP_JUMP_TABLE_A_NEXT_PC
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_MICRO_SEQ_OP, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = OP_JUMP_TABLE_A_NEXT_PC, its value = 5
@@ -3254,7 +3263,7 @@
 [build_macro_list]: state: 0  	macro_total: 5  	
 [build_macro_list]: state: 0  	macro_total: 5  	
 [build_macro_list]: state: 0  	macro_total: 5  	macro_begin SET_DATA_WIDTH
-[build_macro_list]: Found macro_begin name P!ﬁö“U
+[build_macro_list]: Found macro_begin name PQÓJV
 [build_macro_list]: state: 1  	macro_total: 6  	cv_DATA_WIDTH_SEL arg 0
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_DATA_WIDTH_SEL, type: arg
 [add_ctrl_vec_def_by_macro]: ARG add ctrl_vec_def_by_macro: data value: 0, arg_num = 0
@@ -3263,7 +3272,7 @@
 [build_macro_list]: state: 0  	macro_total: 6  	
 [build_macro_list]: state: 0  	macro_total: 6  	
 [build_macro_list]: state: 0  	macro_total: 6  	macro_begin IF
-[build_macro_list]: Found macro_begin name P!ﬁö“U
+[build_macro_list]: Found macro_begin name PQÓJV
 [build_macro_list]: state: 1  	macro_total: 7  	cv_MICRO_SEQ_COND_SEL arg 0
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_MICRO_SEQ_COND_SEL, type: arg
 [add_ctrl_vec_def_by_macro]: ARG add ctrl_vec_def_by_macro: data value: 0, arg_num = 0
@@ -3272,7 +3281,7 @@
 [build_macro_list]: state: 0  	macro_total: 7  	
 [build_macro_list]: state: 0  	macro_total: 7  	
 [build_macro_list]: state: 0  	macro_total: 7  	macro_begin ADDR_PASS
-[build_macro_list]: Found macro_begin name P!ﬁö“U
+[build_macro_list]: Found macro_begin name PQÓJV
 [build_macro_list]: state: 1  	macro_total: 8  	cv_ADDR_ALU_REG_SEL arg 0
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_ADDR_ALU_REG_SEL, type: arg
 [add_ctrl_vec_def_by_macro]: ARG add ctrl_vec_def_by_macro: data value: 0, arg_num = 0
@@ -3280,7 +3289,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 8  	
 [build_macro_list]: state: 0  	macro_total: 8  	macro_begin ADDR_INX_OR_LOAD_IND 
-[build_macro_list]: Found macro_begin name P!ﬁö“U
+[build_macro_list]: Found macro_begin name PQÓJV
 [build_macro_list]: state: 1  	macro_total: 9  	cv_DATA_WIDTH_SEL set W_R1_OR_IND
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_DATA_WIDTH_SEL, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = W_R1_OR_IND, its value = 1
@@ -3291,7 +3300,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 9  	
 [build_macro_list]: state: 0  	macro_total: 9  	macro_begin STACK_PULL
-[build_macro_list]: Found macro_begin name P!ﬁö“U
+[build_macro_list]: Found macro_begin name PQÓJV
 [build_macro_list]: state: 1  	macro_total: 10  	cv_ADDR_ALU_REG_SEL arg 0
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_ADDR_ALU_REG_SEL, type: arg
 [add_ctrl_vec_def_by_macro]: ARG add ctrl_vec_def_by_macro: data value: 0, arg_num = 0
@@ -3302,7 +3311,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 10  	
 [build_macro_list]: state: 0  	macro_total: 10  	macro_begin STACK_PUSH
-[build_macro_list]: Found macro_begin name P!ﬁö“U
+[build_macro_list]: Found macro_begin name PQÓJV
 [build_macro_list]: state: 1  	macro_total: 11  	cv_ADDR_ALU_REG_SEL arg 0
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_ADDR_ALU_REG_SEL, type: arg
 [add_ctrl_vec_def_by_macro]: ARG add ctrl_vec_def_by_macro: data value: 0, arg_num = 0
@@ -3314,7 +3323,7 @@
 [build_macro_list]: state: 0  	macro_total: 11  	
 [build_macro_list]: state: 0  	macro_total: 11  	
 [build_macro_list]: state: 0  	macro_total: 11  	macro_begin DATA_PASS_A
-[build_macro_list]: Found macro_begin name P!ﬁö“U
+[build_macro_list]: Found macro_begin name PQÓJV
 [build_macro_list]: state: 1  	macro_total: 12  	cv_DATA_ALU_COND_SEL set ZERO_BIT
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_DATA_ALU_COND_SEL, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = ZERO_BIT, its value = 0
@@ -3331,7 +3340,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 12  	
 [build_macro_list]: state: 0  	macro_total: 12  	macro_begin DATA_PASS_B
-[build_macro_list]: Found macro_begin name P!ﬁö“U
+[build_macro_list]: Found macro_begin name PQÓJV
 [build_macro_list]: state: 1  	macro_total: 13  	cv_DATA_ALU_COND_SEL set ZERO_BIT
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_DATA_ALU_COND_SEL, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = ZERO_BIT, its value = 0
@@ -3348,7 +3357,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 13  	
 [build_macro_list]: state: 0  	macro_total: 13  	macro_begin DATA_INC
-[build_macro_list]: Found macro_begin name P!ﬁö“U
+[build_macro_list]: Found macro_begin name PQÓJV
 [build_macro_list]: state: 1  	macro_total: 14  	cv_DATA_ALU_COND_SEL set ONE_BIT
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_DATA_ALU_COND_SEL, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = ONE_BIT, its value = 1
@@ -3365,7 +3374,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 14  	
 [build_macro_list]: state: 0  	macro_total: 14  	macro_begin DATA_DEC
-[build_macro_list]: Found macro_begin name P!ﬁö“U
+[build_macro_list]: Found macro_begin name PQÓJV
 [build_macro_list]: state: 1  	macro_total: 15  	cv_DATA_ALU_COND_SEL set ONE_BIT
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_DATA_ALU_COND_SEL, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = ONE_BIT, its value = 1
@@ -3382,7 +3391,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 15  	
 [build_macro_list]: state: 0  	macro_total: 15  	macro_begin DATA_INVERT_B
-[build_macro_list]: Found macro_begin name P!ﬁö“U
+[build_macro_list]: Found macro_begin name PQÓJV
 [build_macro_list]: state: 1  	macro_total: 16  	cv_DATA_ALU_COND_SEL set ONE_BIT
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_DATA_ALU_COND_SEL, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = ONE_BIT, its value = 1
@@ -3399,7 +3408,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 16  	
 [build_macro_list]: state: 0  	macro_total: 16  	macro_begin DATA_LSHIFT_W 
-[build_macro_list]: Found macro_begin name P!ﬁö“U
+[build_macro_list]: Found macro_begin name PQÓJV
 [build_macro_list]: state: 1  	macro_total: 17  	cv_DATA_ALU_COND_SEL arg 1
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_DATA_ALU_COND_SEL, type: arg
 [add_ctrl_vec_def_by_macro]: ARG add ctrl_vec_def_by_macro: data value: 1, arg_num = 0
@@ -3416,7 +3425,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 17  	
 [build_macro_list]: state: 0  	macro_total: 17  	macro_begin DATA_RSHIFT_W 
-[build_macro_list]: Found macro_begin name P!ﬁö“U
+[build_macro_list]: Found macro_begin name PQÓJV
 [build_macro_list]: state: 1  	macro_total: 18  	cv_DATA_ALU_COND_SEL arg 0
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_DATA_ALU_COND_SEL, type: arg
 [add_ctrl_vec_def_by_macro]: ARG add ctrl_vec_def_by_macro: data value: 0, arg_num = 0
@@ -3433,7 +3442,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 18  	
 [build_macro_list]: state: 0  	macro_total: 18  	macro_begin DATA_SUB
-[build_macro_list]: Found macro_begin name P!ﬁö“U
+[build_macro_list]: Found macro_begin name PQÓJV
 [build_macro_list]: state: 1  	macro_total: 19  	cv_DATA_ALU_COND_SEL set ZERO_BIT
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_DATA_ALU_COND_SEL, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = ZERO_BIT, its value = 0
@@ -3450,7 +3459,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 19  	
 [build_macro_list]: state: 0  	macro_total: 19  	macro_begin DATA_ADD
-[build_macro_list]: Found macro_begin name P!ﬁö“U
+[build_macro_list]: Found macro_begin name PQÓJV
 [build_macro_list]: state: 1  	macro_total: 20  	cv_DATA_ALU_COND_SEL set ZERO_BIT
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_DATA_ALU_COND_SEL, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = ZERO_BIT, its value = 0
@@ -3467,7 +3476,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 20  	
 [build_macro_list]: state: 0  	macro_total: 20  	macro_begin DATA_ADDC
-[build_macro_list]: Found macro_begin name P!ﬁö“U
+[build_macro_list]: Found macro_begin name PQÓJV
 [build_macro_list]: state: 1  	macro_total: 21  	cv_DATA_ALU_COND_SEL set CARRY_BIT
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_DATA_ALU_COND_SEL, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = CARRY_BIT, its value = 2
@@ -3484,7 +3493,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 21  	
 [build_macro_list]: state: 0  	macro_total: 21  	macro_begin DATA_SUBC
-[build_macro_list]: Found macro_begin name P!ﬁö“U
+[build_macro_list]: Found macro_begin name PQÓJV
 [build_macro_list]: state: 1  	macro_total: 22  	cv_DATA_ALU_COND_SEL set CARRY_BIT
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_DATA_ALU_COND_SEL, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = CARRY_BIT, its value = 2
@@ -3501,7 +3510,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 22  	
 [build_macro_list]: state: 0  	macro_total: 22  	macro_begin DATA_OR
-[build_macro_list]: Found macro_begin name P!ﬁö“U
+[build_macro_list]: Found macro_begin name PQÓJV
 [build_macro_list]: state: 1  	macro_total: 23  	cv_DATA_ALU_COND_SEL set ZERO_BIT
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_DATA_ALU_COND_SEL, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = ZERO_BIT, its value = 0
@@ -3518,7 +3527,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 23  	
 [build_macro_list]: state: 0  	macro_total: 23  	macro_begin DATA_XOR
-[build_macro_list]: Found macro_begin name P!ﬁö“U
+[build_macro_list]: Found macro_begin name PQÓJV
 [build_macro_list]: state: 1  	macro_total: 24  	cv_DATA_ALU_COND_SEL set ZERO_BIT
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_DATA_ALU_COND_SEL, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = ZERO_BIT, its value = 0
@@ -3535,7 +3544,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 24  	
 [build_macro_list]: state: 0  	macro_total: 24  	macro_begin DATA_AND
-[build_macro_list]: Found macro_begin name P!ﬁö“U
+[build_macro_list]: Found macro_begin name PQÓJV
 [build_macro_list]: state: 1  	macro_total: 25  	cv_DATA_ALU_COND_SEL set ZERO_BIT
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_DATA_ALU_COND_SEL, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = ZERO_BIT, its value = 0
@@ -3552,7 +3561,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 25  	
 [build_macro_list]: state: 0  	macro_total: 25  	macro_begin DATA_SAU_EN
-[build_macro_list]: Found macro_begin name P!ﬁö“U
+[build_macro_list]: Found macro_begin name PQÓJV
 [build_macro_list]: state: 1  	macro_total: 26  	cv_DATA_ALU_SAU_EN set TRUE
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_DATA_ALU_SAU_EN, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = TRUE, its value = 1
@@ -3560,7 +3569,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 26  	
 [build_macro_list]: state: 0  	macro_total: 26  	macro_begin DATA_SAU_DONE
-[build_macro_list]: Found macro_begin name P!ﬁö“U
+[build_macro_list]: Found macro_begin name PQÓJV
 [build_macro_list]: state: 1  	macro_total: 27  	cv_DATA_ALU_OP set SAU
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_DATA_ALU_OP, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = SAU, its value = 7
@@ -3568,7 +3577,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 27  	
 [build_macro_list]: state: 0  	macro_total: 27  	macro_begin DATA_WRITE
-[build_macro_list]: Found macro_begin name P!ﬁö“U
+[build_macro_list]: Found macro_begin name PQÓJV
 [build_macro_list]: state: 1  	macro_total: 28  	cv_DATA_ALU_WR_SEL arg 0
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_DATA_ALU_WR_SEL, type: arg
 [add_ctrl_vec_def_by_macro]: ARG add ctrl_vec_def_by_macro: data value: 0, arg_num = 0
@@ -3577,7 +3586,7 @@
 [build_macro_list]: state: 0  	macro_total: 28  	
 [build_macro_list]: state: 0  	macro_total: 28  	
 [build_macro_list]: state: 0  	macro_total: 28  	macro_begin CCR_OP_W
-[build_macro_list]: Found macro_begin name P!ﬁö“U
+[build_macro_list]: Found macro_begin name PQÓJV
 [build_macro_list]: state: 1  	macro_total: 29  	cv_CCR_OP arg 0
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_CCR_OP, type: arg
 [add_ctrl_vec_def_by_macro]: ARG add ctrl_vec_def_by_macro: data value: 0, arg_num = 0
@@ -3586,7 +3595,7 @@
 [build_macro_list]: state: 0  	macro_total: 29  	
 [build_macro_list]: state: 0  	macro_total: 29  	
 [build_macro_list]: state: 0  	macro_total: 29  	macro_begin DMEM_LOAD_W
-[build_macro_list]: Found macro_begin name P!ﬁö“U
+[build_macro_list]: Found macro_begin name PQÓJV
 [build_macro_list]: state: 1  	macro_total: 30  	cv_DMEM_OP set DMEM_OP_RD
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_DMEM_OP, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = DMEM_OP_RD, its value = 2
@@ -3594,7 +3603,7 @@
 [build_macro_list]: Found macro_end, going back to find macro_begin...
 [build_macro_list]: state: 0  	macro_total: 30  	
 [build_macro_list]: state: 0  	macro_total: 30  	macro_begin DMEM_STORE_W
-[build_macro_list]: Found macro_begin name P!ﬁö“U
+[build_macro_list]: Found macro_begin name PQÓJV
 [build_macro_list]: state: 1  	macro_total: 31  	cv_DMEM_OP set DMEM_OP_WR
 [add_ctrl_vec_def_by_macro]: Found control vector by name: cv_DMEM_OP, type: set
 [add_ctrl_vec_def_by_macro]: VAL add_ctrl_vec_def_by_macro: equ.name = DMEM_OP_WR, its value = 3
@@ -6573,7 +6582,7 @@ total equs: 60
 macro equ sel = SAU16
 macro equ is coded? Yes
 EQU used 1 times
-EQU used 3 times in decode
+EQU used 4 times in decode
 =============================
 =============================
 list index: 2

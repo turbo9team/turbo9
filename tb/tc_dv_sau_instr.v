@@ -47,7 +47,7 @@
 //                  Inherent Addressing Instruction Testcase
 /////////////////////////////////////////////////////////////////////////////
 
-  `define TEST_SAU_TOTAL_INSTR    5
+  `define TEST_SAU_TOTAL_INSTR    6
   `define TEST_SAU_RESET_CYCLES   40  // (16  nominal)
   `define TEST_SAU_START_CYCLES   200 // (100 nominal)
   `define TEST_SAU_FINISH_CYCLES  500 // (240 nominal)
@@ -84,10 +84,11 @@
 
     // Page 1
     inh_instr_list[ 0] =  'h00_2_1_00_14; // EMUL
-    inh_instr_list[ 1] =  'h00_2_1_00_18; // IDIV
-    inh_instr_list[ 2] =  'h00_2_1_00_19; // DAA
-    inh_instr_list[ 3] =  'h00_2_1_00_3D; // MUL
-    inh_instr_list[ 4] =  'h00_2_1_00_18; // IDIVS
+    inh_instr_list[ 1] =  'h00_2_1_00_15; // EMULS
+    inh_instr_list[ 2] =  'h00_2_1_00_18; // IDIV
+    inh_instr_list[ 3] =  'h00_2_1_00_19; // DAA
+    inh_instr_list[ 4] =  'h00_2_1_00_3D; // MUL
+    inh_instr_list[ 5] =  'h00_2_1_00_18; // IDIVS
 
 
     for (instr_idx = 0; instr_idx < `TEST_SAU_TOTAL_INSTR; instr_idx++) begin

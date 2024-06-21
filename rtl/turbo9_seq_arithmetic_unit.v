@@ -127,12 +127,13 @@ localparam SAU_CPY   = 4'b1111; // F opcode = $101F
 
 ///////////////////// A register
 //
-reg   [2:0] a_op;
-localparam  a_idle        = 3'b000;
-localparam  a_clear       = 3'b001;
-localparam  a_rshift      = 3'b010;
-localparam  a_update      = 3'b011;
-localparam  a_update_div  = 3'b100; // One-Hot
+reg   [3:0] a_op;
+localparam  a_idle          = 4'b0000;
+localparam  a_clear         = 4'b0001;
+localparam  a_rshift        = 4'b0010;
+localparam  a_rshift_signed = 4'b0011;
+localparam  a_update        = 4'b0100;
+localparam  a_update_div    = 4'b1000; // One-Hot
 reg  [15:0] a_reg;
 reg  [15:0] a_nxt;
 localparam  a_rst = 16'h0000;
@@ -166,6 +167,16 @@ reg  [15:0] q_reg;
 reg  [15:0] q_nxt;
 localparam  q_rst = 16'h0000;
 
+///////////////////// S register
+//
+reg   [1:0] s_op;
+localparam  s_idle        = 3'h0;
+localparam  s_clear       = 3'h1;
+localparam  s_load_q0     = 3'h2;
+reg         s_reg;
+reg         s_nxt;
+localparam  s_rst = 1'b0;
+
 ///////////////////// Flags
 //
 reg   [2:0] flags_op;
@@ -196,9 +207,10 @@ localparam  c_rst = 1'b0;
 reg   [2:0] adder_op;
 localparam  adder_pass_a      = 3'h0;
 localparam  adder_a_plus_m    = 3'h1;
-localparam  adder_aq_minus_m  = 3'h2;
-localparam  adder_q_plus_m    = 3'h3;
-localparam  adder_pass_q      = 3'h4;
+localparam  adder_a_minus_m   = 3'h2;
+localparam  adder_aq_minus_m  = 3'h3;
+localparam  adder_q_plus_m    = 3'h4;
+localparam  adder_pass_q      = 3'h5;
 reg  [16:0] adder_a_in;
 reg  [16:0] adder_m_in;
 reg         adder_c_in;
@@ -239,6 +251,7 @@ always @* begin
   a_op          = a_idle;
   m_op          = m_idle;
   q_op          = q_idle;
+  s_op          = s_idle;
   flags_op      = flags_idle;
   adder_op      = adder_pass_a;
   cycle_load      = 1'b0;
@@ -247,21 +260,33 @@ always @* begin
   //
   case (SAU_OP_I)
     //
-    SAU_EMUL : begin //////////////////// SAU_EMUL
+    SAU_EMULS,
+    SAU_EMUL  : begin //////////////////// SAU_EMUL / SAU EMULS
       case (cycle_reg)
         5'h1F : begin
           a_op  = a_clear;
           m_op  = m_load_y_reg;
           q_op  = q_load_d_acc;
+          s_op  = s_clear;
           cycle_load    = 1'b1;
           cycle_nxt     = 5'd17;
         end
         default : begin
-          if (q_reg[0]) begin
-            adder_op  = adder_a_plus_m;
+          if (SAU_OP_I[0]) begin // INFO SAU_EMULS One Hot! 
+            if (~q_reg[0] && s_reg) begin
+              adder_op  = adder_a_plus_m;
+            end else if (q_reg[0] && ~s_reg) begin
+              adder_op  = adder_a_minus_m;
+            end
+            a_op      = a_rshift_signed;
+          end else begin
+            if (q_reg[0]) begin
+              adder_op  = adder_a_plus_m;
+            end
+            a_op        = a_rshift;
           end
-          a_op        = a_rshift;
           q_op        = q_rshift;
+          s_op        = s_load_q0;
           done_nxt    = (cycle_reg == 5'h3); // Optimal for min cycles
           if (cycle_reg == 5'h2) begin
             flags_op  = flags_emul;
@@ -388,14 +413,15 @@ end
 ///////////////////// A Register Logic
 //
 always @* begin
-  if (a_op[2] == 1'b1) begin  // a_update_div
+  if (a_op[3] == 1'b1) begin  // a_update_div
     a_nxt = (~adder_c_out) ? aq_lshift : adder_y;
   end else begin
-    case (a_op[1:0])
-      a_clear   : a_nxt = 16'd0;
-      a_rshift  : a_nxt = {adder_c_out, adder_y[15:1]};
-      a_update  : a_nxt = adder_y;
-      default   : a_nxt = a_reg; // a_idle
+    case (a_op[2:0])
+      a_clear           : a_nxt = 16'd0;
+      a_rshift          : a_nxt = {adder_c_out, adder_y[15:1]};
+      a_rshift_signed   : a_nxt = {adder_y[15], adder_y[15:1]};
+      a_update          : a_nxt = adder_y;
+      default           : a_nxt = a_reg; // a_idle
     endcase
   end
 end
@@ -429,12 +455,22 @@ end
 //
 assign  aq_lshift = {a_reg[14:0], q_reg[15]};
 
+///////////////////// S Register Logic
+//
+always @* begin
+  case (s_op)
+    s_clear       : s_nxt = 1'b0;
+    s_load_q0     : s_nxt = q_reg[0];
+    default       : s_nxt = s_reg; // s_idle
+  endcase
+end
 
 ///////////////////// Adder
 //
 always @* begin
   case (adder_op)
     adder_a_plus_m    : adder_a_in = {1'b0, a_reg};
+    adder_a_minus_m   : adder_a_in = {1'b0, a_reg};
     adder_aq_minus_m  : adder_a_in = {1'b0, aq_lshift};
     adder_q_plus_m    : adder_a_in = {1'b0, q_reg};
     adder_pass_q      : adder_a_in = {1'b0, q_reg};
@@ -442,6 +478,7 @@ always @* begin
   endcase
   case (adder_op)
     adder_a_plus_m    : adder_m_in = {1'b0, m_reg};
+    adder_a_minus_m   : adder_m_in = {1'b0,~m_reg}; //m_reg is always positive do not sign extend
     adder_aq_minus_m  : adder_m_in = {1'b0,~m_reg}; //m_reg is always positive do not sign extend
     adder_q_plus_m    : adder_m_in = {1'b0, m_reg};
     adder_pass_q      : adder_m_in = 17'd0;
@@ -449,6 +486,7 @@ always @* begin
   endcase
   case (adder_op)
     adder_a_plus_m    : adder_c_in = 1'b0;
+    adder_a_minus_m   : adder_c_in = 1'b1;
     adder_aq_minus_m  : adder_c_in = 1'b1;
     adder_q_plus_m    : adder_c_in = 1'b0;
     adder_pass_q      : adder_c_in = 1'b0;
@@ -475,7 +513,7 @@ wire  z_q_w16 = z_q_h8 & z_q_l8;
 //
 wire  z_w32   = z_q_w16 & z_a_w16;
 //
-wire  div_by_zero = (m_reg == 16'h0000);
+wire  div_by_zero = (m_reg == 16'h0000); // FIXME needs to be sampled before operation.
 //
 ///////////////////// Flag Logic
 //
@@ -531,6 +569,7 @@ always @(posedge CLK_I) begin
   //   a_reg          <= a_rst;         // NO_INIT
   //   m_reg          <= m_rst;         // NO_INIT
   //   q_reg          <= q_rst;         // NO_INIT
+  //   s_reg          <= s_rst;         // NO_INIT
   //   n_reg          <= n_rst;         // NO_INIT
   //   z_reg          <= z_rst;         // NO_INIT
   //   v_reg          <= v_rst;         // NO_INIT
@@ -541,6 +580,7 @@ always @(posedge CLK_I) begin
     a_reg         <= a_nxt;
     m_reg         <= m_nxt;
     q_reg         <= q_nxt;
+    s_reg         <= s_nxt;
     n_reg         <= n_nxt;
     z_reg         <= z_nxt;
     v_reg         <= v_nxt;

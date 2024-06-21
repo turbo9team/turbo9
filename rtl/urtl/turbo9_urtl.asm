@@ -402,6 +402,10 @@ SAU16:
   decode pg1_R2  Y     $14 ; EMUL (inh)
   decode pg1_R1  D     $14 ; EMUL (inh)
 
+  decode pg1_JTA SAU16 $15 ; EMULS (inh)
+  decode pg1_R2  Y     $15 ; EMULS (inh)
+  decode pg1_R1  D     $15 ; EMULS (inh)
+
   decode pg1_JTA SAU16 $18 ; IDIV (inh)
   decode pg1_R2  D     $18 ; IDIV (inh)
   decode pg1_R1  X     $18 ; IDIV (inh)

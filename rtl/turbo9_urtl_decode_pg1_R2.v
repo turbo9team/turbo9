@@ -63,6 +63,7 @@ always @* begin
     8'h03 : PG1_R2_O = 4'hd; // DMEM_RD     COM (dir idx ext)
     8'h0E : PG1_R2_O = 4'he; // IDATA       JMP (dir ext)
     8'h14 : PG1_R2_O = 4'h2; // Y           EMUL (inh)
+    8'h15 : PG1_R2_O = 4'h2; // Y           EMULS (inh)
     8'h16 : PG1_R2_O = 4'hc; // EA          LBRA 
     8'h17 : PG1_R2_O = 4'hc; // EA          BSR LBSR
     8'h18 : PG1_R2_O = 4'h0; // D           IDIV (inh)
@@ -221,6 +222,7 @@ always @* begin
     8'h03 : PG1_R2_op = "COM (dir idx ext)";
     8'h0E : PG1_R2_op = "JMP (dir ext)";
     8'h14 : PG1_R2_op = "EMUL (inh)";
+    8'h15 : PG1_R2_op = "EMULS (inh)";
     8'h16 : PG1_R2_op = "LBRA ";
     8'h17 : PG1_R2_op = "BSR LBSR";
     8'h18 : PG1_R2_op = "IDIV (inh)";
@@ -377,6 +379,7 @@ always @* begin
     8'h03 : PG1_R2_eq = "DMEM_RD";
     8'h0E : PG1_R2_eq = "IDATA";
     8'h14 : PG1_R2_eq = "Y";
+    8'h15 : PG1_R2_eq = "Y";
     8'h16 : PG1_R2_eq = "EA";
     8'h17 : PG1_R2_eq = "EA";
     8'h18 : PG1_R2_eq = "D";

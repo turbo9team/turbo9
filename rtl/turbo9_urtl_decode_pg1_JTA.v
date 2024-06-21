@@ -75,6 +75,7 @@ always @* begin
     8'h11 : PG1_JTA_O = 8'hc; // NOP         page3 (prebyte)
     8'h12 : PG1_JTA_O = 8'hc; // NOP         NOP(inh)
     8'h14 : PG1_JTA_O = 8'hd; // SAU16       EMUL (inh)
+    8'h15 : PG1_JTA_O = 8'hd; // SAU16       EMULS (inh)
     8'h16 : PG1_JTA_O = 8'h2e; // BRANCH      LBRA On page 1!
     8'h17 : PG1_JTA_O = 8'h2e; // BRANCH      BSR LBSR // FIXME could do this without JUMP_TABLE_A
     8'h18 : PG1_JTA_O = 8'hd; // SAU16       IDIV (inh)
@@ -308,6 +309,7 @@ always @* begin
     8'h11 : PG1_JTA_op = "page3 (prebyte)";
     8'h12 : PG1_JTA_op = "NOP(inh)";
     8'h14 : PG1_JTA_op = "EMUL (inh)";
+    8'h15 : PG1_JTA_op = "EMULS (inh)";
     8'h16 : PG1_JTA_op = "LBRA On page 1!";
     8'h17 : PG1_JTA_op = "BSR LBSR // FIXME could do this without JUMP_TABLE_A";
     8'h18 : PG1_JTA_op = "IDIV (inh)";
@@ -539,6 +541,7 @@ always @* begin
     8'h11 : PG1_JTA_eq = "NOP";
     8'h12 : PG1_JTA_eq = "NOP";
     8'h14 : PG1_JTA_eq = "SAU16";
+    8'h15 : PG1_JTA_eq = "SAU16";
     8'h16 : PG1_JTA_eq = "BRANCH";
     8'h17 : PG1_JTA_eq = "BRANCH";
     8'h18 : PG1_JTA_eq = "SAU16";

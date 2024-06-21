@@ -721,6 +721,22 @@ module tb_dv_6809_model
           `d = data32_y[15:0];
         end
 
+        ///////////////////////////////////////////// EMULS
+        8'h15 : // EMULS (inh)
+        begin 
+          bus_cycles = 19;
+          data16_a = `d;
+          data16_b = `y;
+          data32_y = $signed(data16_a) * $signed(data16_b);
+          //`cc_h = 1'b0;
+          `cc_n = data32_y[31];
+          `cc_z = (data32_y == 32'h00000000);
+          //`cc_v = sub_vout8(data8_y, data8_a, data8_b);
+          `cc_c = data32_y[15];
+          `y = data32_y[31:16];
+          `d = data32_y[15:0];
+        end
+
         ///////////////////////////////////////////// LBRA (rel)
         8'h16 : // LBRA
         begin

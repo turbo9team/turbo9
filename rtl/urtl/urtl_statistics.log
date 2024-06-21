@@ -97,7 +97,7 @@ Decode Use Count:
          LEA_SU (0A) |## 2
          LEA_XY (0B) |## 2
             NOP (0C) |### 3
-          SAU16 (0D) |### 3
+          SAU16 (0D) |#### 4
      SAU16_DONE (0E) | 0 (equate not used!) 
            SAU8 (0F) |## 2
       SAU8_DONE (10) | 0 (equate not used!) 
@@ -430,7 +430,7 @@ Decode Use Count:
                U (3) |############ 12
                Y (2) |############ 12
                X (1) |############### 15
-               D (0) |####################### 23
+               D (0) |######################## 24
 
 
 +==========================================================================================================+
@@ -467,7 +467,7 @@ Decode Use Count:
               PC (5) | 0 (equate not used!) 
                S (4) | 0 (equate not used!) 
                U (3) | 0 (equate not used!) 
-               Y (2) |# 1
+               Y (2) |## 2
                X (1) | 0 (equate not used!) 
                D (0) |## 2
 

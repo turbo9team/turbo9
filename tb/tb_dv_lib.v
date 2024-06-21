@@ -549,7 +549,7 @@
         8'h12   : $write("  0x%2x : NOP       (inherent)  (page1)", opcode);
         8'h13   : $write("  0x%2x : SYNC      (inherent)  (page1)", opcode);
         8'h14   : $write("  0x%2x : EMUL      (inherent)  (page1)", opcode);
-      //8'h15   : $write("  0x%2x : *         ()          (page1)", opcode);
+        8'h15   : $write("  0x%2x : EMULS     (inherent)  (page1)", opcode);
         8'h16   : $write("  0x%2x : LBRA      (relative)  (page1)", opcode);
         8'h17   : $write("  0x%2x : LBSR      (relative)  (page1)", opcode);
         8'h18   : $write("  0x%2x : IDIV      (inherent)  (page1)", opcode);

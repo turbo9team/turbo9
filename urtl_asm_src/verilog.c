@@ -164,7 +164,7 @@ s16 dump_verilog_header()
   fprintf(_verilog_fp, "module %s\n", module_name);
   fprintf(_verilog_fp, "(\n");
   fprintf(_verilog_fp, "  // Inputs:\n");
-  fprintf(_verilog_fp, "  input     [%d:0] MICROCODE_ADR_I,\n\n", _macro_ctx->ctrl_vec_ctx->addr_width);
+  fprintf(_verilog_fp, "  input     [%d:0] MICROCODE_ADR_I,\n\n", _macro_ctx->ctrl_vec_ctx->addr_width-1);
   fprintf(_verilog_fp, "  // Control Vectors\n");
 
   for(idx = 0; idx < _macro_ctx->ctrl_vec_ctx->total_ctrl_vec; idx++)
@@ -239,7 +239,7 @@ done:
   return retval;
 }
 
-s16 dump_verilog_ctrl_vec(u32 address, ctrl_vec_t *ctrl_vec)
+s16 dump_verilog_ctrl_vec(ctrl_vec_ctx_t *ctx, u32 address, ctrl_vec_t *ctrl_vec)
 {
   char * ctrl_vec_name;
   char * equ_name;
@@ -257,7 +257,7 @@ s16 dump_verilog_ctrl_vec(u32 address, ctrl_vec_t *ctrl_vec)
   
   if(addr != address)
   {
-    fprintf(_verilog_fp, "    9'h%03lx: begin\n", address);
+    fprintf(_verilog_fp, "    %d'h%03lx: begin\n", ctx->addr_width, address);
     addr = address;
   }
 

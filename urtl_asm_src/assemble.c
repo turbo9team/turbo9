@@ -77,7 +77,7 @@ done:
 
 
 // --==============================================--
-s16 assemble(macro_ctx_t *macro_ctx, char *asm_file_name, s16 (*f)(u32, ctrl_vec_t *))
+s16 assemble(macro_ctx_t *macro_ctx, char *asm_file_name, s16 (*f)(ctrl_vec_ctx_t *, u32, ctrl_vec_t *))
 {
   FILE *asm_file_ptr = NULL;
   s16 retval = ERR_OK;
@@ -142,7 +142,7 @@ s16 assemble(macro_ctx_t *macro_ctx, char *asm_file_name, s16 (*f)(u32, ctrl_vec
       {
         if(cv_ctx->list[idx].equ_is_coded)
         {
-          if((retval = ((*f)(address, &cv_ctx->list[idx]))) != ERR_OK)
+          if((retval = ((*f)(cv_ctx, address, &cv_ctx->list[idx]))) != ERR_OK)
             goto done;
         }
       }

@@ -61,6 +61,6 @@ s16 init_assembler(macro_ctx_t *macro_ctx);
 //
 // s16 function(ctrl_vec_t *);
 //
-s16 assemble(macro_ctx_t *macro_ctx, char *asm_file_name, s16 (*f)(u32, ctrl_vec_t *));
+s16 assemble(macro_ctx_t *macro_ctx, char *asm_file_name, s16 (*f)(ctrl_vec_ctx_t *, u32, ctrl_vec_t *));
 
 #endif

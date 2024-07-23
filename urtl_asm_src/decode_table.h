@@ -51,7 +51,7 @@
 // One per opcode. Several opcodes per table.
 typedef struct _decode_t
 {
-  u08   opcode;
+  u32   opcode;
   u08   has_comment;
   char  *comment;
   equ_t *equ;
@@ -67,6 +67,7 @@ typedef struct _decode_table_t
   char       *name;
   decode_t   *list;
   u32        list_len;
+  u32        op_width;
 
 } decode_table_t;
 
@@ -88,9 +89,9 @@ s16 init_decode_table_ctx(decode_table_ctx_t **ctx, ctrl_vec_ctx_t *cv_ctx);
 
 decode_table_t * find_table_by_name(decode_table_ctx_t *ctx, char *table_name);
 
-s16 add_table_to_ctx(decode_table_ctx_t *ctx, char *table_name, ctrl_vec_t *ctrl_vec, char *default_val);
+s16 add_table_to_ctx(decode_table_ctx_t *ctx, char *table_name, ctrl_vec_t *ctrl_vec, char *default_val, u32 width);
 
-s16 add_opcode_to_table(decode_table_ctx_t *ctx, decode_table_t *table, u08 opcode, equ_t *equ, u08 has_comment, char *comment);
+s16 add_opcode_to_table(decode_table_ctx_t *ctx, decode_table_t *table, u32 opcode, equ_t *equ, u08 has_comment, char *comment);
 
 s16 free_decode_list(decode_t *list);
 

@@ -63,7 +63,8 @@ s16 dump_comment(u32 line_number, char *comment, ...);
 
 // When building the case statements, call this with each new
 // control vector that changes.
-s16 dump_verilog_ctrl_vec(u32 address, ctrl_vec_t *ctrl_vec);
+s16 dump_verilog_ctrl_vec(ctrl_vec_ctx_t *ctx, u32 address, ctrl_vec_t *ctrl_vec);
+
 s16 dump_verilog_end_case();
 
 // Once the control vectors have been added to the case switch,

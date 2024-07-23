@@ -349,7 +349,6 @@ s16 build_macro_list(macro_ctx_t *ctx, char *macro_file_name)
 
   char  line[255]; // TODO: Prefer this to be dynamic
   char *stripped_line = NULL;
-  char  field[128];
   char  curr_macro_name[128];
   FILE *macro_file_ptr = NULL;
   s16   retval = ERR_OK;
@@ -386,7 +385,7 @@ s16 build_macro_list(macro_ctx_t *ctx, char *macro_file_name)
             goto done;
           }
           state = READ_CTRL_VECS;
-          WRITE_LOG(LOG_HIGH, "Found macro_begin name %s\n", field);
+          WRITE_LOG(LOG_HIGH, "Found macro_begin name %s\n", curr_macro_name);
         }
         else if(strstr(line, "macro_end"))
         {

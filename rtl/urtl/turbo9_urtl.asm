@@ -45,34 +45,34 @@
 ; ////////////////////////////////////////////////////////////////////////////
 ; [TURBO9_HEADER_END]
 
-; decode_init <tablename> <ctrl_vec> <default_string> ; Comment
+; decode_init <tablename> <ctrl_vec> <default_string> <width> ; Comment
 
   ; Jump Table A
-  decode_init pg1_JTA cv_MICRO_SEQ_BRANCH_ADDR FF ; Page 1
-  decode_init pg2_JTA cv_MICRO_SEQ_BRANCH_ADDR FF ; Page 2
-  decode_init pg3_JTA cv_MICRO_SEQ_BRANCH_ADDR FF ; Page 3
+  decode_init pg1_JTA cv_MICRO_SEQ_BRANCH_ADDR FF 8 ; Page 1
+  decode_init pg2_JTA cv_MICRO_SEQ_BRANCH_ADDR FF 8 ; Page 2
+  decode_init pg3_JTA cv_MICRO_SEQ_BRANCH_ADDR FF 8 ; Page 3
   
   ; Jump Table B
-  decode_init pg1_JTB cv_MICRO_SEQ_BRANCH_ADDR FF ; Page 1
-  decode_init pg2_JTB cv_MICRO_SEQ_BRANCH_ADDR FF ; Page 2
-  decode_init pg3_JTB cv_MICRO_SEQ_BRANCH_ADDR FF ; Page 3
+  decode_init pg1_JTB cv_MICRO_SEQ_BRANCH_ADDR FF 8 ; Page 1
+  decode_init pg2_JTB cv_MICRO_SEQ_BRANCH_ADDR FF 8 ; Page 2
+  decode_init pg3_JTB cv_MICRO_SEQ_BRANCH_ADDR FF 8 ; Page 3
   
   ; Register A Decode
   ; A side of ALU and ALU write
-  decode_init pg1_R1  cv_R1_SEL x ; Page 1 
-  decode_init pg2_R1  cv_R1_SEL x ; Page 2 
-  decode_init pg3_R1  cv_R1_SEL x ; Page 3 
+  decode_init pg1_R1  cv_R1_SEL x 8 ; Page 1 
+  decode_init pg2_R1  cv_R1_SEL x 8 ; Page 2 
+  decode_init pg3_R1  cv_R1_SEL x 8 ; Page 3 
 
   ; Register B Decode
   ; B side of ALU
-  decode_init pg1_R2  cv_R2_SEL x ; Page 1 
-  decode_init pg2_R2  cv_R2_SEL x ; Page 2 
-  decode_init pg3_R2  cv_R2_SEL x ; Page 3 
+  decode_init pg1_R2  cv_R2_SEL x 8 ; Page 1 
+  decode_init pg2_R2  cv_R2_SEL x 8 ; Page 2 
+  decode_init pg3_R2  cv_R2_SEL x 8 ; Page 3 
 
   ; Address Register Decode
-  decode_init pg1_AR  cv_AR_SEL x ; Page 1 
-  decode_init pg2_AR  cv_AR_SEL x ; Page 2 
-  decode_init pg3_AR  cv_AR_SEL x ; Page 3 
+  decode_init pg1_AR  cv_AR_SEL x 8 ; Page 1 
+  decode_init pg2_AR  cv_AR_SEL x 8 ; Page 2 
+  decode_init pg3_AR  cv_AR_SEL x 8 ; Page 3 
 
 ; decode <tablename> <equ> <opcode0...opcodeN> ; Comment
 ;

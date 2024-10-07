@@ -484,6 +484,7 @@
     end else if (prebyte == 8'h10) begin
       case (opcode)
         8'h18   : $write("0x%2x%2x : IDIVS     (inherent)  (page2)", prebyte, opcode);
+        8'h19   : $write("0x%2x%2x : FDIV      (inherent)  (page2)", prebyte, opcode);
         8'h20   : $write("0x%2x%2x : LBRA      (relative)  (page2)", prebyte, opcode);
         8'h21   : $write("0x%2x%2x : LBRN      (relative)  (page2)", prebyte, opcode);
         8'h22   : $write("0x%2x%2x : LBHI      (relative)  (page2)", prebyte, opcode);

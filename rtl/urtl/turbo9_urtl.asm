@@ -45,7 +45,7 @@
 ; ////////////////////////////////////////////////////////////////////////////
 ; [TURBO9_HEADER_END]
 
-; decode_init <tablename> <ctrl_vec> <default_string> <width> ; Comment
+; decode_init <tablename> <ctrl_vec> <default_string> <input width> ; Comment
 
   ; Jump Table A
   decode_init pg1_JTA cv_MICRO_SEQ_BRANCH_ADDR FF 8 ; Page 1
@@ -409,6 +409,10 @@ SAU16:
   decode pg1_JTA SAU16 $18 ; IDIV (inh)
   decode pg1_R2  D     $18 ; IDIV (inh)
   decode pg1_R1  X     $18 ; IDIV (inh)
+
+  decode pg2_JTA SAU16 $19 ; FDIV (inh)
+  decode pg2_R2  D     $19 ; FDIV (inh)
+  decode pg2_R1  X     $19 ; FDIV (inh)
 
   decode pg2_JTA SAU16 $18 ; IDIVS (inh)
   decode pg2_R2  D     $18 ; IDIVS (inh)

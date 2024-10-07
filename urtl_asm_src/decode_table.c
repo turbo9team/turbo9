@@ -129,7 +129,7 @@ done:
 }
 
 // --==============================================--
-s16 find_opcode_in_decode_table(decode_table_t *table, u08 opcode)
+s16 find_opcode_in_decode_table(decode_table_t *table, u32 opcode)
 {
   s16 retval = ERR_NOT_FOUND;
   u16 idx;
@@ -183,7 +183,7 @@ done:
   return retval;
 }
 // --==============================================--
-s16 add_opcode_to_table(decode_table_ctx_t *ctx, decode_table_t *table, u08 opcode, equ_t *equ, u08 has_comment, char *comment)
+s16 add_opcode_to_table(decode_table_ctx_t *ctx, decode_table_t *table, u32 opcode, equ_t *equ, u08 has_comment, char *comment)
 {
   s16 retval = ERR_OK;
   s16 index;
@@ -259,7 +259,7 @@ done:
 }
 
 // --==============================================--
-s16 add_table_to_ctx(decode_table_ctx_t *ctx, char *table_name, ctrl_vec_t *ctrl_vec, char *default_val)
+s16 add_table_to_ctx(decode_table_ctx_t *ctx, char *table_name, ctrl_vec_t *ctrl_vec, char *default_val, u32 op_width)
 {
   u32 idx;
   s16 retval = ERR_OK;
@@ -300,6 +300,7 @@ s16 add_table_to_ctx(decode_table_ctx_t *ctx, char *table_name, ctrl_vec_t *ctrl
       ctx->tables[ctx->num_tables].ctrl_vec = ctrl_vec;
       ctx->tables[ctx->num_tables].default_val = malloc(strlen(default_val)*sizeof(char)+1);
       strcpy(ctx->tables[ctx->num_tables].default_val, default_val);
+      ctx->tables[ctx->num_tables].op_width = op_width;
       ctx->num_tables++;
     }
     else
@@ -422,6 +423,7 @@ s16 build_decode_table(decode_table_ctx_t *ctx, char *asm_file_name)
       char *table_name;
       char *ctrl_vec_name;
       char *default_val;
+      char *width;
 
       if((retval = get_field_ex(line, &table_name, 2, 0)) <= ERR_OK)
       {
@@ -456,9 +458,17 @@ s16 build_decode_table(decode_table_ctx_t *ctx, char *asm_file_name)
       else
         retval = ERR_OK;
 
+      if((retval = get_field_ex(line, &width, 5, 0)) <= ERR_OK)
+      {
+        printf("get_field_ex failed.\n");
+        goto done;
+      }
+      else
+        retval = ERR_OK;
+
       WRITE_LOG(LOG_HIGH, "Found decode_init, table: %s ctrl_vec_name: %s default_val: %s\n", table_name, ctrl_vec_name, default_val);
 
-      if((retval = add_table_to_ctx(ctx, table_name, ctrl_vec, default_val)) != ERR_OK)
+      if((retval = add_table_to_ctx(ctx, table_name, ctrl_vec, default_val, atoi(width))) != ERR_OK)
       {
         printf("ERROR: add_table_to_ctx returned %d\n", retval);
         goto done;
@@ -467,7 +477,6 @@ s16 build_decode_table(decode_table_ctx_t *ctx, char *asm_file_name)
       if(table_name) free(table_name);
       if(ctrl_vec_name) free(ctrl_vec_name);
       if(default_val) free(default_val);
-
     }
     else if(check_field(line, "decode", 1, 0) == ERR_OK)
     {
@@ -518,10 +527,10 @@ s16 build_decode_table(decode_table_ctx_t *ctx, char *asm_file_name)
         temp = get_field_ex(line, &val, idx, 0);
         if(temp >= ERR_OK)
         {
-          opcode = (str2num(val) & 0xFF);
+          opcode = (str2num(val));
 
           // The comment position is greater than 0. ERR_OK is 0. Real errors are less than 0.
-          if((temp = add_opcode_to_table(ctx, table, (u08)opcode, equ, comment_pos > ERR_OK, line+comment_pos)) == ERR_OK)
+          if((temp = add_opcode_to_table(ctx, table, opcode, equ, comment_pos > ERR_OK, line+comment_pos)) == ERR_OK)
             WRITE_LOG(LOG_HIGH, "idx = %d, opcode %x for table: %s, EQU: %s\n", idx, opcode, table_name, equ_name);
 
           if(val) free(val);
@@ -546,6 +555,7 @@ void fprint_decode_logic(FILE *fp, decode_table_ctx_t *ctx, char *reg_name, u32 
 {
   u32 idx;
   char sub_str[64] = {0};
+  int digits;
 
   if(ctx->tables[table_num].list_len)
   {
@@ -553,8 +563,12 @@ void fprint_decode_logic(FILE *fp, decode_table_ctx_t *ctx, char *reg_name, u32 
     {
       printf("opcode %x\n", (u08)ctx->tables[table_num].list[idx].opcode);
       {
+        // Compute zero padding for opcode width.
+        digits = ctx->tables[table_num].op_width / 4;
+
         // First, print out the verilog case along with the reg name.
-        fprintf(fp, "    8'h%02X : %s_", ctx->tables[table_num].list[idx].opcode, reg_name);
+        fprintf(fp, "    %ld'h%0*lX : %s_", ctx->tables[table_num].op_width, 
+                        digits, ctx->tables[table_num].list[idx].opcode, reg_name);
 
         // Now use a C case statement to fill out the rest of the verilog case statements.
         switch(type)
@@ -673,7 +687,7 @@ s16 build_decode_table_file(decode_table_ctx_t *ctx, u32 table_num, char *filena
   fprintf(fp, "/////////////////////////////////////////////////////////////////////////////\n");
   fprintf(fp, "module %s", table_filename);
   fprintf(fp, "(\n");
-  fprintf(fp, "  input      [7:0] OPCODE_I,\n"); // TODO: dynamic width
+  fprintf(fp, "  input      [%ld:0] OPCODE_I,\n", ctx->tables[table_num].op_width-1);
   fprintf(fp, "  output reg [%d:0] %s_O\n", addr_width-1, uppercase_str);
   fprintf(fp, ");\n");
   fprintf(fp, "\n");

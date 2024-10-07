@@ -1014,8 +1014,14 @@ s16 build_ctrl_vec_list(ctrl_vec_ctx_t *ctx, char *macro_file_name)
       case FIND_CTRL_VEC:
         if(strstr(line, "microprogram_addr_width"))
         {
+          s32 addr_width;
           get_field(line, field, 1, 0);
-          ctx->addr_width = atoi(field);
+          addr_width = atoi(field);
+          if(addr_width < 1) {
+            printf("microprogram_addr_width is %ld, must be > 1.", addr_width);
+            goto done;
+          }
+          ctx->addr_width = addr_width;
         }
 
         if(strstr(line, "ctrl_vec_begin") || strstr(line, "ctrl_vec_addr_begin"))

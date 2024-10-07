@@ -95,7 +95,7 @@ We addressed this challenge by developing uRTL, a novel toolset for systematical
   - Optimized for speed, power and area
     * Design for performance, but not at the expense of power and area
     * Minimize timing paths for max clock rate
-    * Implement multi-cycle to reduce area / power
+    * Balance pipelining vs multi-cycle implementation to optimize performance vs area
 
 * **Executes a Superset of the Motorola 6809 Instruction Set**
   - Compatible with existing 6809 compilers, assemblers and code base

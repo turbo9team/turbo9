@@ -222,6 +222,9 @@ module tb_dv_6809_model
     reg [15:0] data16_a;
     reg [15:0] data16_b;
     reg [15:0] data16_y;
+
+    reg [31:0] data32_a;
+    reg [31:0] data32_b;
     reg [31:0] data32_y;
 
     reg [ 7:0] instruction_reg;
@@ -507,6 +510,23 @@ module tb_dv_6809_model
               `cc_c = (data16_b == 16'h0000);
               `x = data16_y;
               `d = $unsigned(data16_a) % $unsigned(data16_b);
+            end
+
+            ///////////////////////////////////////////// FDIV
+            8'h19 : // FDIV (inh)
+            begin 
+              bus_cycles = 25;
+              data32_a = {`d, 16'h0000};
+              data32_b = {16'h0000, `x};
+              data32_y = $unsigned(data32_a) / $unsigned(data32_b);
+              //`cc_h = 1'b0;
+              //`cc_n = 1'b0;
+              `cc_z = (data32_y[15:0] == 16'h0000);
+              `cc_v = 1'b0;
+              `cc_c = (data32_b[15:0] == 16'h0000);
+              `x = data32_y[15:0];
+              data32_y = $unsigned(data32_a) % $unsigned(data32_b);
+              `d = data32_y[15:0];
             end
 
             ///////////////////////////////////////////// LBxx (rel)

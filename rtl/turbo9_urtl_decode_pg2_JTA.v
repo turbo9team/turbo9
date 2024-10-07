@@ -60,6 +60,7 @@ module turbo9_urtl_decode_pg2_JTA(
 always @* begin
   case (OPCODE_I)
     8'h18 : PG2_JTA_O = 8'hd; // SAU16       IDIVS (inh)
+    8'h19 : PG2_JTA_O = 8'hd; // SAU16       FDIV (inh)
     8'h1F : PG2_JTA_O = 8'h12; // CPY         CPY (inh)
     8'h20 : PG2_JTA_O = 8'h2e; // BRANCH      LBRA LBRN LBHI LBLS
     8'h21 : PG2_JTA_O = 8'h2e; // BRANCH      LBRA LBRN LBHI LBLS
@@ -110,6 +111,7 @@ reg [(8*64):0] PG2_JTA_op;
 always @* begin
   case (OPCODE_I)
     8'h18 : PG2_JTA_op = "IDIVS (inh)";
+    8'h19 : PG2_JTA_op = "FDIV (inh)";
     8'h1F : PG2_JTA_op = "CPY (inh)";
     8'h20 : PG2_JTA_op = "LBRA LBRN LBHI LBLS";
     8'h21 : PG2_JTA_op = "LBRA LBRN LBHI LBLS";
@@ -158,6 +160,7 @@ reg [(8*64):0] PG2_JTA_eq;
 always @* begin
   case (OPCODE_I)
     8'h18 : PG2_JTA_eq = "SAU16";
+    8'h19 : PG2_JTA_eq = "SAU16";
     8'h1F : PG2_JTA_eq = "CPY";
     8'h20 : PG2_JTA_eq = "BRANCH";
     8'h21 : PG2_JTA_eq = "BRANCH";

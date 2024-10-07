@@ -130,9 +130,10 @@ localparam SAU_CPY   = 4'b1111; // F opcode = $101F
 reg   [3:0] a_op;
 localparam  a_idle          = 4'b0000;
 localparam  a_clear         = 4'b0001;
-localparam  a_rshift        = 4'b0010;
-localparam  a_rshift_signed = 4'b0011;
-localparam  a_update        = 4'b0100;
+localparam  a_load_d_acc    = 4'h0010;
+localparam  a_rshift        = 4'b0011;
+localparam  a_rshift_signed = 4'b0100;
+localparam  a_update        = 4'b0101;
 localparam  a_update_div    = 4'b1000; // One-Hot
 reg  [15:0] a_reg;
 reg  [15:0] a_nxt;
@@ -159,10 +160,11 @@ localparam  m_rst = 16'h0000;
 //
 reg   [2:0] q_op;
 localparam  q_idle        = 3'h0;
-localparam  q_load_d_acc  = 3'h1;
-localparam  q_lshift      = 3'h2;
-localparam  q_rshift      = 3'h3;
-localparam  q_update      = 3'h4;
+localparam  q_clear       = 3'h1;
+localparam  q_load_d_acc  = 3'h2;
+localparam  q_lshift      = 3'h3;
+localparam  q_rshift      = 3'h4;
+localparam  q_update      = 3'h5;
 reg  [15:0] q_reg;
 reg  [15:0] q_nxt;
 localparam  q_rst = 16'h0000;
@@ -260,6 +262,32 @@ always @* begin
   //
   case (SAU_OP_I)
     //
+    default : begin //////////////////// SAU_MUL
+      case (cycle_reg)
+        5'h1F : begin
+          a_op  = a_clear;
+          m_op  = m_load_b_acc;
+          q_op  = q_load_d_acc;
+          cycle_load    = 1'b1;
+          cycle_nxt     = 5'h8;
+        end
+        default : begin
+          if (q_reg[8]) begin
+            adder_op  = adder_a_plus_m;
+          end
+          a_op        = a_rshift;
+          q_op        = q_rshift;
+          done_nxt    = (cycle_reg == 5'h2); // Optimal for min cycles
+          if (cycle_reg == 5'h1) begin
+            flags_op  = flags_mul;
+          end
+        end
+        5'h0 : begin
+          cycle_nxt   = 5'h0; // do nothing
+        end
+      endcase
+    end
+    //
     SAU_EMULS,
     SAU_EMUL  : begin //////////////////// SAU_EMUL / SAU EMULS
       case (cycle_reg)
@@ -302,13 +330,19 @@ always @* begin
       endcase
     end
     //
-    SAU_IDIVS,
-    SAU_IDIV : begin //////////////////// SAU_IDIV
+    SAU_IDIV,
+    SAU_FDIV,
+    SAU_IDIVS : begin //////////////////// IDIV / FDIV
       case (cycle_reg)
         5'h1F : begin
-          a_op      = a_clear;
+          if (SAU_OP_I == SAU_FDIV) begin
+            a_op      = a_load_d_acc;
+            q_op      = q_clear;
+          end else begin
+            a_op      = a_clear;
+            q_op      = q_load_d_acc;
+          end
           m_op      = m_load_x_reg;
-          q_op      = q_load_d_acc;
           cycle_load  = 1'b1;
           cycle_nxt   = 5'd17;
         end
@@ -374,32 +408,6 @@ always @* begin
       endcase
     end
     //
-    default : begin //////////////////// SAU_MUL
-      case (cycle_reg)
-        5'h1F : begin
-          a_op  = a_clear;
-          m_op  = m_load_b_acc;
-          q_op  = q_load_d_acc;
-          cycle_load    = 1'b1;
-          cycle_nxt     = 5'h8;
-        end
-        default : begin
-          if (q_reg[8]) begin
-            adder_op  = adder_a_plus_m;
-          end
-          a_op        = a_rshift;
-          q_op        = q_rshift;
-          done_nxt    = (cycle_reg == 5'h2); // Optimal for min cycles
-          if (cycle_reg == 5'h1) begin
-            flags_op  = flags_mul;
-          end
-        end
-        5'h0 : begin
-          cycle_nxt   = 5'h0; // do nothing
-        end
-      endcase
-    end
-    //
   endcase
 end
 //
@@ -418,6 +426,7 @@ always @* begin
   end else begin
     case (a_op[2:0])
       a_clear           : a_nxt = 16'd0;
+      a_load_d_acc      : a_nxt = d_acc_in;
       a_rshift          : a_nxt = {adder_c_out, adder_y[15:1]};
       a_rshift_signed   : a_nxt = {adder_y[15], adder_y[15:1]};
       a_update          : a_nxt = adder_y;
@@ -443,8 +452,9 @@ end
 //
 always @* begin
   case (q_op)
+    q_clear       : q_nxt = 16'd0;
     q_load_d_acc  : q_nxt = d_acc_in;
-    q_lshift      : q_nxt = {q_reg[14:0], adder_c_out};
+    q_lshift      : q_nxt = {q_reg[14:0], adder_c_out}; // INFO 0
     q_rshift      : q_nxt = {adder_y[0], q_reg[15:1]};
     q_update      : q_nxt = adder_y;
     default       : q_nxt = q_reg; // q_idle
@@ -471,7 +481,7 @@ always @* begin
   case (adder_op)
     adder_a_plus_m    : adder_a_in = {1'b0, a_reg};
     adder_a_minus_m   : adder_a_in = {1'b0, a_reg};
-    adder_aq_minus_m  : adder_a_in = {1'b0, aq_lshift};
+    adder_aq_minus_m  : adder_a_in = {1'b0, aq_lshift}; //INFO 0
     adder_q_plus_m    : adder_a_in = {1'b0, q_reg};
     adder_pass_q      : adder_a_in = {1'b0, q_reg};
     default           : adder_a_in = {1'b0, a_reg}; // adder_pass_a
@@ -479,7 +489,7 @@ always @* begin
   case (adder_op)
     adder_a_plus_m    : adder_m_in = {1'b0, m_reg};
     adder_a_minus_m   : adder_m_in = {1'b0,~m_reg}; //m_reg is always positive do not sign extend
-    adder_aq_minus_m  : adder_m_in = {1'b0,~m_reg}; //m_reg is always positive do not sign extend
+    adder_aq_minus_m  : adder_m_in = {1'b0,~m_reg}; //m_reg is always positive do not sign extend INFO 0
     adder_q_plus_m    : adder_m_in = {1'b0, m_reg};
     adder_pass_q      : adder_m_in = 17'd0;
     default           : adder_m_in = 17'd0; // adder_pass_a

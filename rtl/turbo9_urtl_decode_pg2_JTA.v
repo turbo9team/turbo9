@@ -59,6 +59,8 @@ module turbo9_urtl_decode_pg2_JTA(
 
 always @* begin
   case (OPCODE_I)
+    8'h14 : PG2_JTA_O = 8'hd; // SAU16       EDIV (inh)
+    8'h15 : PG2_JTA_O = 8'hd; // SAU16       EDIVS (inh)
     8'h18 : PG2_JTA_O = 8'hd; // SAU16       IDIVS (inh)
     8'h19 : PG2_JTA_O = 8'hd; // SAU16       FDIV (inh)
     8'h1F : PG2_JTA_O = 8'h12; // CPY         CPY (inh)
@@ -110,6 +112,8 @@ reg [(8*64):0] PG2_JTA_op;
 
 always @* begin
   case (OPCODE_I)
+    8'h14 : PG2_JTA_op = "EDIV (inh)";
+    8'h15 : PG2_JTA_op = "EDIVS (inh)";
     8'h18 : PG2_JTA_op = "IDIVS (inh)";
     8'h19 : PG2_JTA_op = "FDIV (inh)";
     8'h1F : PG2_JTA_op = "CPY (inh)";
@@ -159,6 +163,8 @@ reg [(8*64):0] PG2_JTA_eq;
 
 always @* begin
   case (OPCODE_I)
+    8'h14 : PG2_JTA_eq = "SAU16";
+    8'h15 : PG2_JTA_eq = "SAU16";
     8'h18 : PG2_JTA_eq = "SAU16";
     8'h19 : PG2_JTA_eq = "SAU16";
     8'h1F : PG2_JTA_eq = "CPY";

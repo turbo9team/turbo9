@@ -47,7 +47,7 @@
 //                  Inherent Addressing Instruction Testcase
 /////////////////////////////////////////////////////////////////////////////
 
-  `define TEST_SAU_TOTAL_INSTR    5
+  `define TEST_SAU_TOTAL_INSTR    9
   `define TEST_SAU_RESET_CYCLES   40  // (16  nominal)
   `define TEST_SAU_START_CYCLES   200 // (100 nominal)
   `define TEST_SAU_FINISH_CYCLES  500 // (240 nominal)
@@ -88,7 +88,10 @@
     inh_instr_list[ 2] =  'h00_2_1_00_18; // IDIV
     inh_instr_list[ 3] =  'h00_2_1_00_19; // DAA
     inh_instr_list[ 4] =  'h00_2_1_00_3D; // MUL
-    //inh_instr_list[ 5] =  'h00_2_1_10_19; // FDIV
+    inh_instr_list[ 5] =  'h00_2_1_10_14; // EDIV
+    inh_instr_list[ 6] =  'h00_2_1_10_15; // EDIVS
+    inh_instr_list[ 7] =  'h00_2_1_10_18; // IDIVS
+    inh_instr_list[ 8] =  'h00_2_1_10_19; // FDIV
 
 
     for (instr_idx = 0; instr_idx < `TEST_SAU_TOTAL_INSTR; instr_idx++) begin
@@ -154,8 +157,37 @@
         //
         random_block_p(`asm_stack_end, 16'hFFFF);
         $display("writing random data to stack & vector table *** This includes processor initalization state! ***");
-       
-      
+
+        if (rand_itr_idx[1:0] == 2'b01) begin
+          case({prebyte,opcode})
+            'h00_14,       // EMUL    Y:D = D * Y
+            'h00_15: begin // EMULS   Y:D = D * Y 
+              write_tb_mem16p( `asm_init_a, random_corner_num16(0) ); $display(" FORCE CORNER VALUE register D ");
+              write_tb_mem16p( `asm_init_y, random_corner_num16(0) ); $display(" FORCE CORNER VALUE register Y ");
+            end
+            'h00_18,       // IDIV    X = D / X, D = R 
+            'h10_18,       // IDIVS   X = D / X, D = R 
+            'h10_19: begin // FDIV    X = D / X, D = R 
+              write_tb_mem16p( `asm_init_a, random_corner_num16(0) ); $display(" FORCE CORNER VALUE register D ");
+              write_tb_mem16p( `asm_init_x, random_corner_num16(0) ); $display(" FORCE CORNER VALUE register X ");
+            end
+            'h00_19: begin // DAA     A = A + BDC_CF
+              write_tb_mem8p( `asm_init_a, random_corner_num8(0) );   $display(" FORCE CORNER VALUE register A ");
+            end
+            'h00_3D: begin // MUL     D = A * B
+              write_tb_mem8p( `asm_init_a, random_corner_num8(0) );   $display(" FORCE CORNER VALUE register A ");
+              write_tb_mem8p( `asm_init_b, random_corner_num8(0) );   $display(" FORCE CORNER VALUE register B ");
+            end
+            'h10_14,       // EDIV    Y = Y:D / X, D = R 
+            'h10_15: begin // EDIVS   Y = Y:D / X, D = R
+              rand32 = random_corner_num32(0);
+              write_tb_mem16p( `asm_init_y, rand32[31:16]          ); $display(" FORCE CORNER VALUE register Y ");
+              write_tb_mem16p( `asm_init_a, rand32[15: 0]          ); $display(" FORCE CORNER VALUE register D ");
+              write_tb_mem16p( `asm_init_x, random_corner_num16(0) ); $display(" FORCE CORNER VALUE register X ");
+            end
+          endcase
+        end 
+
         ///////////////// Initialize the processor state on the stack
         //
         //write_tb_mem8p( `asm_init_cc,  ); // CC

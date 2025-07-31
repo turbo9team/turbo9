@@ -59,6 +59,8 @@ module turbo9_urtl_decode_pg2_R1(
 
 always @* begin
   case (OPCODE_I)
+    8'h14 : PG2_R1_O = 4'h2; // Y           EDIV (inh)
+    8'h15 : PG2_R1_O = 4'h2; // Y           EDIVS (inh)
     8'h18 : PG2_R1_O = 4'h1; // X           IDIVS (inh)
     8'h19 : PG2_R1_O = 4'h1; // X           FDIV (inh)
     8'h20 : PG2_R1_O = 4'h5; // PC          LBRA LBRN LBHI LBLS
@@ -109,6 +111,8 @@ reg [(8*64):0] PG2_R1_op;
 
 always @* begin
   case (OPCODE_I)
+    8'h14 : PG2_R1_op = "EDIV (inh)";
+    8'h15 : PG2_R1_op = "EDIVS (inh)";
     8'h18 : PG2_R1_op = "IDIVS (inh)";
     8'h19 : PG2_R1_op = "FDIV (inh)";
     8'h20 : PG2_R1_op = "LBRA LBRN LBHI LBLS";
@@ -157,6 +161,8 @@ reg [(8*64):0] PG2_R1_eq;
 
 always @* begin
   case (OPCODE_I)
+    8'h14 : PG2_R1_eq = "Y";
+    8'h15 : PG2_R1_eq = "Y";
     8'h18 : PG2_R1_eq = "X";
     8'h19 : PG2_R1_eq = "X";
     8'h20 : PG2_R1_eq = "PC";

@@ -410,6 +410,14 @@ SAU16:
   decode pg1_R2  D     $18 ; IDIV (inh)
   decode pg1_R1  X     $18 ; IDIV (inh)
 
+  decode pg2_JTA SAU16 $14 ; EDIV (inh)
+  decode pg2_R2  D     $14 ; EDIV (inh)
+  decode pg2_R1  Y     $14 ; EDIV (inh)
+ 
+  decode pg2_JTA SAU16 $15 ; EDIVS (inh)
+  decode pg2_R2  D     $15 ; EDIVS (inh)
+  decode pg2_R1  Y     $15 ; EDIVS (inh)
+  
   decode pg2_JTA SAU16 $19 ; FDIV (inh)
   decode pg2_R2  D     $19 ; FDIV (inh)
   decode pg2_R1  X     $19 ; FDIV (inh)
@@ -426,7 +434,6 @@ SAU16:
 
 SAU16_DONE:
 
-  DATA_SAU_EN
   DATA_SAU_DONE
   DATA_WRITE      R2
 
@@ -450,7 +457,6 @@ SAU8:
 
 SAU8_DONE:
 
-  DATA_SAU_EN
   DATA_SAU_DONE
   DATA_WRITE      R1
 

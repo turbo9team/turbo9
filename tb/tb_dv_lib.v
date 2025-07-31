@@ -92,30 +92,84 @@
   end
   endtask
 
+
+  ////////////////////////////////////////////////////////////////////////////
+  // Read DUT memory (8-bit)
+  ////////////////////////////////////////////////////////////////////////////
+
+  function reg [7:0] read_dut_mem8(input [15:0] addr);
+  begin
+`ifdef TURBO9_R
+    if (addr[0] == 1'b0) begin
+      read_dut_mem8 = `dut_mem_even[addr[15:1]];
+    end else begin
+      read_dut_mem8 = `dut_mem_odd[addr[15:1]];
+    end
+`elsif TURBO9_S
+    if (addr[0] == 1'b0) begin
+      read_dut_mem8 = `dut_mem_even[addr[15:1]];
+    end else begin
+      read_dut_mem8 = `dut_mem_odd[addr[15:1]];
+    end
+`else
+    read_dut_mem8 = `dut_mem[addr];
+`endif
+  end
+  endfunction
+
+  ////////////////////////////////////////////////////////////////////////////
+  // Write DUT Memory (8-bit)
+  ////////////////////////////////////////////////////////////////////////////
+  task write_dut_mem8(input [15:0] addr, input [7:0] data);
+  begin
+`ifdef TURBO9_R
+      if (addr[0] == 1'b0) begin
+        `dut_mem_even[addr[15:1]]  = data;
+      end else begin
+        `dut_mem_odd[addr[15:1]]   = data;
+      end
+`elsif TURBO9_S
+      if (addr[0] == 1'b0) begin
+        `dut_mem_even[addr[15:1]]  = data;
+      end else begin
+        `dut_mem_odd[addr[15:1]]   = data;
+      end
+`else
+      `dut_mem[addr] = data;
+`endif
+  end
+  endtask
+
+
   ////////////////////////////////////////////////////////////////////////////
   // Copy Testbench Memory to Model and DUT
   ////////////////////////////////////////////////////////////////////////////
   task copy_tb_mem;
     integer ptr;
+    reg [15:0] addr;
   begin
     $display("[TB: copy_tb_mem    ] Copy testbench program into model and DUT memory");
     for (ptr = 0; ptr < (2**`MEM_ADDR_WIDTH); ptr++) begin
-`ifdef TURBO9_R
-      if (ptr[0] == 1'b0) begin
-        `dut_mem_even[ptr[31:1]]   = `tb_mem[ptr];
-      end else begin
-        `dut_mem_odd[ptr[31:1]]   = `tb_mem[ptr];
-      end
-`elsif TURBO9_S
-      if (ptr[0] == 1'b0) begin
-        `dut_mem_even[ptr[31:1]]   = `tb_mem[ptr];
-      end else begin
-        `dut_mem_odd[ptr[31:1]]   = `tb_mem[ptr];
-      end
-`else
-      `dut_mem[ptr] = `tb_mem[ptr];
-`endif
+      write_dut_mem8(ptr,`tb_mem[ptr]);
       `model_mem[ptr] = `tb_mem[ptr];
+      //
+      addr = {{(16-`MEM_ADDR_WIDTH){1'b1}},ptr[(`MEM_ADDR_WIDTH-1):0]};
+      if (addr >= `asm_init_stack_data) begin 
+        case(addr)
+            `asm_init_cc      : $display("[TB: copy_tb_mem    ] Stack Initialized Reg: EFHI_NZVC  = 0x%2x", `tb_mem[ptr]);
+            `asm_init_a       : $display("[TB: copy_tb_mem    ] Stack Initialized Reg: AorD[15:8] = 0x%2x", `tb_mem[ptr]);
+            `asm_init_b       : $display("[TB: copy_tb_mem    ] Stack Initialized Reg: BorD[ 7:0] = 0x%2x", `tb_mem[ptr]);
+            `asm_init_dp      : $display("[TB: copy_tb_mem    ] Stack Initialized Reg: DP         = 0x%2x", `tb_mem[ptr]);
+            (`asm_init_x+0)   : $display("[TB: copy_tb_mem    ] Stack Initialized Reg: X[15:8]    = 0x%2x", `tb_mem[ptr]);
+            (`asm_init_x+1)   : $display("[TB: copy_tb_mem    ] Stack Initialized Reg: X[ 7:0]    = 0x%2x", `tb_mem[ptr]);
+            (`asm_init_y+0)   : $display("[TB: copy_tb_mem    ] Stack Initialized Reg: Y[15:8]    = 0x%2x", `tb_mem[ptr]);
+            (`asm_init_y+1)   : $display("[TB: copy_tb_mem    ] Stack Initialized Reg: Y[ 7:0]    = 0x%2x", `tb_mem[ptr]);
+            (`asm_init_u_s+0) : $display("[TB: copy_tb_mem    ] Stack Initialized Reg: U/S[15:8]  = 0x%2x", `tb_mem[ptr]);
+            (`asm_init_u_s+1) : $display("[TB: copy_tb_mem    ] Stack Initialized Reg: U/S[ 7:0]  = 0x%2x", `tb_mem[ptr]);
+            (`asm_init_pc+0)  : $display("[TB: copy_tb_mem    ] Stack Initialized Reg: PC[15:8]   = 0x%2x", `tb_mem[ptr]);
+            (`asm_init_pc+1)  : $display("[TB: copy_tb_mem    ] Stack Initialized Reg: PC[ 7:0]   = 0x%2x", `tb_mem[ptr]);
+        endcase
+      end
     end
   end
   endtask
@@ -127,47 +181,59 @@
   function integer mem_diff_cnt(input stop_on_err);
     integer ptr;
     integer diff_cnt;
+    reg [15:0] addr;
+    reg [7:0] mdc_dut_mem;
   begin
     ptr = 0;
     diff_cnt = 0;
-    while ((ptr < (2**`MEM_ADDR_WIDTH)) && ((diff_cnt == 0) || ~stop_on_err)) begin
+    while ((ptr < (2**`MEM_ADDR_WIDTH)) && ((diff_cnt == 0) || ~stop_on_err) ) begin
 
-`ifdef TURBO9_R
-      if (ptr[0] == 1'b0) begin
-        if (`dut_mem_even[ptr[31:1]] !== `model_mem[ptr]) begin
-          $display("[TB: mem_diff_cnt   ] ERROR: Memory mismatch. DUT = 0x%2x / Model = 0x%2x @ Address: 0x%4x (Memory Index %0d)",
-            `dut_mem_even[ptr[31:1]], `model_mem[ptr], {{(16-`MEM_ADDR_WIDTH){1'b1}},ptr[(`MEM_ADDR_WIDTH-1):0]}, ptr);
-          diff_cnt++;
-        end
-      end else begin
-        if (`dut_mem_odd[ptr[31:1]] !== `model_mem[ptr]) begin
-          $display("[TB: mem_diff_cnt   ] ERROR: Memory mismatch. DUT = 0x%2x / Model = 0x%2x @ Address: 0x%4x (Memory Index %0d)",
-            `dut_mem_odd[ptr[31:1]], `model_mem[ptr], {{(16-`MEM_ADDR_WIDTH){1'b1}},ptr[(`MEM_ADDR_WIDTH-1):0]}, ptr);
-          diff_cnt++;
-        end
+      addr = {{(16-`MEM_ADDR_WIDTH){1'b1}},ptr[(`MEM_ADDR_WIDTH-1):0]};
+      mdc_dut_mem = read_dut_mem8(ptr);
+
+      if (addr >= `asm_init_stack_data) begin 
+        case(addr)
+            `asm_init_cc      : $display("[TB: mem_diff_cnt   ] DUT Stacked Reg: EFHI_NZVC  = 0x%2x", mdc_dut_mem);
+            `asm_init_a       : $display("[TB: mem_diff_cnt   ] DUT Stacked Reg: AorD[15:8] = 0x%2x", mdc_dut_mem);
+            `asm_init_b       : $display("[TB: mem_diff_cnt   ] DUT Stacked Reg: BorD[ 7:0] = 0x%2x", mdc_dut_mem);
+            `asm_init_dp      : $display("[TB: mem_diff_cnt   ] DUT Stacked Reg: DP         = 0x%2x", mdc_dut_mem);
+            (`asm_init_x+0)   : $display("[TB: mem_diff_cnt   ] DUT Stacked Reg: X[15:8]    = 0x%2x", mdc_dut_mem);
+            (`asm_init_x+1)   : $display("[TB: mem_diff_cnt   ] DUT Stacked Reg: X[ 7:0]    = 0x%2x", mdc_dut_mem);
+            (`asm_init_y+0)   : $display("[TB: mem_diff_cnt   ] DUT Stacked Reg: Y[15:8]    = 0x%2x", mdc_dut_mem);
+            (`asm_init_y+1)   : $display("[TB: mem_diff_cnt   ] DUT Stacked Reg: Y[ 7:0]    = 0x%2x", mdc_dut_mem);
+            (`asm_init_u_s+0) : $display("[TB: mem_diff_cnt   ] DUT Stacked Reg: U/S[15:8]  = 0x%2x", mdc_dut_mem);
+            (`asm_init_u_s+1) : $display("[TB: mem_diff_cnt   ] DUT Stacked Reg: U/S[ 7:0]  = 0x%2x", mdc_dut_mem);
+            (`asm_init_pc+0)  : $display("[TB: mem_diff_cnt   ] DUT Stacked Reg: PC[15:8]   = 0x%2x", mdc_dut_mem);
+            (`asm_init_pc+1)  : $display("[TB: mem_diff_cnt   ] DUT Stacked Reg: PC[ 7:0]   = 0x%2x", mdc_dut_mem);
+        endcase
       end
-`elsif TURBO9_S
-      if (ptr[0] == 1'b0) begin
-        if (`dut_mem_even[ptr[31:1]] !== `model_mem[ptr]) begin
-          $display("[TB: mem_diff_cnt   ] ERROR: Memory mismatch. DUT = 0x%2x / Model = 0x%2x @ Address: 0x%4x (Memory Index %0d)",
-            `dut_mem_even[ptr[31:1]], `model_mem[ptr], {{(16-`MEM_ADDR_WIDTH){1'b1}},ptr[(`MEM_ADDR_WIDTH-1):0]}, ptr);
-          diff_cnt++;
-        end
-      end else begin
-        if (`dut_mem_odd[ptr[31:1]] !== `model_mem[ptr]) begin
-          $display("[TB: mem_diff_cnt   ] ERROR: Memory mismatch. DUT = 0x%2x / Model = 0x%2x @ Address: 0x%4x (Memory Index %0d)",
-            `dut_mem_odd[ptr[31:1]], `model_mem[ptr], {{(16-`MEM_ADDR_WIDTH){1'b1}},ptr[(`MEM_ADDR_WIDTH-1):0]}, ptr);
-          diff_cnt++;
-        end
-      end
-`else
-      if (`dut_mem[ptr] != `model_mem[ptr]) begin
-        $display("[TB: mem_diff_cnt   ] ERROR: Memory mismatch. DUT = 0x%2x / Model = 0x%2x @ Address: 0x%4x (Memory Index %0d)",
-          `dut_mem[ptr], `model_mem[ptr], {{(16-`MEM_ADDR_WIDTH){1'b1}},ptr[(`MEM_ADDR_WIDTH-1):0]}, ptr);
+
+
+      if (mdc_dut_mem !== `model_mem[ptr]) begin // must use !== to test for X !!!
+      
+        $write("[TB: mem_diff_cnt   ] ERROR: Memory mismatch. ");
+
+        case(addr)
+          `asm_init_cc      : $write("Stacked Reg: EFHI_NZVC  ");
+          `asm_init_a       : $write("Stacked Reg: AorD[15:8] ");
+          `asm_init_b       : $write("Stacked Reg: BorD[ 7:0] ");
+          `asm_init_dp      : $write("Stacked Reg: DP         ");
+          (`asm_init_x+0)   : $write("Stacked Reg: X[15:8]    ");
+          (`asm_init_x+1)   : $write("Stacked Reg: X[ 7:0]    ");
+          (`asm_init_y+0)   : $write("Stacked Reg: Y[15:8]    ");
+          (`asm_init_y+1)   : $write("Stacked Reg: Y[ 7:0]    ");
+          (`asm_init_u_s+0) : $write("Stacked Reg: U/S[15:8]  ");
+          (`asm_init_u_s+1) : $write("Stacked Reg: U/S[ 7:0]  ");
+          (`asm_init_pc+0)  : $write("Stacked Reg: PC[15:8]   ");
+          (`asm_init_pc+1)  : $write("Stacked Reg: PC[ 7:0]   ");
+        endcase
+      
+        $display("DUT = 0x%2x / Model = 0x%2x @ Address: 0x%4x (Memory Index %0d)", mdc_dut_mem, `model_mem[ptr], addr, ptr);
+
         diff_cnt++;
       end
-`endif
       ptr++;
+
     end
     if (diff_cnt == 0) begin
       $display("[TB: mem_diff_cnt   ] DUT memory matches Model memory!");
@@ -201,6 +267,101 @@
     $write("[TB: random_block_p ] @ 0x%4x to 0x%4x : ", block_start, block_last_byte);
   end
   endtask
+
+  ////////////////////////////////////////////////////////////////////////////
+  // Random corner number (32-bit)
+  ////////////////////////////////////////////////////////////////////////////
+  function reg [31:0] random_corner_num32(input rcn_null);
+    reg [31:0] rand32;
+    reg [31:0] num32;
+  begin
+    rand32  = {$random(seed)}; // {} = unsigned 
+    case (rand32[4:0])
+      5'h1F    : num32 = 32'hFFFF_FFFF; 
+      5'h1E    : num32 = 32'hFFFF_FFFE; 
+      5'h1D    : num32 = 32'hFFFF_8001; 
+      5'h1C    : num32 = 32'hFFFF_8000; 
+      5'h1B    : num32 = 32'hFFFF_7FFF; 
+      5'h1A    : num32 = 32'hFFFF_7FFE; 
+      5'h19    : num32 = 32'hFFFF_0001; 
+      5'h18    : num32 = 32'hFFFF_0000; 
+         
+      5'h17    : num32 = 32'h8000_FFFF; 
+      5'h16    : num32 = 32'h8000_FFFE; 
+      5'h15    : num32 = 32'h8000_8001; 
+      5'h14    : num32 = 32'h8000_8000; 
+      5'h13    : num32 = 32'h8000_7FFF; 
+      5'h12    : num32 = 32'h8000_7FFE; 
+      5'h11    : num32 = 32'h8000_0001; 
+      5'h10    : num32 = 32'h8000_0000; 
+
+      5'h0F    : num32 = 32'h7FFF_FFFF; 
+      5'h0E    : num32 = 32'h7FFF_FFFE; 
+      5'h0D    : num32 = 32'h7FFF_8001; 
+      5'h0C    : num32 = 32'h7FFF_8000; 
+      5'h0B    : num32 = 32'h7FFF_7FFF; 
+      5'h0A    : num32 = 32'h7FFF_7FFE; 
+      5'h09    : num32 = 32'h7FFF_0001; 
+      5'h08    : num32 = 32'h7FFF_0000; 
+
+      5'h07    : num32 = 32'h0000_FFFF; 
+      5'h06    : num32 = 32'h0000_FFFE; 
+      5'h05    : num32 = 32'h0000_8001; 
+      5'h04    : num32 = 32'h0000_8000; 
+      5'h03    : num32 = 32'h0000_7FFF; 
+      5'h02    : num32 = 32'h0000_7FFE; 
+      5'h01    : num32 = 32'h0000_0001; 
+      5'h00    : num32 = 32'h0000_0000; 
+      default : num32 = 32'h0000_0000; 
+    endcase
+    random_corner_num32 = num32;
+  end
+  endfunction
+
+  ////////////////////////////////////////////////////////////////////////////
+  // Random corner number (16-bit)
+  ////////////////////////////////////////////////////////////////////////////
+  function reg [15:0] random_corner_num16(input rcn_null);
+    reg [31:0] rand32;
+    reg [15:0] num16;
+  begin
+    rand32  = {$random(seed)}; // {} = unsigned 
+    case (rand32[2:0])
+      3'h7    : num16 = 16'hFFFF; // -1
+      3'h6    : num16 = 16'hFFFE; // -2
+      3'h5    : num16 = 16'h8001; // -32767
+      3'h4    : num16 = 16'h8000; // -32768
+      3'h3    : num16 = 16'h7FFF; // +32767
+      3'h2    : num16 = 16'h7FFE; // +32766
+      3'h1    : num16 = 16'h0001; // 1
+      default : num16 = 16'h0000; // 0
+    endcase
+    random_corner_num16 = num16;
+  end
+  endfunction
+
+  ////////////////////////////////////////////////////////////////////////////
+  // Random corner number (8-bit)
+  ////////////////////////////////////////////////////////////////////////////
+  function reg [7:0] random_corner_num8(input rcn_null);
+    reg [31:0] rand32;
+    reg [7:0] num8;
+  begin
+    rand32  = {$random(seed)}; // {} = unsigned 
+    case (rand32[2:0])
+      3'h7    : num8 = 8'hFF; // -1
+      3'h6    : num8 = 8'hFE; // -2
+      3'h5    : num8 = 8'h81; // -127
+      3'h4    : num8 = 8'h80; // -128
+      3'h3    : num8 = 8'h7F; // +127
+      3'h2    : num8 = 8'h7E; // +126
+      3'h1    : num8 = 8'h01; // 1
+      default : num8 = 8'h00; // 0
+    endcase
+    random_corner_num8 = num8;
+  end
+  endfunction
+
 
   ////////////////////////////////////////////////////////////////////////////
   // Debug $random
@@ -483,6 +644,8 @@
       if (newline) $display("");
     end else if (prebyte == 8'h10) begin
       case (opcode)
+        8'h14   : $write("0x%2x%2x : EDIV      (inherent)  (page2)", prebyte, opcode);
+        8'h15   : $write("0x%2x%2x : EDIVS     (inherent)  (page2)", prebyte, opcode);
         8'h18   : $write("0x%2x%2x : IDIVS     (inherent)  (page2)", prebyte, opcode);
         8'h19   : $write("0x%2x%2x : FDIV      (inherent)  (page2)", prebyte, opcode);
         8'h20   : $write("0x%2x%2x : LBRA      (relative)  (page2)", prebyte, opcode);

@@ -639,19 +639,27 @@ always @* begin
     // 0410:   decode pg1_R2  D     $18 ; IDIV (inh)
     // 0411:   decode pg1_R1  X     $18 ; IDIV (inh)
     // 0412: 
-    // 0413:   decode pg2_JTA SAU16 $19 ; FDIV (inh)
-    // 0414:   decode pg2_R2  D     $19 ; FDIV (inh)
-    // 0415:   decode pg2_R1  X     $19 ; FDIV (inh)
-    // 0416: 
-    // 0417:   decode pg2_JTA SAU16 $18 ; IDIVS (inh)
-    // 0418:   decode pg2_R2  D     $18 ; IDIVS (inh)
-    // 0419:   decode pg2_R1  X     $18 ; IDIVS (inh)
-    // 0420: 
-    // 0421:   DATA_SAU_EN
-    // 0422: 
-    // 0423:   IF              SAU_NOT_DONE
-    // 0424:   JUMP            SAU16
-    // 0425:   micro_op_end
+    // 0413:   decode pg2_JTA SAU16 $14 ; EDIV (inh)
+    // 0414:   decode pg2_R2  D     $14 ; EDIV (inh)
+    // 0415:   decode pg2_R1  Y     $14 ; EDIV (inh)
+    // 0416:  
+    // 0417:   decode pg2_JTA SAU16 $15 ; EDIVS (inh)
+    // 0418:   decode pg2_R2  D     $15 ; EDIVS (inh)
+    // 0419:   decode pg2_R1  Y     $15 ; EDIVS (inh)
+    // 0420:   
+    // 0421:   decode pg2_JTA SAU16 $19 ; FDIV (inh)
+    // 0422:   decode pg2_R2  D     $19 ; FDIV (inh)
+    // 0423:   decode pg2_R1  X     $19 ; FDIV (inh)
+    // 0424: 
+    // 0425:   decode pg2_JTA SAU16 $18 ; IDIVS (inh)
+    // 0426:   decode pg2_R2  D     $18 ; IDIVS (inh)
+    // 0427:   decode pg2_R1  X     $18 ; IDIVS (inh)
+    // 0428: 
+    // 0429:   DATA_SAU_EN
+    // 0430: 
+    // 0431:   IF              SAU_NOT_DONE
+    // 0432:   JUMP            SAU16
+    // 0433:   micro_op_end
     8'h00d: begin
       CV_MICRO_SEQ_OP_O = 3'h1;  // OP_JUMP
       CV_MICRO_SEQ_BRANCH_ADDR_O = 8'hd;  // SAU16
@@ -660,39 +668,37 @@ always @* begin
     end
 
 
-    // 0426: 
-    // 0427: SAU16_DONE:
-    // 0428: 
-    // 0429:   DATA_SAU_EN
-    // 0430:   DATA_SAU_DONE
-    // 0431:   DATA_WRITE      R2
-    // 0432: 
-    // 0433:   JUMP            SAU8_DONE
-    // 0434:   micro_op_end
+    // 0434: 
+    // 0435: SAU16_DONE:
+    // 0436: 
+    // 0437:   DATA_SAU_DONE
+    // 0438:   DATA_WRITE      R2
+    // 0439: 
+    // 0440:   JUMP            SAU8_DONE
+    // 0441:   micro_op_end
     8'h00e: begin
       CV_MICRO_SEQ_OP_O = 3'h1;  // OP_JUMP
       CV_MICRO_SEQ_BRANCH_ADDR_O = 8'h10;  // SAU8_DONE
       CV_DATA_ALU_WR_SEL_O = 4'h4;  // R2
       CV_DATA_ALU_OP_O = 3'h7;  // SAU
-      CV_DATA_ALU_SAU_EN_O = 1'h1;  // TRUE
     end
 
 
-    // 0435: 
-    // 0436: ; //////////////////////////////////////////// DAA MUL
-    // 0437: ; //
-    // 0438: SAU8:
-    // 0439:   decode pg1_JTA SAU8 $19 ; DAA (inh)
-    // 0440:   decode pg1_R1  D    $19 ; DAA (inh)
-    // 0441: 
-    // 0442:   decode pg1_JTA SAU8 $3D ; MUL (inh)
-    // 0443:   decode pg1_R1  D    $3D ; MUL (inh)
-    // 0444: 
-    // 0445:   DATA_SAU_EN
-    // 0446: 
-    // 0447:   IF              SAU_NOT_DONE
-    // 0448:   JUMP            SAU8
-    // 0449:   micro_op_end
+    // 0442: 
+    // 0443: ; //////////////////////////////////////////// DAA MUL
+    // 0444: ; //
+    // 0445: SAU8:
+    // 0446:   decode pg1_JTA SAU8 $19 ; DAA (inh)
+    // 0447:   decode pg1_R1  D    $19 ; DAA (inh)
+    // 0448: 
+    // 0449:   decode pg1_JTA SAU8 $3D ; MUL (inh)
+    // 0450:   decode pg1_R1  D    $3D ; MUL (inh)
+    // 0451: 
+    // 0452:   DATA_SAU_EN
+    // 0453: 
+    // 0454:   IF              SAU_NOT_DONE
+    // 0455:   JUMP            SAU8
+    // 0456:   micro_op_end
     8'h00f: begin
       CV_MICRO_SEQ_OP_O = 3'h1;  // OP_JUMP
       CV_MICRO_SEQ_BRANCH_ADDR_O = 8'hf;  // SAU8
@@ -701,43 +707,41 @@ always @* begin
     end
 
 
-    // 0450: 
-    // 0451: SAU8_DONE:
-    // 0452: 
-    // 0453:   DATA_SAU_EN
-    // 0454:   DATA_SAU_DONE
-    // 0455:   DATA_WRITE      R1
-    // 0456: 
-    // 0457:   CCR_OP_W        OP_ooooXXXX ; SAU masks correct bits
-    // 0458: 
-    // 0459:   JUMP_TABLE_A_NEXT_PC
-    // 0460:   micro_op_end
+    // 0457: 
+    // 0458: SAU8_DONE:
+    // 0459: 
+    // 0460:   DATA_SAU_DONE
+    // 0461:   DATA_WRITE      R1
+    // 0462: 
+    // 0463:   CCR_OP_W        OP_ooooXXXX ; SAU masks correct bits
+    // 0464: 
+    // 0465:   JUMP_TABLE_A_NEXT_PC
+    // 0466:   micro_op_end
     8'h010: begin
       CV_MICRO_SEQ_OP_O = 3'h5;  // OP_JUMP_TABLE_A_NEXT_PC
       CV_DATA_ALU_WR_SEL_O = 4'h8;  // R1
       CV_DATA_ALU_OP_O = 3'h7;  // SAU
-      CV_DATA_ALU_SAU_EN_O = 1'h1;  // TRUE
       CV_CCR_OP_O = 4'h2;  // OP_OOOOXXXX
     end
 
 
-    // 0461: 
-    // 0462: ; //////////////////////////////////////////// SEX (in 1 micro-cycle!)
-    // 0463: ; //
-    // 0464: SEX:
-    // 0465:   decode pg1_JTA SEX  $1D ; SEX(inh)
-    // 0466:   decode pg1_R1  D    $1D ; SEX(inh)
-    // 0467:   decode pg1_R2  SEXB $1D ; SEX(inh)
-    // 0468: 
-    // 0469:   DATA_PASS_B     R2
-    // 0470:   DATA_WRITE      R1
-    // 0471:   
-    // 0472:   SET_DATA_WIDTH  W_R1
-    // 0473: 
-    // 0474:   CCR_OP_W        OP_ooooXXXo ; INFO Prog Man says V unaffected, datasheet says v=0
-    // 0475: 
-    // 0476:   JUMP_TABLE_A_NEXT_PC
-    // 0477:   micro_op_end
+    // 0467: 
+    // 0468: ; //////////////////////////////////////////// SEX (in 1 micro-cycle!)
+    // 0469: ; //
+    // 0470: SEX:
+    // 0471:   decode pg1_JTA SEX  $1D ; SEX(inh)
+    // 0472:   decode pg1_R1  D    $1D ; SEX(inh)
+    // 0473:   decode pg1_R2  SEXB $1D ; SEX(inh)
+    // 0474: 
+    // 0475:   DATA_PASS_B     R2
+    // 0476:   DATA_WRITE      R1
+    // 0477:   
+    // 0478:   SET_DATA_WIDTH  W_R1
+    // 0479: 
+    // 0480:   CCR_OP_W        OP_ooooXXXo ; INFO Prog Man says V unaffected, datasheet says v=0
+    // 0481: 
+    // 0482:   JUMP_TABLE_A_NEXT_PC
+    // 0483:   micro_op_end
     8'h011: begin
       CV_MICRO_SEQ_OP_O = 3'h5;  // OP_JUMP_TABLE_A_NEXT_PC
       CV_DATA_ALU_A_SEL_O = 4'hf;  // ZERO
@@ -750,35 +754,35 @@ always @* begin
     end
 
 
-    // 0478: 
-    // 0479: ; //////////////////////////////////////////// CPY
-    // 0480: ; //
-    // 0481: CPY:
-    // 0482:   decode pg2_JTA CPY $1F ; CPY (inh)
-    // 0483: ; R1 = postbyte[7:0] $1F ; CPY (inh)
-    // 0484: ; R2 = postbyte[3:0] $1F ; CPY (inh)
-    // 0485: 
-    // 0486: ; TODO INFO: could combine this state with SAU states
-    // 0487: 
-    // 0488:   DATA_SAU_EN ; initalize byte counter from D register
-    // 0489:   micro_op_end
+    // 0484: 
+    // 0485: ; //////////////////////////////////////////// CPY
+    // 0486: ; //
+    // 0487: CPY:
+    // 0488:   decode pg2_JTA CPY $1F ; CPY (inh)
+    // 0489: ; R1 = postbyte[7:0] $1F ; CPY (inh)
+    // 0490: ; R2 = postbyte[3:0] $1F ; CPY (inh)
+    // 0491: 
+    // 0492: ; TODO INFO: could combine this state with SAU states
+    // 0493: 
+    // 0494:   DATA_SAU_EN ; initalize byte counter from D register
+    // 0495:   micro_op_end
     8'h012: begin
       CV_DATA_ALU_SAU_EN_O = 1'h1;  // TRUE
     end
 
 
-    // 0490:   
-    // 0491: CPY_LOOP:
-    // 0492:   DATA_SAU_EN ; enable byte counter
-    // 0493: 
-    // 0494:   SET_DATA_WIDTH  W_8
-    // 0495: 
-    // 0496:   ADDR_PASS       RR1_WR2
-    // 0497:   DMEM_LOAD_W
-    // 0498: 
-    // 0499:   IF              SAU_DONE
-    // 0500:   JUMP            GO_NEW_PC
-    // 0501:   micro_op_end
+    // 0496:   
+    // 0497: CPY_LOOP:
+    // 0498:   DATA_SAU_EN ; enable byte counter
+    // 0499: 
+    // 0500:   SET_DATA_WIDTH  W_8
+    // 0501: 
+    // 0502:   ADDR_PASS       RR1_WR2
+    // 0503:   DMEM_LOAD_W
+    // 0504: 
+    // 0505:   IF              SAU_DONE
+    // 0506:   JUMP            GO_NEW_PC
+    // 0507:   micro_op_end
     8'h013: begin
       CV_MICRO_SEQ_OP_O = 3'h1;  // OP_JUMP
       CV_MICRO_SEQ_BRANCH_ADDR_O = 8'h2f;  // GO_NEW_PC
@@ -790,18 +794,18 @@ always @* begin
     end
 
 
-    // 0502:   
-    // 0503:   DATA_SAU_EN ; enable byte counter
-    // 0504: 
-    // 0505:   SET_DATA_WIDTH  W_8
-    // 0506: 
-    // 0507:   DATA_PASS_B     DMEM_RD
-    // 0508: 
-    // 0509:   ADDR_PASS       RR1_WR2
-    // 0510:   DMEM_STORE_W
-    // 0511: 
-    // 0512:   JUMP            CPY_LOOP
-    // 0513:   micro_op_end
+    // 0508:   
+    // 0509:   DATA_SAU_EN ; enable byte counter
+    // 0510: 
+    // 0511:   SET_DATA_WIDTH  W_8
+    // 0512: 
+    // 0513:   DATA_PASS_B     DMEM_RD
+    // 0514: 
+    // 0515:   ADDR_PASS       RR1_WR2
+    // 0516:   DMEM_STORE_W
+    // 0517: 
+    // 0518:   JUMP            CPY_LOOP
+    // 0519:   micro_op_end
     8'h014: begin
       CV_MICRO_SEQ_OP_O = 3'h1;  // OP_JUMP
       CV_MICRO_SEQ_BRANCH_ADDR_O = 8'h13;  // CPY_LOOP
@@ -816,23 +820,23 @@ always @* begin
     end
 
 
-    // 0514: 
-    // 0515: 
-    // 0516: 
-    // 0517: ; //////////////////////////////////////////// TFR
-    // 0518: ; //
-    // 0519: TFR:
-    // 0520:   decode pg1_JTA TFR $1F ; TFR(inh)
-    // 0521: ; R1 = postbyte[7:0] $1F ; TFR(inh)
-    // 0522: ; R2 = postbyte[3:0] $1F ; TFR(inh)
-    // 0523: 
-    // 0524:   DATA_PASS_A     R1
-    // 0525:   DATA_WRITE      R2
-    // 0526: 
-    // 0527:   CCR_OP_W        OP_XXXXXXXX ; Just in case CCR is destination
-    // 0528: 
-    // 0529:   JUMP            GO_NEW_PC ; Just in case PC is destination
-    // 0530:   micro_op_end
+    // 0520: 
+    // 0521: 
+    // 0522: 
+    // 0523: ; //////////////////////////////////////////// TFR
+    // 0524: ; //
+    // 0525: TFR:
+    // 0526:   decode pg1_JTA TFR $1F ; TFR(inh)
+    // 0527: ; R1 = postbyte[7:0] $1F ; TFR(inh)
+    // 0528: ; R2 = postbyte[3:0] $1F ; TFR(inh)
+    // 0529: 
+    // 0530:   DATA_PASS_A     R1
+    // 0531:   DATA_WRITE      R2
+    // 0532: 
+    // 0533:   CCR_OP_W        OP_XXXXXXXX ; Just in case CCR is destination
+    // 0534: 
+    // 0535:   JUMP            GO_NEW_PC ; Just in case PC is destination
+    // 0536:   micro_op_end
     8'h015: begin
       CV_MICRO_SEQ_OP_O = 3'h1;  // OP_JUMP
       CV_MICRO_SEQ_BRANCH_ADDR_O = 8'h2f;  // GO_NEW_PC
@@ -845,43 +849,43 @@ always @* begin
     end
 
 
-    // 0531: 
-    // 0532: ; //
-    // 0533: ; ////////////////////////////////////////////////////////////////////////////
-    // 0534: 
-    // 0535: 
-    // 0536: ; ////////////////////////////////////////////////////////////////////////////
-    // 0537: ;                        LOAD TYPE INSTRUCTIONS
-    // 0538: ; ////////////////////////////////////////////////////////////////////////////
-    // 0539: 
-    // 0540: ; //////////////////////////////////////////// ADC
-    // 0541: ; //
-    // 0542: ADC:
-    // 0543:   decode pg1_JTA ADC     $89         ; ADCA (imm)
-    // 0544:   decode pg1_R1  A       $89         ; ADCA (imm)
-    // 0545:   decode pg1_R2  IDATA   $89         ; ADCA (imm)
-    // 0546:                                                    
-    // 0547:   decode pg1_JTA ADC     $C9         ; ADCB (imm)
-    // 0548:   decode pg1_R1  B       $C9         ; ADCB (imm)
-    // 0549:   decode pg1_R2  IDATA   $C9         ; ADCB (imm)
-    // 0550:                                          
-    // 0551:   decode pg1_JTB ADC     $99 $A9 $B9 ; ADCA (dir idx ext)
-    // 0552:   decode pg1_R1  A       $99 $A9 $B9 ; ADCA (dir idx ext)
-    // 0553:   decode pg1_R2  DMEM_RD $99 $A9 $B9 ; ADCA (dir idx ext)
-    // 0554:                                          
-    // 0555:   decode pg1_JTB ADC     $D9 $E9 $F9 ; ADCB (dir idx ext)
-    // 0556:   decode pg1_R1  B       $D9 $E9 $F9 ; ADCB (dir idx ext)
-    // 0557:   decode pg1_R2  DMEM_RD $D9 $E9 $F9 ; ADCB (dir idx ext)
-    // 0558: 
-    // 0559:   DATA_ADDC       R1, R2
-    // 0560:   DATA_WRITE      R1
-    // 0561: 
-    // 0562:   SET_DATA_WIDTH  W_R1
-    // 0563: 
-    // 0564:   CCR_OP_W        OP_ooXoXXXX ; H is masked for 16bit
-    // 0565: 
-    // 0566:   JUMP_TABLE_A_NEXT_PC
-    // 0567:   micro_op_end
+    // 0537: 
+    // 0538: ; //
+    // 0539: ; ////////////////////////////////////////////////////////////////////////////
+    // 0540: 
+    // 0541: 
+    // 0542: ; ////////////////////////////////////////////////////////////////////////////
+    // 0543: ;                        LOAD TYPE INSTRUCTIONS
+    // 0544: ; ////////////////////////////////////////////////////////////////////////////
+    // 0545: 
+    // 0546: ; //////////////////////////////////////////// ADC
+    // 0547: ; //
+    // 0548: ADC:
+    // 0549:   decode pg1_JTA ADC     $89         ; ADCA (imm)
+    // 0550:   decode pg1_R1  A       $89         ; ADCA (imm)
+    // 0551:   decode pg1_R2  IDATA   $89         ; ADCA (imm)
+    // 0552:                                                    
+    // 0553:   decode pg1_JTA ADC     $C9         ; ADCB (imm)
+    // 0554:   decode pg1_R1  B       $C9         ; ADCB (imm)
+    // 0555:   decode pg1_R2  IDATA   $C9         ; ADCB (imm)
+    // 0556:                                          
+    // 0557:   decode pg1_JTB ADC     $99 $A9 $B9 ; ADCA (dir idx ext)
+    // 0558:   decode pg1_R1  A       $99 $A9 $B9 ; ADCA (dir idx ext)
+    // 0559:   decode pg1_R2  DMEM_RD $99 $A9 $B9 ; ADCA (dir idx ext)
+    // 0560:                                          
+    // 0561:   decode pg1_JTB ADC     $D9 $E9 $F9 ; ADCB (dir idx ext)
+    // 0562:   decode pg1_R1  B       $D9 $E9 $F9 ; ADCB (dir idx ext)
+    // 0563:   decode pg1_R2  DMEM_RD $D9 $E9 $F9 ; ADCB (dir idx ext)
+    // 0564: 
+    // 0565:   DATA_ADDC       R1, R2
+    // 0566:   DATA_WRITE      R1
+    // 0567: 
+    // 0568:   SET_DATA_WIDTH  W_R1
+    // 0569: 
+    // 0570:   CCR_OP_W        OP_ooXoXXXX ; H is masked for 16bit
+    // 0571: 
+    // 0572:   JUMP_TABLE_A_NEXT_PC
+    // 0573:   micro_op_end
     8'h016: begin
       CV_MICRO_SEQ_OP_O = 3'h5;  // OP_JUMP_TABLE_A_NEXT_PC
       CV_DATA_ALU_A_SEL_O = 4'h8;  // R1
@@ -894,43 +898,43 @@ always @* begin
     end
 
 
-    // 0568: 
-    // 0569: ; //////////////////////////////////////////// ADD
-    // 0570: ; //
-    // 0571: ADD:
-    // 0572:   decode pg1_JTA ADD     $8B         ; ADDA (imm)
-    // 0573:   decode pg1_R1  A       $8B         ; ADDA (imm)
-    // 0574:   decode pg1_R2  IDATA   $8B         ; ADDA (imm)
-    // 0575:                                                    
-    // 0576:   decode pg1_JTA ADD     $CB         ; ADDB (imm)
-    // 0577:   decode pg1_R1  B       $CB         ; ADDB (imm)
-    // 0578:   decode pg1_R2  IDATA   $CB         ; ADDB (imm)
-    // 0579:                                                    
-    // 0580:   decode pg1_JTA ADD     $C3         ; ADDD (imm)
-    // 0581:   decode pg1_R1  D       $C3         ; ADDD (imm)
-    // 0582:   decode pg1_R2  IDATA   $C3         ; ADDD (imm)
-    // 0583:                              
-    // 0584:   decode pg1_JTB ADD     $9B $AB $BB ; ADDA (dir idx ext)
-    // 0585:   decode pg1_R1  A       $9B $AB $BB ; ADDA (dir idx ext)
-    // 0586:   decode pg1_R2  DMEM_RD $9B $AB $BB ; ADDA (dir idx ext)
-    // 0587:                              
-    // 0588:   decode pg1_JTB ADD     $DB $EB $FB ; ADDB (dir idx ext)
-    // 0589:   decode pg1_R1  B       $DB $EB $FB ; ADDB (dir idx ext)
-    // 0590:   decode pg1_R2  DMEM_RD $DB $EB $FB ; ADDB (dir idx ext)
-    // 0591:                              
-    // 0592:   decode pg1_JTB ADD     $D3 $E3 $F3 ; ADDD (dir idx ext)
-    // 0593:   decode pg1_R1  D       $D3 $E3 $F3 ; ADDD (dir idx ext)
-    // 0594:   decode pg1_R2  DMEM_RD $D3 $E3 $F3 ; ADDD (dir idx ext)
-    // 0595: 
-    // 0596:   DATA_ADD        R1, R2
-    // 0597:   DATA_WRITE      R1
-    // 0598: 
-    // 0599:   SET_DATA_WIDTH  W_R1
-    // 0600: 
-    // 0601:   CCR_OP_W        OP_ooXoXXXX ; H is masked for 16bit
-    // 0602: 
-    // 0603:   JUMP_TABLE_A_NEXT_PC
-    // 0604:   micro_op_end
+    // 0574: 
+    // 0575: ; //////////////////////////////////////////// ADD
+    // 0576: ; //
+    // 0577: ADD:
+    // 0578:   decode pg1_JTA ADD     $8B         ; ADDA (imm)
+    // 0579:   decode pg1_R1  A       $8B         ; ADDA (imm)
+    // 0580:   decode pg1_R2  IDATA   $8B         ; ADDA (imm)
+    // 0581:                                                    
+    // 0582:   decode pg1_JTA ADD     $CB         ; ADDB (imm)
+    // 0583:   decode pg1_R1  B       $CB         ; ADDB (imm)
+    // 0584:   decode pg1_R2  IDATA   $CB         ; ADDB (imm)
+    // 0585:                                                    
+    // 0586:   decode pg1_JTA ADD     $C3         ; ADDD (imm)
+    // 0587:   decode pg1_R1  D       $C3         ; ADDD (imm)
+    // 0588:   decode pg1_R2  IDATA   $C3         ; ADDD (imm)
+    // 0589:                              
+    // 0590:   decode pg1_JTB ADD     $9B $AB $BB ; ADDA (dir idx ext)
+    // 0591:   decode pg1_R1  A       $9B $AB $BB ; ADDA (dir idx ext)
+    // 0592:   decode pg1_R2  DMEM_RD $9B $AB $BB ; ADDA (dir idx ext)
+    // 0593:                              
+    // 0594:   decode pg1_JTB ADD     $DB $EB $FB ; ADDB (dir idx ext)
+    // 0595:   decode pg1_R1  B       $DB $EB $FB ; ADDB (dir idx ext)
+    // 0596:   decode pg1_R2  DMEM_RD $DB $EB $FB ; ADDB (dir idx ext)
+    // 0597:                              
+    // 0598:   decode pg1_JTB ADD     $D3 $E3 $F3 ; ADDD (dir idx ext)
+    // 0599:   decode pg1_R1  D       $D3 $E3 $F3 ; ADDD (dir idx ext)
+    // 0600:   decode pg1_R2  DMEM_RD $D3 $E3 $F3 ; ADDD (dir idx ext)
+    // 0601: 
+    // 0602:   DATA_ADD        R1, R2
+    // 0603:   DATA_WRITE      R1
+    // 0604: 
+    // 0605:   SET_DATA_WIDTH  W_R1
+    // 0606: 
+    // 0607:   CCR_OP_W        OP_ooXoXXXX ; H is masked for 16bit
+    // 0608: 
+    // 0609:   JUMP_TABLE_A_NEXT_PC
+    // 0610:   micro_op_end
     8'h017: begin
       CV_MICRO_SEQ_OP_O = 3'h5;  // OP_JUMP_TABLE_A_NEXT_PC
       CV_DATA_ALU_A_SEL_O = 4'h8;  // R1
@@ -943,36 +947,36 @@ always @* begin
     end
 
 
-    // 0605: 
-    // 0606: 
-    // 0607: ; //////////////////////////////////////////// AND
-    // 0608: ; //
-    // 0609: AND:
-    // 0610:   decode pg1_JTA AND     $84         ; ANDA (imm)
-    // 0611:   decode pg1_R1  A       $84         ; ANDA (imm)
-    // 0612:   decode pg1_R2  IDATA   $84         ; ANDA (imm)
-    // 0613:                                                    
-    // 0614:   decode pg1_JTA AND     $C4         ; ANDB (imm)
-    // 0615:   decode pg1_R1  B       $C4         ; ANDB (imm)
-    // 0616:   decode pg1_R2  IDATA   $C4         ; ANDB (imm)
-    // 0617:                                      
-    // 0618:   decode pg1_JTB AND     $94 $A4 $B4 ; ANDA (dir idx ext)
-    // 0619:   decode pg1_R1  A       $94 $A4 $B4 ; ANDA (dir idx ext)
-    // 0620:   decode pg1_R2  DMEM_RD $94 $A4 $B4 ; ANDA (dir idx ext)
-    // 0621:                                      
-    // 0622:   decode pg1_JTB AND     $D4 $E4 $F4 ; ANDB (dir idx ext)
-    // 0623:   decode pg1_R1  B       $D4 $E4 $F4 ; ANDB (dir idx ext)
-    // 0624:   decode pg1_R2  DMEM_RD $D4 $E4 $F4 ; ANDB (dir idx ext)
-    // 0625: 
-    // 0626:   DATA_AND        R1, R2
-    // 0627:   DATA_WRITE      R1
-    // 0628: 
-    // 0629:   SET_DATA_WIDTH  W_R1
-    // 0630: 
-    // 0631:   CCR_OP_W        OP_ooooXXXo 
-    // 0632: 
-    // 0633:   JUMP_TABLE_A_NEXT_PC
-    // 0634:   micro_op_end
+    // 0611: 
+    // 0612: 
+    // 0613: ; //////////////////////////////////////////// AND
+    // 0614: ; //
+    // 0615: AND:
+    // 0616:   decode pg1_JTA AND     $84         ; ANDA (imm)
+    // 0617:   decode pg1_R1  A       $84         ; ANDA (imm)
+    // 0618:   decode pg1_R2  IDATA   $84         ; ANDA (imm)
+    // 0619:                                                    
+    // 0620:   decode pg1_JTA AND     $C4         ; ANDB (imm)
+    // 0621:   decode pg1_R1  B       $C4         ; ANDB (imm)
+    // 0622:   decode pg1_R2  IDATA   $C4         ; ANDB (imm)
+    // 0623:                                      
+    // 0624:   decode pg1_JTB AND     $94 $A4 $B4 ; ANDA (dir idx ext)
+    // 0625:   decode pg1_R1  A       $94 $A4 $B4 ; ANDA (dir idx ext)
+    // 0626:   decode pg1_R2  DMEM_RD $94 $A4 $B4 ; ANDA (dir idx ext)
+    // 0627:                                      
+    // 0628:   decode pg1_JTB AND     $D4 $E4 $F4 ; ANDB (dir idx ext)
+    // 0629:   decode pg1_R1  B       $D4 $E4 $F4 ; ANDB (dir idx ext)
+    // 0630:   decode pg1_R2  DMEM_RD $D4 $E4 $F4 ; ANDB (dir idx ext)
+    // 0631: 
+    // 0632:   DATA_AND        R1, R2
+    // 0633:   DATA_WRITE      R1
+    // 0634: 
+    // 0635:   SET_DATA_WIDTH  W_R1
+    // 0636: 
+    // 0637:   CCR_OP_W        OP_ooooXXXo 
+    // 0638: 
+    // 0639:   JUMP_TABLE_A_NEXT_PC
+    // 0640:   micro_op_end
     8'h018: begin
       CV_MICRO_SEQ_OP_O = 3'h5;  // OP_JUMP_TABLE_A_NEXT_PC
       CV_DATA_ALU_A_SEL_O = 4'h8;  // R1
@@ -985,21 +989,21 @@ always @* begin
     end
 
 
-    // 0635: 
-    // 0636: ANDCC:
-    // 0637:   decode pg1_JTA ANDCC $1C ; ANDCC (imm)
-    // 0638:   decode pg1_R1  CCR   $1C ; ANDCC (imm)
-    // 0639:   decode pg1_R2  IDATA $1C ; ANDCC (imm)
-    // 0640: 
-    // 0641:   DATA_AND        R1, R2
-    // 0642:   DATA_WRITE      R1
-    // 0643: 
-    // 0644:   SET_DATA_WIDTH  W_R1
-    // 0645: 
-    // 0646:   CCR_OP_W        OP_XXXXXXXX 
-    // 0647: 
-    // 0648:   JUMP_TABLE_A_NEXT_PC
-    // 0649:   micro_op_end
+    // 0641: 
+    // 0642: ANDCC:
+    // 0643:   decode pg1_JTA ANDCC $1C ; ANDCC (imm)
+    // 0644:   decode pg1_R1  CCR   $1C ; ANDCC (imm)
+    // 0645:   decode pg1_R2  IDATA $1C ; ANDCC (imm)
+    // 0646: 
+    // 0647:   DATA_AND        R1, R2
+    // 0648:   DATA_WRITE      R1
+    // 0649: 
+    // 0650:   SET_DATA_WIDTH  W_R1
+    // 0651: 
+    // 0652:   CCR_OP_W        OP_XXXXXXXX 
+    // 0653: 
+    // 0654:   JUMP_TABLE_A_NEXT_PC
+    // 0655:   micro_op_end
     8'h019: begin
       CV_MICRO_SEQ_OP_O = 3'h5;  // OP_JUMP_TABLE_A_NEXT_PC
       CV_DATA_ALU_A_SEL_O = 4'h8;  // R1
@@ -1012,34 +1016,34 @@ always @* begin
     end
 
 
-    // 0650: 
-    // 0651: ; //////////////////////////////////////////// BIT
-    // 0652: ; //
-    // 0653: BIT:
-    // 0654:   decode pg1_JTA BIT     $85         ; BITA (imm)
-    // 0655:   decode pg1_R1  A       $85         ; BITA (imm)
-    // 0656:   decode pg1_R2  IDATA   $85         ; BITA (imm)
-    // 0657:                                                 
-    // 0658:   decode pg1_JTA BIT     $C5         ; BITB (imm)
-    // 0659:   decode pg1_R1  B       $C5         ; BITB (imm)
-    // 0660:   decode pg1_R2  IDATA   $C5         ; BITB (imm)
-    // 0661:                              
-    // 0662:   decode pg1_JTB BIT     $95 $A5 $B5 ; BITA (dir idx ext)
-    // 0663:   decode pg1_R1  A       $95 $A5 $B5 ; BITA (dir idx ext)
-    // 0664:   decode pg1_R2  DMEM_RD $95 $A5 $B5 ; BITA (dir idx ext)
-    // 0665:                              
-    // 0666:   decode pg1_JTB BIT     $D5 $E5 $F5 ; BITB (dir idx ext)
-    // 0667:   decode pg1_R1  B       $D5 $E5 $F5 ; BITB (dir idx ext)
-    // 0668:   decode pg1_R2  DMEM_RD $D5 $E5 $F5 ; BITB (dir idx ext)
-    // 0669: 
-    // 0670:   DATA_AND        R1, R2
-    // 0671: 
-    // 0672:   SET_DATA_WIDTH  W_R1
-    // 0673: 
-    // 0674:   CCR_OP_W        OP_ooooXXXo 
+    // 0656: 
+    // 0657: ; //////////////////////////////////////////// BIT
+    // 0658: ; //
+    // 0659: BIT:
+    // 0660:   decode pg1_JTA BIT     $85         ; BITA (imm)
+    // 0661:   decode pg1_R1  A       $85         ; BITA (imm)
+    // 0662:   decode pg1_R2  IDATA   $85         ; BITA (imm)
+    // 0663:                                                 
+    // 0664:   decode pg1_JTA BIT     $C5         ; BITB (imm)
+    // 0665:   decode pg1_R1  B       $C5         ; BITB (imm)
+    // 0666:   decode pg1_R2  IDATA   $C5         ; BITB (imm)
+    // 0667:                              
+    // 0668:   decode pg1_JTB BIT     $95 $A5 $B5 ; BITA (dir idx ext)
+    // 0669:   decode pg1_R1  A       $95 $A5 $B5 ; BITA (dir idx ext)
+    // 0670:   decode pg1_R2  DMEM_RD $95 $A5 $B5 ; BITA (dir idx ext)
+    // 0671:                              
+    // 0672:   decode pg1_JTB BIT     $D5 $E5 $F5 ; BITB (dir idx ext)
+    // 0673:   decode pg1_R1  B       $D5 $E5 $F5 ; BITB (dir idx ext)
+    // 0674:   decode pg1_R2  DMEM_RD $D5 $E5 $F5 ; BITB (dir idx ext)
     // 0675: 
-    // 0676:   JUMP_TABLE_A_NEXT_PC
-    // 0677:   micro_op_end
+    // 0676:   DATA_AND        R1, R2
+    // 0677: 
+    // 0678:   SET_DATA_WIDTH  W_R1
+    // 0679: 
+    // 0680:   CCR_OP_W        OP_ooooXXXo 
+    // 0681: 
+    // 0682:   JUMP_TABLE_A_NEXT_PC
+    // 0683:   micro_op_end
     8'h01a: begin
       CV_MICRO_SEQ_OP_O = 3'h5;  // OP_JUMP_TABLE_A_NEXT_PC
       CV_DATA_ALU_A_SEL_O = 4'h8;  // R1
@@ -1051,74 +1055,74 @@ always @* begin
     end
 
 
-    // 0678: 
-    // 0679: ; //////////////////////////////////////////// CMP
-    // 0680: ; //
-    // 0681: CMP:
-    // 0682:   decode pg1_JTA CMP     $81         ; CMPA (imm)
-    // 0683:   decode pg1_R1  A       $81         ; CMPA (imm)
-    // 0684:   decode pg1_R2  IDATA   $81         ; CMPA (imm)
-    // 0685:                                                
-    // 0686:   decode pg1_JTA CMP     $C1         ; CMPB (imm)
-    // 0687:   decode pg1_R1  B       $C1         ; CMPB (imm)
-    // 0688:   decode pg1_R2  IDATA   $C1         ; CMPB (imm)
-    // 0689:                                                
-    // 0690:   decode pg2_JTA CMP     $83         ; CMPD (imm)
-    // 0691:   decode pg2_R1  D       $83         ; CMPD (imm)
-    // 0692:   decode pg2_R2  IDATA   $83         ; CMPD (imm)
-    // 0693:                                                
-    // 0694:   decode pg3_JTA CMP     $8C         ; CMPS (imm)
-    // 0695:   decode pg3_R1  S       $8C         ; CMPS (imm)
-    // 0696:   decode pg3_R2  IDATA   $8C         ; CMPS (imm)
-    // 0697:                                                
-    // 0698:   decode pg3_JTA CMP     $83         ; CMPU (imm)
-    // 0699:   decode pg3_R1  U       $83         ; CMPU (imm)
-    // 0700:   decode pg3_R2  IDATA   $83         ; CMPU (imm)
-    // 0701:                                                
-    // 0702:   decode pg1_JTA CMP     $8C         ; CMPX (imm)
-    // 0703:   decode pg1_R1  X       $8C         ; CMPX (imm)
-    // 0704:   decode pg1_R2  IDATA   $8C         ; CMPX (imm)
-    // 0705:                                                
-    // 0706:   decode pg2_JTA CMP     $8C         ; CMPY (imm)
-    // 0707:   decode pg2_R1  Y       $8C         ; CMPY (imm)
-    // 0708:   decode pg2_R2  IDATA   $8C         ; CMPY (imm)
-    // 0709:                              
-    // 0710:   decode pg1_JTB CMP     $91 $A1 $B1 ; CMPA (dir idx ext)
-    // 0711:   decode pg1_R1  A       $91 $A1 $B1 ; CMPA (dir idx ext)
-    // 0712:   decode pg1_R2  DMEM_RD $91 $A1 $B1 ; CMPA (dir idx ext)
-    // 0713:                              
-    // 0714:   decode pg1_JTB CMP     $D1 $E1 $F1 ; CMPB (dir idx ext)
-    // 0715:   decode pg1_R1  B       $D1 $E1 $F1 ; CMPB (dir idx ext)
-    // 0716:   decode pg1_R2  DMEM_RD $D1 $E1 $F1 ; CMPB (dir idx ext)
-    // 0717:                              
-    // 0718:   decode pg2_JTB CMP     $93 $A3 $B3 ; CMPD (dir idx ext)
-    // 0719:   decode pg2_R1  D       $93 $A3 $B3 ; CMPD (dir idx ext)
-    // 0720:   decode pg2_R2  DMEM_RD $93 $A3 $B3 ; CMPD (dir idx ext)
-    // 0721:                              
-    // 0722:   decode pg3_JTB CMP     $9C $AC $BC ; CMPS (dir idx ext)
-    // 0723:   decode pg3_R1  S       $9C $AC $BC ; CMPS (dir idx ext)
-    // 0724:   decode pg3_R2  DMEM_RD $9C $AC $BC ; CMPS (dir idx ext)
-    // 0725:                              
-    // 0726:   decode pg3_JTB CMP     $93 $A3 $B3 ; CMPU (dir idx ext)
-    // 0727:   decode pg3_R1  U       $93 $A3 $B3 ; CMPU (dir idx ext)
-    // 0728:   decode pg3_R2  DMEM_RD $93 $A3 $B3 ; CMPU (dir idx ext)
-    // 0729:                              
-    // 0730:   decode pg1_JTB CMP     $9C $AC $BC ; CMPX (dir idx ext)
-    // 0731:   decode pg1_R1  X       $9C $AC $BC ; CMPX (dir idx ext)
-    // 0732:   decode pg1_R2  DMEM_RD $9C $AC $BC ; CMPX (dir idx ext)
-    // 0733:                              
-    // 0734:   decode pg2_JTB CMP     $9C $AC $BC ; CMPY (dir idx ext)
-    // 0735:   decode pg2_R1  Y       $9C $AC $BC ; CMPY (dir idx ext)
-    // 0736:   decode pg2_R2  DMEM_RD $9C $AC $BC ; CMPY (dir idx ext)
-    // 0737: 
-    // 0738:   DATA_SUB        R1, R2
-    // 0739: 
-    // 0740:   SET_DATA_WIDTH  W_R1
-    // 0741: 
-    // 0742:   CCR_OP_W        OP_ooooXXXX ; INFO: Spec H Undefined, Turbo9 H not affected
+    // 0684: 
+    // 0685: ; //////////////////////////////////////////// CMP
+    // 0686: ; //
+    // 0687: CMP:
+    // 0688:   decode pg1_JTA CMP     $81         ; CMPA (imm)
+    // 0689:   decode pg1_R1  A       $81         ; CMPA (imm)
+    // 0690:   decode pg1_R2  IDATA   $81         ; CMPA (imm)
+    // 0691:                                                
+    // 0692:   decode pg1_JTA CMP     $C1         ; CMPB (imm)
+    // 0693:   decode pg1_R1  B       $C1         ; CMPB (imm)
+    // 0694:   decode pg1_R2  IDATA   $C1         ; CMPB (imm)
+    // 0695:                                                
+    // 0696:   decode pg2_JTA CMP     $83         ; CMPD (imm)
+    // 0697:   decode pg2_R1  D       $83         ; CMPD (imm)
+    // 0698:   decode pg2_R2  IDATA   $83         ; CMPD (imm)
+    // 0699:                                                
+    // 0700:   decode pg3_JTA CMP     $8C         ; CMPS (imm)
+    // 0701:   decode pg3_R1  S       $8C         ; CMPS (imm)
+    // 0702:   decode pg3_R2  IDATA   $8C         ; CMPS (imm)
+    // 0703:                                                
+    // 0704:   decode pg3_JTA CMP     $83         ; CMPU (imm)
+    // 0705:   decode pg3_R1  U       $83         ; CMPU (imm)
+    // 0706:   decode pg3_R2  IDATA   $83         ; CMPU (imm)
+    // 0707:                                                
+    // 0708:   decode pg1_JTA CMP     $8C         ; CMPX (imm)
+    // 0709:   decode pg1_R1  X       $8C         ; CMPX (imm)
+    // 0710:   decode pg1_R2  IDATA   $8C         ; CMPX (imm)
+    // 0711:                                                
+    // 0712:   decode pg2_JTA CMP     $8C         ; CMPY (imm)
+    // 0713:   decode pg2_R1  Y       $8C         ; CMPY (imm)
+    // 0714:   decode pg2_R2  IDATA   $8C         ; CMPY (imm)
+    // 0715:                              
+    // 0716:   decode pg1_JTB CMP     $91 $A1 $B1 ; CMPA (dir idx ext)
+    // 0717:   decode pg1_R1  A       $91 $A1 $B1 ; CMPA (dir idx ext)
+    // 0718:   decode pg1_R2  DMEM_RD $91 $A1 $B1 ; CMPA (dir idx ext)
+    // 0719:                              
+    // 0720:   decode pg1_JTB CMP     $D1 $E1 $F1 ; CMPB (dir idx ext)
+    // 0721:   decode pg1_R1  B       $D1 $E1 $F1 ; CMPB (dir idx ext)
+    // 0722:   decode pg1_R2  DMEM_RD $D1 $E1 $F1 ; CMPB (dir idx ext)
+    // 0723:                              
+    // 0724:   decode pg2_JTB CMP     $93 $A3 $B3 ; CMPD (dir idx ext)
+    // 0725:   decode pg2_R1  D       $93 $A3 $B3 ; CMPD (dir idx ext)
+    // 0726:   decode pg2_R2  DMEM_RD $93 $A3 $B3 ; CMPD (dir idx ext)
+    // 0727:                              
+    // 0728:   decode pg3_JTB CMP     $9C $AC $BC ; CMPS (dir idx ext)
+    // 0729:   decode pg3_R1  S       $9C $AC $BC ; CMPS (dir idx ext)
+    // 0730:   decode pg3_R2  DMEM_RD $9C $AC $BC ; CMPS (dir idx ext)
+    // 0731:                              
+    // 0732:   decode pg3_JTB CMP     $93 $A3 $B3 ; CMPU (dir idx ext)
+    // 0733:   decode pg3_R1  U       $93 $A3 $B3 ; CMPU (dir idx ext)
+    // 0734:   decode pg3_R2  DMEM_RD $93 $A3 $B3 ; CMPU (dir idx ext)
+    // 0735:                              
+    // 0736:   decode pg1_JTB CMP     $9C $AC $BC ; CMPX (dir idx ext)
+    // 0737:   decode pg1_R1  X       $9C $AC $BC ; CMPX (dir idx ext)
+    // 0738:   decode pg1_R2  DMEM_RD $9C $AC $BC ; CMPX (dir idx ext)
+    // 0739:                              
+    // 0740:   decode pg2_JTB CMP     $9C $AC $BC ; CMPY (dir idx ext)
+    // 0741:   decode pg2_R1  Y       $9C $AC $BC ; CMPY (dir idx ext)
+    // 0742:   decode pg2_R2  DMEM_RD $9C $AC $BC ; CMPY (dir idx ext)
     // 0743: 
-    // 0744:   JUMP_TABLE_A_NEXT_PC
-    // 0745:   micro_op_end
+    // 0744:   DATA_SUB        R1, R2
+    // 0745: 
+    // 0746:   SET_DATA_WIDTH  W_R1
+    // 0747: 
+    // 0748:   CCR_OP_W        OP_ooooXXXX ; INFO: Spec H Undefined, Turbo9 H not affected
+    // 0749: 
+    // 0750:   JUMP_TABLE_A_NEXT_PC
+    // 0751:   micro_op_end
     8'h01b: begin
       CV_MICRO_SEQ_OP_O = 3'h5;  // OP_JUMP_TABLE_A_NEXT_PC
       CV_DATA_ALU_A_SEL_O = 4'h8;  // R1
@@ -1130,35 +1134,35 @@ always @* begin
     end
 
 
-    // 0746: 
-    // 0747: ; //////////////////////////////////////////// EOR
-    // 0748: ; //
-    // 0749: EOR:
-    // 0750:   decode pg1_JTA EOR     $88         ; EORA (imm)
-    // 0751:   decode pg1_R1  A       $88         ; EORA (imm)
-    // 0752:   decode pg1_R2  IDATA   $88         ; EORA (imm)
-    // 0753:                                                 
-    // 0754:   decode pg1_JTA EOR     $C8         ; EORB (imm)
-    // 0755:   decode pg1_R1  B       $C8         ; EORB (imm)
-    // 0756:   decode pg1_R2  IDATA   $C8         ; EORB (imm)
-    // 0757:                              
-    // 0758:   decode pg1_JTB EOR     $98 $A8 $B8 ; EORA (dir idx ext)
-    // 0759:   decode pg1_R1  A       $98 $A8 $B8 ; EORA (dir idx ext)
-    // 0760:   decode pg1_R2  DMEM_RD $98 $A8 $B8 ; EORA (dir idx ext)
-    // 0761:                              
-    // 0762:   decode pg1_JTB EOR     $D8 $E8 $F8 ; EORB (dir idx ext)
-    // 0763:   decode pg1_R1  B       $D8 $E8 $F8 ; EORB (dir idx ext)
-    // 0764:   decode pg1_R2  DMEM_RD $D8 $E8 $F8 ; EORB (dir idx ext)
-    // 0765: 
-    // 0766:   DATA_XOR        R1, R2
-    // 0767:   DATA_WRITE      R1
-    // 0768: 
-    // 0769:   SET_DATA_WIDTH  W_R1
-    // 0770: 
-    // 0771:   CCR_OP_W        OP_ooooXXXo 
-    // 0772: 
-    // 0773:   JUMP_TABLE_A_NEXT_PC
-    // 0774:   micro_op_end
+    // 0752: 
+    // 0753: ; //////////////////////////////////////////// EOR
+    // 0754: ; //
+    // 0755: EOR:
+    // 0756:   decode pg1_JTA EOR     $88         ; EORA (imm)
+    // 0757:   decode pg1_R1  A       $88         ; EORA (imm)
+    // 0758:   decode pg1_R2  IDATA   $88         ; EORA (imm)
+    // 0759:                                                 
+    // 0760:   decode pg1_JTA EOR     $C8         ; EORB (imm)
+    // 0761:   decode pg1_R1  B       $C8         ; EORB (imm)
+    // 0762:   decode pg1_R2  IDATA   $C8         ; EORB (imm)
+    // 0763:                              
+    // 0764:   decode pg1_JTB EOR     $98 $A8 $B8 ; EORA (dir idx ext)
+    // 0765:   decode pg1_R1  A       $98 $A8 $B8 ; EORA (dir idx ext)
+    // 0766:   decode pg1_R2  DMEM_RD $98 $A8 $B8 ; EORA (dir idx ext)
+    // 0767:                              
+    // 0768:   decode pg1_JTB EOR     $D8 $E8 $F8 ; EORB (dir idx ext)
+    // 0769:   decode pg1_R1  B       $D8 $E8 $F8 ; EORB (dir idx ext)
+    // 0770:   decode pg1_R2  DMEM_RD $D8 $E8 $F8 ; EORB (dir idx ext)
+    // 0771: 
+    // 0772:   DATA_XOR        R1, R2
+    // 0773:   DATA_WRITE      R1
+    // 0774: 
+    // 0775:   SET_DATA_WIDTH  W_R1
+    // 0776: 
+    // 0777:   CCR_OP_W        OP_ooooXXXo 
+    // 0778: 
+    // 0779:   JUMP_TABLE_A_NEXT_PC
+    // 0780:   micro_op_end
     8'h01c: begin
       CV_MICRO_SEQ_OP_O = 3'h5;  // OP_JUMP_TABLE_A_NEXT_PC
       CV_DATA_ALU_A_SEL_O = 4'h8;  // R1
@@ -1171,75 +1175,75 @@ always @* begin
     end
 
 
-    // 0775: 
-    // 0776: ; //////////////////////////////////////////// LD
-    // 0777: ; //
-    // 0778: LD:
-    // 0779:   decode pg1_JTA LD      $86         ; LDA (imm)
-    // 0780:   decode pg1_R1  A       $86         ; LDA (imm)
-    // 0781:   decode pg1_R2  IDATA   $86         ; LDA (imm)
-    // 0782:                                                 
-    // 0783:   decode pg1_JTA LD      $C6         ; LDB (imm)
-    // 0784:   decode pg1_R1  B       $C6         ; LDB (imm)
-    // 0785:   decode pg1_R2  IDATA   $C6         ; LDB (imm)
-    // 0786:                                                 
-    // 0787:   decode pg1_JTA LD      $CC         ; LDD (imm)
-    // 0788:   decode pg1_R1  D       $CC         ; LDD (imm)
-    // 0789:   decode pg1_R2  IDATA   $CC         ; LDD (imm)
-    // 0790:                                                 
-    // 0791:   decode pg2_JTA LD      $CE         ; LDS (imm)
-    // 0792:   decode pg2_R1  S       $CE         ; LDS (imm)
-    // 0793:   decode pg2_R2  IDATA   $CE         ; LDS (imm)
-    // 0794:                                                 
-    // 0795:   decode pg1_JTA LD      $CE         ; LDU (imm)
-    // 0796:   decode pg1_R1  U       $CE         ; LDU (imm)
-    // 0797:   decode pg1_R2  IDATA   $CE         ; LDU (imm)
-    // 0798:                                                 
-    // 0799:   decode pg1_JTA LD      $8E         ; LDX (imm)
-    // 0800:   decode pg1_R1  X       $8E         ; LDX (imm)
-    // 0801:   decode pg1_R2  IDATA   $8E         ; LDX (imm)
-    // 0802:                                                 
-    // 0803:   decode pg2_JTA LD      $8E         ; LDY (imm)
-    // 0804:   decode pg2_R1  Y       $8E         ; LDY (imm)
-    // 0805:   decode pg2_R2  IDATA   $8E         ; LDY (imm)
-    // 0806:                              
-    // 0807:   decode pg1_JTB LD      $96 $A6 $B6 ; LDA (dir idx ext)
-    // 0808:   decode pg1_R1  A       $96 $A6 $B6 ; LDA (dir idx ext)
-    // 0809:   decode pg1_R2  DMEM_RD $96 $A6 $B6 ; LDA (dir idx ext)
-    // 0810:                              
-    // 0811:   decode pg1_JTB LD      $D6 $E6 $F6 ; LDB (dir idx ext)
-    // 0812:   decode pg1_R1  B       $D6 $E6 $F6 ; LDB (dir idx ext)
-    // 0813:   decode pg1_R2  DMEM_RD $D6 $E6 $F6 ; LDB (dir idx ext)
-    // 0814:                              
-    // 0815:   decode pg1_JTB LD      $DC $EC $FC ; LDD (dir idx ext)
-    // 0816:   decode pg1_R1  D       $DC $EC $FC ; LDD (dir idx ext)
-    // 0817:   decode pg1_R2  DMEM_RD $DC $EC $FC ; LDD (dir idx ext)
-    // 0818:                              
-    // 0819:   decode pg2_JTB LD      $DE $EE $FE ; LDS (dir idx ext)
-    // 0820:   decode pg2_R1  S       $DE $EE $FE ; LDS (dir idx ext)
-    // 0821:   decode pg2_R2  DMEM_RD $DE $EE $FE ; LDS (dir idx ext)
-    // 0822:                              
-    // 0823:   decode pg1_JTB LD      $DE $EE $FE ; LDU (dir idx ext)
-    // 0824:   decode pg1_R1  U       $DE $EE $FE ; LDU (dir idx ext)
-    // 0825:   decode pg1_R2  DMEM_RD $DE $EE $FE ; LDU (dir idx ext)
-    // 0826:                              
-    // 0827:   decode pg1_JTB LD      $9E $AE $BE ; LDX (dir idx ext)
-    // 0828:   decode pg1_R1  X       $9E $AE $BE ; LDX (dir idx ext)
-    // 0829:   decode pg1_R2  DMEM_RD $9E $AE $BE ; LDX (dir idx ext)
-    // 0830:                              
-    // 0831:   decode pg2_JTB LD      $9E $AE $BE ; LDY (dir idx ext)
-    // 0832:   decode pg2_R1  Y       $9E $AE $BE ; LDY (dir idx ext)
-    // 0833:   decode pg2_R2  DMEM_RD $9E $AE $BE ; LDY (dir idx ext)
-    // 0834: 
-    // 0835:   DATA_PASS_B     R2
-    // 0836:   DATA_WRITE      R1
-    // 0837: 
-    // 0838:   SET_DATA_WIDTH  W_R1
-    // 0839: 
-    // 0840:   CCR_OP_W        OP_ooooXXXo
-    // 0841: 
-    // 0842:   JUMP_TABLE_A_NEXT_PC
-    // 0843:   micro_op_end
+    // 0781: 
+    // 0782: ; //////////////////////////////////////////// LD
+    // 0783: ; //
+    // 0784: LD:
+    // 0785:   decode pg1_JTA LD      $86         ; LDA (imm)
+    // 0786:   decode pg1_R1  A       $86         ; LDA (imm)
+    // 0787:   decode pg1_R2  IDATA   $86         ; LDA (imm)
+    // 0788:                                                 
+    // 0789:   decode pg1_JTA LD      $C6         ; LDB (imm)
+    // 0790:   decode pg1_R1  B       $C6         ; LDB (imm)
+    // 0791:   decode pg1_R2  IDATA   $C6         ; LDB (imm)
+    // 0792:                                                 
+    // 0793:   decode pg1_JTA LD      $CC         ; LDD (imm)
+    // 0794:   decode pg1_R1  D       $CC         ; LDD (imm)
+    // 0795:   decode pg1_R2  IDATA   $CC         ; LDD (imm)
+    // 0796:                                                 
+    // 0797:   decode pg2_JTA LD      $CE         ; LDS (imm)
+    // 0798:   decode pg2_R1  S       $CE         ; LDS (imm)
+    // 0799:   decode pg2_R2  IDATA   $CE         ; LDS (imm)
+    // 0800:                                                 
+    // 0801:   decode pg1_JTA LD      $CE         ; LDU (imm)
+    // 0802:   decode pg1_R1  U       $CE         ; LDU (imm)
+    // 0803:   decode pg1_R2  IDATA   $CE         ; LDU (imm)
+    // 0804:                                                 
+    // 0805:   decode pg1_JTA LD      $8E         ; LDX (imm)
+    // 0806:   decode pg1_R1  X       $8E         ; LDX (imm)
+    // 0807:   decode pg1_R2  IDATA   $8E         ; LDX (imm)
+    // 0808:                                                 
+    // 0809:   decode pg2_JTA LD      $8E         ; LDY (imm)
+    // 0810:   decode pg2_R1  Y       $8E         ; LDY (imm)
+    // 0811:   decode pg2_R2  IDATA   $8E         ; LDY (imm)
+    // 0812:                              
+    // 0813:   decode pg1_JTB LD      $96 $A6 $B6 ; LDA (dir idx ext)
+    // 0814:   decode pg1_R1  A       $96 $A6 $B6 ; LDA (dir idx ext)
+    // 0815:   decode pg1_R2  DMEM_RD $96 $A6 $B6 ; LDA (dir idx ext)
+    // 0816:                              
+    // 0817:   decode pg1_JTB LD      $D6 $E6 $F6 ; LDB (dir idx ext)
+    // 0818:   decode pg1_R1  B       $D6 $E6 $F6 ; LDB (dir idx ext)
+    // 0819:   decode pg1_R2  DMEM_RD $D6 $E6 $F6 ; LDB (dir idx ext)
+    // 0820:                              
+    // 0821:   decode pg1_JTB LD      $DC $EC $FC ; LDD (dir idx ext)
+    // 0822:   decode pg1_R1  D       $DC $EC $FC ; LDD (dir idx ext)
+    // 0823:   decode pg1_R2  DMEM_RD $DC $EC $FC ; LDD (dir idx ext)
+    // 0824:                              
+    // 0825:   decode pg2_JTB LD      $DE $EE $FE ; LDS (dir idx ext)
+    // 0826:   decode pg2_R1  S       $DE $EE $FE ; LDS (dir idx ext)
+    // 0827:   decode pg2_R2  DMEM_RD $DE $EE $FE ; LDS (dir idx ext)
+    // 0828:                              
+    // 0829:   decode pg1_JTB LD      $DE $EE $FE ; LDU (dir idx ext)
+    // 0830:   decode pg1_R1  U       $DE $EE $FE ; LDU (dir idx ext)
+    // 0831:   decode pg1_R2  DMEM_RD $DE $EE $FE ; LDU (dir idx ext)
+    // 0832:                              
+    // 0833:   decode pg1_JTB LD      $9E $AE $BE ; LDX (dir idx ext)
+    // 0834:   decode pg1_R1  X       $9E $AE $BE ; LDX (dir idx ext)
+    // 0835:   decode pg1_R2  DMEM_RD $9E $AE $BE ; LDX (dir idx ext)
+    // 0836:                              
+    // 0837:   decode pg2_JTB LD      $9E $AE $BE ; LDY (dir idx ext)
+    // 0838:   decode pg2_R1  Y       $9E $AE $BE ; LDY (dir idx ext)
+    // 0839:   decode pg2_R2  DMEM_RD $9E $AE $BE ; LDY (dir idx ext)
+    // 0840: 
+    // 0841:   DATA_PASS_B     R2
+    // 0842:   DATA_WRITE      R1
+    // 0843: 
+    // 0844:   SET_DATA_WIDTH  W_R1
+    // 0845: 
+    // 0846:   CCR_OP_W        OP_ooooXXXo
+    // 0847: 
+    // 0848:   JUMP_TABLE_A_NEXT_PC
+    // 0849:   micro_op_end
     8'h01d: begin
       CV_MICRO_SEQ_OP_O = 3'h5;  // OP_JUMP_TABLE_A_NEXT_PC
       CV_DATA_ALU_A_SEL_O = 4'hf;  // ZERO
@@ -1252,35 +1256,35 @@ always @* begin
     end
 
 
-    // 0844: 
-    // 0845: ; //////////////////////////////////////////// OR
-    // 0846: ; //
-    // 0847: OR:
-    // 0848:   decode pg1_JTA OR      $8A         ; ORA (imm)
-    // 0849:   decode pg1_R1  A       $8A         ; ORA (imm)
-    // 0850:   decode pg1_R2  IDATA   $8A         ; ORA (imm)
-    // 0851:                                                 
-    // 0852:   decode pg1_JTA OR      $CA         ; ORB (imm)
-    // 0853:   decode pg1_R1  B       $CA         ; ORB (imm)
-    // 0854:   decode pg1_R2  IDATA   $CA         ; ORB (imm)
-    // 0855:                              
-    // 0856:   decode pg1_JTB OR      $9A $AA $BA ; ORA (dir idx ext)
-    // 0857:   decode pg1_R1  A       $9A $AA $BA ; ORA (dir idx ext)
-    // 0858:   decode pg1_R2  DMEM_RD $9A $AA $BA ; ORA (dir idx ext)
-    // 0859:                              
-    // 0860:   decode pg1_JTB OR      $DA $EA $FA ; ORB (dir idx ext)
-    // 0861:   decode pg1_R1  B       $DA $EA $FA ; ORB (dir idx ext)
-    // 0862:   decode pg1_R2  DMEM_RD $DA $EA $FA ; ORB (dir idx ext)
-    // 0863: 
-    // 0864:   DATA_OR         R1, R2
-    // 0865:   DATA_WRITE      R1
-    // 0866: 
-    // 0867:   SET_DATA_WIDTH  W_R1
-    // 0868: 
-    // 0869:   CCR_OP_W        OP_ooooXXXo 
-    // 0870: 
-    // 0871:   JUMP_TABLE_A_NEXT_PC
-    // 0872:   micro_op_end
+    // 0850: 
+    // 0851: ; //////////////////////////////////////////// OR
+    // 0852: ; //
+    // 0853: OR:
+    // 0854:   decode pg1_JTA OR      $8A         ; ORA (imm)
+    // 0855:   decode pg1_R1  A       $8A         ; ORA (imm)
+    // 0856:   decode pg1_R2  IDATA   $8A         ; ORA (imm)
+    // 0857:                                                 
+    // 0858:   decode pg1_JTA OR      $CA         ; ORB (imm)
+    // 0859:   decode pg1_R1  B       $CA         ; ORB (imm)
+    // 0860:   decode pg1_R2  IDATA   $CA         ; ORB (imm)
+    // 0861:                              
+    // 0862:   decode pg1_JTB OR      $9A $AA $BA ; ORA (dir idx ext)
+    // 0863:   decode pg1_R1  A       $9A $AA $BA ; ORA (dir idx ext)
+    // 0864:   decode pg1_R2  DMEM_RD $9A $AA $BA ; ORA (dir idx ext)
+    // 0865:                              
+    // 0866:   decode pg1_JTB OR      $DA $EA $FA ; ORB (dir idx ext)
+    // 0867:   decode pg1_R1  B       $DA $EA $FA ; ORB (dir idx ext)
+    // 0868:   decode pg1_R2  DMEM_RD $DA $EA $FA ; ORB (dir idx ext)
+    // 0869: 
+    // 0870:   DATA_OR         R1, R2
+    // 0871:   DATA_WRITE      R1
+    // 0872: 
+    // 0873:   SET_DATA_WIDTH  W_R1
+    // 0874: 
+    // 0875:   CCR_OP_W        OP_ooooXXXo 
+    // 0876: 
+    // 0877:   JUMP_TABLE_A_NEXT_PC
+    // 0878:   micro_op_end
     8'h01e: begin
       CV_MICRO_SEQ_OP_O = 3'h5;  // OP_JUMP_TABLE_A_NEXT_PC
       CV_DATA_ALU_A_SEL_O = 4'h8;  // R1
@@ -1293,21 +1297,21 @@ always @* begin
     end
 
 
-    // 0873: 
-    // 0874: ORCC:
-    // 0875:   decode pg1_JTA ORCC  $1A ; ORCC (imm)
-    // 0876:   decode pg1_R1  CCR   $1A ; ORCC (imm)
-    // 0877:   decode pg1_R2  IDATA $1A ; ORCC (imm)
-    // 0878: 
-    // 0879:   DATA_OR         R1, R2   
-    // 0880:   DATA_WRITE      R1
-    // 0881: 
-    // 0882:   SET_DATA_WIDTH  W_R1
-    // 0883: 
-    // 0884:   CCR_OP_W        OP_XXXXXXXX 
-    // 0885: 
-    // 0886:   JUMP_TABLE_A_NEXT_PC
-    // 0887:   micro_op_end
+    // 0879: 
+    // 0880: ORCC:
+    // 0881:   decode pg1_JTA ORCC  $1A ; ORCC (imm)
+    // 0882:   decode pg1_R1  CCR   $1A ; ORCC (imm)
+    // 0883:   decode pg1_R2  IDATA $1A ; ORCC (imm)
+    // 0884: 
+    // 0885:   DATA_OR         R1, R2   
+    // 0886:   DATA_WRITE      R1
+    // 0887: 
+    // 0888:   SET_DATA_WIDTH  W_R1
+    // 0889: 
+    // 0890:   CCR_OP_W        OP_XXXXXXXX 
+    // 0891: 
+    // 0892:   JUMP_TABLE_A_NEXT_PC
+    // 0893:   micro_op_end
     8'h01f: begin
       CV_MICRO_SEQ_OP_O = 3'h5;  // OP_JUMP_TABLE_A_NEXT_PC
       CV_DATA_ALU_A_SEL_O = 4'h8;  // R1
@@ -1320,35 +1324,35 @@ always @* begin
     end
 
 
-    // 0888: 
-    // 0889: ; //////////////////////////////////////////// SBC
-    // 0890: ; //
-    // 0891: SBC:
-    // 0892:   decode pg1_JTA SBC     $82         ; SBCA (imm)
-    // 0893:   decode pg1_R1  A       $82         ; SBCA (imm)
-    // 0894:   decode pg1_R2  IDATA   $82         ; SBCA (imm)
-    // 0895:                                                 
-    // 0896:   decode pg1_JTA SBC     $C2         ; SBCB (imm)
-    // 0897:   decode pg1_R1  B       $C2         ; SBCB (imm)
-    // 0898:   decode pg1_R2  IDATA   $C2         ; SBCB (imm)
-    // 0899:                              
-    // 0900:   decode pg1_JTB SBC     $92 $A2 $B2 ; SBCA (dir idx ext)
-    // 0901:   decode pg1_R1  A       $92 $A2 $B2 ; SBCA (dir idx ext)
-    // 0902:   decode pg1_R2  DMEM_RD $92 $A2 $B2 ; SBCA (dir idx ext)
-    // 0903:                                                      
-    // 0904:   decode pg1_JTB SBC     $D2 $E2 $F2 ; SBCB (dir idx ext)
-    // 0905:   decode pg1_R1  B       $D2 $E2 $F2 ; SBCB (dir idx ext)
-    // 0906:   decode pg1_R2  DMEM_RD $D2 $E2 $F2 ; SBCB (dir idx ext)
-    // 0907: 
-    // 0908:   DATA_SUBC       R1, R2
-    // 0909:   DATA_WRITE      R1
-    // 0910: 
-    // 0911:   SET_DATA_WIDTH  W_R1
-    // 0912: 
-    // 0913:   CCR_OP_W        OP_ooooXXXX ; INFO: Spec H Undefined, Turbo9 H not affected
-    // 0914: 
-    // 0915:   JUMP_TABLE_A_NEXT_PC
-    // 0916:   micro_op_end
+    // 0894: 
+    // 0895: ; //////////////////////////////////////////// SBC
+    // 0896: ; //
+    // 0897: SBC:
+    // 0898:   decode pg1_JTA SBC     $82         ; SBCA (imm)
+    // 0899:   decode pg1_R1  A       $82         ; SBCA (imm)
+    // 0900:   decode pg1_R2  IDATA   $82         ; SBCA (imm)
+    // 0901:                                                 
+    // 0902:   decode pg1_JTA SBC     $C2         ; SBCB (imm)
+    // 0903:   decode pg1_R1  B       $C2         ; SBCB (imm)
+    // 0904:   decode pg1_R2  IDATA   $C2         ; SBCB (imm)
+    // 0905:                              
+    // 0906:   decode pg1_JTB SBC     $92 $A2 $B2 ; SBCA (dir idx ext)
+    // 0907:   decode pg1_R1  A       $92 $A2 $B2 ; SBCA (dir idx ext)
+    // 0908:   decode pg1_R2  DMEM_RD $92 $A2 $B2 ; SBCA (dir idx ext)
+    // 0909:                                                      
+    // 0910:   decode pg1_JTB SBC     $D2 $E2 $F2 ; SBCB (dir idx ext)
+    // 0911:   decode pg1_R1  B       $D2 $E2 $F2 ; SBCB (dir idx ext)
+    // 0912:   decode pg1_R2  DMEM_RD $D2 $E2 $F2 ; SBCB (dir idx ext)
+    // 0913: 
+    // 0914:   DATA_SUBC       R1, R2
+    // 0915:   DATA_WRITE      R1
+    // 0916: 
+    // 0917:   SET_DATA_WIDTH  W_R1
+    // 0918: 
+    // 0919:   CCR_OP_W        OP_ooooXXXX ; INFO: Spec H Undefined, Turbo9 H not affected
+    // 0920: 
+    // 0921:   JUMP_TABLE_A_NEXT_PC
+    // 0922:   micro_op_end
     8'h020: begin
       CV_MICRO_SEQ_OP_O = 3'h5;  // OP_JUMP_TABLE_A_NEXT_PC
       CV_DATA_ALU_A_SEL_O = 4'h8;  // R1
@@ -1361,43 +1365,43 @@ always @* begin
     end
 
 
-    // 0917: 
-    // 0918: ; //////////////////////////////////////////// SUB
-    // 0919: ; //
-    // 0920: SUB:
-    // 0921:   decode pg1_JTA SUB     $80         ; SUBA (imm)
-    // 0922:   decode pg1_R1  A       $80         ; SUBA (imm)
-    // 0923:   decode pg1_R2  IDATA   $80         ; SUBA (imm)
-    // 0924:                                                 
-    // 0925:   decode pg1_JTA SUB     $C0         ; SUBB (imm)
-    // 0926:   decode pg1_R1  B       $C0         ; SUBB (imm)
-    // 0927:   decode pg1_R2  IDATA   $C0         ; SUBB (imm)
-    // 0928:                                                 
-    // 0929:   decode pg1_JTA SUB     $83         ; SUBD (imm)
-    // 0930:   decode pg1_R1  D       $83         ; SUBD (imm)
-    // 0931:   decode pg1_R2  IDATA   $83         ; SUBD (imm)
-    // 0932:                              
-    // 0933:   decode pg1_JTB SUB     $90 $A0 $B0 ; SUBA (dir idx ext)
-    // 0934:   decode pg1_R1  A       $90 $A0 $B0 ; SUBA (dir idx ext)
-    // 0935:   decode pg1_R2  DMEM_RD $90 $A0 $B0 ; SUBA (dir idx ext)
-    // 0936:                                                       
-    // 0937:   decode pg1_JTB SUB     $D0 $E0 $F0 ; SUBB (dir idx ext)
-    // 0938:   decode pg1_R1  B       $D0 $E0 $F0 ; SUBB (dir idx ext)
-    // 0939:   decode pg1_R2  DMEM_RD $D0 $E0 $F0 ; SUBB (dir idx ext)
-    // 0940:                                                       
-    // 0941:   decode pg1_JTB SUB     $93 $A3 $B3 ; SUBD (dir idx ext)
-    // 0942:   decode pg1_R1  D       $93 $A3 $B3 ; SUBD (dir idx ext)
-    // 0943:   decode pg1_R2  DMEM_RD $93 $A3 $B3 ; SUBD (dir idx ext)
-    // 0944: 
-    // 0945:   DATA_SUB        R1, R2
-    // 0946:   DATA_WRITE      R1
-    // 0947: 
-    // 0948:   SET_DATA_WIDTH  W_R1
-    // 0949: 
-    // 0950:   CCR_OP_W        OP_ooooXXXX ; INFO: Spec H Undefined, Turbo9 H not affected (8-bit)
-    // 0951: 
-    // 0952:   JUMP_TABLE_A_NEXT_PC
-    // 0953:   micro_op_end
+    // 0923: 
+    // 0924: ; //////////////////////////////////////////// SUB
+    // 0925: ; //
+    // 0926: SUB:
+    // 0927:   decode pg1_JTA SUB     $80         ; SUBA (imm)
+    // 0928:   decode pg1_R1  A       $80         ; SUBA (imm)
+    // 0929:   decode pg1_R2  IDATA   $80         ; SUBA (imm)
+    // 0930:                                                 
+    // 0931:   decode pg1_JTA SUB     $C0         ; SUBB (imm)
+    // 0932:   decode pg1_R1  B       $C0         ; SUBB (imm)
+    // 0933:   decode pg1_R2  IDATA   $C0         ; SUBB (imm)
+    // 0934:                                                 
+    // 0935:   decode pg1_JTA SUB     $83         ; SUBD (imm)
+    // 0936:   decode pg1_R1  D       $83         ; SUBD (imm)
+    // 0937:   decode pg1_R2  IDATA   $83         ; SUBD (imm)
+    // 0938:                              
+    // 0939:   decode pg1_JTB SUB     $90 $A0 $B0 ; SUBA (dir idx ext)
+    // 0940:   decode pg1_R1  A       $90 $A0 $B0 ; SUBA (dir idx ext)
+    // 0941:   decode pg1_R2  DMEM_RD $90 $A0 $B0 ; SUBA (dir idx ext)
+    // 0942:                                                       
+    // 0943:   decode pg1_JTB SUB     $D0 $E0 $F0 ; SUBB (dir idx ext)
+    // 0944:   decode pg1_R1  B       $D0 $E0 $F0 ; SUBB (dir idx ext)
+    // 0945:   decode pg1_R2  DMEM_RD $D0 $E0 $F0 ; SUBB (dir idx ext)
+    // 0946:                                                       
+    // 0947:   decode pg1_JTB SUB     $93 $A3 $B3 ; SUBD (dir idx ext)
+    // 0948:   decode pg1_R1  D       $93 $A3 $B3 ; SUBD (dir idx ext)
+    // 0949:   decode pg1_R2  DMEM_RD $93 $A3 $B3 ; SUBD (dir idx ext)
+    // 0950: 
+    // 0951:   DATA_SUB        R1, R2
+    // 0952:   DATA_WRITE      R1
+    // 0953: 
+    // 0954:   SET_DATA_WIDTH  W_R1
+    // 0955: 
+    // 0956:   CCR_OP_W        OP_ooooXXXX ; INFO: Spec H Undefined, Turbo9 H not affected (8-bit)
+    // 0957: 
+    // 0958:   JUMP_TABLE_A_NEXT_PC
+    // 0959:   micro_op_end
     8'h021: begin
       CV_MICRO_SEQ_OP_O = 3'h5;  // OP_JUMP_TABLE_A_NEXT_PC
       CV_DATA_ALU_A_SEL_O = 4'h8;  // R1
@@ -1410,87 +1414,87 @@ always @* begin
     end
 
 
-    // 0954: 
-    // 0955: 
-    // 0956: ; //
-    // 0957: ; ////////////////////////////////////////////////////////////////////////////
-    // 0958: 
-    // 0959: 
-    // 0960: ; ////////////////////////////////////////////////////////////////////////////
-    // 0961: ;                        STORE INSTRUCTIONS
-    // 0962: ; ////////////////////////////////////////////////////////////////////////////
-    // 0963: ; //
+    // 0960: 
+    // 0961: 
+    // 0962: ; //
+    // 0963: ; ////////////////////////////////////////////////////////////////////////////
     // 0964: 
-    // 0965: ; //////////////////////////////////////////// ST
-    // 0966: ; //
-    // 0967: ST:
-    // 0968:   decode pg1_JTA ST    $97 $B7 ; STA (dir ext)
-    // 0969:   decode pg1_R1  A     $97 $B7 ; STA (dir ext)
-    // 0970:   decode pg1_AR  IDATA $97 $B7 ; STA (dir ext)
-    // 0971:                            
-    // 0972:   decode pg1_JTA ST    $D7 $F7 ; STB (dir ext)
-    // 0973:   decode pg1_R1  B     $D7 $F7 ; STB (dir ext)
-    // 0974:   decode pg1_AR  IDATA $D7 $F7 ; STB (dir ext)
-    // 0975:                            
-    // 0976:   decode pg1_JTA ST    $DD $FD ; STD (dir ext)
-    // 0977:   decode pg1_R1  D     $DD $FD ; STD (dir ext)
-    // 0978:   decode pg1_AR  IDATA $DD $FD ; STD (dir ext)
-    // 0979:                            
-    // 0980:   decode pg2_JTA ST    $DF $FF ; STS (dir ext)
-    // 0981:   decode pg2_R1  S     $DF $FF ; STS (dir ext)
-    // 0982:   decode pg2_AR  IDATA $DF $FF ; STS (dir ext)
-    // 0983:                            
-    // 0984:   decode pg1_JTA ST    $DF $FF ; STU (dir ext)
-    // 0985:   decode pg1_R1  U     $DF $FF ; STU (dir ext)
-    // 0986:   decode pg1_AR  IDATA $DF $FF ; STU (dir ext)
-    // 0987:                            
-    // 0988:   decode pg1_JTA ST    $9F $BF ; STX (dir ext)
-    // 0989:   decode pg1_R1  X     $9F $BF ; STX (dir ext)
-    // 0990:   decode pg1_AR  IDATA $9F $BF ; STX (dir ext)
-    // 0991:                            
-    // 0992:   decode pg2_JTA ST    $9F $BF ; STY (dir ext)
-    // 0993:   decode pg2_R1  Y     $9F $BF ; STY (dir ext)
-    // 0994:   decode pg2_AR  IDATA $9F $BF ; STY (dir ext)
-    // 0995:                            
-    // 0996:   decode pg1_JTB ST    $A7     ; STA (idx)
-    // 0997:   decode pg1_R1  A     $A7     ; STA (idx)
-    // 0998:   decode pg1_AR  EA    $A7     ; STA (idx)
-    // 0999:                                    
-    // 1000:   decode pg1_JTB ST    $E7     ; STB (idx)
-    // 1001:   decode pg1_R1  B     $E7     ; STB (idx)
-    // 1002:   decode pg1_AR  EA    $E7     ; STB (idx)
-    // 1003:                                    
-    // 1004:   decode pg1_JTB ST    $ED     ; STD (idx)
-    // 1005:   decode pg1_R1  D     $ED     ; STD (idx)
-    // 1006:   decode pg1_AR  EA    $ED     ; STD (idx)
-    // 1007:                                    
-    // 1008:   decode pg2_JTB ST    $EF     ; STS (idx)
-    // 1009:   decode pg2_R1  S     $EF     ; STS (idx)
-    // 1010:   decode pg2_AR  EA    $EF     ; STS (idx)
-    // 1011:                                    
-    // 1012:   decode pg1_JTB ST    $EF     ; STU (idx)
-    // 1013:   decode pg1_R1  U     $EF     ; STU (idx)
-    // 1014:   decode pg1_AR  EA    $EF     ; STU (idx)
-    // 1015:                                    
-    // 1016:   decode pg1_JTB ST    $AF     ; STX (idx)
-    // 1017:   decode pg1_R1  X     $AF     ; STX (idx)
-    // 1018:   decode pg1_AR  EA    $AF     ; STX (idx)
-    // 1019:                                    
-    // 1020:   decode pg2_JTB ST    $AF     ; STY (idx)
-    // 1021:   decode pg2_R1  Y     $AF     ; STY (idx)
-    // 1022:   decode pg2_AR  EA    $AF     ; STY (idx)
-    // 1023: 
-    // 1024:   DATA_PASS_A     R1
-    // 1025: 
-    // 1026:   SET_DATA_WIDTH  W_R1
-    // 1027: 
-    // 1028:   CCR_OP_W        OP_ooooXXXo
+    // 0965: 
+    // 0966: ; ////////////////////////////////////////////////////////////////////////////
+    // 0967: ;                        STORE INSTRUCTIONS
+    // 0968: ; ////////////////////////////////////////////////////////////////////////////
+    // 0969: ; //
+    // 0970: 
+    // 0971: ; //////////////////////////////////////////// ST
+    // 0972: ; //
+    // 0973: ST:
+    // 0974:   decode pg1_JTA ST    $97 $B7 ; STA (dir ext)
+    // 0975:   decode pg1_R1  A     $97 $B7 ; STA (dir ext)
+    // 0976:   decode pg1_AR  IDATA $97 $B7 ; STA (dir ext)
+    // 0977:                            
+    // 0978:   decode pg1_JTA ST    $D7 $F7 ; STB (dir ext)
+    // 0979:   decode pg1_R1  B     $D7 $F7 ; STB (dir ext)
+    // 0980:   decode pg1_AR  IDATA $D7 $F7 ; STB (dir ext)
+    // 0981:                            
+    // 0982:   decode pg1_JTA ST    $DD $FD ; STD (dir ext)
+    // 0983:   decode pg1_R1  D     $DD $FD ; STD (dir ext)
+    // 0984:   decode pg1_AR  IDATA $DD $FD ; STD (dir ext)
+    // 0985:                            
+    // 0986:   decode pg2_JTA ST    $DF $FF ; STS (dir ext)
+    // 0987:   decode pg2_R1  S     $DF $FF ; STS (dir ext)
+    // 0988:   decode pg2_AR  IDATA $DF $FF ; STS (dir ext)
+    // 0989:                            
+    // 0990:   decode pg1_JTA ST    $DF $FF ; STU (dir ext)
+    // 0991:   decode pg1_R1  U     $DF $FF ; STU (dir ext)
+    // 0992:   decode pg1_AR  IDATA $DF $FF ; STU (dir ext)
+    // 0993:                            
+    // 0994:   decode pg1_JTA ST    $9F $BF ; STX (dir ext)
+    // 0995:   decode pg1_R1  X     $9F $BF ; STX (dir ext)
+    // 0996:   decode pg1_AR  IDATA $9F $BF ; STX (dir ext)
+    // 0997:                            
+    // 0998:   decode pg2_JTA ST    $9F $BF ; STY (dir ext)
+    // 0999:   decode pg2_R1  Y     $9F $BF ; STY (dir ext)
+    // 1000:   decode pg2_AR  IDATA $9F $BF ; STY (dir ext)
+    // 1001:                            
+    // 1002:   decode pg1_JTB ST    $A7     ; STA (idx)
+    // 1003:   decode pg1_R1  A     $A7     ; STA (idx)
+    // 1004:   decode pg1_AR  EA    $A7     ; STA (idx)
+    // 1005:                                    
+    // 1006:   decode pg1_JTB ST    $E7     ; STB (idx)
+    // 1007:   decode pg1_R1  B     $E7     ; STB (idx)
+    // 1008:   decode pg1_AR  EA    $E7     ; STB (idx)
+    // 1009:                                    
+    // 1010:   decode pg1_JTB ST    $ED     ; STD (idx)
+    // 1011:   decode pg1_R1  D     $ED     ; STD (idx)
+    // 1012:   decode pg1_AR  EA    $ED     ; STD (idx)
+    // 1013:                                    
+    // 1014:   decode pg2_JTB ST    $EF     ; STS (idx)
+    // 1015:   decode pg2_R1  S     $EF     ; STS (idx)
+    // 1016:   decode pg2_AR  EA    $EF     ; STS (idx)
+    // 1017:                                    
+    // 1018:   decode pg1_JTB ST    $EF     ; STU (idx)
+    // 1019:   decode pg1_R1  U     $EF     ; STU (idx)
+    // 1020:   decode pg1_AR  EA    $EF     ; STU (idx)
+    // 1021:                                    
+    // 1022:   decode pg1_JTB ST    $AF     ; STX (idx)
+    // 1023:   decode pg1_R1  X     $AF     ; STX (idx)
+    // 1024:   decode pg1_AR  EA    $AF     ; STX (idx)
+    // 1025:                                    
+    // 1026:   decode pg2_JTB ST    $AF     ; STY (idx)
+    // 1027:   decode pg2_R1  Y     $AF     ; STY (idx)
+    // 1028:   decode pg2_AR  EA    $AF     ; STY (idx)
     // 1029: 
-    // 1030:   ADDR_PASS       AR
-    // 1031:   DMEM_STORE_W
-    // 1032: 
-    // 1033:   JUMP_TABLE_A_NEXT_PC
-    // 1034:   micro_op_end
+    // 1030:   DATA_PASS_A     R1
+    // 1031: 
+    // 1032:   SET_DATA_WIDTH  W_R1
+    // 1033: 
+    // 1034:   CCR_OP_W        OP_ooooXXXo
+    // 1035: 
+    // 1036:   ADDR_PASS       AR
+    // 1037:   DMEM_STORE_W
+    // 1038: 
+    // 1039:   JUMP_TABLE_A_NEXT_PC
+    // 1040:   micro_op_end
     8'h022: begin
       CV_MICRO_SEQ_OP_O = 3'h5;  // OP_JUMP_TABLE_A_NEXT_PC
       CV_DATA_ALU_A_SEL_O = 4'h8;  // R1
@@ -1504,40 +1508,40 @@ always @* begin
     end
 
 
-    // 1035: 
-    // 1036: ; //
-    // 1037: ; ////////////////////////////////////////////////////////////////////////////
-    // 1038: 
-    // 1039: 
-    // 1040: ; ////////////////////////////////////////////////////////////////////////////
-    // 1041: ;                   MODIFY MEMORY OR ACCUMULATOR INSTRUCTIONS
-    // 1042: ; ////////////////////////////////////////////////////////////////////////////
-    // 1043: ; //
+    // 1041: 
+    // 1042: ; //
+    // 1043: ; ////////////////////////////////////////////////////////////////////////////
     // 1044: 
-    // 1045: ; //////////////////////////////////////////// ASL LSL
-    // 1046: ; //
-    // 1047: ASL_LSL:
-    // 1048:   decode pg1_JTA ASL_LSL $48         ; ASLA LSLA (inh)
-    // 1049:   decode pg1_R1  A       $48         ; ASLA LSLA (inh)
-    // 1050:                                         
-    // 1051:   decode pg1_JTA ASL_LSL $58         ; ASLB LSLB (inh)
-    // 1052:   decode pg1_R1  B       $58         ; ASLB LSLB (inh)
-    // 1053:                              
-    // 1054:   decode pg1_JTB ASL_LSL $08 $68 $78 ; ASL LSL (dir idx ext)
-    // 1055:   decode pg1_R1  DMEM_RD $08 $68 $78 ; ASL LSL (dir idx ext)
-    // 1056: 
-    // 1057:   DATA_LSHIFT_W   R1, ZERO_BIT
-    // 1058:   DATA_WRITE      R1
-    // 1059: 
-    // 1060:   SET_DATA_WIDTH  W_R1
-    // 1061: 
-    // 1062:   CCR_OP_W        OP_ooooXXXX ; INFO: Spec H Undefined, Turbo9 H not affected
-    // 1063: 
-    // 1064:   ADDR_PASS       EA
-    // 1065:   DMEM_STORE_W ; Disabled for inherent addressing modes
-    // 1066: 
-    // 1067:   JUMP_TABLE_A_NEXT_PC
-    // 1068:   micro_op_end
+    // 1045: 
+    // 1046: ; ////////////////////////////////////////////////////////////////////////////
+    // 1047: ;                   MODIFY MEMORY OR ACCUMULATOR INSTRUCTIONS
+    // 1048: ; ////////////////////////////////////////////////////////////////////////////
+    // 1049: ; //
+    // 1050: 
+    // 1051: ; //////////////////////////////////////////// ASL LSL
+    // 1052: ; //
+    // 1053: ASL_LSL:
+    // 1054:   decode pg1_JTA ASL_LSL $48         ; ASLA LSLA (inh)
+    // 1055:   decode pg1_R1  A       $48         ; ASLA LSLA (inh)
+    // 1056:                                         
+    // 1057:   decode pg1_JTA ASL_LSL $58         ; ASLB LSLB (inh)
+    // 1058:   decode pg1_R1  B       $58         ; ASLB LSLB (inh)
+    // 1059:                              
+    // 1060:   decode pg1_JTB ASL_LSL $08 $68 $78 ; ASL LSL (dir idx ext)
+    // 1061:   decode pg1_R1  DMEM_RD $08 $68 $78 ; ASL LSL (dir idx ext)
+    // 1062: 
+    // 1063:   DATA_LSHIFT_W   R1, ZERO_BIT
+    // 1064:   DATA_WRITE      R1
+    // 1065: 
+    // 1066:   SET_DATA_WIDTH  W_R1
+    // 1067: 
+    // 1068:   CCR_OP_W        OP_ooooXXXX ; INFO: Spec H Undefined, Turbo9 H not affected
+    // 1069: 
+    // 1070:   ADDR_PASS       EA
+    // 1071:   DMEM_STORE_W ; Disabled for inherent addressing modes
+    // 1072: 
+    // 1073:   JUMP_TABLE_A_NEXT_PC
+    // 1074:   micro_op_end
     8'h023: begin
       CV_MICRO_SEQ_OP_O = 3'h5;  // OP_JUMP_TABLE_A_NEXT_PC
       CV_DATA_ALU_A_SEL_O = 4'h8;  // R1
@@ -1552,31 +1556,31 @@ always @* begin
     end
 
 
-    // 1069: 
-    // 1070: ; //////////////////////////////////////////// ASR
-    // 1071: ; //
-    // 1072: ASR:
-    // 1073:   decode pg1_JTA ASR     $47         ; ASRA (inh)
-    // 1074:   decode pg1_R1  A       $47         ; ASRA (inh)
-    // 1075:                                          
-    // 1076:   decode pg1_JTA ASR     $57         ; ASRB (inh)
-    // 1077:   decode pg1_R1  B       $57         ; ASRB (inh)
-    // 1078:                              
-    // 1079:   decode pg1_JTB ASR     $07 $67 $77 ; ASR (dir idx ext)
-    // 1080:   decode pg1_R1  DMEM_RD $07 $67 $77 ; ASR (dir idx ext)
-    // 1081: 
-    // 1082:   DATA_RSHIFT_W   SIGN_BIT, R1
-    // 1083:   DATA_WRITE      R1
-    // 1084: 
-    // 1085:   SET_DATA_WIDTH  W_R1
-    // 1086: 
-    // 1087:   CCR_OP_W        OP_ooooXXoX ; INFO: Spec H Undefined, Turbo9 H not affected
-    // 1088: 
-    // 1089:   ADDR_PASS       EA
-    // 1090:   DMEM_STORE_W  ; Disabled for inherent addressing modes
-    // 1091: 
-    // 1092:   JUMP_TABLE_A_NEXT_PC
-    // 1093:   micro_op_end
+    // 1075: 
+    // 1076: ; //////////////////////////////////////////// ASR
+    // 1077: ; //
+    // 1078: ASR:
+    // 1079:   decode pg1_JTA ASR     $47         ; ASRA (inh)
+    // 1080:   decode pg1_R1  A       $47         ; ASRA (inh)
+    // 1081:                                          
+    // 1082:   decode pg1_JTA ASR     $57         ; ASRB (inh)
+    // 1083:   decode pg1_R1  B       $57         ; ASRB (inh)
+    // 1084:                              
+    // 1085:   decode pg1_JTB ASR     $07 $67 $77 ; ASR (dir idx ext)
+    // 1086:   decode pg1_R1  DMEM_RD $07 $67 $77 ; ASR (dir idx ext)
+    // 1087: 
+    // 1088:   DATA_RSHIFT_W   SIGN_BIT, R1
+    // 1089:   DATA_WRITE      R1
+    // 1090: 
+    // 1091:   SET_DATA_WIDTH  W_R1
+    // 1092: 
+    // 1093:   CCR_OP_W        OP_ooooXXoX ; INFO: Spec H Undefined, Turbo9 H not affected
+    // 1094: 
+    // 1095:   ADDR_PASS       EA
+    // 1096:   DMEM_STORE_W  ; Disabled for inherent addressing modes
+    // 1097: 
+    // 1098:   JUMP_TABLE_A_NEXT_PC
+    // 1099:   micro_op_end
     8'h024: begin
       CV_MICRO_SEQ_OP_O = 3'h5;  // OP_JUMP_TABLE_A_NEXT_PC
       CV_DATA_ALU_A_SEL_O = 4'h8;  // R1
@@ -1591,40 +1595,40 @@ always @* begin
     end
 
 
-    // 1094: 
-    // 1095: ; //////////////////////////////////////////// CLR
-    // 1096: ; //
-    // 1097: ; // This is a little different than other memory modify
-    // 1098: ; // instructions. It does not load the memory first like
-    // 1099: ; // the 6809. It just writes a zero to be more efficient
-    // 1100: CLR:
-    // 1101: 
-    // 1102:   decode pg1_JTA CLR     $4F     ; CLRA (inh)
-    // 1103:   decode pg1_R1  A       $4F     ; CLRA (inh)
-    // 1104:                                      
-    // 1105:   decode pg1_JTA CLR     $5F     ; CLRB (inh)
-    // 1106:   decode pg1_R1  B       $5F     ; CLRB (inh)
-    // 1107:                            
-    // 1108:   decode pg1_JTA CLR     $0F $7F ; CLR (dir ext)
-    // 1109:   decode pg1_R1  DMEM_RD $0F $7F ; CLR (dir ext) sets 8bit width
-    // 1110:   decode pg1_AR  IDATA   $0F $7F ; CLR (dir ext)
-    // 1111:                            
-    // 1112:   decode pg1_JTB CLR     $6F     ; CLR (idx)
-    // 1113:   decode pg1_R1  DMEM_RD $6F     ; CLR (idx) sets 8bit width
-    // 1114:   decode pg1_AR  EA      $6F     ; CLR (idx)
-    // 1115: 
-    // 1116:   DATA_PASS_B     ZERO 
-    // 1117:   DATA_WRITE      R1
-    // 1118: 
-    // 1119:   SET_DATA_WIDTH  W_R1
-    // 1120: 
-    // 1121:   CCR_OP_W        OP_ooooXXXX
-    // 1122: 
-    // 1123:   ADDR_PASS       AR
-    // 1124:   DMEM_STORE_W  ; Disabled for inherent addressing modes
-    // 1125: 
-    // 1126:   JUMP_TABLE_A_NEXT_PC
-    // 1127:   micro_op_end
+    // 1100: 
+    // 1101: ; //////////////////////////////////////////// CLR
+    // 1102: ; //
+    // 1103: ; // This is a little different than other memory modify
+    // 1104: ; // instructions. It does not load the memory first like
+    // 1105: ; // the 6809. It just writes a zero to be more efficient
+    // 1106: CLR:
+    // 1107: 
+    // 1108:   decode pg1_JTA CLR     $4F     ; CLRA (inh)
+    // 1109:   decode pg1_R1  A       $4F     ; CLRA (inh)
+    // 1110:                                      
+    // 1111:   decode pg1_JTA CLR     $5F     ; CLRB (inh)
+    // 1112:   decode pg1_R1  B       $5F     ; CLRB (inh)
+    // 1113:                            
+    // 1114:   decode pg1_JTA CLR     $0F $7F ; CLR (dir ext)
+    // 1115:   decode pg1_R1  DMEM_RD $0F $7F ; CLR (dir ext) sets 8bit width
+    // 1116:   decode pg1_AR  IDATA   $0F $7F ; CLR (dir ext)
+    // 1117:                            
+    // 1118:   decode pg1_JTB CLR     $6F     ; CLR (idx)
+    // 1119:   decode pg1_R1  DMEM_RD $6F     ; CLR (idx) sets 8bit width
+    // 1120:   decode pg1_AR  EA      $6F     ; CLR (idx)
+    // 1121: 
+    // 1122:   DATA_PASS_B     ZERO 
+    // 1123:   DATA_WRITE      R1
+    // 1124: 
+    // 1125:   SET_DATA_WIDTH  W_R1
+    // 1126: 
+    // 1127:   CCR_OP_W        OP_ooooXXXX
+    // 1128: 
+    // 1129:   ADDR_PASS       AR
+    // 1130:   DMEM_STORE_W  ; Disabled for inherent addressing modes
+    // 1131: 
+    // 1132:   JUMP_TABLE_A_NEXT_PC
+    // 1133:   micro_op_end
     8'h025: begin
       CV_MICRO_SEQ_OP_O = 3'h5;  // OP_JUMP_TABLE_A_NEXT_PC
       CV_DATA_ALU_A_SEL_O = 4'hf;  // ZERO
@@ -1639,34 +1643,34 @@ always @* begin
     end
 
 
-    // 1128: 
-    // 1129: ; //////////////////////////////////////////// COM
-    // 1130: ; //
-    // 1131: COM:
-    // 1132:   decode pg1_JTA COM     $43         ; COMA (inh)
-    // 1133:   decode pg1_R1  A       $43         ; COMA (inh)
-    // 1134:   decode pg1_R2  A       $43         ; COMA (inh)
-    // 1135:                                          
-    // 1136:   decode pg1_JTA COM     $53         ; COMB (inh)
-    // 1137:   decode pg1_R1  B       $53         ; COMB (inh)
-    // 1138:   decode pg1_R2  B       $53         ; COMB (inh)
-    // 1139:                              
-    // 1140:   decode pg1_JTB COM     $03 $63 $73 ; COM (dir idx ext)
-    // 1141:   decode pg1_R1  DMEM_RD $03 $63 $73 ; COM (dir idx ext) sets 8bit width
-    // 1142:   decode pg1_R2  DMEM_RD $03 $63 $73 ; COM (dir idx ext)
-    // 1143: 
-    // 1144:   DATA_INVERT_B   R2
-    // 1145:   DATA_WRITE      R1
-    // 1146: 
-    // 1147:   SET_DATA_WIDTH  W_R1
-    // 1148: 
-    // 1149:   CCR_OP_W        OP_ooooXXXX ; INFO Carry should be set to 1 for 6800 compatibility
-    // 1150: 
-    // 1151:   ADDR_PASS       EA
-    // 1152:   DMEM_STORE_W ; Disabled for inherent addressing modes
-    // 1153: 
-    // 1154:   JUMP_TABLE_A_NEXT_PC
-    // 1155:   micro_op_end
+    // 1134: 
+    // 1135: ; //////////////////////////////////////////// COM
+    // 1136: ; //
+    // 1137: COM:
+    // 1138:   decode pg1_JTA COM     $43         ; COMA (inh)
+    // 1139:   decode pg1_R1  A       $43         ; COMA (inh)
+    // 1140:   decode pg1_R2  A       $43         ; COMA (inh)
+    // 1141:                                          
+    // 1142:   decode pg1_JTA COM     $53         ; COMB (inh)
+    // 1143:   decode pg1_R1  B       $53         ; COMB (inh)
+    // 1144:   decode pg1_R2  B       $53         ; COMB (inh)
+    // 1145:                              
+    // 1146:   decode pg1_JTB COM     $03 $63 $73 ; COM (dir idx ext)
+    // 1147:   decode pg1_R1  DMEM_RD $03 $63 $73 ; COM (dir idx ext) sets 8bit width
+    // 1148:   decode pg1_R2  DMEM_RD $03 $63 $73 ; COM (dir idx ext)
+    // 1149: 
+    // 1150:   DATA_INVERT_B   R2
+    // 1151:   DATA_WRITE      R1
+    // 1152: 
+    // 1153:   SET_DATA_WIDTH  W_R1
+    // 1154: 
+    // 1155:   CCR_OP_W        OP_ooooXXXX ; INFO Carry should be set to 1 for 6800 compatibility
+    // 1156: 
+    // 1157:   ADDR_PASS       EA
+    // 1158:   DMEM_STORE_W ; Disabled for inherent addressing modes
+    // 1159: 
+    // 1160:   JUMP_TABLE_A_NEXT_PC
+    // 1161:   micro_op_end
     8'h026: begin
       CV_MICRO_SEQ_OP_O = 3'h5;  // OP_JUMP_TABLE_A_NEXT_PC
       CV_DATA_ALU_A_SEL_O = 4'hf;  // ZERO
@@ -1681,31 +1685,31 @@ always @* begin
     end
 
 
-    // 1156: 
-    // 1157: ; //////////////////////////////////////////// DEC
-    // 1158: ; //
-    // 1159: DEC:
-    // 1160:   decode pg1_JTA DEC     $4A         ; DECA (inh)
-    // 1161:   decode pg1_R1  A       $4A         ; DECA (inh)
-    // 1162:                                          
-    // 1163:   decode pg1_JTA DEC     $5A         ; DECB (inh)
-    // 1164:   decode pg1_R1  B       $5A         ; DECB (inh)
-    // 1165:                              
-    // 1166:   decode pg1_JTB DEC     $0A $6A $7A ; DEC (dir idx ext)
-    // 1167:   decode pg1_R1  DMEM_RD $0A $6A $7A ; DEC (dir idx ext)
-    // 1168: 
-    // 1169:   DATA_DEC        R1
-    // 1170:   DATA_WRITE      R1
-    // 1171: 
-    // 1172:   SET_DATA_WIDTH  W_R1
-    // 1173:   
-    // 1174:   CCR_OP_W        OP_ooooXXXo
-    // 1175: 
-    // 1176:   ADDR_PASS       EA
-    // 1177:   DMEM_STORE_W ; Disabled for inherent addressing modes
-    // 1178: 
-    // 1179:   JUMP_TABLE_A_NEXT_PC
-    // 1180:   micro_op_end
+    // 1162: 
+    // 1163: ; //////////////////////////////////////////// DEC
+    // 1164: ; //
+    // 1165: DEC:
+    // 1166:   decode pg1_JTA DEC     $4A         ; DECA (inh)
+    // 1167:   decode pg1_R1  A       $4A         ; DECA (inh)
+    // 1168:                                          
+    // 1169:   decode pg1_JTA DEC     $5A         ; DECB (inh)
+    // 1170:   decode pg1_R1  B       $5A         ; DECB (inh)
+    // 1171:                              
+    // 1172:   decode pg1_JTB DEC     $0A $6A $7A ; DEC (dir idx ext)
+    // 1173:   decode pg1_R1  DMEM_RD $0A $6A $7A ; DEC (dir idx ext)
+    // 1174: 
+    // 1175:   DATA_DEC        R1
+    // 1176:   DATA_WRITE      R1
+    // 1177: 
+    // 1178:   SET_DATA_WIDTH  W_R1
+    // 1179:   
+    // 1180:   CCR_OP_W        OP_ooooXXXo
+    // 1181: 
+    // 1182:   ADDR_PASS       EA
+    // 1183:   DMEM_STORE_W ; Disabled for inherent addressing modes
+    // 1184: 
+    // 1185:   JUMP_TABLE_A_NEXT_PC
+    // 1186:   micro_op_end
     8'h027: begin
       CV_MICRO_SEQ_OP_O = 3'h5;  // OP_JUMP_TABLE_A_NEXT_PC
       CV_DATA_ALU_A_SEL_O = 4'h8;  // R1
@@ -1720,31 +1724,31 @@ always @* begin
     end
 
 
-    // 1181: 
-    // 1182: ; //////////////////////////////////////////// INC
-    // 1183: ; //
-    // 1184: INC:
-    // 1185:   decode pg1_JTA INC     $4C         ; INCA (inh)
-    // 1186:   decode pg1_R1  A       $4C         ; INCA (inh)
-    // 1187:                                          
-    // 1188:   decode pg1_JTA INC     $5C         ; INCB (inh)
-    // 1189:   decode pg1_R1  B       $5C         ; INCB (inh)
-    // 1190:                              
-    // 1191:   decode pg1_JTB INC     $0C $6C $7C ; INC (dir idx ext)
-    // 1192:   decode pg1_R1  DMEM_RD $0C $6C $7C ; INC (dir idx ext)
-    // 1193: 
-    // 1194:   DATA_INC        R1
-    // 1195:   DATA_WRITE      R1
-    // 1196: 
-    // 1197:   SET_DATA_WIDTH  W_R1
-    // 1198: 
-    // 1199:   CCR_OP_W        OP_ooooXXXo
-    // 1200: 
-    // 1201:   ADDR_PASS       EA
-    // 1202:   DMEM_STORE_W ; Disabled for inherent addressing modes
-    // 1203: 
-    // 1204:   JUMP_TABLE_A_NEXT_PC
-    // 1205:   micro_op_end
+    // 1187: 
+    // 1188: ; //////////////////////////////////////////// INC
+    // 1189: ; //
+    // 1190: INC:
+    // 1191:   decode pg1_JTA INC     $4C         ; INCA (inh)
+    // 1192:   decode pg1_R1  A       $4C         ; INCA (inh)
+    // 1193:                                          
+    // 1194:   decode pg1_JTA INC     $5C         ; INCB (inh)
+    // 1195:   decode pg1_R1  B       $5C         ; INCB (inh)
+    // 1196:                              
+    // 1197:   decode pg1_JTB INC     $0C $6C $7C ; INC (dir idx ext)
+    // 1198:   decode pg1_R1  DMEM_RD $0C $6C $7C ; INC (dir idx ext)
+    // 1199: 
+    // 1200:   DATA_INC        R1
+    // 1201:   DATA_WRITE      R1
+    // 1202: 
+    // 1203:   SET_DATA_WIDTH  W_R1
+    // 1204: 
+    // 1205:   CCR_OP_W        OP_ooooXXXo
+    // 1206: 
+    // 1207:   ADDR_PASS       EA
+    // 1208:   DMEM_STORE_W ; Disabled for inherent addressing modes
+    // 1209: 
+    // 1210:   JUMP_TABLE_A_NEXT_PC
+    // 1211:   micro_op_end
     8'h028: begin
       CV_MICRO_SEQ_OP_O = 3'h5;  // OP_JUMP_TABLE_A_NEXT_PC
       CV_DATA_ALU_A_SEL_O = 4'h8;  // R1
@@ -1759,31 +1763,31 @@ always @* begin
     end
 
 
-    // 1206: 
-    // 1207: ; //////////////////////////////////////////// LSR
-    // 1208: ; //
-    // 1209: LSR:
-    // 1210:   decode pg1_JTA LSR     $44         ; LSRA (inh)
-    // 1211:   decode pg1_R1  A       $44         ; LSRA (inh)
-    // 1212:                                          
-    // 1213:   decode pg1_JTA LSR     $54         ; LSRB (inh)
-    // 1214:   decode pg1_R1  B       $54         ; LSRB (inh)
-    // 1215:                              
-    // 1216:   decode pg1_JTB LSR     $04 $64 $74 ; LSR (dir idx ext)
-    // 1217:   decode pg1_R1  DMEM_RD $04 $64 $74 ; LSR (dir idx ext)
-    // 1218: 
-    // 1219:   DATA_RSHIFT_W   ZERO_BIT, R1
-    // 1220:   DATA_WRITE      R1
-    // 1221: 
-    // 1222:   SET_DATA_WIDTH  W_R1
-    // 1223: 
-    // 1224:   CCR_OP_W        OP_ooooXXoX
-    // 1225: 
-    // 1226:   ADDR_PASS       EA
-    // 1227:   DMEM_STORE_W ; Disabled for inherent addressing modes
-    // 1228: 
-    // 1229:   JUMP_TABLE_A_NEXT_PC
-    // 1230:   micro_op_end
+    // 1212: 
+    // 1213: ; //////////////////////////////////////////// LSR
+    // 1214: ; //
+    // 1215: LSR:
+    // 1216:   decode pg1_JTA LSR     $44         ; LSRA (inh)
+    // 1217:   decode pg1_R1  A       $44         ; LSRA (inh)
+    // 1218:                                          
+    // 1219:   decode pg1_JTA LSR     $54         ; LSRB (inh)
+    // 1220:   decode pg1_R1  B       $54         ; LSRB (inh)
+    // 1221:                              
+    // 1222:   decode pg1_JTB LSR     $04 $64 $74 ; LSR (dir idx ext)
+    // 1223:   decode pg1_R1  DMEM_RD $04 $64 $74 ; LSR (dir idx ext)
+    // 1224: 
+    // 1225:   DATA_RSHIFT_W   ZERO_BIT, R1
+    // 1226:   DATA_WRITE      R1
+    // 1227: 
+    // 1228:   SET_DATA_WIDTH  W_R1
+    // 1229: 
+    // 1230:   CCR_OP_W        OP_ooooXXoX
+    // 1231: 
+    // 1232:   ADDR_PASS       EA
+    // 1233:   DMEM_STORE_W ; Disabled for inherent addressing modes
+    // 1234: 
+    // 1235:   JUMP_TABLE_A_NEXT_PC
+    // 1236:   micro_op_end
     8'h029: begin
       CV_MICRO_SEQ_OP_O = 3'h5;  // OP_JUMP_TABLE_A_NEXT_PC
       CV_DATA_ALU_A_SEL_O = 4'h8;  // R1
@@ -1798,34 +1802,34 @@ always @* begin
     end
 
 
-    // 1231: 
-    // 1232: ; //////////////////////////////////////////// NEG
-    // 1233: ; //
-    // 1234: NEG:
-    // 1235:   decode pg1_JTA NEG     $40         ; NEGA (inh)
-    // 1236:   decode pg1_R1  A       $40         ; NEGA (inh)
-    // 1237:   decode pg1_R2  A       $40         ; NEGA (inh)
-    // 1238:                                          
-    // 1239:   decode pg1_JTA NEG     $50         ; NEGB (inh)
-    // 1240:   decode pg1_R1  B       $50         ; NEGB (inh)
-    // 1241:   decode pg1_R2  B       $50         ; NEGB (inh)
-    // 1242:                                          
-    // 1243:   decode pg1_JTB NEG     $00 $60 $70 ; NEG (dir idx ext)
-    // 1244:   decode pg1_R1  DMEM_RD $00 $60 $70 ; NEG (dir idx ext) sets 8bit width
-    // 1245:   decode pg1_R2  DMEM_RD $00 $60 $70 ; NEG (dir idx ext)
-    // 1246: 
-    // 1247:   DATA_SUB        ZERO, R2
-    // 1248:   DATA_WRITE      R1
-    // 1249: 
-    // 1250:   SET_DATA_WIDTH  W_R1
-    // 1251: 
-    // 1252:   CCR_OP_W        OP_ooooXXXX ; INFO: Spec H Undefined, Turbo9 H not affected
-    // 1253: 
-    // 1254:   ADDR_PASS       EA
-    // 1255:   DMEM_STORE_W ; Disabled for inherent addressing modes
-    // 1256: 
-    // 1257:   JUMP_TABLE_A_NEXT_PC
-    // 1258:   micro_op_end
+    // 1237: 
+    // 1238: ; //////////////////////////////////////////// NEG
+    // 1239: ; //
+    // 1240: NEG:
+    // 1241:   decode pg1_JTA NEG     $40         ; NEGA (inh)
+    // 1242:   decode pg1_R1  A       $40         ; NEGA (inh)
+    // 1243:   decode pg1_R2  A       $40         ; NEGA (inh)
+    // 1244:                                          
+    // 1245:   decode pg1_JTA NEG     $50         ; NEGB (inh)
+    // 1246:   decode pg1_R1  B       $50         ; NEGB (inh)
+    // 1247:   decode pg1_R2  B       $50         ; NEGB (inh)
+    // 1248:                                          
+    // 1249:   decode pg1_JTB NEG     $00 $60 $70 ; NEG (dir idx ext)
+    // 1250:   decode pg1_R1  DMEM_RD $00 $60 $70 ; NEG (dir idx ext) sets 8bit width
+    // 1251:   decode pg1_R2  DMEM_RD $00 $60 $70 ; NEG (dir idx ext)
+    // 1252: 
+    // 1253:   DATA_SUB        ZERO, R2
+    // 1254:   DATA_WRITE      R1
+    // 1255: 
+    // 1256:   SET_DATA_WIDTH  W_R1
+    // 1257: 
+    // 1258:   CCR_OP_W        OP_ooooXXXX ; INFO: Spec H Undefined, Turbo9 H not affected
+    // 1259: 
+    // 1260:   ADDR_PASS       EA
+    // 1261:   DMEM_STORE_W ; Disabled for inherent addressing modes
+    // 1262: 
+    // 1263:   JUMP_TABLE_A_NEXT_PC
+    // 1264:   micro_op_end
     8'h02a: begin
       CV_MICRO_SEQ_OP_O = 3'h5;  // OP_JUMP_TABLE_A_NEXT_PC
       CV_DATA_ALU_A_SEL_O = 4'hf;  // ZERO
@@ -1840,31 +1844,31 @@ always @* begin
     end
 
 
-    // 1259: 
-    // 1260: ; //////////////////////////////////////////// ROL
-    // 1261: ; //
-    // 1262: ROL:
-    // 1263:   decode pg1_JTA ROL     $49         ; ROLA (inh)
-    // 1264:   decode pg1_R1  A       $49         ; ROLA (inh)
-    // 1265:                                          
-    // 1266:   decode pg1_JTA ROL     $59         ; ROLB (inh)
-    // 1267:   decode pg1_R1  B       $59         ; ROLB (inh)
-    // 1268:                                          
-    // 1269:   decode pg1_JTB ROL     $09 $69 $79 ; ROL (dir idx ext)
-    // 1270:   decode pg1_R1  DMEM_RD $09 $69 $79 ; ROL (dir idx ext)
-    // 1271: 
-    // 1272:   DATA_LSHIFT_W   R1, CARRY_BIT
-    // 1273:   DATA_WRITE      R1
-    // 1274: 
-    // 1275:   SET_DATA_WIDTH  W_R1
-    // 1276: 
-    // 1277:   CCR_OP_W        OP_ooooXXXX
-    // 1278: 
-    // 1279:   ADDR_PASS       EA
-    // 1280:   DMEM_STORE_W ; Disabled for inherent addressing modes
-    // 1281: 
-    // 1282:   JUMP_TABLE_A_NEXT_PC
-    // 1283:   micro_op_end
+    // 1265: 
+    // 1266: ; //////////////////////////////////////////// ROL
+    // 1267: ; //
+    // 1268: ROL:
+    // 1269:   decode pg1_JTA ROL     $49         ; ROLA (inh)
+    // 1270:   decode pg1_R1  A       $49         ; ROLA (inh)
+    // 1271:                                          
+    // 1272:   decode pg1_JTA ROL     $59         ; ROLB (inh)
+    // 1273:   decode pg1_R1  B       $59         ; ROLB (inh)
+    // 1274:                                          
+    // 1275:   decode pg1_JTB ROL     $09 $69 $79 ; ROL (dir idx ext)
+    // 1276:   decode pg1_R1  DMEM_RD $09 $69 $79 ; ROL (dir idx ext)
+    // 1277: 
+    // 1278:   DATA_LSHIFT_W   R1, CARRY_BIT
+    // 1279:   DATA_WRITE      R1
+    // 1280: 
+    // 1281:   SET_DATA_WIDTH  W_R1
+    // 1282: 
+    // 1283:   CCR_OP_W        OP_ooooXXXX
+    // 1284: 
+    // 1285:   ADDR_PASS       EA
+    // 1286:   DMEM_STORE_W ; Disabled for inherent addressing modes
+    // 1287: 
+    // 1288:   JUMP_TABLE_A_NEXT_PC
+    // 1289:   micro_op_end
     8'h02b: begin
       CV_MICRO_SEQ_OP_O = 3'h5;  // OP_JUMP_TABLE_A_NEXT_PC
       CV_DATA_ALU_A_SEL_O = 4'h8;  // R1
@@ -1879,31 +1883,31 @@ always @* begin
     end
 
 
-    // 1284: 
-    // 1285: ; //////////////////////////////////////////// ROR
-    // 1286: ; //
-    // 1287: ROR:
-    // 1288:   decode pg1_JTA ROR     $46         ; RORA (inh)
-    // 1289:   decode pg1_R1  A       $46         ; RORA (inh)
-    // 1290:                                                    
-    // 1291:   decode pg1_JTA ROR     $56         ; RORB (inh)
-    // 1292:   decode pg1_R1  B       $56         ; RORB (inh)
-    // 1293:                              
-    // 1294:   decode pg1_JTB ROR     $06 $66 $76 ; ROR (dir idx ext)
-    // 1295:   decode pg1_R1  DMEM_RD $06 $66 $76 ; ROR (dir idx ext)
-    // 1296: 
-    // 1297:   DATA_RSHIFT_W   CARRY_BIT, R1
-    // 1298:   DATA_WRITE      R1
-    // 1299: 
-    // 1300:   SET_DATA_WIDTH  W_R1
-    // 1301: 
-    // 1302:   CCR_OP_W        OP_ooooXXoX
-    // 1303: 
-    // 1304:   ADDR_PASS       EA
-    // 1305:   DMEM_STORE_W ; Disabled for inherent addressing modes
-    // 1306: 
-    // 1307:   JUMP_TABLE_A_NEXT_PC
-    // 1308:   micro_op_end
+    // 1290: 
+    // 1291: ; //////////////////////////////////////////// ROR
+    // 1292: ; //
+    // 1293: ROR:
+    // 1294:   decode pg1_JTA ROR     $46         ; RORA (inh)
+    // 1295:   decode pg1_R1  A       $46         ; RORA (inh)
+    // 1296:                                                    
+    // 1297:   decode pg1_JTA ROR     $56         ; RORB (inh)
+    // 1298:   decode pg1_R1  B       $56         ; RORB (inh)
+    // 1299:                              
+    // 1300:   decode pg1_JTB ROR     $06 $66 $76 ; ROR (dir idx ext)
+    // 1301:   decode pg1_R1  DMEM_RD $06 $66 $76 ; ROR (dir idx ext)
+    // 1302: 
+    // 1303:   DATA_RSHIFT_W   CARRY_BIT, R1
+    // 1304:   DATA_WRITE      R1
+    // 1305: 
+    // 1306:   SET_DATA_WIDTH  W_R1
+    // 1307: 
+    // 1308:   CCR_OP_W        OP_ooooXXoX
+    // 1309: 
+    // 1310:   ADDR_PASS       EA
+    // 1311:   DMEM_STORE_W ; Disabled for inherent addressing modes
+    // 1312: 
+    // 1313:   JUMP_TABLE_A_NEXT_PC
+    // 1314:   micro_op_end
     8'h02c: begin
       CV_MICRO_SEQ_OP_O = 3'h5;  // OP_JUMP_TABLE_A_NEXT_PC
       CV_DATA_ALU_A_SEL_O = 4'h8;  // R1
@@ -1918,27 +1922,27 @@ always @* begin
     end
 
 
-    // 1309: 
-    // 1310: ; //////////////////////////////////////////// TST
-    // 1311: ; //
-    // 1312: TST:
-    // 1313:   decode pg1_JTA TST     $4D         ; TSTA (inh)
-    // 1314:   decode pg1_R1  A       $4D         ; TSTA (inh)
-    // 1315:                                          
-    // 1316:   decode pg1_JTA TST     $5D         ; TSTB (inh)
-    // 1317:   decode pg1_R1  B       $5D         ; TSTB (inh)
-    // 1318:                              
-    // 1319:   decode pg1_JTB TST     $0D $6D $7D ; TST (dir idx ext)
-    // 1320:   decode pg1_R1  DMEM_RD $0D $6D $7D ; TST (dir idx ext)
-    // 1321: 
-    // 1322:   DATA_PASS_A     R1 ; Pass A, B or DMEM
-    // 1323: 
-    // 1324:   SET_DATA_WIDTH  W_R1
-    // 1325: 
-    // 1326:   CCR_OP_W        OP_ooooXXXo
+    // 1315: 
+    // 1316: ; //////////////////////////////////////////// TST
+    // 1317: ; //
+    // 1318: TST:
+    // 1319:   decode pg1_JTA TST     $4D         ; TSTA (inh)
+    // 1320:   decode pg1_R1  A       $4D         ; TSTA (inh)
+    // 1321:                                          
+    // 1322:   decode pg1_JTA TST     $5D         ; TSTB (inh)
+    // 1323:   decode pg1_R1  B       $5D         ; TSTB (inh)
+    // 1324:                              
+    // 1325:   decode pg1_JTB TST     $0D $6D $7D ; TST (dir idx ext)
+    // 1326:   decode pg1_R1  DMEM_RD $0D $6D $7D ; TST (dir idx ext)
     // 1327: 
-    // 1328:   JUMP_TABLE_A_NEXT_PC
-    // 1329:   micro_op_end
+    // 1328:   DATA_PASS_A     R1 ; Pass A, B or DMEM
+    // 1329: 
+    // 1330:   SET_DATA_WIDTH  W_R1
+    // 1331: 
+    // 1332:   CCR_OP_W        OP_ooooXXXo
+    // 1333: 
+    // 1334:   JUMP_TABLE_A_NEXT_PC
+    // 1335:   micro_op_end
     8'h02d: begin
       CV_MICRO_SEQ_OP_O = 3'h5;  // OP_JUMP_TABLE_A_NEXT_PC
       CV_DATA_ALU_A_SEL_O = 4'h8;  // R1
@@ -1950,80 +1954,80 @@ always @* begin
     end
 
 
-    // 1330: 
-    // 1331: ; //
-    // 1332: ; ////////////////////////////////////////////////////////////////////////////
-    // 1333: 
-    // 1334: 
-    // 1335: 
-    // 1336: ; ////////////////////////////////////////////////////////////////////////////
-    // 1337: ;                        JUMP & BRANCH INSTRUCTIONS
+    // 1336: 
+    // 1337: ; //
     // 1338: ; ////////////////////////////////////////////////////////////////////////////
-    // 1339: ; //
+    // 1339: 
     // 1340: 
-    // 1341: ; //////////////////////////////////////////// BRANCH
-    // 1342: ; //
-    // 1343: BRANCH:
-    // 1344:   decode pg1_JTA BRANCH $20 $21 $22 $23 ; BRA BRN BHI BLS
-    // 1345:   decode pg1_JTB JMP    $20 $21 $22 $23 ; BRA BRN BHI BLS
-    // 1346:   decode pg1_R1  PC     $20 $21 $22 $23 ; BRA BRN BHI BLS
-    // 1347:   decode pg1_R2  EA     $20 $21 $22 $23 ; BRA BRN BHI BLS
-    // 1348:                                             
-    // 1349:   decode pg1_JTA BRANCH $24 $25 $26 $27 ; BCC BCS BNE BEQ
-    // 1350:   decode pg1_JTB JMP    $24 $25 $26 $27 ; BCC BCS BNE BEQ
-    // 1351:   decode pg1_R1  PC     $24 $25 $26 $27 ; BCC BCS BNE BEQ
-    // 1352:   decode pg1_R2  EA     $24 $25 $26 $27 ; BCC BCS BNE BEQ
-    // 1353:                                             
-    // 1354:   decode pg1_JTA BRANCH $28 $29 $2A $2B ; BVC BVS BPL BMI
-    // 1355:   decode pg1_JTB JMP    $28 $29 $2A $2B ; BVC BVS BPL BMI
-    // 1356:   decode pg1_R1  PC     $28 $29 $2A $2B ; BVC BVS BPL BMI
-    // 1357:   decode pg1_R2  EA     $28 $29 $2A $2B ; BVC BVS BPL BMI
-    // 1358:                                             
-    // 1359:   decode pg1_JTA BRANCH $2C $2D $2E $2F ; BGE BLT BGT BLE
-    // 1360:   decode pg1_JTB JMP    $2C $2D $2E $2F ; BGE BLT BGT BLE
-    // 1361:   decode pg1_R1  PC     $2C $2D $2E $2F ; BGE BLT BGT BLE
-    // 1362:   decode pg1_R2  EA     $2C $2D $2E $2F ; BGE BLT BGT BLE
-    // 1363:                                             
-    // 1364:   decode pg1_JTA BRANCH $16             ; LBRA On page 1!
-    // 1365:   decode pg1_JTB JMP    $16             ; LBRA
-    // 1366:   decode pg1_R1  PC     $16             ; LBRA 
-    // 1367:   decode pg1_R2  EA     $16             ; LBRA 
-    // 1368:                 
-    // 1369:   decode pg1_JTA BRANCH $8D $17         ; BSR LBSR // FIXME could do this without JUMP_TABLE_A
-    // 1370:   decode pg1_JTB JSR    $8D $17         ; BSR LBSR // FIXME check if smaller area
-    // 1371:   decode pg1_R1  PC     $8D $17         ; BSR LBSR
-    // 1372:   decode pg1_R2  EA     $8D $17         ; BSR LBSR
-    // 1373:   decode pg1_AR  S      $8D $17         ; BSR LBSR
-    // 1374:                             
-    // 1375: ; Another LBRA hidden on Page 2!
-    // 1376:   decode pg2_JTA BRANCH $20 $21 $22 $23 ; LBRA LBRN LBHI LBLS
-    // 1377:   decode pg2_JTB JMP    $20 $21 $22 $23 ; LBRA LBRN LBHI LBLS
-    // 1378:   decode pg2_R1  PC     $20 $21 $22 $23 ; LBRA LBRN LBHI LBLS
-    // 1379:   decode pg2_R2  EA     $20 $21 $22 $23 ; LBRA LBRN LBHI LBLS
-    // 1380:                                                                   
-    // 1381:   decode pg2_JTA BRANCH $24 $25 $26 $27 ; LBCC LBCS LBNE LBEQ
-    // 1382:   decode pg2_JTB JMP    $24 $25 $26 $27 ; LBCC LBCS LBNE LBEQ
-    // 1383:   decode pg2_R1  PC     $24 $25 $26 $27 ; LBCC LBCS LBNE LBEQ
-    // 1384:   decode pg2_R2  EA     $24 $25 $26 $27 ; LBCC LBCS LBNE LBEQ
-    // 1385:                                                                   
-    // 1386:   decode pg2_JTA BRANCH $28 $29 $2A $2B ; LBVC LBVS LBPL LBMI
-    // 1387:   decode pg2_JTB JMP    $28 $29 $2A $2B ; LBVC LBVS LBPL LBMI
-    // 1388:   decode pg2_R1  PC     $28 $29 $2A $2B ; LBVC LBVS LBPL LBMI
-    // 1389:   decode pg2_R2  EA     $28 $29 $2A $2B ; LBVC LBVS LBPL LBMI
-    // 1390:                                                                   
-    // 1391:   decode pg2_JTA BRANCH $2C $2D $2E $2F ; LBGE LBLT LBGT LBLE
-    // 1392:   decode pg2_JTB JMP    $2C $2D $2E $2F ; LBGE LBLT LBGT LBLE
-    // 1393:   decode pg2_R1  PC     $2C $2D $2E $2F ; LBGE LBLT LBGT LBLE
-    // 1394:   decode pg2_R2  EA     $2C $2D $2E $2F ; LBGE LBLT LBGT LBLE
-    // 1395: 
-    // 1396:   DATA_ADD        R1, IDATA ; PC + signed offset
-    // 1397:   DATA_WRITE      EA
-    // 1398: 
-    // 1399:   SET_DATA_WIDTH  W_R1
-    // 1400: 
-    // 1401:   IF              BRANCH_COND
-    // 1402:   JUMP_TABLE_B
-    // 1403:   micro_op_end
+    // 1341: 
+    // 1342: ; ////////////////////////////////////////////////////////////////////////////
+    // 1343: ;                        JUMP & BRANCH INSTRUCTIONS
+    // 1344: ; ////////////////////////////////////////////////////////////////////////////
+    // 1345: ; //
+    // 1346: 
+    // 1347: ; //////////////////////////////////////////// BRANCH
+    // 1348: ; //
+    // 1349: BRANCH:
+    // 1350:   decode pg1_JTA BRANCH $20 $21 $22 $23 ; BRA BRN BHI BLS
+    // 1351:   decode pg1_JTB JMP    $20 $21 $22 $23 ; BRA BRN BHI BLS
+    // 1352:   decode pg1_R1  PC     $20 $21 $22 $23 ; BRA BRN BHI BLS
+    // 1353:   decode pg1_R2  EA     $20 $21 $22 $23 ; BRA BRN BHI BLS
+    // 1354:                                             
+    // 1355:   decode pg1_JTA BRANCH $24 $25 $26 $27 ; BCC BCS BNE BEQ
+    // 1356:   decode pg1_JTB JMP    $24 $25 $26 $27 ; BCC BCS BNE BEQ
+    // 1357:   decode pg1_R1  PC     $24 $25 $26 $27 ; BCC BCS BNE BEQ
+    // 1358:   decode pg1_R2  EA     $24 $25 $26 $27 ; BCC BCS BNE BEQ
+    // 1359:                                             
+    // 1360:   decode pg1_JTA BRANCH $28 $29 $2A $2B ; BVC BVS BPL BMI
+    // 1361:   decode pg1_JTB JMP    $28 $29 $2A $2B ; BVC BVS BPL BMI
+    // 1362:   decode pg1_R1  PC     $28 $29 $2A $2B ; BVC BVS BPL BMI
+    // 1363:   decode pg1_R2  EA     $28 $29 $2A $2B ; BVC BVS BPL BMI
+    // 1364:                                             
+    // 1365:   decode pg1_JTA BRANCH $2C $2D $2E $2F ; BGE BLT BGT BLE
+    // 1366:   decode pg1_JTB JMP    $2C $2D $2E $2F ; BGE BLT BGT BLE
+    // 1367:   decode pg1_R1  PC     $2C $2D $2E $2F ; BGE BLT BGT BLE
+    // 1368:   decode pg1_R2  EA     $2C $2D $2E $2F ; BGE BLT BGT BLE
+    // 1369:                                             
+    // 1370:   decode pg1_JTA BRANCH $16             ; LBRA On page 1!
+    // 1371:   decode pg1_JTB JMP    $16             ; LBRA
+    // 1372:   decode pg1_R1  PC     $16             ; LBRA 
+    // 1373:   decode pg1_R2  EA     $16             ; LBRA 
+    // 1374:                 
+    // 1375:   decode pg1_JTA BRANCH $8D $17         ; BSR LBSR // FIXME could do this without JUMP_TABLE_A
+    // 1376:   decode pg1_JTB JSR    $8D $17         ; BSR LBSR // FIXME check if smaller area
+    // 1377:   decode pg1_R1  PC     $8D $17         ; BSR LBSR
+    // 1378:   decode pg1_R2  EA     $8D $17         ; BSR LBSR
+    // 1379:   decode pg1_AR  S      $8D $17         ; BSR LBSR
+    // 1380:                             
+    // 1381: ; Another LBRA hidden on Page 2!
+    // 1382:   decode pg2_JTA BRANCH $20 $21 $22 $23 ; LBRA LBRN LBHI LBLS
+    // 1383:   decode pg2_JTB JMP    $20 $21 $22 $23 ; LBRA LBRN LBHI LBLS
+    // 1384:   decode pg2_R1  PC     $20 $21 $22 $23 ; LBRA LBRN LBHI LBLS
+    // 1385:   decode pg2_R2  EA     $20 $21 $22 $23 ; LBRA LBRN LBHI LBLS
+    // 1386:                                                                   
+    // 1387:   decode pg2_JTA BRANCH $24 $25 $26 $27 ; LBCC LBCS LBNE LBEQ
+    // 1388:   decode pg2_JTB JMP    $24 $25 $26 $27 ; LBCC LBCS LBNE LBEQ
+    // 1389:   decode pg2_R1  PC     $24 $25 $26 $27 ; LBCC LBCS LBNE LBEQ
+    // 1390:   decode pg2_R2  EA     $24 $25 $26 $27 ; LBCC LBCS LBNE LBEQ
+    // 1391:                                                                   
+    // 1392:   decode pg2_JTA BRANCH $28 $29 $2A $2B ; LBVC LBVS LBPL LBMI
+    // 1393:   decode pg2_JTB JMP    $28 $29 $2A $2B ; LBVC LBVS LBPL LBMI
+    // 1394:   decode pg2_R1  PC     $28 $29 $2A $2B ; LBVC LBVS LBPL LBMI
+    // 1395:   decode pg2_R2  EA     $28 $29 $2A $2B ; LBVC LBVS LBPL LBMI
+    // 1396:                                                                   
+    // 1397:   decode pg2_JTA BRANCH $2C $2D $2E $2F ; LBGE LBLT LBGT LBLE
+    // 1398:   decode pg2_JTB JMP    $2C $2D $2E $2F ; LBGE LBLT LBGT LBLE
+    // 1399:   decode pg2_R1  PC     $2C $2D $2E $2F ; LBGE LBLT LBGT LBLE
+    // 1400:   decode pg2_R2  EA     $2C $2D $2E $2F ; LBGE LBLT LBGT LBLE
+    // 1401: 
+    // 1402:   DATA_ADD        R1, IDATA ; PC + signed offset
+    // 1403:   DATA_WRITE      EA
+    // 1404: 
+    // 1405:   SET_DATA_WIDTH  W_R1
+    // 1406: 
+    // 1407:   IF              BRANCH_COND
+    // 1408:   JUMP_TABLE_B
+    // 1409:   micro_op_end
     8'h02e: begin
       CV_MICRO_SEQ_OP_O = 3'h4;  // OP_JUMP_TABLE_B
       CV_DATA_ALU_A_SEL_O = 4'h8;  // R1
@@ -2036,32 +2040,32 @@ always @* begin
     end
 
 
-    // 1404: 
-    // 1405: GO_NEW_PC:
-    // 1406:   JUMP_TABLE_A_NEXT_PC
-    // 1407:   micro_op_end
+    // 1410: 
+    // 1411: GO_NEW_PC:
+    // 1412:   JUMP_TABLE_A_NEXT_PC
+    // 1413:   micro_op_end
     8'h02f: begin
       CV_MICRO_SEQ_OP_O = 3'h5;  // OP_JUMP_TABLE_A_NEXT_PC
     end
 
 
-    // 1408: 
-    // 1409: ; //////////////////////////////////////////// JMP
-    // 1410: ; //
-    // 1411: JMP:
-    // 1412:   decode pg1_JTA JMP   $0E $7E ; JMP (dir ext)
-    // 1413:   decode pg1_R1  PC    $0E $7E ; JMP (dir ext)
-    // 1414:   decode pg1_R2  IDATA $0E $7E ; JMP (dir ext)
-    // 1415:                                    
-    // 1416:   decode pg1_JTB JMP   $6E     ; JMP (idx)
-    // 1417:   decode pg1_R1  PC    $6E     ; JMP (idx)
-    // 1418:   decode pg1_R2  EA    $6E     ; JMP (idx)
-    // 1419: 
-    // 1420:   DATA_PASS_B     R2 ; IDATA or EA
-    // 1421:   DATA_WRITE      R1 ; PC
-    // 1422: 
-    // 1423:   JUMP            GO_NEW_PC ; PC must be written before "JUMP_TABLE_A_NEXT_PC"
-    // 1424:   micro_op_end
+    // 1414: 
+    // 1415: ; //////////////////////////////////////////// JMP
+    // 1416: ; //
+    // 1417: JMP:
+    // 1418:   decode pg1_JTA JMP   $0E $7E ; JMP (dir ext)
+    // 1419:   decode pg1_R1  PC    $0E $7E ; JMP (dir ext)
+    // 1420:   decode pg1_R2  IDATA $0E $7E ; JMP (dir ext)
+    // 1421:                                    
+    // 1422:   decode pg1_JTB JMP   $6E     ; JMP (idx)
+    // 1423:   decode pg1_R1  PC    $6E     ; JMP (idx)
+    // 1424:   decode pg1_R2  EA    $6E     ; JMP (idx)
+    // 1425: 
+    // 1426:   DATA_PASS_B     R2 ; IDATA or EA
+    // 1427:   DATA_WRITE      R1 ; PC
+    // 1428: 
+    // 1429:   JUMP            GO_NEW_PC ; PC must be written before "JUMP_TABLE_A_NEXT_PC"
+    // 1430:   micro_op_end
     8'h030: begin
       CV_MICRO_SEQ_OP_O = 3'h1;  // OP_JUMP
       CV_MICRO_SEQ_BRANCH_ADDR_O = 8'h2f;  // GO_NEW_PC
@@ -2073,40 +2077,40 @@ always @* begin
     end
 
 
-    // 1425: 
-    // 1426: 
-    // 1427: ; ////////////////////////////////////////////////////////////////////////////
-    // 1428: 
-    // 1429: 
-    // 1430: 
-    // 1431: ; ////////////////////////////////////////////////////////////////////////////
-    // 1432: ;                        STACK INSTRUCTIONS
+    // 1431: 
+    // 1432: 
     // 1433: ; ////////////////////////////////////////////////////////////////////////////
-    // 1434: ; //
+    // 1434: 
     // 1435: 
     // 1436: 
-    // 1437: ; //////////////////////////////////////////// JSR
-    // 1438: ; //
-    // 1439: JSR:
-    // 1440:   decode pg1_JTA JSR   $9D $BD ; JSR (dir ext)
-    // 1441:   decode pg1_R1  PC    $9D $BD ; JSR (dir ext)
-    // 1442:   decode pg1_R2  IDATA $9D $BD ; JSR (dir ext)
-    // 1443:   decode pg1_AR  S     $9D $BD ; JSR (dir ext)
-    // 1444:                                  
-    // 1445:   decode pg1_JTB JSR   $AD     ; JSR (idx)
-    // 1446:   decode pg1_R1  PC    $AD     ; JSR (idx)
-    // 1447:   decode pg1_R2  EA    $AD     ; JSR (idx)
-    // 1448:   decode pg1_AR  S     $AD     ; JSR (idx)
-    // 1449: 
-    // 1450:   DATA_PASS_A     R1 ; PC
-    // 1451: 
-    // 1452:   SET_DATA_WIDTH  W_R1
-    // 1453: 
-    // 1454:   STACK_PUSH      AR
-    // 1455:   DMEM_STORE_W
-    // 1456: 
-    // 1457:   JUMP            JMP 
-    // 1458:   micro_op_end
+    // 1437: ; ////////////////////////////////////////////////////////////////////////////
+    // 1438: ;                        STACK INSTRUCTIONS
+    // 1439: ; ////////////////////////////////////////////////////////////////////////////
+    // 1440: ; //
+    // 1441: 
+    // 1442: 
+    // 1443: ; //////////////////////////////////////////// JSR
+    // 1444: ; //
+    // 1445: JSR:
+    // 1446:   decode pg1_JTA JSR   $9D $BD ; JSR (dir ext)
+    // 1447:   decode pg1_R1  PC    $9D $BD ; JSR (dir ext)
+    // 1448:   decode pg1_R2  IDATA $9D $BD ; JSR (dir ext)
+    // 1449:   decode pg1_AR  S     $9D $BD ; JSR (dir ext)
+    // 1450:                                  
+    // 1451:   decode pg1_JTB JSR   $AD     ; JSR (idx)
+    // 1452:   decode pg1_R1  PC    $AD     ; JSR (idx)
+    // 1453:   decode pg1_R2  EA    $AD     ; JSR (idx)
+    // 1454:   decode pg1_AR  S     $AD     ; JSR (idx)
+    // 1455: 
+    // 1456:   DATA_PASS_A     R1 ; PC
+    // 1457: 
+    // 1458:   SET_DATA_WIDTH  W_R1
+    // 1459: 
+    // 1460:   STACK_PUSH      AR
+    // 1461:   DMEM_STORE_W
+    // 1462: 
+    // 1463:   JUMP            JMP 
+    // 1464:   micro_op_end
     8'h031: begin
       CV_MICRO_SEQ_OP_O = 3'h1;  // OP_JUMP
       CV_MICRO_SEQ_BRANCH_ADDR_O = 8'h30;  // JMP
@@ -2121,22 +2125,22 @@ always @* begin
     end
 
 
-    // 1459: 
-    // 1460: ; //////////////////////////////////////////// RTS
-    // 1461: ; //
-    // 1462: RTS:
-    // 1463:   decode pg1_JTA RTS      $39 ; RTS
-    // 1464:   decode pg1_R1  PC       $39 ; RTS
-    // 1465:   decode pg1_R2  DMEM_RD  $39 ; RTS
-    // 1466:   decode pg1_AR  S        $39 ; RTS
-    // 1467: 
-    // 1468:   SET_DATA_WIDTH  W_R1
-    // 1469:   
-    // 1470:   STACK_PULL      AR
-    // 1471:   DMEM_LOAD_W
-    // 1472:   
-    // 1473:   JUMP            JMP
-    // 1474:   micro_op_end
+    // 1465: 
+    // 1466: ; //////////////////////////////////////////// RTS
+    // 1467: ; //
+    // 1468: RTS:
+    // 1469:   decode pg1_JTA RTS      $39 ; RTS
+    // 1470:   decode pg1_R1  PC       $39 ; RTS
+    // 1471:   decode pg1_R2  DMEM_RD  $39 ; RTS
+    // 1472:   decode pg1_AR  S        $39 ; RTS
+    // 1473: 
+    // 1474:   SET_DATA_WIDTH  W_R1
+    // 1475:   
+    // 1476:   STACK_PULL      AR
+    // 1477:   DMEM_LOAD_W
+    // 1478:   
+    // 1479:   JUMP            JMP
+    // 1480:   micro_op_end
     8'h032: begin
       CV_MICRO_SEQ_OP_O = 3'h1;  // OP_JUMP
       CV_MICRO_SEQ_BRANCH_ADDR_O = 8'h30;  // JMP
@@ -2147,29 +2151,29 @@ always @* begin
     end
 
 
-    // 1475: 
-    // 1476: ; //////////////////////////////////////////// RTI
-    // 1477: ; //
-    // 1478: RTI:
-    // 1479:   decode pg1_JTA RTI      $3B ; RTI
-    // 1480:   decode pg1_R1  PC       $3B ; RTI
-    // 1481:   decode pg1_R2  DMEM_RD  $3B ; RTI
-    // 1482:   decode pg1_AR  S        $3B ; RTI
-    // 1483:   
-    // 1484:   STACK_PULL      ZERO  ; Prime the decode pipeline!
-    // 1485:   micro_op_end
+    // 1481: 
+    // 1482: ; //////////////////////////////////////////// RTI
+    // 1483: ; //
+    // 1484: RTI:
+    // 1485:   decode pg1_JTA RTI      $3B ; RTI
+    // 1486:   decode pg1_R1  PC       $3B ; RTI
+    // 1487:   decode pg1_R2  DMEM_RD  $3B ; RTI
+    // 1488:   decode pg1_AR  S        $3B ; RTI
+    // 1489:   
+    // 1490:   STACK_PULL      ZERO  ; Prime the decode pipeline!
+    // 1491:   micro_op_end
     8'h033: begin
       CV_ADDR_ALU_REG_SEL_O = 4'hf;  // ZERO
       CV_STACK_OP_O = 2'h1;  // STACK_OP_PULL
     end
 
 
-    // 1486: 
-    // 1487:   SET_DATA_WIDTH  W_STACK_REG
-    // 1488:   
-    // 1489:   STACK_PULL      AR
-    // 1490:   DMEM_LOAD_W
-    // 1491:   micro_op_end
+    // 1492: 
+    // 1493:   SET_DATA_WIDTH  W_STACK_REG
+    // 1494:   
+    // 1495:   STACK_PULL      AR
+    // 1496:   DMEM_LOAD_W
+    // 1497:   micro_op_end
     8'h034: begin
       CV_ADDR_ALU_REG_SEL_O = 4'h8;  // AR
       CV_DATA_WIDTH_SEL_O = 3'h2;  // W_STACK_REG
@@ -2178,13 +2182,13 @@ always @* begin
     end
 
 
-    // 1492: 
-    // 1493: RTI_CCR:
-    // 1494:   DATA_PASS_B     DMEM_RD
-    // 1495:   DATA_WRITE      STACK_REG
-    // 1496: 
-    // 1497:   CCR_OP_W        OP_XXXXXXXX ; FIXME get rid of this requirement
-    // 1498:   micro_op_end
+    // 1498: 
+    // 1499: RTI_CCR:
+    // 1500:   DATA_PASS_B     DMEM_RD
+    // 1501:   DATA_WRITE      STACK_REG
+    // 1502: 
+    // 1503:   CCR_OP_W        OP_XXXXXXXX ; FIXME get rid of this requirement
+    // 1504:   micro_op_end
     8'h035: begin
       CV_DATA_ALU_A_SEL_O = 4'hf;  // ZERO
       CV_DATA_ALU_B_SEL_O = 3'h5;  // DMEM_RD
@@ -2195,11 +2199,11 @@ always @* begin
     end
 
 
-    // 1499: 
-    // 1500: RTI_TEST_E:
-    // 1501:   IF              E_CLEAR
-    // 1502:   JUMP            RTS
-    // 1503:   micro_op_end
+    // 1505: 
+    // 1506: RTI_TEST_E:
+    // 1507:   IF              E_CLEAR
+    // 1508:   JUMP            RTS
+    // 1509:   micro_op_end
     8'h036: begin
       CV_MICRO_SEQ_OP_O = 3'h1;  // OP_JUMP
       CV_MICRO_SEQ_BRANCH_ADDR_O = 8'h32;  // RTS
@@ -2207,15 +2211,15 @@ always @* begin
     end
 
 
-    // 1504: 
-    // 1505: RTI_PUL_ALL:
-    // 1506:   SET_DATA_WIDTH  W_STACK_REG
-    // 1507:   
-    // 1508:   STACK_PULL      AR
-    // 1509:   DMEM_LOAD_W
-    // 1510:   
-    // 1511:   JUMP            PUL_LOOP
-    // 1512:   micro_op_end
+    // 1510: 
+    // 1511: RTI_PUL_ALL:
+    // 1512:   SET_DATA_WIDTH  W_STACK_REG
+    // 1513:   
+    // 1514:   STACK_PULL      AR
+    // 1515:   DMEM_LOAD_W
+    // 1516:   
+    // 1517:   JUMP            PUL_LOOP
+    // 1518:   micro_op_end
     8'h037: begin
       CV_MICRO_SEQ_OP_O = 3'h1;  // OP_JUMP
       CV_MICRO_SEQ_BRANCH_ADDR_O = 8'h3a;  // PUL_LOOP
@@ -2226,23 +2230,23 @@ always @* begin
     end
 
 
-    // 1513: 
-    // 1514: 
-    // 1515: ; //////////////////////////////////////////// PULS PULU
-    // 1516: ; //
-    // 1517: PUL:
-    // 1518:   decode pg1_JTA PUL  $35 ; PULS
-    // 1519:   decode pg1_AR  S    $35 ; PULS
+    // 1519: 
     // 1520: 
-    // 1521:   decode pg1_JTA PUL  $37 ; PULU
-    // 1522:   decode pg1_AR  U    $37 ; PULU
-    // 1523: 
-    // 1524:   
-    // 1525:   STACK_PULL      ZERO  ; Prime the decode pipeline!
-    // 1526:   
-    // 1527:   IF              STACK_DONE
-    // 1528:   JUMP            NOP
-    // 1529:   micro_op_end
+    // 1521: ; //////////////////////////////////////////// PULS PULU
+    // 1522: ; //
+    // 1523: PUL:
+    // 1524:   decode pg1_JTA PUL  $35 ; PULS
+    // 1525:   decode pg1_AR  S    $35 ; PULS
+    // 1526: 
+    // 1527:   decode pg1_JTA PUL  $37 ; PULU
+    // 1528:   decode pg1_AR  U    $37 ; PULU
+    // 1529: 
+    // 1530:   
+    // 1531:   STACK_PULL      ZERO  ; Prime the decode pipeline!
+    // 1532:   
+    // 1533:   IF              STACK_DONE
+    // 1534:   JUMP            NOP
+    // 1535:   micro_op_end
     8'h038: begin
       CV_MICRO_SEQ_OP_O = 3'h1;  // OP_JUMP
       CV_MICRO_SEQ_BRANCH_ADDR_O = 8'hc;  // NOP
@@ -2252,15 +2256,15 @@ always @* begin
     end
 
 
-    // 1530:   
-    // 1531:   SET_DATA_WIDTH  W_STACK_REG
-    // 1532:   
-    // 1533:   STACK_PULL      AR
-    // 1534:   DMEM_LOAD_W
-    // 1535:   
-    // 1536:   IF              STACK_DONE
-    // 1537:   JUMP            PUL_DONE
-    // 1538:   micro_op_end
+    // 1536:   
+    // 1537:   SET_DATA_WIDTH  W_STACK_REG
+    // 1538:   
+    // 1539:   STACK_PULL      AR
+    // 1540:   DMEM_LOAD_W
+    // 1541:   
+    // 1542:   IF              STACK_DONE
+    // 1543:   JUMP            PUL_DONE
+    // 1544:   micro_op_end
     8'h039: begin
       CV_MICRO_SEQ_OP_O = 3'h1;  // OP_JUMP
       CV_MICRO_SEQ_BRANCH_ADDR_O = 8'h3b;  // PUL_DONE
@@ -2272,21 +2276,21 @@ always @* begin
     end
 
 
-    // 1539: 
-    // 1540: PUL_LOOP:
-    // 1541:   DATA_PASS_B     DMEM_RD
-    // 1542:   DATA_WRITE      STACK_REG
-    // 1543: 
-    // 1544:   CCR_OP_W        OP_XXXXXXXX ; FIXME get rid of this requirement
-    // 1545:   
-    // 1546:   SET_DATA_WIDTH  W_STACK_REG
-    // 1547: 
-    // 1548:   STACK_PULL      AR
-    // 1549:   DMEM_LOAD_W
-    // 1550: 
-    // 1551:   IF              STACK_NEXT
-    // 1552:   JUMP            PUL_LOOP
-    // 1553:   micro_op_end
+    // 1545: 
+    // 1546: PUL_LOOP:
+    // 1547:   DATA_PASS_B     DMEM_RD
+    // 1548:   DATA_WRITE      STACK_REG
+    // 1549: 
+    // 1550:   CCR_OP_W        OP_XXXXXXXX ; FIXME get rid of this requirement
+    // 1551:   
+    // 1552:   SET_DATA_WIDTH  W_STACK_REG
+    // 1553: 
+    // 1554:   STACK_PULL      AR
+    // 1555:   DMEM_LOAD_W
+    // 1556: 
+    // 1557:   IF              STACK_NEXT
+    // 1558:   JUMP            PUL_LOOP
+    // 1559:   micro_op_end
     8'h03a: begin
       CV_MICRO_SEQ_OP_O = 3'h1;  // OP_JUMP
       CV_MICRO_SEQ_BRANCH_ADDR_O = 8'h3a;  // PUL_LOOP
@@ -2304,15 +2308,15 @@ always @* begin
     end
 
 
-    // 1554: 
-    // 1555: PUL_DONE:
-    // 1556:   DATA_PASS_B     DMEM_RD
-    // 1557:   DATA_WRITE      STACK_REG
-    // 1558: 
-    // 1559:   CCR_OP_W        OP_XXXXXXXX ; FIXME get rid of this requirement
     // 1560: 
-    // 1561:   JUMP            GO_NEW_PC ; PC must be written before "JUMP_TABLE_A_NEXT_PC" FIXME?
-    // 1562:   micro_op_end
+    // 1561: PUL_DONE:
+    // 1562:   DATA_PASS_B     DMEM_RD
+    // 1563:   DATA_WRITE      STACK_REG
+    // 1564: 
+    // 1565:   CCR_OP_W        OP_XXXXXXXX ; FIXME get rid of this requirement
+    // 1566: 
+    // 1567:   JUMP            GO_NEW_PC ; PC must be written before "JUMP_TABLE_A_NEXT_PC" FIXME?
+    // 1568:   micro_op_end
     8'h03b: begin
       CV_MICRO_SEQ_OP_O = 3'h1;  // OP_JUMP
       CV_MICRO_SEQ_BRANCH_ADDR_O = 8'h2f;  // GO_NEW_PC
@@ -2325,22 +2329,22 @@ always @* begin
     end
 
 
-    // 1563: 
-    // 1564: 
-    // 1565: ; //////////////////////////////////////////// PSHS PSHU
-    // 1566: ; //
-    // 1567: PSH:
-    // 1568:   decode pg1_JTA PSH   $34 ; PSHS
-    // 1569:   decode pg1_AR  S     $34 ; PSHS
+    // 1569: 
     // 1570: 
-    // 1571:   decode pg1_JTA PSH   $36 ; PSHU
-    // 1572:   decode pg1_AR  U     $36 ; PSHU
-    // 1573:   
-    // 1574:   STACK_PUSH      ZERO  ; Prime the decode pipeline!
-    // 1575: 
-    // 1576:   IF              STACK_DONE
-    // 1577:   JUMP            NOP
-    // 1578:   micro_op_end
+    // 1571: ; //////////////////////////////////////////// PSHS PSHU
+    // 1572: ; //
+    // 1573: PSH:
+    // 1574:   decode pg1_JTA PSH   $34 ; PSHS
+    // 1575:   decode pg1_AR  S     $34 ; PSHS
+    // 1576: 
+    // 1577:   decode pg1_JTA PSH   $36 ; PSHU
+    // 1578:   decode pg1_AR  U     $36 ; PSHU
+    // 1579:   
+    // 1580:   STACK_PUSH      ZERO  ; Prime the decode pipeline!
+    // 1581: 
+    // 1582:   IF              STACK_DONE
+    // 1583:   JUMP            NOP
+    // 1584:   micro_op_end
     8'h03c: begin
       CV_MICRO_SEQ_OP_O = 3'h1;  // OP_JUMP
       CV_MICRO_SEQ_BRANCH_ADDR_O = 8'hc;  // NOP
@@ -2350,18 +2354,18 @@ always @* begin
     end
 
 
-    // 1579:   
-    // 1580: PSH_LOOP:
-    // 1581:   DATA_PASS_A     STACK_REG
-    // 1582:   
-    // 1583:   SET_DATA_WIDTH  W_STACK_REG
-    // 1584: 
-    // 1585:   STACK_PUSH      AR
-    // 1586:   DMEM_STORE_W
-    // 1587: 
-    // 1588:   IF              STACK_NEXT
-    // 1589:   JUMP            PSH_LOOP
-    // 1590:   micro_op_end
+    // 1585:   
+    // 1586: PSH_LOOP:
+    // 1587:   DATA_PASS_A     STACK_REG
+    // 1588:   
+    // 1589:   SET_DATA_WIDTH  W_STACK_REG
+    // 1590: 
+    // 1591:   STACK_PUSH      AR
+    // 1592:   DMEM_STORE_W
+    // 1593: 
+    // 1594:   IF              STACK_NEXT
+    // 1595:   JUMP            PSH_LOOP
+    // 1596:   micro_op_end
     8'h03d: begin
       CV_MICRO_SEQ_OP_O = 3'h1;  // OP_JUMP
       CV_MICRO_SEQ_BRANCH_ADDR_O = 8'h3d;  // PSH_LOOP
@@ -2377,28 +2381,28 @@ always @* begin
     end
 
 
-    // 1591: 
-    // 1592:   JUMP_TABLE_A_NEXT_PC
-    // 1593:   micro_op_end
+    // 1597: 
+    // 1598:   JUMP_TABLE_A_NEXT_PC
+    // 1599:   micro_op_end
     8'h03e: begin
       CV_MICRO_SEQ_OP_O = 3'h5;  // OP_JUMP_TABLE_A_NEXT_PC
     end
 
 
-    // 1594: 
-    // 1595: 
-    // 1596: ; //////////////////////////////////////////// SWI
-    // 1597: ; //
-    // 1598: SWI:
-    // 1599:   decode pg1_JTA SWI      $3F ; SWI
-    // 1600:   decode pg1_AR  S        $3F ; SWI
-    // 1601:   decode pg1_R1  PC       $3F ; SWI
-    // 1602:   decode pg1_R2  DMEM_RD  $3F ; SWI
-    // 1603:   
-    // 1604:   STACK_PUSH      ZERO  ; Prime the decode pipeline!
-    // 1605: 
-    // 1606:   CCR_OP_W        OP_1ooooooo ; Set E
-    // 1607:   micro_op_end
+    // 1600: 
+    // 1601: 
+    // 1602: ; //////////////////////////////////////////// SWI
+    // 1603: ; //
+    // 1604: SWI:
+    // 1605:   decode pg1_JTA SWI      $3F ; SWI
+    // 1606:   decode pg1_AR  S        $3F ; SWI
+    // 1607:   decode pg1_R1  PC       $3F ; SWI
+    // 1608:   decode pg1_R2  DMEM_RD  $3F ; SWI
+    // 1609:   
+    // 1610:   STACK_PUSH      ZERO  ; Prime the decode pipeline!
+    // 1611: 
+    // 1612:   CCR_OP_W        OP_1ooooooo ; Set E
+    // 1613:   micro_op_end
     8'h03f: begin
       CV_ADDR_ALU_REG_SEL_O = 4'hf;  // ZERO
       CV_CCR_OP_O = 4'h7;  // OP_1OOOOOOO
@@ -2406,18 +2410,18 @@ always @* begin
     end
 
 
-    // 1608:   
-    // 1609: SWI_LOOP:
-    // 1610:   DATA_PASS_A     STACK_REG
-    // 1611:   
-    // 1612:   SET_DATA_WIDTH  W_STACK_REG
-    // 1613: 
-    // 1614:   STACK_PUSH      AR
-    // 1615:   DMEM_STORE_W
-    // 1616: 
-    // 1617:   IF              STACK_NEXT
-    // 1618:   JUMP            SWI_LOOP
-    // 1619:   micro_op_end
+    // 1614:   
+    // 1615: SWI_LOOP:
+    // 1616:   DATA_PASS_A     STACK_REG
+    // 1617:   
+    // 1618:   SET_DATA_WIDTH  W_STACK_REG
+    // 1619: 
+    // 1620:   STACK_PUSH      AR
+    // 1621:   DMEM_STORE_W
+    // 1622: 
+    // 1623:   IF              STACK_NEXT
+    // 1624:   JUMP            SWI_LOOP
+    // 1625:   micro_op_end
     8'h040: begin
       CV_MICRO_SEQ_OP_O = 3'h1;  // OP_JUMP
       CV_MICRO_SEQ_BRANCH_ADDR_O = 8'h40;  // SWI_LOOP
@@ -2433,19 +2437,19 @@ always @* begin
     end
 
 
-    // 1620: 
-    // 1621:   ; R1 is PC
-    // 1622:   ; R2 is DMEM_RD
-    // 1623: 
-    // 1624:   SET_DATA_WIDTH  W_16
-    // 1625: 
-    // 1626:   ADDR_PASS       IDATA ; SWI vector
-    // 1627:   DMEM_LOAD_W
-    // 1628:   
-    // 1629:   CCR_OP_W        OP_o1o1oooo ; Set I & F
-    // 1630: 
-    // 1631:   JUMP            JMP
-    // 1632:   micro_op_end
+    // 1626: 
+    // 1627:   ; R1 is PC
+    // 1628:   ; R2 is DMEM_RD
+    // 1629: 
+    // 1630:   SET_DATA_WIDTH  W_16
+    // 1631: 
+    // 1632:   ADDR_PASS       IDATA ; SWI vector
+    // 1633:   DMEM_LOAD_W
+    // 1634:   
+    // 1635:   CCR_OP_W        OP_o1o1oooo ; Set I & F
+    // 1636: 
+    // 1637:   JUMP            JMP
+    // 1638:   micro_op_end
     8'h041: begin
       CV_MICRO_SEQ_OP_O = 3'h1;  // OP_JUMP
       CV_MICRO_SEQ_BRANCH_ADDR_O = 8'h30;  // JMP
@@ -2456,25 +2460,25 @@ always @* begin
     end
 
 
-    // 1633: 
-    // 1634: 
-    // 1635: 
-    // 1636: ; ////////////////////////////////////////////////////////////////////////////
-    // 1637: 
-    // 1638: 
-    // 1639:   ORG  $FF
+    // 1639: 
     // 1640: 
-    // 1641: TRAP:
-    // 1642: 
-    // 1643:   JUMP            TRAP
-    // 1644:   micro_op_end
+    // 1641: 
+    // 1642: ; ////////////////////////////////////////////////////////////////////////////
+    // 1643: 
+    // 1644: 
+    // 1645:   ORG  $FF
+    // 1646: 
+    // 1647: TRAP:
+    // 1648: 
+    // 1649:   JUMP            TRAP
+    // 1650:   micro_op_end
     8'h0ff: begin
       CV_MICRO_SEQ_OP_O = 3'h1;  // OP_JUMP
       CV_MICRO_SEQ_BRANCH_ADDR_O = 8'hff;  // TRAP
     end
 
 
-    // 1645: 
+    // 1651: 
     default: begin
       //
       // Control Logic Defaults

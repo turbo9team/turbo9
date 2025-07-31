@@ -496,37 +496,167 @@ module tb_dv_6809_model
           //
           case (instruction_reg2)
 
-            ///////////////////////////////////////////// IDIVS //FIXME add signed divide
+            ///////////////////////////////////////////// EDIVS
+            //
+            // 32 by 16 signed integer divide 
+            //
+            // Y = Y:D / X
+            //     Y unchanged when div_by_0 or overflow
+            //
+            // D = remainder
+            //     D unchanged when div_by_0 or overflow
+            //
+            // N = MSB of quotient
+            //     MSB of unchanged Y when div_by_0 or overflow (HC12 undefined)
+            //
+            // Z = 1 if quotient = 0x0000
+            //     1 if unchanged Y = 0x0000, when div_by_0 or overflow (HC12 undefined)
+            //
+            // V = 1 if quotient > 0x7FFF (+32767) or 0x8000 (-32768)
+            //     0 when div_by_0 (HC12 undefined)
+            //
+            // C = 1 if divisor = 0x0000
+            //
+            8'h15 : // EDIVS (inh)
+            begin 
+              bus_cycles = 25;
+              data32_a = $signed({`y,`d});
+              data32_b = $signed(`x);
+              data32_y = $signed(data32_a) / $signed(data32_b);
+              `cc_c = (data32_b == 32'h0000);
+              `cc_v = ($signed(data32_y) > 32767) | ($signed(data32_y) < -32768) | `cc_c;
+              //
+              if (~(`cc_c || `cc_v)) begin // if div-by-zero or overflow
+                `y = data32_y[15:0];
+                data32_y = $signed(data32_a) % $signed(data32_b);
+                `d = data32_y[15:0];
+              end
+              `cc_n = `y[15];
+              `cc_z = (`y == 16'h0000);
+            end
+
+            ///////////////////////////////////////////// IDIVS
+            //
+            // 16 by 16 signed integer divide 
+            //
+            // X = D / X
+            //     X unchanged when div_by_0 or overflow
+            //
+            // D = remainder
+            //     D unchanged when div_by_0 or overflow
+            //
+            // N = MSB of quotient
+            //     MSB of unchanged X when div_by_0 or overflow (HC12 undefined)
+            //
+            // Z = 1 if quotient = 0x0000
+            //     1 if unchanged X = 0x0000, when div_by_0 or overflow (HC12 undefined)
+            //
+            // V = 1 if quotient > 0x7FFF (+32767) or 0x8000 (-32768)
+            //     1 when div_by_0 (HC12 undefined)
+            //
+            // C = 1 if divisor = 0x0000
+            //
             8'h18 : // IDIVS (inh)
             begin 
               bus_cycles = 25;
-              data16_a = `d;
-              data16_b = `x;
-              data16_y = $unsigned(data16_a) / $unsigned(data16_b);
-              //`cc_h = 1'b0;
-              //`cc_n = 1'b0;
-              `cc_z = (data16_y == 16'h0000);
-              `cc_v = 1'b0;
-              `cc_c = (data16_b == 16'h0000);
-              `x = data16_y;
-              `d = $unsigned(data16_a) % $unsigned(data16_b);
+              data32_a = $signed(`d);
+              data32_b = $signed(`x);
+              data32_y = $signed(data32_a) / $signed(data32_b);
+              `cc_c = (data32_b == 32'h0000);
+              `cc_v = (($signed(data32_y) > 32767) | ($signed(data32_y) < -32768) | `cc_c);
+              //
+              if (~(`cc_c || `cc_v)) begin // if div-by-zero or overflow
+                `x = data32_y[15:0];
+                data32_y = $signed(data32_a) % $signed(data32_b);
+                `d = data32_y[15:0];
+              end
+              `cc_n = `x[15];
+              `cc_z = (`x == 16'h0000);
             end
-
-            ///////////////////////////////////////////// FDIV
-            8'h19 : // FDIV (inh)
+  
+            ///////////////////////////////////////////// EDIV
+            //
+            // 32 by 16 unsigned integer divide 
+            //
+            // Y = Y:D / X
+            //     Y input when div_by_0 or overflow
+            //
+            // D = remainder
+            //     D input when div_by_0 or overflow
+            //
+            // N = MSB of quotient
+            //     MSB of Y input when div_by_0 or overflow (HC12 undefined)
+            //
+            // Z = 1 if quotient = 0x0000
+            //     1 if Y input  = 0x0000, when div_by_0 or overflow (HC12 undefined)
+            //
+            // V = 1 if quotient > 0xFFFF
+            //     1 when div_by_0 (HC12 undefined)
+            //
+            // C = 1 if divisor = 0x0000
+            //
+            8'h14 : // EDIV (inh)
             begin 
+              bus_cycles = 25;
+              data32_a = {`y,`d};
+              data32_b = {16'h0000, `x};
+              data32_y = $unsigned(data32_a) / $unsigned(data32_b);
+              `cc_c = (data32_b[15:0] == 16'h0000);
+              if (`cc_c) begin
+                `cc_v = 1'b1; // if div-by-zero set overflow
+              end else begin
+                `cc_v = (data32_y[31:16] != 16'h0000);
+              end
+              if (`cc_v | `cc_c) begin
+                `cc_n = `y[15];
+                `cc_z = (`y == 16'h0000);
+              end else begin // if no overflow or divide-by-zero
+                `cc_n = data32_y[15];
+                `cc_z = (data32_y[15:0] == 16'h0000);
+                `y = data32_y[15:0];
+                data32_y = $unsigned(data32_a) % $unsigned(data32_b);
+                `d = data32_y[15:0];
+              end
+            end
+  
+            ///////////////////////////////////////////// FDIV
+            //
+            // 16 by 16 unsigned fractional divide
+            // 0.16 = 0.16 / 16.0
+            //
+            // X = D / X 
+            //     0xFFFF when div_by_0
+            //
+            // D = remainder
+            //     D input when div_by_0 (HC12 undefined)
+            //
+            // Z = 1 if quotient = 0x0000
+            //     0 when div_by_0
+            //
+            // V = 1 if X <= D
+            //
+            // C = 1 if divisor = 0x0000
+            //
+            8'h19 : // FDIV (inh)
+            begin
               bus_cycles = 25;
               data32_a = {`d, 16'h0000};
               data32_b = {16'h0000, `x};
               data32_y = $unsigned(data32_a) / $unsigned(data32_b);
               //`cc_h = 1'b0;
               //`cc_n = 1'b0;
-              `cc_z = (data32_y[15:0] == 16'h0000);
-              `cc_v = 1'b0;
-              `cc_c = (data32_b[15:0] == 16'h0000);
-              `x = data32_y[15:0];
-              data32_y = $unsigned(data32_a) % $unsigned(data32_b);
-              `d = data32_y[15:0];
+              `cc_c = (data32_b[15:0] == 16'h0000); // 1 if X = 0
+              `cc_v = (data32_b[15:0] <= data32_a[31:16]); // 1 if X <= D
+              if (`cc_c || `cc_v) begin // if div-by-zero or overflow
+                `cc_z = 1'b0;
+                `x = 16'hFFFF;
+                //`d = unchanged
+              end else begin
+                `cc_z = (data32_y[15:0] == 16'h0000);
+                `x = data32_y[15:0];
+                data32_y = $unsigned(data32_a) % $unsigned(data32_b);
+                `d = data32_y[15:0];
+              end
             end
 
             ///////////////////////////////////////////// LBxx (rel)
@@ -726,6 +856,17 @@ module tb_dv_6809_model
         end
 
         ///////////////////////////////////////////// EMUL
+        //
+        // 16 by 16 unsigned integer multiply
+        //
+        // Y:D = D * Y
+        //
+        // N   = MSB of product
+        //    
+        // Z   = 1 if product = 0x0000_0000
+        //    
+        // C   = bit 15 of product
+        //
         8'h14 : // EMUL (inh)
         begin 
           bus_cycles = 19;
@@ -742,6 +883,17 @@ module tb_dv_6809_model
         end
 
         ///////////////////////////////////////////// EMULS
+        //
+        // 16 by 16 signed integer multiply
+        //
+        // Y:D = D * Y
+        //
+        // N   = MSB of product
+        //    
+        // Z   = 1 if product = 0x0000_0000
+        //    
+        // C   = bit 15 of product
+        //
         8'h15 : // EMULS (inh)
         begin 
           bus_cycles = 19;
@@ -775,19 +927,42 @@ module tb_dv_6809_model
         end
 
         ///////////////////////////////////////////// IDIV
+        //
+        // 16 by 16 unsigned integer divide
+        //
+        // X = D / X
+        //     0xFFFF when div_by_0
+        //
+        // D = remainder
+        //     D input when div_by_0 (HC12 undefined)
+        //
+        // Z = 1 if quotient = 0x0000
+        //     0 when div_by_0
+        //
+        // V = 0
+        //
+        // C = 1 if divisor = 0x0000
+        //
         8'h18 : // IDIV (inh)
-        begin 
+        begin
           bus_cycles = 19;
           data16_a = `d;
           data16_b = `x;
           data16_y = $unsigned(data16_a) / $unsigned(data16_b);
           //`cc_h = 1'b0;
           //`cc_n = 1'b0;
-          `cc_z = (data16_y == 16'h0000);
-          `cc_v = 1'b0;
           `cc_c = (data16_b == 16'h0000);
-          `x = data16_y;
-          `d = $unsigned(data16_a) % $unsigned(data16_b);
+          if (`cc_c) begin // if div-by-zero
+            `cc_z = 1'b0;
+            `cc_v = 1'b0;
+            `x = 16'hFFFF;
+            //`d = 
+          end else begin
+            `cc_z = (data16_y == 16'h0000);
+            `cc_v = 1'b0;
+            `x = data16_y;
+            `d = $unsigned(data16_a) % $unsigned(data16_b);
+          end
         end
 
         ///////////////////////////////////////////// DAA (inh)

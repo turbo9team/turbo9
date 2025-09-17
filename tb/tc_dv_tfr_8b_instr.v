@@ -221,7 +221,7 @@
         ///////////////// Waiting for indication of completed code under test
         //
         $display("[TB: tc_dv_tfr_8b_instr] Waiting for Model and DUT to indicate completion of code under test...");
-        wait_bits_set(8'h80, `TEST_TFR_8_FINISH_CYCLES, error_cnt);
+        wait_bits_set(8'h02, `TEST_TFR_8_FINISH_CYCLES, error_cnt);
       
         wait_clk_cycles(4); // wait a few cycles to capture the output port in waveform dump
 

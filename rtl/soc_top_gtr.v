@@ -36,6 +36,36 @@
 // Description: Target independent top level for the Turbo9GTR
 // (16-bit program & 16-bit data buses)
 //
+
+  ////////////// Memory Map
+  //
+  //
+  // Initialized RAM (Vector Table): FFFF - FFF0
+  //
+  // FFFE : FFFF   RESET_VECTOR
+  // FFFC : FFFD   NMI_VECTOR
+  // FFFA : FFFB   SWI_VECTOR
+  // FFF8 : FFF9   IRQ_VECTOR
+  // FFF6 : FFF7   FIRQ_VECTOR
+  // FFF4 : FFF5   SWI2_VECTOR
+  // FFF2 : FFF3   SWI3_VECTOR
+  // FFF0 : FFF1   RESERVED_VECTOR
+  //
+  //
+  // I/O Space: FFEF - FF00
+  //
+  // FF08          CLK_CNT_CTRL[1:0] (read)  /  CLK_CNT_CTRL (write)
+  // FF04 : FF07   CLK_CNT[31:0]     (read)
+  // FF03          ACIA_STATUS       (read)
+  // FF02          ACIA_RX_DATA      (read)  /  ACIA_TX_DATA (write)
+  // FF01          GPI PORT          (read)
+  // FF00          GPO PORT          (read)  /  GPO_PORT    (write)
+  //
+  //
+  // Initialized RAM: FEFF - 0000
+  //
+  //
+
 //////////////////////////////////////////////////////////////////////////////
 // History:
 // 07.14.2023 - Kevin Phillipson
@@ -58,15 +88,19 @@ module soc_top_gtr
 
   // Inputs 
   input          RXD_PIN_I,
+  input    [7:0] GPI_PORT_I,
   
   // Outputs
   output         TXD_PIN_O,
-  output   [7:0] OUTPUT_PORT_O
+  output   [7:0] GPO_PORT_O
 );
 
 /////////////////////////////////////////////////////////////////////////////
 //                             INTERNAL SIGNALS
 /////////////////////////////////////////////////////////////////////////////
+
+// Comment / Uncomment to remove / add pipeline register:
+//`define SOC_PIPELINE_REG
 
 localparam FULL_MEM_ADDR_WIDTH = MEM_ADDR_WIDTH;
 localparam EVEN_MEM_ADDR_WIDTH = MEM_ADDR_WIDTH-1;
@@ -158,11 +192,15 @@ wire  [7:0] dmem_odd_ram_rd_dat;
 wire  [7:0] acia_data_rd_dat;  
 wire  [7:0] acia_status_rd_dat;
 
-reg  acia_data_wr_en;
-reg  acia_data_rd_en;
+reg         clk_cnt_ctrl_wr_en;
+wire  [7:0] clk_cnt_ctrl_dat;
 
-reg         port_we;
-wire  [7:0] port_rd_dat;
+reg         acia_data_wr_en;
+reg         acia_data_rd_en;
+
+reg         gpo_port_we;
+wire  [7:0] gpo_port_rd_dat;
+wire  [7:0] gpi_port_rd_dat;
 
 wire [31:0] clk_cnt_rd_dat;
 
@@ -235,38 +273,56 @@ wire        ram_clk;
 
   );
 
-  /*
+`ifdef SOC_PIPELINE_REG
+  //
   assign ram_clk = CLK_I;
-
-  // Wishbone Pipeline Registers (Even Bytes)
+  //
+  // Wishbone Pipeline Registers
   always @(posedge CLK_I, posedge RST_I) begin
     if (RST_I) begin
       dmem_even_turbo9_adr_reg <= dmem_even_turbo9_adr_rst;
       dmem_even_turbo9_ack     <= 1'b0;
       dmem_even_turbo9_tgd_reg <= dmem_even_turbo9_tgd_rst; 
-      dmem_even_turbo9_we_reg  <= dmem_even_turbo9_we_rst; 
+      dmem_even_turbo9_we_reg  <= dmem_even_turbo9_we_rst;
+      //
+      dmem_odd_turbo9_adr_reg  <= dmem_odd_turbo9_adr_rst;
+      dmem_odd_turbo9_ack      <= 1'b0;
     end else begin
       dmem_even_turbo9_adr_reg <= dmem_even_turbo9_adr;
       dmem_even_turbo9_ack     <= dmem_even_turbo9_stb;
       dmem_even_turbo9_tgd_reg <= dmem_even_turbo9_tgd_o;
-      dmem_even_turbo9_we_reg  <= dmem_even_turbo9_we; 
+      dmem_even_turbo9_we_reg  <= dmem_even_turbo9_we;
+      //
+      dmem_odd_turbo9_adr_reg  <= dmem_odd_turbo9_adr;
+      dmem_odd_turbo9_ack      <= dmem_odd_turbo9_stb;
     end
   end
-
-  // Wishbone Pipeline Registers (Odd Bytes)
+  //
+  // Wishbone Pipeline Registers
   always @(posedge CLK_I, posedge RST_I) begin
     if (RST_I) begin
-      dmem_odd_turbo9_adr_reg <= dmem_odd_turbo9_adr_rst;
-      dmem_odd_turbo9_ack     <= 1'b0;
+      pmem_even_turbo9_adr_reg <= pmem_even_turbo9_adr_rst;
+      pmem_even_turbo9_ack     <= 1'b0;
+      pmem_even_turbo9_tgd_reg <= pmem_even_turbo9_tgd_rst; 
+      pmem_even_turbo9_we_reg  <= pmem_even_turbo9_we_rst;
+      //
+      pmem_odd_turbo9_adr_reg  <= pmem_odd_turbo9_adr_rst;
+      pmem_odd_turbo9_ack      <= 1'b0;
     end else begin
-      dmem_odd_turbo9_adr_reg <= dmem_odd_turbo9_adr;
-      dmem_odd_turbo9_ack     <= dmem_odd_turbo9_stb;
+      pmem_even_turbo9_adr_reg <= pmem_even_turbo9_adr;
+      pmem_even_turbo9_ack     <= pmem_even_turbo9_stb;
+      pmem_even_turbo9_tgd_reg <= pmem_even_turbo9_tgd_o;
+      pmem_even_turbo9_we_reg  <= pmem_even_turbo9_we; 
+      //
+      pmem_odd_turbo9_adr_reg  <= pmem_odd_turbo9_adr;
+      pmem_odd_turbo9_ack      <= pmem_odd_turbo9_stb;
     end
   end
-  */
-
+  //
+`else
+  //
   assign ram_clk = ~CLK_I;
-
+  //
   always @* begin
     dmem_even_turbo9_adr_reg = dmem_even_turbo9_adr;
     dmem_even_turbo9_ack     = dmem_even_turbo9_stb;
@@ -275,36 +331,7 @@ wire        ram_clk;
     dmem_odd_turbo9_adr_reg  = dmem_odd_turbo9_adr;
     dmem_odd_turbo9_ack      = dmem_odd_turbo9_stb;
   end
-
-
-  /*
-  // Wishbone Pipeline Registers (Even Bytes)
-  always @(posedge CLK_I, posedge RST_I) begin
-    if (RST_I) begin
-      pmem_even_turbo9_adr_reg <= pmem_even_turbo9_adr_rst;
-      pmem_even_turbo9_ack     <= 1'b0;
-      pmem_even_turbo9_tgd_reg <= pmem_even_turbo9_tgd_rst; 
-      pmem_even_turbo9_we_reg  <= pmem_even_turbo9_we_rst; 
-    end else begin
-      pmem_even_turbo9_adr_reg <= pmem_even_turbo9_adr;
-      pmem_even_turbo9_ack     <= pmem_even_turbo9_stb;
-      pmem_even_turbo9_tgd_reg <= pmem_even_turbo9_tgd_o;
-      pmem_even_turbo9_we_reg  <= pmem_even_turbo9_we; 
-    end
-  end
-
-  // Wishbone Pipeline Registers (Odd Bytes)
-  always @(posedge CLK_I, posedge RST_I) begin
-    if (RST_I) begin
-      pmem_odd_turbo9_adr_reg <= pmem_odd_turbo9_adr_rst;
-      pmem_odd_turbo9_ack     <= 1'b0;
-    end else begin
-      pmem_odd_turbo9_adr_reg <= pmem_odd_turbo9_adr;
-      pmem_odd_turbo9_ack     <= pmem_odd_turbo9_stb;
-    end
-  end
-  */
-
+  //
   always @* begin
     pmem_even_turbo9_adr_reg = pmem_even_turbo9_adr;
     pmem_even_turbo9_ack     = pmem_even_turbo9_stb;
@@ -313,25 +340,32 @@ wire        ram_clk;
     pmem_odd_turbo9_adr_reg  = pmem_odd_turbo9_adr;
     pmem_odd_turbo9_ack      = pmem_odd_turbo9_stb;
   end
-
+  //
+`endif
 
 
   // Write Enables (Even Bytes)
   always @* begin
     // Defaults
     dmem_even_ram_we = 1'b0;
-    port_we = 1'b0;
+    gpo_port_we = 1'b0;
     acia_data_wr_en = 1'b0;
+    clk_cnt_ctrl_wr_en = 1'b0;
     //
     // Even Memory Bus Read Data Mux
-    if (dmem_even_turbo9_adr_full[15:FULL_MEM_ADDR_WIDTH] == {(16-FULL_MEM_ADDR_WIDTH){1'b1}}) begin
+    if (dmem_even_turbo9_adr_full[15:8] == 8'hFF) begin
+      if (dmem_even_turbo9_adr_full[7:4] == 4'hF) begin  /////////// FFFF - FFF0 : Vector Table
+        dmem_even_ram_we = dmem_even_turbo9_we;
+      end else begin
+        case (dmem_even_turbo9_adr_full[3:0])            /////////// FFEF - FF00 : I/O Space
+          //
+          4'h8: clk_cnt_ctrl_wr_en = dmem_even_turbo9_we;
+          4'h2: acia_data_wr_en    = dmem_even_turbo9_we;
+          4'h0: gpo_port_we        = dmem_even_turbo9_we;
+        endcase
+      end
+    end else begin                                       /////////// FEFF - 0000 : RAM
       dmem_even_ram_we = dmem_even_turbo9_we;
-    end else begin
-      case (dmem_even_turbo9_adr_full[3:0])
-        //
-        4'h2: acia_data_wr_en = dmem_even_turbo9_we;
-        4'h0: port_we         = dmem_even_turbo9_we;
-      endcase
     end
   end
 
@@ -341,7 +375,12 @@ wire        ram_clk;
     dmem_odd_ram_we = 1'b0;
     //
     // Odd Memory Bus Read Data Mux
-    if (dmem_odd_turbo9_adr_full[15:FULL_MEM_ADDR_WIDTH] == {(16-FULL_MEM_ADDR_WIDTH){1'b1}}) begin
+    if (dmem_odd_turbo9_adr_full[15:8] == 8'hFF) begin
+      if (dmem_odd_turbo9_adr_full[7:4] == 4'hF) begin   /////////// FFFF - FFF0 : Vector Table
+        dmem_odd_ram_we = dmem_odd_turbo9_we;
+      end
+                                                         /////////// FFEF - FF00 : I/O Space
+    end else begin                                       /////////// FEFF - 0000 : RAM
       dmem_odd_ram_we = dmem_odd_turbo9_we;
     end
   end
@@ -384,16 +423,26 @@ wire        ram_clk;
     .B_DAT_O  (pmem_odd_ram_rd_dat)
   );
 
+
   // Output Port
-  output_port I_output_port
+  gpo_port I_gpo_port
   (
-    .CLK_I  (CLK_I),
-    .RST_I  (RST_I),
-    .WE_I   (port_we),
-    .DAT_I  (dmem_even_turbo9_wr_dat),
-    .DAT_O  (port_rd_dat),
-    .PORT_O (OUTPUT_PORT_O)
+    .CLK_I      (CLK_I),
+    .RST_I      (RST_I),
+    .WE_I       (gpo_port_we),
+    .DAT_I      (dmem_even_turbo9_wr_dat),
+    .DAT_O      (gpo_port_rd_dat),
+    .GPO_PORT_O (GPO_PORT_O)
   );
+
+  // Input Port
+  gpi_port I_gpi_port
+  (
+    .CLK_I       (CLK_I           ),
+    .GPI_PORT_I  (GPI_PORT_I      ),
+    .DAT_O       (gpi_port_rd_dat )
+  );
+
 
   // UART 
   t6551 I_t6551
@@ -414,15 +463,20 @@ wire        ram_clk;
     .STATUS_DATA_O    (acia_status_rd_dat )
   );
 
-  // Clock Count Timer
+ // Clock Count Timer
   clk_counter I_clk_counter
   (
     // Inputs: Clock & Reset
-    .RST_I            (RST_I          ),
-    .CLK_I            (CLK_I          ),
-    // Inputs             
-    .PORT_I           (OUTPUT_PORT_O  ),  
-    .CLK_CNT_DATA_O   (clk_cnt_rd_dat )
+    .RST_I                (RST_I          ),
+    .CLK_I                (CLK_I          ),
+
+    // Inputs
+    .DATA_I               (dmem_even_turbo9_wr_dat ),
+    .CLK_CNT_CTRL_WR_EN_I (clk_cnt_ctrl_wr_en ),
+
+    // Outputs
+    .CLK_CNT_CTRL_DATA_O  (clk_cnt_ctrl_dat   ),
+    .CLK_CNT_DATA_O       (clk_cnt_rd_dat     )
   );
 
 
@@ -432,20 +486,25 @@ wire        ram_clk;
     dmem_even_turbo9_rd_dat = 8'h00;
     acia_data_rd_en = 1'b0;
     //
-    if (dmem_even_turbo9_adr_reg_full[15:FULL_MEM_ADDR_WIDTH] == {(16-FULL_MEM_ADDR_WIDTH){1'b1}}) begin
+    if (dmem_even_turbo9_adr_reg_full[15:8] == 8'hFF) begin
+      if (dmem_even_turbo9_adr_reg_full[7:4] == 4'hF) begin /////////// FFFF - FFF0 : Vector Table
+        dmem_even_turbo9_rd_dat = dmem_even_ram_rd_dat;
+      end else begin
+        case (dmem_even_turbo9_adr_reg_full[3:0])           /////////// FFEF - FF00 : I/O Space
+          //
+          4'h8:    dmem_even_turbo9_rd_dat = clk_cnt_ctrl_dat;
+          4'h6:    dmem_even_turbo9_rd_dat = clk_cnt_rd_dat[15: 8];
+          4'h4:    dmem_even_turbo9_rd_dat = clk_cnt_rd_dat[31:24];
+          4'h2: begin
+            dmem_even_turbo9_rd_dat = acia_data_rd_dat;
+            acia_data_rd_en =  ~dmem_even_turbo9_we_reg;
+          end
+          4'h0:    dmem_even_turbo9_rd_dat = gpo_port_rd_dat;
+          default: dmem_even_turbo9_rd_dat = 8'h00;
+        endcase
+      end
+    end else begin                                         /////////// FEFF - 0000 : RAM
       dmem_even_turbo9_rd_dat = dmem_even_ram_rd_dat;
-    end else begin
-      case (dmem_even_turbo9_adr_reg_full[3:0])
-        //
-        4'h6:    dmem_even_turbo9_rd_dat = clk_cnt_rd_dat[15: 8];
-        4'h4:    dmem_even_turbo9_rd_dat = clk_cnt_rd_dat[31:24];
-        4'h2: begin
-          dmem_even_turbo9_rd_dat = acia_data_rd_dat;
-          acia_data_rd_en =  ~dmem_even_turbo9_we_reg;
-        end
-        4'h0:    dmem_even_turbo9_rd_dat = port_rd_dat;
-        default: dmem_even_turbo9_rd_dat = 8'h00;
-      endcase
     end
   end
 
@@ -454,41 +513,32 @@ wire        ram_clk;
     // Defaults
     dmem_odd_turbo9_rd_dat = 8'h00;
     //
-    if (dmem_odd_turbo9_adr_reg_full[15:FULL_MEM_ADDR_WIDTH] == {(16-FULL_MEM_ADDR_WIDTH){1'b1}}) begin
+    if (dmem_odd_turbo9_adr_reg_full[15:8] == 8'hFF) begin
+      if (dmem_odd_turbo9_adr_reg_full[7:4] == 4'hF) begin /////////// FFFF - FFF0 : Vector Table
+        dmem_odd_turbo9_rd_dat = dmem_odd_ram_rd_dat;
+      end else begin
+        case (dmem_odd_turbo9_adr_reg_full[3:0])           /////////// FFEF - FF00 : I/O Space
+          //
+          4'h7:    dmem_odd_turbo9_rd_dat = clk_cnt_rd_dat[ 7: 0];
+          4'h5:    dmem_odd_turbo9_rd_dat = clk_cnt_rd_dat[23:16];
+          4'h3:    dmem_odd_turbo9_rd_dat = acia_status_rd_dat;
+          4'h1:    dmem_odd_turbo9_rd_dat = gpi_port_rd_dat;
+          default: dmem_odd_turbo9_rd_dat = 8'h00;
+        endcase
+      end
+    end else begin                                         /////////// FEFF - 0000 : RAM
       dmem_odd_turbo9_rd_dat = dmem_odd_ram_rd_dat;
-    end else begin
-      case (dmem_odd_turbo9_adr_reg_full[3:0])
-        //
-        4'h7:    dmem_odd_turbo9_rd_dat = clk_cnt_rd_dat[ 7: 0];
-        4'h5:    dmem_odd_turbo9_rd_dat = clk_cnt_rd_dat[23:16];
-        4'h3:    dmem_odd_turbo9_rd_dat = acia_status_rd_dat;
-        default: dmem_odd_turbo9_rd_dat = 8'h00;
-      endcase
     end
   end
 
   // Read Program Memory Muxes & Enables (Even Bytes)
   always @* begin
-    // Defaults
-    pmem_even_turbo9_rd_dat = 8'h00;
-    //
-    if (pmem_even_turbo9_adr_reg_full[15:FULL_MEM_ADDR_WIDTH] == {(16-FULL_MEM_ADDR_WIDTH){1'b1}}) begin
-      pmem_even_turbo9_rd_dat = pmem_even_ram_rd_dat;
-    end else begin
-      pmem_even_turbo9_rd_dat = 8'h00;
-    end
+    pmem_even_turbo9_rd_dat = pmem_even_ram_rd_dat;
   end
 
   // Read Program Memory Mux & Enables (Odd Bytes)
   always @* begin
-    // Defaults
-    pmem_odd_turbo9_rd_dat = 8'h00;
-    //
-    if (pmem_odd_turbo9_adr_reg_full[15:FULL_MEM_ADDR_WIDTH] == {(16-FULL_MEM_ADDR_WIDTH){1'b1}}) begin
-      pmem_odd_turbo9_rd_dat = pmem_odd_ram_rd_dat;
-    end else begin
-      pmem_odd_turbo9_rd_dat = 8'h00;
-    end
+    pmem_odd_turbo9_rd_dat = pmem_odd_ram_rd_dat;
   end
 
 

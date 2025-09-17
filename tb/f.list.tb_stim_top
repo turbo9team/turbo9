@@ -13,7 +13,8 @@
 ../../rtl/soc_top.v
 ../../rtl/syncram_dp_8bit.v
 ../../rtl/syncram_8bit.v
-../../rtl/output_port.v
+../../rtl/gpo_port.v
+../../rtl/gpi_port.v
 
 ../../rtl/t6551.v
 ../../rtl/t6551_rx.v

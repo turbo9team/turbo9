@@ -1,0 +1,564 @@
+                      (  turbo9_boot.asm):00001         ; [TURBO9_HEADER_START]
+                      (  turbo9_boot.asm):00002         ; ////////////////////////////////////////////////////////////////////////////
+                      (  turbo9_boot.asm):00003         ;                          Turbo9 Microprocessor IP
+                      (  turbo9_boot.asm):00004         ; ////////////////////////////////////////////////////////////////////////////
+                      (  turbo9_boot.asm):00005         ; Website: www.turbo9.org
+                      (  turbo9_boot.asm):00006         ; Contact: team[at]turbo9[dot]org
+                      (  turbo9_boot.asm):00007         ; ////////////////////////////////////////////////////////////////////////////
+                      (  turbo9_boot.asm):00008         ; [TURBO9_LICENSE_START]
+                      (  turbo9_boot.asm):00009         ; BSD-1-Clause
+                      (  turbo9_boot.asm):00010         ;
+                      (  turbo9_boot.asm):00011         ; Copyright (c) 2020-2023
+                      (  turbo9_boot.asm):00012         ; Kevin Phillipson
+                      (  turbo9_boot.asm):00013         ; Michael Rywalt
+                      (  turbo9_boot.asm):00014         ; All rights reserved.
+                      (  turbo9_boot.asm):00015         ;
+                      (  turbo9_boot.asm):00016         ; Redistribution and use in source and binary forms, with or without
+                      (  turbo9_boot.asm):00017         ; modification, are permitted provided that the following conditions are met:
+                      (  turbo9_boot.asm):00018         ;
+                      (  turbo9_boot.asm):00019         ; 1. Redistributions of source code must retain the above copyright notice,
+                      (  turbo9_boot.asm):00020         ;    this list of conditions and the following disclaimer.
+                      (  turbo9_boot.asm):00021         ;
+                      (  turbo9_boot.asm):00022         ; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+                      (  turbo9_boot.asm):00023         ; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+                      (  turbo9_boot.asm):00024         ; IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+                      (  turbo9_boot.asm):00025         ; ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS AND CONTRIBUTORS BE
+                      (  turbo9_boot.asm):00026         ; LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+                      (  turbo9_boot.asm):00027         ; CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+                      (  turbo9_boot.asm):00028         ; SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+                      (  turbo9_boot.asm):00029         ; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+                      (  turbo9_boot.asm):00030         ; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+                      (  turbo9_boot.asm):00031         ; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+                      (  turbo9_boot.asm):00032         ; POSSIBILITY OF SUCH DAMAGE.
+                      (  turbo9_boot.asm):00033         ; [TURBO9_LICENSE_END]
+                      (  turbo9_boot.asm):00034         ; ////////////////////////////////////////////////////////////////////////////
+                      (  turbo9_boot.asm):00035         ; Engineer:
+                      (  turbo9_boot.asm):00036         ; Description:
+                      (  turbo9_boot.asm):00037         ;
+                      (  turbo9_boot.asm):00038         ; ////////////////////////////////////////////////////////////////////////////
+                      (  turbo9_boot.asm):00039         ; History:
+                      (  turbo9_boot.asm):00040         ; 07.14.2023 - Kevin Phillipson
+                      (  turbo9_boot.asm):00041         ;   File header added
+                      (  turbo9_boot.asm):00042         ;
+                      (  turbo9_boot.asm):00043         ; ////////////////////////////////////////////////////////////////////////////
+                      (  turbo9_boot.asm):00044         ; [TURBO9_HEADER_END]
+                      (  turbo9_boot.asm):00045         ;
+                      (  turbo9_boot.asm):00046         ; Turbo9 S19 Bootloader
+                      (  turbo9_boot.asm):00047         ;
+                      (  turbo9_boot.asm):00048         ; Kevin Phillipson
+                      (  turbo9_boot.asm):00049         ;
+                      (  turbo9_boot.asm):00050         
+                      (  turbo9_boot.asm):00051         ; //////////// Memory Map
+                      (  turbo9_boot.asm):00052         ;
+                      (  turbo9_boot.asm):00053         ; Initialized RAM (Vector Table): FFFF - FFF0
+                      (  turbo9_boot.asm):00054         ;
+                      (  turbo9_boot.asm):00055         ; FFFE : FFFF   RESET_VECTOR
+                      (  turbo9_boot.asm):00056         ; FFFC : FFFD   NMI_VECTOR
+                      (  turbo9_boot.asm):00057         ; FFFA : FFFB   SWI_VECTOR
+                      (  turbo9_boot.asm):00058         ; FFF8 : FFF9   IRQ_VECTOR
+                      (  turbo9_boot.asm):00059         ; FFF6 : FFF7   FIRQ_VECTOR
+                      (  turbo9_boot.asm):00060         ; FFF4 : FFF5   SWI2_VECTOR
+                      (  turbo9_boot.asm):00061         ; FFF2 : FFF3   SWI3_VECTOR
+                      (  turbo9_boot.asm):00062         ; FFF0 : FFF1   RESERVED_VECTOR
+                      (  turbo9_boot.asm):00063         ;
+                      (  turbo9_boot.asm):00064         ;
+                      (  turbo9_boot.asm):00065         ; I/O Space: FFEF - FF00
+                      (  turbo9_boot.asm):00066         ;
+                      (  turbo9_boot.asm):00067         ; FF08          CLK_CNT_CTRL[1:0] (read)  /  CLK_CNT_CTRL (write)
+                      (  turbo9_boot.asm):00068         ; FF04 : FF07   CLK_CNT[31:0]     (read)
+                      (  turbo9_boot.asm):00069         ; FF03          ACIA_STATUS       (read)
+                      (  turbo9_boot.asm):00070         ; FF02          ACIA_RX_DATA      (read)  /  ACIA_TX_DATA (write)
+                      (  turbo9_boot.asm):00071         ; FF01          GPI PORT          (read)
+                      (  turbo9_boot.asm):00072         ; FF00          GPO PORT          (read)  /  GPO_PORT    (write)
+                      (  turbo9_boot.asm):00073         ;
+                      (  turbo9_boot.asm):00074         ; Initialized RAM: FEFF - 0000
+                      (  turbo9_boot.asm):00075         ;
+                      (  turbo9_boot.asm):00076         
+     FF03             (  turbo9_boot.asm):00077         acia_status equ   $ff03
+     FF02             (  turbo9_boot.asm):00078         acia_data   equ   $ff02
+     FF01             (  turbo9_boot.asm):00079         gpi_port    equ   $ff01
+     FF00             (  turbo9_boot.asm):00080         gpo_port    equ   $ff00
+                      (  turbo9_boot.asm):00081         
+                      (  turbo9_boot.asm):00082         
+     FD00             (  turbo9_boot.asm):00083         boot_start  equ   $fd00       ; bootloader location
+     FD00             (  turbo9_boot.asm):00084         boot_stack  equ   boot_start  ; stack location
+                      (  turbo9_boot.asm):00085         
+                      (  turbo9_boot.asm):00086         
+                      (  turbo9_boot.asm):00087         ; ////////////////////////////////////////////////////////////////////////////
+                      (  turbo9_boot.asm):00088         ;                            Main Program
+                      (  turbo9_boot.asm):00089         ; ////////////////////////////////////////////////////////////////////////////
+                      (  turbo9_boot.asm):00090         
+                      (  turbo9_boot.asm):00091         
+                      (  turbo9_boot.asm):00092         ; //////////////////// Start of bootloader
+                      (  turbo9_boot.asm):00093         ; //
+                      (  turbo9_boot.asm):00094           org   boot_start
+                      (  turbo9_boot.asm):00095         
+FD00 10CEFD00         (  turbo9_boot.asm):00096           lds   #boot_stack   ; set stack point
+                      (  turbo9_boot.asm):00097         
+FD04 7FFF00           (  turbo9_boot.asm):00098           clr   gpo_port  ; clear outport to communicate with TB
+                      (  turbo9_boot.asm):00099         
+                      (  turbo9_boot.asm):00100           ; B = general purpose
+                      (  turbo9_boot.asm):00101           ; S = stack pointer
+                      (  turbo9_boot.asm):00102         
+                      (  turbo9_boot.asm):00103           ; A = byte_cnt,     S1 record byte count
+                      (  turbo9_boot.asm):00104           ; X = checksum,
+                      (  turbo9_boot.asm):00105           ; Y = write_addr,   Write address
+                      (  turbo9_boot.asm):00106           ; U = total_bytes,  Total bytes written
+                      (  turbo9_boot.asm):00107           
+FD07 8E0000           (  turbo9_boot.asm):00108           ldx   #$0000        ; clear checksum
+FD0A 1F13             (  turbo9_boot.asm):00109           tfr   x,u           ; clear total_bytes
+                      (  turbo9_boot.asm):00110         
+FD0C CCFDF2           (  turbo9_boot.asm):00111           ldd   #string_prompt
+FD0F BDFE88           (  turbo9_boot.asm):00112           jsr   print_string
+                      (  turbo9_boot.asm):00113          
+                      (  turbo9_boot.asm):00114         ; //////////////////// Top of main Loop
+                      (  turbo9_boot.asm):00115         ; //
+FD12                  (  turbo9_boot.asm):00116         main_loop
+FD12 BDFE4A           (  turbo9_boot.asm):00117           jsr   getchar_b
+                      (  turbo9_boot.asm):00118         
+FD15 C153             (  turbo9_boot.asm):00119           cmpb  #'S'
+FD17 26F9             (  turbo9_boot.asm):00120           bne   main_loop
+                      (  turbo9_boot.asm):00121         
+FD19 BDFE4A           (  turbo9_boot.asm):00122           jsr   getchar_b
+                      (  turbo9_boot.asm):00123         
+FD1C C130             (  turbo9_boot.asm):00124           cmpb  #'0'
+FD1E 270A             (  turbo9_boot.asm):00125           beq   s0_record
+                      (  turbo9_boot.asm):00126         
+FD20 C131             (  turbo9_boot.asm):00127           cmpb  #'1'
+FD22 2725             (  turbo9_boot.asm):00128           beq   s1_record
+                      (  turbo9_boot.asm):00129         
+FD24 C139             (  turbo9_boot.asm):00130           cmpb  #'9'
+FD26 2741             (  turbo9_boot.asm):00131           beq   s9_record
+                      (  turbo9_boot.asm):00132         
+FD28 20E8             (  turbo9_boot.asm):00133           bra   main_loop
+                      (  turbo9_boot.asm):00134         
+                      (  turbo9_boot.asm):00135         
+                      (  turbo9_boot.asm):00136         ; //////////////////// S0 record
+                      (  turbo9_boot.asm):00137         ; //
+FD2A                  (  turbo9_boot.asm):00138         s0_record
+FD2A 3084             (  turbo9_boot.asm):00139           leax  ,x            ; checksum still ok?
+FD2C 26E4             (  turbo9_boot.asm):00140           bne   main_loop
+FD2E BDFDC0           (  turbo9_boot.asm):00141           jsr   put_len_in_a
+FD31 BDFDCD           (  turbo9_boot.asm):00142           jsr   put_addr_in_y
+FD34                  (  turbo9_boot.asm):00143         s0r_loop
+FD34 BDFE5C           (  turbo9_boot.asm):00144           jsr   gethex_byte
+FD37 3085             (  turbo9_boot.asm):00145           leax  b,x           ; add_checksum
+FD39 BDFE7A           (  turbo9_boot.asm):00146           jsr   putchar_b
+FD3C 4A               (  turbo9_boot.asm):00147           deca                ; dec byte_cnt
+FD3D 26F5             (  turbo9_boot.asm):00148           bne   s0r_loop
+FD3F BDFDDF           (  turbo9_boot.asm):00149           jsr   calc_checksum_x
+FD42 C620             (  turbo9_boot.asm):00150           ldb   #' '
+FD44 BDFE7A           (  turbo9_boot.asm):00151           jsr   putchar_b     ; Print a space
+FD47 20C9             (  turbo9_boot.asm):00152           bra   main_loop
+                      (  turbo9_boot.asm):00153          
+                      (  turbo9_boot.asm):00154         
+                      (  turbo9_boot.asm):00155         ; //////////////////// S1 record
+                      (  turbo9_boot.asm):00156         ; //
+FD49                  (  turbo9_boot.asm):00157         s1_record
+FD49 3084             (  turbo9_boot.asm):00158           leax  ,x            ; checksum still ok?
+FD4B 26C5             (  turbo9_boot.asm):00159           bne   main_loop
+FD4D BDFDC0           (  turbo9_boot.asm):00160           jsr   put_len_in_a
+FD50 BDFDCD           (  turbo9_boot.asm):00161           jsr   put_addr_in_y
+FD53                  (  turbo9_boot.asm):00162         s1r_loop
+FD53 BDFE5C           (  turbo9_boot.asm):00163           jsr   gethex_byte
+FD56 3085             (  turbo9_boot.asm):00164           leax  b,x           ; add_checksum
+FD58 E7A0             (  turbo9_boot.asm):00165           stb   ,y+           ; write byte to write_addr; write_addr + 1
+FD5A 3341             (  turbo9_boot.asm):00166           leau  1,u           ; U = total_bytes + 1
+FD5C 4A               (  turbo9_boot.asm):00167           deca                ; dec byte_cnt
+FD5D 26F4             (  turbo9_boot.asm):00168           bne   s1r_loop
+FD5F BDFDDF           (  turbo9_boot.asm):00169           jsr   calc_checksum_x
+FD62 C62E             (  turbo9_boot.asm):00170           ldb   #'.'
+FD64 BDFE7A           (  turbo9_boot.asm):00171           jsr   putchar_b     ; Print progress bar
+FD67 20A9             (  turbo9_boot.asm):00172           bra   main_loop
+                      (  turbo9_boot.asm):00173         
+                      (  turbo9_boot.asm):00174         
+                      (  turbo9_boot.asm):00175         ; //////////////////// S9 record
+                      (  turbo9_boot.asm):00176         ; //
+FD69                  (  turbo9_boot.asm):00177         s9_record
+FD69 3084             (  turbo9_boot.asm):00178           leax  ,x            ; checksum still ok?
+FD6B 2612             (  turbo9_boot.asm):00179           bne   bootload_done
+FD6D BDFDC0           (  turbo9_boot.asm):00180           jsr   put_len_in_a
+FD70 BDFDCD           (  turbo9_boot.asm):00181           jsr   put_addr_in_y
+FD73 BDFDDF           (  turbo9_boot.asm):00182           jsr   calc_checksum_x
+FD76                  (  turbo9_boot.asm):00183         s9r_lf
+FD76 BDFE4A           (  turbo9_boot.asm):00184           jsr   getchar_b
+FD79 C10A             (  turbo9_boot.asm):00185           cmpb  #$0a
+FD7B 26F9             (  turbo9_boot.asm):00186           bne   s9r_lf        ; strip the last LF from the data stream
+FD7D 2000             (  turbo9_boot.asm):00187           bra   bootload_done
+                      (  turbo9_boot.asm):00188           
+                      (  turbo9_boot.asm):00189         
+                      (  turbo9_boot.asm):00190         ; //////////////////// Bootloader done
+                      (  turbo9_boot.asm):00191         ; //
+FD7F                  (  turbo9_boot.asm):00192         bootload_done
+FD7F CCFE0F           (  turbo9_boot.asm):00193           ldd   #string_checksum
+FD82 BDFE88           (  turbo9_boot.asm):00194           jsr   print_string
+FD85 3084             (  turbo9_boot.asm):00195           leax  ,x            ; checksum ok?
+FD87 2709             (  turbo9_boot.asm):00196           beq   bootload_good
+FD89 CCFE22           (  turbo9_boot.asm):00197           ldd   #string_fail
+FD8C BDFE88           (  turbo9_boot.asm):00198           jsr   print_string
+FD8F 7EFD00           (  turbo9_boot.asm):00199           jmp   boot_start
+FD92                  (  turbo9_boot.asm):00200         bootload_good
+FD92 CCFE27           (  turbo9_boot.asm):00201           ldd   #string_pass_total_bytes
+FD95 BDFE88           (  turbo9_boot.asm):00202           jsr   print_string
+FD98 1F30             (  turbo9_boot.asm):00203           tfr   u,d           ; U = total_bytes
+FD9A BDFEA0           (  turbo9_boot.asm):00204           jsr   puthex_16bit
+FD9D CCFE3C           (  turbo9_boot.asm):00205           ldd   #string_jsr
+FDA0 BDFE88           (  turbo9_boot.asm):00206           jsr   print_string
+FDA3 1F20             (  turbo9_boot.asm):00207           tfr   y,d           ; Y = loaded program start address
+FDA5 BDFEA0           (  turbo9_boot.asm):00208           jsr   puthex_16bit
+FDA8 CCFE48           (  turbo9_boot.asm):00209           ldd   #string_line_feed
+FDAB BDFE88           (  turbo9_boot.asm):00210           jsr   print_string
+FDAE BDFE88           (  turbo9_boot.asm):00211           jsr   print_string
+FDB1                  (  turbo9_boot.asm):00212         call_prog_start
+FDB1 C601             (  turbo9_boot.asm):00213           ldb   #$01
+FDB3 F7FF00           (  turbo9_boot.asm):00214           stb   gpo_port    ; set outport[0] = 1 to tell TB test has begun 
+FDB6 ADA4             (  turbo9_boot.asm):00215           jsr   ,y          ; jump/call to loaded program at address Y 
+                      (  turbo9_boot.asm):00216           ;
+                      (  turbo9_boot.asm):00217           ; Run the loaded program!
+                      (  turbo9_boot.asm):00218           ;
+FDB8                  (  turbo9_boot.asm):00219         boot_return
+FDB8                  (  turbo9_boot.asm):00220         boot_return_io_lib
+FDB8 C602             (  turbo9_boot.asm):00221           ldb   #$02
+FDBA F7FF00           (  turbo9_boot.asm):00222           stb   gpo_port    ;  set outport[1] = 1 to tell TB test has finished
+FDBD 7EFD00           (  turbo9_boot.asm):00223           jmp   boot_start
+                      (  turbo9_boot.asm):00224         
+                      (  turbo9_boot.asm):00225         ; ////////////////////////////////////////////////////////////////////////////
+                      (  turbo9_boot.asm):00226         
+                      (  turbo9_boot.asm):00227         
+                      (  turbo9_boot.asm):00228         ; ////////////////////////////////////////////////////////////////////////////
+                      (  turbo9_boot.asm):00229         ;                            Helper Functions
+                      (  turbo9_boot.asm):00230         ; ////////////////////////////////////////////////////////////////////////////
+                      (  turbo9_boot.asm):00231         
+                      (  turbo9_boot.asm):00232         
+                      (  turbo9_boot.asm):00233         ; //////////////////// Get length, put in A
+                      (  turbo9_boot.asm):00234         ; //
+FDC0                  (  turbo9_boot.asm):00235         put_len_in_a
+                      (  turbo9_boot.asm):00236           ; put length in A, update checksum in X.
+FDC0 3404             (  turbo9_boot.asm):00237           pshs  b
+FDC2 BDFE5C           (  turbo9_boot.asm):00238           jsr   gethex_byte   ; Read length
+FDC5 3085             (  turbo9_boot.asm):00239           leax  b,x           ; add_checksum
+FDC7 C003             (  turbo9_boot.asm):00240           subb  #3            ; minus 16bit address & checksum equals number of data bytes
+FDC9 1F98             (  turbo9_boot.asm):00241           tfr   b,a           ; put byte_cnt in A
+FDCB 3584             (  turbo9_boot.asm):00242           puls  b,pc
+                      (  turbo9_boot.asm):00243         
+                      (  turbo9_boot.asm):00244         
+                      (  turbo9_boot.asm):00245         ; //////////////////// Get address, put in Y
+                      (  turbo9_boot.asm):00246         ; //
+FDCD                  (  turbo9_boot.asm):00247         put_addr_in_y
+                      (  turbo9_boot.asm):00248           ; put address in Y, update checksum in X.
+FDCD 3406             (  turbo9_boot.asm):00249           pshs  a,b
+FDCF BDFE5C           (  turbo9_boot.asm):00250           jsr   gethex_byte
+FDD2 3085             (  turbo9_boot.asm):00251           leax  b,x           ; add_checksum
+FDD4 1F98             (  turbo9_boot.asm):00252           tfr   b,a           ; put write_addr[15:8] in A
+FDD6 BDFE5C           (  turbo9_boot.asm):00253           jsr   gethex_byte
+FDD9 3085             (  turbo9_boot.asm):00254           leax  b,x           ; add_checksum
+FDDB 1F02             (  turbo9_boot.asm):00255           tfr   d,y           ; Y = write_addr
+FDDD 3586             (  turbo9_boot.asm):00256           puls  a,b,pc
+                      (  turbo9_boot.asm):00257         
+                      (  turbo9_boot.asm):00258         
+                      (  turbo9_boot.asm):00259         ; //////////////////// Get checksum, compare to X
+                      (  turbo9_boot.asm):00260         ; //
+FDDF                  (  turbo9_boot.asm):00261         calc_checksum_x
+                      (  turbo9_boot.asm):00262           ; the S1 checksum should equal the one's complement of our running checksum in x[7:0]
+FDDF 3406             (  turbo9_boot.asm):00263           pshs  a,b
+FDE1 BDFE5C           (  turbo9_boot.asm):00264           jsr   gethex_byte   ; read S1 checksum
+FDE4 E7E2             (  turbo9_boot.asm):00265           stb   ,-s           ; push S1 checksum onto stack
+FDE6 1F10             (  turbo9_boot.asm):00266           tfr   x,d
+FDE8 E8E4             (  turbo9_boot.asm):00267           eorb  ,s            ; B = $FF if correct
+FDEA 5C               (  turbo9_boot.asm):00268           incb                ; B = $00 if correct
+FDEB 4F               (  turbo9_boot.asm):00269           clra
+FDEC 1F01             (  turbo9_boot.asm):00270           tfr   d,x           ; X = $0000 if correct
+FDEE 3261             (  turbo9_boot.asm):00271           leas  1,s           ; clean up stack
+FDF0 3586             (  turbo9_boot.asm):00272           puls  a,b,pc
+                      (  turbo9_boot.asm):00273         
+                      (  turbo9_boot.asm):00274         ; ////////////////////////////////////////////////////////////////////////////
+                      (  turbo9_boot.asm):00275         
+                      (  turbo9_boot.asm):00276         
+                      (  turbo9_boot.asm):00277         ; ////////////////////////////////////////////////////////////////////////////
+                      (  turbo9_boot.asm):00278         ;                              Data Block
+                      (  turbo9_boot.asm):00279         ; ////////////////////////////////////////////////////////////////////////////
+                      (  turbo9_boot.asm):00280         
+FDF2                  (  turbo9_boot.asm):00281         string_prompt
+FDF2 0A               (  turbo9_boot.asm):00282           fcb  $0a
+FDF3 0A               (  turbo9_boot.asm):00283           fcb  $0a
+FDF4 3E20547572626F39 (  turbo9_boot.asm):00284           fcc  "> Turbo9 S19 Bootloader"
+     2053313920426F6F
+     746C6F61646572
+FE0B 0A               (  turbo9_boot.asm):00285           fcb  $0a
+FE0C 3E20             (  turbo9_boot.asm):00286           fcc  "> "
+FE0E 00               (  turbo9_boot.asm):00287           fcb  $00
+                      (  turbo9_boot.asm):00288         
+FE0F                  (  turbo9_boot.asm):00289         string_checksum
+FE0F 20646F6E6521     (  turbo9_boot.asm):00290           fcc  " done!"
+FE15 0A               (  turbo9_boot.asm):00291           fcb  $0a
+FE16 3E20436865636B73 (  turbo9_boot.asm):00292           fcc  "> Checksum "
+     756D20
+FE21 00               (  turbo9_boot.asm):00293           fcb  $00
+                      (  turbo9_boot.asm):00294         
+FE22                  (  turbo9_boot.asm):00295         string_fail
+FE22 4641494C         (  turbo9_boot.asm):00296           fcc  "FAIL"
+FE26 00               (  turbo9_boot.asm):00297           fcb  $00
+                      (  turbo9_boot.asm):00298         
+FE27                  (  turbo9_boot.asm):00299         string_pass_total_bytes
+FE27 50415353         (  turbo9_boot.asm):00300           fcc  "PASS"
+FE2B 0A               (  turbo9_boot.asm):00301           fcb  $0a
+FE2C 3E20546F74616C20 (  turbo9_boot.asm):00302           fcc  "> Total bytes $"
+     62797465732024
+FE3B 00               (  turbo9_boot.asm):00303           fcb  $00
+                      (  turbo9_boot.asm):00304         
+FE3C                  (  turbo9_boot.asm):00305         string_jsr
+FE3C 0A               (  turbo9_boot.asm):00306           fcb  $0a
+FE3D 3E204A535220746F (  turbo9_boot.asm):00307           fcc  "> JSR to $"
+     2024
+FE47 00               (  turbo9_boot.asm):00308           fcb  $00
+                      (  turbo9_boot.asm):00309         
+FE48                  (  turbo9_boot.asm):00310         string_line_feed
+FE48 0A               (  turbo9_boot.asm):00311           fcb  $0a
+FE49 00               (  turbo9_boot.asm):00312           fcb  $00
+                      (  turbo9_boot.asm):00313         
+                      (  turbo9_boot.asm):00314         ; ////////////////////////////////////////////////////////////////////////////
+                      (  turbo9_boot.asm):00315         
+                      (  turbo9_boot.asm):00316         
+                      (  turbo9_boot.asm):00317         ; ////////////////////////////////////////////////////////////////////////////
+                      (  turbo9_boot.asm):00318         ;                       Common I/O Function Library
+                      (  turbo9_boot.asm):00319         ; ////////////////////////////////////////////////////////////////////////////
+                      (  turbo9_boot.asm):00320         
+FE4A                  (  turbo9_boot.asm):00321         turbo9_io_addr:
+                      (  turbo9_boot.asm):00322          
+                      (  turbo9_boot.asm):00323           include   turbo9_io.asm
+                      (    turbo9_io.asm):00001         ; [TURBO9_HEADER_START]
+                      (    turbo9_io.asm):00002         ; ////////////////////////////////////////////////////////////////////////////
+                      (    turbo9_io.asm):00003         ;                          Turbo9 Microprocessor IP
+                      (    turbo9_io.asm):00004         ; ////////////////////////////////////////////////////////////////////////////
+                      (    turbo9_io.asm):00005         ; Website: www.turbo9.org
+                      (    turbo9_io.asm):00006         ; Contact: team[at]turbo9[dot]org
+                      (    turbo9_io.asm):00007         ; ////////////////////////////////////////////////////////////////////////////
+                      (    turbo9_io.asm):00008         ; [TURBO9_LICENSE_START]
+                      (    turbo9_io.asm):00009         ; BSD-1-Clause
+                      (    turbo9_io.asm):00010         ;
+                      (    turbo9_io.asm):00011         ; Copyright (c) 2020-2023
+                      (    turbo9_io.asm):00012         ; Kevin Phillipson
+                      (    turbo9_io.asm):00013         ; Michael Rywalt
+                      (    turbo9_io.asm):00014         ; All rights reserved.
+                      (    turbo9_io.asm):00015         ;
+                      (    turbo9_io.asm):00016         ; Redistribution and use in source and binary forms, with or without
+                      (    turbo9_io.asm):00017         ; modification, are permitted provided that the following conditions are met:
+                      (    turbo9_io.asm):00018         ;
+                      (    turbo9_io.asm):00019         ; 1. Redistributions of source code must retain the above copyright notice,
+                      (    turbo9_io.asm):00020         ;    this list of conditions and the following disclaimer.
+                      (    turbo9_io.asm):00021         ;
+                      (    turbo9_io.asm):00022         ; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+                      (    turbo9_io.asm):00023         ; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+                      (    turbo9_io.asm):00024         ; IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+                      (    turbo9_io.asm):00025         ; ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS AND CONTRIBUTORS BE
+                      (    turbo9_io.asm):00026         ; LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+                      (    turbo9_io.asm):00027         ; CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+                      (    turbo9_io.asm):00028         ; SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+                      (    turbo9_io.asm):00029         ; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+                      (    turbo9_io.asm):00030         ; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+                      (    turbo9_io.asm):00031         ; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+                      (    turbo9_io.asm):00032         ; POSSIBILITY OF SUCH DAMAGE.
+                      (    turbo9_io.asm):00033         ; [TURBO9_LICENSE_END]
+                      (    turbo9_io.asm):00034         ; ////////////////////////////////////////////////////////////////////////////
+                      (    turbo9_io.asm):00035         ; Engineer: Kevin Phillipson
+                      (    turbo9_io.asm):00036         ; Description: Input / Output Library
+                      (    turbo9_io.asm):00037         ;
+                      (    turbo9_io.asm):00038         ; ////////////////////////////////////////////////////////////////////////////
+                      (    turbo9_io.asm):00039         ; History:
+                      (    turbo9_io.asm):00040         ; 07.14.2023 - Kevin Phillipson
+                      (    turbo9_io.asm):00041         ;   File header added
+                      (    turbo9_io.asm):00042         ;
+                      (    turbo9_io.asm):00043         ; ////////////////////////////////////////////////////////////////////////////
+                      (    turbo9_io.asm):00044         ; [TURBO9_HEADER_END]
+                      (    turbo9_io.asm):00045         
+                      (    turbo9_io.asm):00046         ; ////////////////////////////////////////////////////////////////////////////
+                      (    turbo9_io.asm):00047         ;                             Turbo9 I/O Functions
+                      (    turbo9_io.asm):00048         ; ////////////////////////////////////////////////////////////////////////////
+                      (    turbo9_io.asm):00049         
+                      (    turbo9_io.asm):00050         
+                      (    turbo9_io.asm):00051         
+                      (    turbo9_io.asm):00052         ; ////////////////////// Recieve byte and return in B
+                      (    turbo9_io.asm):00053         ;
+FE4A                  (    turbo9_io.asm):00054         getchar_b
+FE4A                  (    turbo9_io.asm):00055         getchar_b_io_lib
+FE4A F6FF03           (    turbo9_io.asm):00056           ldb   >acia_status
+FE4D C508             (    turbo9_io.asm):00057           bitb  #$08
+FE4F 27F9             (    turbo9_io.asm):00058           beq   getchar_b
+FE51 F6FF02           (    turbo9_io.asm):00059           ldb   >acia_data
+FE54 39               (    turbo9_io.asm):00060           rts
+                      (    turbo9_io.asm):00061         
+                      (    turbo9_io.asm):00062         
+                      (    turbo9_io.asm):00063         ; ////////////////////// Get Hex 16bit
+                      (    turbo9_io.asm):00064         ; 
+                      (    turbo9_io.asm):00065         ; Get 4 hex digit and convert
+                      (    turbo9_io.asm):00066         ; to binary word. Return in D
+                      (    turbo9_io.asm):00067         ;
+FE55                  (    turbo9_io.asm):00068         gethex_16bit
+FE55                  (    turbo9_io.asm):00069         gethex_16bit_io_lib
+FE55 8D05             (    turbo9_io.asm):00070           bsr   gethex_byte
+FE57 1F98             (    turbo9_io.asm):00071           tfr   b,a
+FE59 8D01             (    turbo9_io.asm):00072           bsr   gethex_byte
+FE5B 39               (    turbo9_io.asm):00073           rts
+                      (    turbo9_io.asm):00074         
+                      (    turbo9_io.asm):00075         ; ////////////////////// Get Hex Byte
+                      (    turbo9_io.asm):00076         ; 
+                      (    turbo9_io.asm):00077         ; Get 2 hex digit and convert
+                      (    turbo9_io.asm):00078         ; to binary byte. Return in B
+                      (    turbo9_io.asm):00079         ;
+FE5C                  (    turbo9_io.asm):00080         gethex_byte
+FE5C                  (    turbo9_io.asm):00081         gethex_byte_io_lib
+FE5C 8D0B             (    turbo9_io.asm):00082           bsr   gethex_digit
+FE5E 58               (    turbo9_io.asm):00083           lslb
+FE5F 58               (    turbo9_io.asm):00084           lslb
+FE60 58               (    turbo9_io.asm):00085           lslb
+FE61 58               (    turbo9_io.asm):00086           lslb
+FE62 3404             (    turbo9_io.asm):00087           pshs  b
+FE64 8D03             (    turbo9_io.asm):00088           bsr   gethex_digit
+FE66 EAE0             (    turbo9_io.asm):00089           orb   ,s+
+FE68 39               (    turbo9_io.asm):00090           rts
+                      (    turbo9_io.asm):00091         
+                      (    turbo9_io.asm):00092         ; ////////////////////// Get Hex Digit
+                      (    turbo9_io.asm):00093         ;
+                      (    turbo9_io.asm):00094         ; Get hex digit and convert
+                      (    turbo9_io.asm):00095         ; to binary nibble. Return in B
+                      (    turbo9_io.asm):00096         ;
+FE69                  (    turbo9_io.asm):00097         gethex_digit
+FE69                  (    turbo9_io.asm):00098         gethex_digit_io_lib
+FE69 8DDF             (    turbo9_io.asm):00099           bsr   getchar_b
+FE6B C139             (    turbo9_io.asm):00100           cmpb  #'9'        ; 0 to 9?
+FE6D 2308             (    turbo9_io.asm):00101           bls   ghd_0to9
+FE6F C146             (    turbo9_io.asm):00102           cmpb  #'F'        ; A to F?
+FE71 2302             (    turbo9_io.asm):00103           bls   ghd_AtoF
+FE73                  (    turbo9_io.asm):00104         ghd_atof            ; else a to f
+FE73 C020             (    turbo9_io.asm):00105           subb  #32         ; ascii a: 97 - 32  - 7 - 48 = 10
+FE75                  (    turbo9_io.asm):00106         ghd_AtoF
+FE75 C007             (    turbo9_io.asm):00107           subb  #7          ; ascii A: 65 - 7 - 48 = 10
+FE77                  (    turbo9_io.asm):00108         ghd_0to9
+FE77 C030             (    turbo9_io.asm):00109           subb  #48         ; ascii 0: 48 - 48 = 0
+FE79 39               (    turbo9_io.asm):00110           rts
+                      (    turbo9_io.asm):00111         
+                      (    turbo9_io.asm):00112         
+                      (    turbo9_io.asm):00113         
+                      (    turbo9_io.asm):00114         
+                      (    turbo9_io.asm):00115         ; ////////////////////// Send byte contained in B
+                      (    turbo9_io.asm):00116         ;
+FE7A                  (    turbo9_io.asm):00117         putchar_b
+FE7A                  (    turbo9_io.asm):00118         putchar_b_io_lib
+FE7A 3402             (    turbo9_io.asm):00119           pshs  a
+FE7C                  (    turbo9_io.asm):00120         pcb_wait
+FE7C B6FF03           (    turbo9_io.asm):00121           lda   >acia_status
+FE7F 8510             (    turbo9_io.asm):00122           bita  #$10
+FE81 27F9             (    turbo9_io.asm):00123           beq   pcb_wait
+FE83 F7FF02           (    turbo9_io.asm):00124           stb   >acia_data
+FE86 3582             (    turbo9_io.asm):00125           puls  a,pc
+                      (    turbo9_io.asm):00126         
+                      (    turbo9_io.asm):00127         ; ////////////////////// Print null terminated string pointed to by D
+                      (    turbo9_io.asm):00128         ;
+                      (    turbo9_io.asm):00129         ; Adds CR to LF to support standard VT-100
+                      (    turbo9_io.asm):00130         ;
+FE88                  (    turbo9_io.asm):00131         print_string
+FE88                  (    turbo9_io.asm):00132         print_string_io_lib
+FE88 3414             (    turbo9_io.asm):00133           pshs  b,x
+FE8A 1F01             (    turbo9_io.asm):00134           tfr   d,x
+FE8C                  (    turbo9_io.asm):00135         ps_loop
+FE8C E680             (    turbo9_io.asm):00136           ldb   ,x+
+FE8E 270E             (    turbo9_io.asm):00137           beq   ps_end
+FE90 C10A             (    turbo9_io.asm):00138           cmpb  #$0a
+FE92 2606             (    turbo9_io.asm):00139           bne   ps_not_lf
+FE94 C60D             (    turbo9_io.asm):00140           ldb   #$0d
+FE96 8DE2             (    turbo9_io.asm):00141           bsr   putchar_b
+FE98 C60A             (    turbo9_io.asm):00142           ldb   #$0a
+FE9A                  (    turbo9_io.asm):00143         ps_not_lf
+FE9A 8DDE             (    turbo9_io.asm):00144           bsr   putchar_b
+FE9C 20EE             (    turbo9_io.asm):00145           bra   ps_loop
+FE9E                  (    turbo9_io.asm):00146         ps_end
+FE9E 3594             (    turbo9_io.asm):00147           puls  b,x,pc
+                      (    turbo9_io.asm):00148         
+                      (    turbo9_io.asm):00149         ; ////////////////////// Put Hex 16bit
+                      (    turbo9_io.asm):00150         ;
+                      (    turbo9_io.asm):00151         ; Print hex value in D
+                      (    turbo9_io.asm):00152         ;
+FEA0                  (    turbo9_io.asm):00153         puthex_16bit
+FEA0                  (    turbo9_io.asm):00154         puthex_16bit_io_lib
+FEA0 1E89             (    turbo9_io.asm):00155           exg   a,b
+FEA2 8D05             (    turbo9_io.asm):00156           bsr   puthex_byte
+FEA4 1E89             (    turbo9_io.asm):00157           exg   a,b
+FEA6 8D01             (    turbo9_io.asm):00158           bsr   puthex_byte
+FEA8 39               (    turbo9_io.asm):00159           rts
+                      (    turbo9_io.asm):00160         
+                      (    turbo9_io.asm):00161         
+                      (    turbo9_io.asm):00162         ; ////////////////////// Put Hex Byte
+                      (    turbo9_io.asm):00163         ;
+                      (    turbo9_io.asm):00164         ; Print hex value in B
+                      (    turbo9_io.asm):00165         ;
+FEA9                  (    turbo9_io.asm):00166         puthex_byte
+FEA9                  (    turbo9_io.asm):00167         puthex_byte_io_lib
+FEA9 3404             (    turbo9_io.asm):00168           pshs  b
+FEAB 54               (    turbo9_io.asm):00169           lsrb
+FEAC 54               (    turbo9_io.asm):00170           lsrb
+FEAD 54               (    turbo9_io.asm):00171           lsrb
+FEAE 54               (    turbo9_io.asm):00172           lsrb
+FEAF 8D05             (    turbo9_io.asm):00173           bsr   puthex_digit
+FEB1 3504             (    turbo9_io.asm):00174           puls  b
+FEB3 8D01             (    turbo9_io.asm):00175           bsr   puthex_digit
+FEB5 39               (    turbo9_io.asm):00176           rts
+                      (    turbo9_io.asm):00177         
+                      (    turbo9_io.asm):00178         
+                      (    turbo9_io.asm):00179         ; ////////////////////// Put Hex Digit
+                      (    turbo9_io.asm):00180         ;
+FEB6                  (    turbo9_io.asm):00181         puthex_digit
+FEB6                  (    turbo9_io.asm):00182         puthex_digit_io_lib
+FEB6 3404             (    turbo9_io.asm):00183           pshs  b
+FEB8 C40F             (    turbo9_io.asm):00184           andb  #$0f
+FEBA C10A             (    turbo9_io.asm):00185           cmpb  #$0a
+FEBC 2502             (    turbo9_io.asm):00186           blo   phd_0to9
+FEBE                  (    turbo9_io.asm):00187         phd_AtoF
+FEBE CB07             (    turbo9_io.asm):00188           addb  #7
+FEC0                  (    turbo9_io.asm):00189         phd_0to9
+FEC0 CB30             (    turbo9_io.asm):00190           addb  #48
+FEC2 8DB6             (    turbo9_io.asm):00191           bsr   putchar_b
+FEC4 3584             (    turbo9_io.asm):00192           puls  b,pc
+                      (    turbo9_io.asm):00193         
+                      (    turbo9_io.asm):00194         
+                      (    turbo9_io.asm):00195         ; ////////////////////////////////////////////////////////////////////////////
+                      (    turbo9_io.asm):00196         
+                      (    turbo9_io.asm):00197         
+                      (  turbo9_boot.asm):00324         
+                      (  turbo9_boot.asm):00325         ; ////////////////////////////////////////////////////////////////////////////
+                      (  turbo9_boot.asm):00326         
+                      (  turbo9_boot.asm):00327         
+                      (  turbo9_boot.asm):00328         
+                      (  turbo9_boot.asm):00329         ; ////////////////////////////////////////////////////////////////////////////
+                      (  turbo9_boot.asm):00330         ;                           I/O Block  (240 bytes)
+                      (  turbo9_boot.asm):00331         ; ////////////////////////////////////////////////////////////////////////////
+                      (  turbo9_boot.asm):00332           org $ff00
+FF00                  (  turbo9_boot.asm):00333         io_block:
+                      (  turbo9_boot.asm):00334         
+                      (  turbo9_boot.asm):00335         ; ////////////////////////////////////////////////////////////////////////////
+                      (  turbo9_boot.asm):00336         
+                      (  turbo9_boot.asm):00337         
+                      (  turbo9_boot.asm):00338         ; ////////////////////////////////////////////////////////////////////////////
+                      (  turbo9_boot.asm):00339         ;                      Reset / Interrupt Vector Table
+                      (  turbo9_boot.asm):00340         ; ////////////////////////////////////////////////////////////////////////////
+                      (  turbo9_boot.asm):00341         
+                      (  turbo9_boot.asm):00342           org  $fff0
+FFF0                  (  turbo9_boot.asm):00343         boot_vector_table:
+                      (  turbo9_boot.asm):00344         
+FFF0                  (  turbo9_boot.asm):00345         boot_reserved_vector:
+FFF0 FD00             (  turbo9_boot.asm):00346           fdb boot_start
+FFF2                  (  turbo9_boot.asm):00347         boot_swi3_vector:
+FFF2 FD00             (  turbo9_boot.asm):00348           fdb boot_start
+FFF4                  (  turbo9_boot.asm):00349         boot_swi2_vector:
+FFF4 FD00             (  turbo9_boot.asm):00350           fdb boot_start
+FFF6                  (  turbo9_boot.asm):00351         boot_firq_vector:
+FFF6 FD00             (  turbo9_boot.asm):00352           fdb boot_start
+FFF8                  (  turbo9_boot.asm):00353         boot_irq_vector:
+FFF8 FD00             (  turbo9_boot.asm):00354           fdb boot_start
+FFFA                  (  turbo9_boot.asm):00355         boot_swi_vector:
+FFFA FD00             (  turbo9_boot.asm):00356           fdb boot_start
+FFFC                  (  turbo9_boot.asm):00357         boot_nmi_vector:
+FFFC FD00             (  turbo9_boot.asm):00358           fdb boot_start
+FFFE                  (  turbo9_boot.asm):00359         boot_reset_vector:
+FFFE FD00             (  turbo9_boot.asm):00360           fdb boot_start
+                      (  turbo9_boot.asm):00361         
+                      (  turbo9_boot.asm):00362         ; ////////////////////////////////////////////////////////////////////////////

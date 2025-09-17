@@ -46,33 +46,33 @@
 /////////////////////////////////////////////////////////////////////////////
 //                                MODULE
 /////////////////////////////////////////////////////////////////////////////
-module output_port
+module gpo_port
 (
   input          CLK_I,
   input          RST_I,
   input          WE_I,
   input   [ 7:0] DAT_I,
   output  [ 7:0] DAT_O,
-  output  [ 7:0] PORT_O
+  output  [ 7:0] GPO_PORT_O
 );
 
 /////////////////////////////////////////////////////////////////////////////
 //                                LOGIC
 /////////////////////////////////////////////////////////////////////////////
 
-reg   [7:0] port_reg;
-localparam  port_rst = 8'd0;
+reg   [7:0] gpo_reg;
+localparam  gpo_rst = 8'd0;
 
 always @(posedge CLK_I, posedge RST_I) begin
   if (RST_I) begin
-    port_reg <= port_rst;
+    gpo_reg <= gpo_rst;
   end else if (WE_I) begin
-    port_reg <= DAT_I;
+    gpo_reg <= DAT_I;
   end
 end
 
-assign DAT_O = port_reg;
-assign PORT_O = port_reg;
+assign DAT_O = gpo_reg;
+assign GPO_PORT_O = gpo_reg;
 
 /////////////////////////////////////////////////////////////////////////////
 

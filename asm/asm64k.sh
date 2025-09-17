@@ -35,7 +35,7 @@
 # ////////////////////////////////////////////////////////////////////////////
 # Engineer: Kevin Phillipson
 # Description: Script to assemble using LWTools LWASM.
-# Outputs 32KB S19 and HEX files with correct offset
+# Outputs 64KB S19 and HEX files with zero offset
 #
 # ////////////////////////////////////////////////////////////////////////////
 # History:
@@ -58,36 +58,31 @@ set filename=$1
 lwasm -f srec -o ${filename}.s19 -l${filename}.lst ${filename}.asm --symbol-dump=${filename}.sym
 
 #./s192mif8 < ${filename}.s19 > ${filename}.mif
-./s192hex8_offset0x8000      < ${filename}.s19 > ${filename}.hex
-./s192hex8_offset0x8000_even < ${filename}.s19 > ${filename}_even.hex
-./s192hex8_offset0x8000_odd  < ${filename}.s19 > ${filename}_odd.hex
+./s192hex8_offset0x0000      < ${filename}.s19 > ${filename}.hex
+./s192hex8_offset0x0000_even < ${filename}.s19 > ${filename}_even.hex
+./s192hex8_offset0x0000_odd  < ${filename}.s19 > ${filename}_odd.hex
 
 if ($filename == "tb_dv_asm") then
   ./verihead -i ${filename}.sym -o ${filename}.vh
   #sed 's/^/  `define  tb_asm_/g' ${filename}.sym | sed 's/EQU.*\$/             16\x27h/g' > ${filename}.vh
-  cp ${filename}.vh ../tb/.
   echo "Copying ${filename}.vh to ../tb/."
+  cp ${filename}.vh ../tb/.
 endif
 
-if ($filename == "turbo_boot") then
-  cp ${filename}.hex ../rtl/default.hex
+if ($filename == "turbo9_boot") then
   echo "Copying ${filename}.hex to ../rtl/default.hex"
-  cp ${filename}_even.hex ../rtl/default_even.hex
+  cp ${filename}.hex ../rtl/default.hex
   echo "Copying ${filename}_even.hex to ../rtl/default_even.hex"
-  cp ${filename}_odd.hex ../rtl/default_odd.hex
+  cp ${filename}_even.hex ../rtl/default_even.hex
   echo "Copying ${filename}_odd.hex to ../rtl/default_odd.hex"
-  #
-  echo "Creating sim_boot.asm"
-  cp turbo_boot.asm sim_boot.asm
-  sed -i 's/ brn / bra /g' sim_boot.asm
-  sed -i 's/ lbrn / lbra /g' sim_boot.asm
-  sed -i 's/.*tag_sim_detect.*/  fcb   $01   ;sed replace tag_sim_detect/g' sim_boot.asm
-  lwasm -f srec -o sim_boot.s19 -lsim_boot.lst sim_boot.asm --symbol-dump=sim_boot.sym
-  ./s192hex8_offset0x8000      < sim_boot.s19 > sim_boot.hex
-  ./s192hex8_offset0x8000_even < sim_boot.s19 > sim_boot_even.hex
-  ./s192hex8_offset0x8000_odd  < sim_boot.s19 > sim_boot_odd.hex
-  ./verihead -i sim_boot.sym -o sim_boot.vh
-  echo "Copying sim_boot.vh to ../tb/."
-  cp sim_boot.vh ../tb/.
+  cp ${filename}_odd.hex ../rtl/default_odd.hex
+  echo "Creating turbo9_boot_io_lib.sym"
+  grep _io_lib  turbo9_boot.sym > turbo9_boot_io_lib.sym
+  sed -i 's/_io_lib//g' turbo9_boot_io_lib.sym
+  ./chead -i turbo9_boot_io_lib.sym -o turbo9_boot_io_lib.h
+  echo "Copying turbo9_boot_io_lib.h to ../c_code/lib_vbcc/."
+  cp turbo9_boot_io_lib.h ../c_code/lib_vbcc/.
+  echo "Copying turbo9_boot_io_lib.h to ../c_code/lib_gcc/."
+  cp turbo9_boot_io_lib.h ../c_code/lib_gcc/.
 endif
 

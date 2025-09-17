@@ -76,10 +76,26 @@ union WORD
 
 ////////////////////////////////////// Defines & Macros
 //
-#define  OUTPUT_PORT   (*(volatile u08 *)0x0000)
-#define  CLOCK_COUNT   (*(volatile u32 *)0x0004)
-#define  CLOCK_COUNT_H (*(volatile u16 *)0x0004)
-#define  CLOCK_COUNT_L (*(volatile u16 *)0x0006)
+// I/O Space: FFEF - FF00
+//
+// FF08          CLK_CNT_CTRL[1:0] (read)  /  CLK_CNT_CTRL (write)
+// FF04 : FF07   CLK_CNT[31:0]     (read)
+// FF03          ACIA_STATUS       (read)
+// FF02          ACIA_RX_DATA      (read)  /  ACIA_TX_DATA (write)
+// FF01          GPI PORT          (read)
+// FF00          GPO PORT          (read)  /  GPO_PORT    (write)
+//
+// Initialized RAM: FEFF - 0000
+
+
+#define  CLK_CNT_CTRL   (*(volatile u08 *)0xFF08)
+#define  CLK_CNT_L      (*(volatile u16 *)0xFF06)
+#define  CLK_CNT_H      (*(volatile u16 *)0xFF04)
+#define  CLK_CNT        (*(volatile u32 *)0xFF04)
+#define  ACIA_STATUS    (*(volatile u08 *)0xFF03)
+#define  ACIA_DATA      (*(volatile u08 *)0xFF02)
+#define  GPI_PORT       (*(volatile u08 *)0xFF01)
+#define  GPO_PORT       (*(volatile u08 *)0xFF00) 
 #define  NULL         0x00
 
 #define SECTION_START __attribute__((section (".prog_start")))
@@ -88,13 +104,13 @@ union WORD
   union LONG clk_cnt;
 
 #define COUNTER_START   \
-  OUTPUT_PORT = 0x01;   \
-  OUTPUT_PORT = 0x03;
+  CLK_CNT_CTRL = 0x00;  \
+  CLK_CNT_CTRL = 0x01;
 
 #define COUNTER_STOP      \
-  OUTPUT_PORT = 0x43;     \
-  clk_cnt.ui[0] = CLOCK_COUNT_H; \
-  clk_cnt.ui[1] = CLOCK_COUNT_L; \
+  CLK_CNT_CTRL = 0x02;    \
+  clk_cnt.ui[0] = CLK_CNT_H; \
+  clk_cnt.ui[1] = CLK_CNT_L; \
 
 #define COUNTER_PRINT               \
   acia_print_str("Clock Count: ");  \

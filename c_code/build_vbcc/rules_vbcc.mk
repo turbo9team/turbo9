@@ -14,4 +14,8 @@ OP2speed= -O=1023 	-speed
 OP3speed= -O=-1 		-speed
 
 CCOPTS= -cpu=9 -cpp-comments -D_VBCC -D_TURBO9
-VCOPTS= +s9 -cpp-comments -nostdlib -v -D_VBCC -D_TURBO9
+VCOPTS= +s6809 -cpp-comments -nostdlib -v -D_VBCC -D_TURBO9
+
+#VCOPTS= +s9 -cpp-comments -nostdlib -v -D_VBCC -D_TURBO9  FIXME where is s9 config? is that Turbo9?
+
+

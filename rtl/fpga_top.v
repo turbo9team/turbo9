@@ -143,7 +143,7 @@ end
 soc_top_s
 //soc_top
 #(
-  15 // MEM_ADDR_WIDTH 
+  16 // MEM_ADDR_WIDTH 
 )
 //I_soc_top
 I_soc_top_s
@@ -154,13 +154,12 @@ I_soc_top_s
   .CLK_I      (clk      ), // Clock
 
   .RXD_PIN_I  (uart_txd_in  ),
-  
+  .GPI_PORT_I (             ), 
+   
   // Outputs
   .TXD_PIN_O  (uart_rxd_out ),
-
-  .OUTPUT_PORT_O (led_port )
+  .GPO_PORT_O (led_port     )
 );
-
 
 
 fpga_leds I_fpga_leds

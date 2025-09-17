@@ -1,7 +1,7 @@
 MEMORY
 {
-  rom : org = 0x8000, len = 0x3000
-  ram : org = 0xB000, len = 0x5000
+  rom : org = 0x0000, len = 0x7000
+  ram : org = 0x8000, len = 0x7000
 }
 
 SECTIONS {
@@ -18,7 +18,7 @@ SECTIONS {
 	__DC = LOADADDR(.data);
 	__DL = SIZEOF(.data);
 
-	__STACK = 0xFDFE;
+	__STACK = 0xFCFE;
 
 }
 

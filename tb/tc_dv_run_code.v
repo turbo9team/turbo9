@@ -80,10 +80,10 @@
     
     ///////////////// Loading S19 test code
     //
-    if (s19_file != "") begin
-      $display("[TB: tc_dv_run_code] Loading S19 test code: %0s",s19_file);
-      load_s19_tb_mem(s19_file);
-    end
+    //if (s19_file != "") begin
+    //  $display("[TB: tc_dv_run_code] Loading S19 test code: %0s",s19_file);
+    //  load_s19_tb_mem(s19_file);
+    //end
 
     ///////////////// Copy testbench program into model and DUT memory
     //
@@ -96,9 +96,9 @@
     reset = 1'b1;
     wait_clk_cycles(4);
 
-    ///////////////// Open Console File
+    ///////////////// Enable Console Output to file
     //
-    console_file_open("tc_dv_run_code");
+    console_en = 1'b1;
 
     ///////////////// Ensure the output port are cleared
     //
@@ -121,7 +121,7 @@
     ///////////////// Waiting for indication of completed code under test
     //
     $display("[TB: tc_dv_run_code] Waiting for Model and DUT to indicate completion of code under test...");
-    wait_bits_set(8'h80, `RUN_CODE_FINISH_CYCLES, error_cnt);
+    wait_bits_set(8'h02, `RUN_CODE_FINISH_CYCLES, error_cnt);
     model_ticks = model_cycle_cnt;
     dut_ticks = `dut_cycle_cnt;
 
@@ -134,10 +134,6 @@
     reset = 1'b1;
     wait_clk_cycles(4);
  
-    ///////////////// Close Console File
-    //
-    console_file_close;
-
     ///////////////// Running a diff on the memories
     //
     $display("[TB: tc_dv_run_code] Comparing DUT memory and Model memory...");

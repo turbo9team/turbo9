@@ -1,0 +1,70 @@
+////////////////////////////////////////////////////////////////////////////////
+//                                                                            //
+//      Definition file                                                       //
+//                                                                            //
+////////////////////////////////////////////////////////////////////////////////
+
+`define asm_acia_data                       16'hFF02
+`define asm_acia_status                     16'hFF03
+`define asm_boot_firq_vector                16'hFFF6
+`define asm_boot_irq_vector                 16'hFFF8
+`define asm_boot_nmi_vector                 16'hFFFC
+`define asm_boot_reserved_vector            16'hFFF0
+`define asm_boot_reset_vector               16'hFFFE
+`define asm_boot_return                     16'hFDBC
+`define asm_boot_return_io_lib              16'hFDBC
+`define asm_boot_stack                      16'hFD00
+`define asm_boot_start                      16'hFD00
+`define asm_boot_swi2_vector                16'hFFF4
+`define asm_boot_swi3_vector                16'hFFF2
+`define asm_boot_swi_vector                 16'hFFFA
+`define asm_boot_vector_table               16'hFFF0
+`define asm_bootload_done                   16'hFD7F
+`define asm_bootload_good                   16'hFD96
+`define asm_calc_checksum_x                 16'hFDE3
+`define asm_call_prog_start                 16'hFDB5
+`define asm_getchar_b                       16'hFE4E
+`define asm_getchar_b_io_lib                16'hFE4E
+`define asm_gethex_16bit                    16'hFE59
+`define asm_gethex_16bit_io_lib             16'hFE59
+`define asm_gethex_byte                     16'hFE60
+`define asm_gethex_byte_io_lib              16'hFE60
+`define asm_gethex_digit                    16'hFE6D
+`define asm_gethex_digit_io_lib             16'hFE6D
+`define asm_ghd_0to9                        16'hFE7B
+`define asm_ghd_atof                        16'hFE77
+`define asm_ghd_AtoF                        16'hFE79
+`define asm_gpi_port                        16'hFF01
+`define asm_gpo_port                        16'hFF00
+`define asm_io_block                        16'hFF00
+`define asm_main_loop                       16'hFD12
+`define asm_pcb_wait                        16'hFE80
+`define asm_phd_0to9                        16'hFEB8
+`define asm_phd_AtoF                        16'hFEB6
+`define asm_print_x                         16'hFE8C
+`define asm_print_x_io_lib                  16'hFE8C
+`define asm_put_addr_in_y                   16'hFDD1
+`define asm_put_len_in_a                    16'hFDC4
+`define asm_putchar_b                       16'hFE7E
+`define asm_putchar_b_io_lib                16'hFE7E
+`define asm_puthex_16bit                    16'hFE98
+`define asm_puthex_16bit_io_lib             16'hFE98
+`define asm_puthex_byte                     16'hFEA1
+`define asm_puthex_byte_io_lib              16'hFEA1
+`define asm_puthex_digit                    16'hFEAE
+`define asm_puthex_digit_io_lib             16'hFEAE
+`define asm_px_end                          16'hFE96
+`define asm_px_loop                         16'hFE8E
+`define asm_s0_record                       16'hFD2A
+`define asm_s0r_loop                        16'hFD34
+`define asm_s1_record                       16'hFD49
+`define asm_s1r_loop                        16'hFD53
+`define asm_s9_record                       16'hFD69
+`define asm_s9r_lf                          16'hFD76
+`define asm_string_checksum                 16'hFE13
+`define asm_string_fail                     16'hFE26
+`define asm_string_jsr                      16'hFE40
+`define asm_string_line_feed                16'hFE4C
+`define asm_string_pass_total_bytes         16'hFE2B
+`define asm_string_prompt                   16'hFDF6
+`define asm_turbo9_io_addr                  16'hFE4E

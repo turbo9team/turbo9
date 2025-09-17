@@ -81,7 +81,12 @@ reg         clk_cnt_half_load;
 reg         clk_cnt_dec;
 wire        clk_cnt_zero;
 reg [ 3:0]  clk_cnt_reg;
-localparam  clk_cnt_rst = 4'hF;
+
+`ifdef SIM_T6551_FAST
+localparam  clk_cnt_rst = 4'h6; // Works at 5, but lets do 6...
+`else
+localparam  clk_cnt_rst = 4'hF; // 16 cycles per bit
+`endif
 
 reg         bit_cnt_load;
 reg         bit_cnt_dec;

@@ -45,6 +45,16 @@
 
 #include "lib.h"
 
+
+////////////////////////////////////// Put Char 
+
+void acia_put_char(char data)
+{
+  while (!(ACIA_STATUS & (char)0x10)); // wait for TX buffer empty
+  ACIA_DATA = data;
+}
+
+
 //////////////////////////////////////// Print String
 //
 void acia_print_str(char *string_ptr)
@@ -52,6 +62,10 @@ void acia_print_str(char *string_ptr)
 
   while (*string_ptr != NULL)
   {
+    if (*string_ptr == 0x0a)
+    {
+      acia_put_char(0x0d);
+    }
     acia_put_char(*string_ptr);
     string_ptr++;
   }
@@ -190,8 +204,10 @@ void setup(void)
 {
 }
 
+
 void teardown(void)
 {
 }
+
 
 

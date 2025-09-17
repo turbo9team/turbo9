@@ -44,115 +44,153 @@
 ; [TURBO9_HEADER_END]
 
 ; ////////////////////////////////////////////////////////////////////////////
-;                             Common I/O Functions
+;                             Turbo9 I/O Functions
 ; ////////////////////////////////////////////////////////////////////////////
 
-; You must provide a putchar_a & getchar_a function for this library.
-; Requirement for putchar_a & getchar_a
-;  - byte in A to be recieved / sent
-;  - all other registers need to be maintained through function call
-;
 
 
-
-; ////////////////////// Print null terminated string pointed to by X
+; ////////////////////// Recieve byte and return in B
 ;
-print_x
-  pshs  a,x
-apx_loop
-  lda   ,x+
-  beq   apx_end
-  jsr   putchar_a
-  bra   apx_loop
-apx_end
-  puls  a,x,pc
-
-; ////////////////////// Put Hex Digit
-;
-puthex_digit
-  pshs  a
-  anda  #$0f
-  cmpa  #$0a
-  blo   puthex_digit1
-  adda  #$37
-  bra   puthex_digit2
-puthex_digit1
-  adda  #$30
-puthex_digit2
-  jsr   putchar_a
-  puls  a,pc
-
-; ////////////////////// Get Hex Digit
-;
-; Get hex digit and convert
-; to binary nibble. Return in A
-;
-gethex_digit
-  jsr   getchar_a
-  bsr   ucase_a
-  cmpa  #'A'         ; uppercase A to F?
-  bhs   ghd_AtoF
-ghd_0to9
-  suba  #'0'         ; else 0 to 9
-  bra   ghd_done
-ghd_AtoF
-  suba  #$37
-ghd_done
+getchar_b
+getchar_b_io_lib
+  ldb   >acia_status
+  bitb  #$08
+  beq   getchar_b
+  ldb   >acia_data
   rts
 
+
+; ////////////////////// Get Hex 16bit
+; 
+; Get 4 hex digit and convert
+; to binary word. Return in D
+;
+gethex_16bit
+gethex_16bit_io_lib
+  bsr   gethex_byte
+  tfr   b,a
+  bsr   gethex_byte
+  rts
 
 ; ////////////////////// Get Hex Byte
 ; 
 ; Get 2 hex digit and convert
-; to binary byte. Return in A
+; to binary byte. Return in B
 ;
 gethex_byte
+gethex_byte_io_lib
   bsr   gethex_digit
-  lsla
-  lsla
-  lsla
-  lsla
-  pshs  a
+  lslb
+  lslb
+  lslb
+  lslb
+  pshs  b
   bsr   gethex_digit
-  ora   ,s+
+  orb   ,s+
   rts
 
-; ////////////////////// Put Hex Byte
+; ////////////////////// Get Hex Digit
 ;
-; Print hex value in A
+; Get hex digit and convert
+; to binary nibble. Return in B
 ;
-puthex_byte
-  pshs  a
-  lsra
-  lsra
-  lsra
-  lsra
-  bsr   puthex_digit
-  puls  a
-  bsr   puthex_digit
+gethex_digit
+gethex_digit_io_lib
+  bsr   getchar_b
+  cmpb  #'9'        ; 0 to 9?
+  bls   ghd_0to9
+  cmpb  #'F'        ; A to F?
+  bls   ghd_AtoF
+ghd_atof            ; else a to f
+  subb  #32         ; ascii a: 97 - 32  - 7 - 48 = 10
+ghd_AtoF
+  subb  #7          ; ascii A: 65 - 7 - 48 = 10
+ghd_0to9
+  subb  #48         ; ascii 0: 48 - 48 = 0
   rts
+
+
+
+
+; ////////////////////// Send byte contained in B
+;
+putchar_b
+putchar_b_io_lib
+  pshs  a
+pcb_wait
+  lda   >acia_status
+  bita  #$10
+  beq   pcb_wait
+  stb   >acia_data
+  puls  a,pc
+
+; ////////////////////// Print null terminated string pointed to by D
+;
+; Adds CR to LF to support standard VT-100
+;
+print_string
+print_string_io_lib
+  pshs  b,x
+  tfr   d,x
+ps_loop
+  ldb   ,x+
+  beq   ps_end
+  cmpb  #$0a
+  bne   ps_not_lf
+  ldb   #$0d
+  bsr   putchar_b
+  ldb   #$0a
+ps_not_lf
+  bsr   putchar_b
+  bra   ps_loop
+ps_end
+  puls  b,x,pc
 
 ; ////////////////////// Put Hex 16bit
 ;
 ; Print hex value in D
 ;
 puthex_16bit
-  bsr   puthex_byte
+puthex_16bit_io_lib
   exg   a,b
   bsr   puthex_byte
   exg   a,b
+  bsr   puthex_byte
   rts
 
-; ////////////////////// Ucase A
+
+; ////////////////////// Put Hex Byte
 ;
-ucase_a
-  cmpa  #'a'
-  blo   uca_done
-  cmpa  #'z'
-  bhi   uca_done
-  suba  #$20
-uca_done
+; Print hex value in B
+;
+puthex_byte
+puthex_byte_io_lib
+  pshs  b
+  lsrb
+  lsrb
+  lsrb
+  lsrb
+  bsr   puthex_digit
+  puls  b
+  bsr   puthex_digit
   rts
+
+
+; ////////////////////// Put Hex Digit
+;
+puthex_digit
+puthex_digit_io_lib
+  pshs  b
+  andb  #$0f
+  cmpb  #$0a
+  blo   phd_0to9
+phd_AtoF
+  addb  #7
+phd_0to9
+  addb  #48
+  bsr   putchar_b
+  puls  b,pc
+
 
 ; ////////////////////////////////////////////////////////////////////////////
 

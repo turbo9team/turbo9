@@ -60,13 +60,14 @@ module tb_dv_6809_model
   // Inputs
   input         QUIET_I,
   input         FAST_CLK_I,
+  input  [ 7:0] GPI_PORT_I,
 
   // Outputs
   output        E_CLK_O,
   output        Q_CLK_O,
   output        ERROR_O,
-  output [ 7:0] OUTPUT_PORT_O,
-  input  [31:0] CYCLE_CNT_O
+  output [ 7:0] GPO_PORT_O,
+  output [31:0] CYCLE_CNT_O
 );
 
   tb_dv_memory
@@ -75,8 +76,9 @@ module tb_dv_6809_model
   )
   I_tb_dv_6809_memory ();
 
-  reg [7:0] output_port;
-  integer   cycle_cnt;
+  reg [7:0] gpo_port;
+  reg [1:0] clk_cnt_ctrl_reg;
+  integer   clk_cnt_reg;
 
   wire quiet = QUIET_I;
 
@@ -191,8 +193,9 @@ module tb_dv_6809_model
       exe_state = 1'b0;
       //
       wait (reset_sync == 1'b1);
-      `error       = 1'b0;
-      output_port  = 8'h00;
+      `error           = 1'b0;
+      gpo_port         = 8'h00;
+      clk_cnt_ctrl_reg = 2'h0;
       //
       @ (negedge reset_sync) exe_state = 1'b1;
       //
@@ -1807,22 +1810,52 @@ module tb_dv_6809_model
   ////////////////////////////////////////////////////////////////////////////
   // Read Memory (8-bit)
   ////////////////////////////////////////////////////////////////////////////
+  //
+  ////////////// Memory Map
+  //
+  //
+  // Initialized RAM (Vector Table): FFFF - FFF0
+  //
+  // FFFE : FFFF   RESET_VECTOR
+  // FFFC : FFFD   NMI_VECTOR
+  // FFFA : FFFB   SWI_VECTOR
+  // FFF8 : FFF9   IRQ_VECTOR
+  // FFF6 : FFF7   FIRQ_VECTOR
+  // FFF4 : FFF5   SWI2_VECTOR
+  // FFF2 : FFF3   SWI3_VECTOR
+  // FFF0 : FFF1   RESERVED_VECTOR
+  //
+  //
+  // I/O Space: FFEF - FF00
+  // 
+  // FF08          CLK_CNT_CTRL[1:0] (read)  /  CLK_CNT_CTRL (write)
+  // FF04 : FF07   CLK_CNT[31:0]     (read)
+  // FF03          ACIA_STATUS       (read)
+  // FF02          ACIA_RX_DATA      (read)  /  ACIA_TX_DATA (write)
+  // FF01          GPI PORT          (read)
+  // FF00          GPO PORT          (read)  /  GPO_PORT    (write)
+  //
+  //
+  // Initialized RAM: FEFF - 0000
+  //
   function reg [7:0] read_mem8(input [15:0] addr);
   begin
-    if (addr == 16'h0000) begin
-      read_mem8 = output_port;
-    end else if (addr == 16'h0004) begin
-      read_mem8 = cycle_cnt[31:24];
-    end else if (addr == 16'h0005) begin
-      read_mem8 = cycle_cnt[23:16];
-    end else if (addr == 16'h0006) begin
-      read_mem8 = cycle_cnt[15: 8];
-    end else if (addr == 16'h0007) begin
-      read_mem8 = cycle_cnt[ 7: 0];
-    end else if (addr[15:MEM_ADDR_WIDTH] == {(16-MEM_ADDR_WIDTH){1'b1}}) begin // Place Memory at the end of the memory map
-      read_mem8 = `memory[addr[(MEM_ADDR_WIDTH-1):0]];
+    if (addr == 16'hFF00) begin
+      read_mem8 = gpo_port;
+    end else if (addr == 16'hFF01) begin
+      read_mem8 = GPI_PORT_I;
+    end else if (addr == 16'hFF04) begin
+      read_mem8 = clk_cnt_reg[31:24];
+    end else if (addr == 16'hFF05) begin
+      read_mem8 = clk_cnt_reg[23:16];
+    end else if (addr == 16'hFF06) begin
+      read_mem8 = clk_cnt_reg[15: 8];
+    end else if (addr == 16'hFF07) begin
+      read_mem8 = clk_cnt_reg[ 7: 0]; 
+    end else if (addr == 16'hFF08) begin
+      read_mem8 = {6'd0, clk_cnt_ctrl_reg[1:0]}; 
     end else begin
-      read_mem8 = 8'h00;
+      read_mem8 = `memory[addr[(MEM_ADDR_WIDTH-1):0]];
     end
   end
   endfunction
@@ -1843,9 +1876,11 @@ module tb_dv_6809_model
   ////////////////////////////////////////////////////////////////////////////
   task write_mem8(input [15:0] addr, input [7:0] data);
   begin
-    if (addr == 16'h0000) begin
-      output_port = data;
-    end else if (addr[15:MEM_ADDR_WIDTH] == {(16-MEM_ADDR_WIDTH){1'b1}}) begin // Place Memory at the end of the memory map
+    if (addr == 16'hFF00) begin
+      gpo_port = data;
+    end else if (addr == 16'hFF08) begin
+      clk_cnt_ctrl_reg = data[1:0];
+    end else begin
       `memory[addr[(MEM_ADDR_WIDTH-1):0]] = data;
     end
   end
@@ -2475,10 +2510,10 @@ module tb_dv_6809_model
   ////////////////////////////////////////////////////////////////////////////
   always @(negedge `e_clk)
   begin
-    if (output_port == 8'h00) begin
-      cycle_cnt <= 0;
-    end else if ((output_port[6] == 1'b0) && (output_port[1] == 1'b1)) begin
-      cycle_cnt <= cycle_cnt + 1;
+    if (clk_cnt_ctrl_reg == 2'b00) begin
+      clk_cnt_reg <= 0;
+    end else if (clk_cnt_ctrl_reg == 2'b01) begin
+      clk_cnt_reg <= clk_cnt_reg + 1;
     end
   end
 
@@ -2488,7 +2523,7 @@ module tb_dv_6809_model
   assign        E_CLK_O       = `e_clk;
   assign        Q_CLK_O       = `q_clk;
   assign        ERROR_O       = `error;
-  assign        OUTPUT_PORT_O = output_port;
-  assign        CYCLE_CNT_O   = cycle_cnt;
+  assign        GPO_PORT_O    = gpo_port;
+  assign        CYCLE_CNT_O   = clk_cnt_reg;
 
 endmodule

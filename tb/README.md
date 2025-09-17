@@ -8,7 +8,6 @@
 | f.list.tb_dv_top       |   File list for testbench                                    |
 | f.list.tb_stim_top     |   File list for stimbench                                    |
 | README.txt             |   This file                                                  |
-| sim_boot.vh            |   Defines from sim_boot.asm                                  |
 | tb_dv_6809_model.v     |   Testbench: 6809 behavioral model                           |
 | tb_dv_asm.vh           |   Defines from tb_dv_asm.asm                                 |
 | tb_dv_lib.v            |   Testbench: Library of functions and tasks                  |

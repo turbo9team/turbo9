@@ -302,12 +302,14 @@ SECTION_START
   acia_print_str ("Number of runs through Dhrystone: ");
   acia_print_signed_long (Number_Of_Runs);
   acia_print_str ("\n\n");
-  
+
   COUNTER_PRINT
 
   acia_print_str      ("\n");
 
   teardown();
+
+  SYSTEM_RESET
 
   return ( 0 );
 }

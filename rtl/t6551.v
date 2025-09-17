@@ -79,6 +79,7 @@ localparam  frac_cycle_cnt_rst = 3'b000;
 reg   [5:0] baud_div_cnt_reg;
 localparam  baud_div_cnt_rst = 6'h00;
 
+wire				baud_div_en;
 reg         baud_div_en_reg;
 localparam  baud_div_en_rst = 1'b0;
 
@@ -151,6 +152,13 @@ always @(posedge CLK_I, posedge RST_I) begin
 
   end
 end
+
+`ifdef SIM_T6551_FAST
+assign baud_div_en = 1'b1;
+`else
+assign baud_div_en = baud_div_en_reg;
+`endif
+
 //
 /////////////////////////////////////////////////////////////////////////////
 
@@ -167,7 +175,7 @@ t6551_rx I_t6551_rx
   // Inputs                               
   .PROG_RST_I           (1'b0             ),
   .RXD_PIN_I            (RXD_PIN_I        ),
-  .BAUD_DIV_EN_I        (baud_div_en_reg  ),
+  .BAUD_DIV_EN_I        (baud_div_en      ),
   .RX_DATA_REG_RD_EN_I  (RX_DATA_RD_EN_I  ),
                                          
   // Outputs                             
@@ -185,7 +193,7 @@ t6551_tx I_t6551_tx
   .CLK_I                (CLK_I              ),
                                            
   // Inputs                                
-  .BAUD_DIV_EN_I        (baud_div_en_reg    ),
+  .BAUD_DIV_EN_I        (baud_div_en        ),
   .TX_DATA_I            (TX_DATA_I          ),
   .TX_DATA_REG_WR_EN_I  (TX_DATA_WR_EN_I    ),
                                            

@@ -62,22 +62,13 @@ void acia_print_str(char *string_ptr)
 
 //////////////////////////////////////// Put Char 
 //
-/*
 void acia_put_char(char data)
 {
-
-  if (SIM_BOOT_DETECT == 0)
-  {
-    while (!(ACIA_STATUS & (char)0x10)); // wait for TX buffer empty
-    ACIA_DATA = data;
-  }
-  else
-  {
-    SIM_BOOT_ACIA_OUT = data;
-  }
+  while (!(ACIA_STATUS & (char)0x10)); // wait for TX buffer empty
+  ACIA_DATA = data;
 }
-*/
 
+/*
 __asm__
 (
   "   .area .text                 \n"
@@ -87,7 +78,7 @@ __asm__
   "   swi                         \n"
   "   rts                         \n"
 );
-
+*/
 
 
 //////////////////////////////////////// Put 16-bit Hex 

@@ -156,7 +156,7 @@ if ($tb == "tb_dv_top") then #######################################  TB = tb_dv
       echo "Setting up tb_dv_top tc_dv_run_s19..."
       
       set test_list = ( "tc_dv_run_code" )
-      set hex_file = "../../../asm/sim_boot.hex" # not necessary set below
+      set hex_file = "../../../asm/turbo9_boot.hex" # not necessary set below
 
       if ($#argv >= 3) then
         set s19_file = "../../${3}"
@@ -247,8 +247,8 @@ foreach test_x ( $test_list )
       set hex_arg = "+hex_file=${hex_file}"
       set s19_arg = ""
     else
-      cp ../../../asm/sim_boot.hex .
-      set hex_arg = "+hex_file=../../../asm/sim_boot.hex"
+      cp ../../../asm/turbo9_boot.hex .
+      set hex_arg = "+hex_file=../../../asm/turbo9_boot.hex"
       cp ${s19_file} .
       set s19_arg = "+s19_file=${s19_file}"
     endif

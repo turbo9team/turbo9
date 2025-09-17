@@ -53,7 +53,11 @@ module clk_counter
   input          CLK_I,
 
   // Inputs         
-  input [ 7:0]   PORT_I,
+  input [ 7:0]   DATA_I,
+  input          CLK_CNT_CTRL_WR_EN_I,
+
+  // Outputs         
+  output [ 7:0]  CLK_CNT_CTRL_DATA_O,
   output [31:0]  CLK_CNT_DATA_O
 );
 
@@ -62,14 +66,32 @@ module clk_counter
 //                             INTERNAL SIGNALS
 /////////////////////////////////////////////////////////////////////////////
 
+reg   [1:0]   clk_cnt_ctrl_reg;
+localparam    clk_cnt_ctrl_rst = 2'd0;
+
 reg   [31:0]  clk_cnt_reg;
 localparam    clk_cnt_rst = 32'd0;
 
-wire [1:0] state = {PORT_I[6], PORT_I[1]};
 localparam  CLEAR = 2'b00;
 localparam  RUN   = 2'b01;
-localparam  STOP  = 2'b11;
+localparam  STOP  = 2'b10;
 
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+//                           Clock Counter Control
+/////////////////////////////////////////////////////////////////////////////
+always @(posedge CLK_I, posedge RST_I) begin
+  if (RST_I) begin
+    clk_cnt_ctrl_reg   <= clk_cnt_ctrl_rst;  
+  end else begin
+    if (CLK_CNT_CTRL_WR_EN_I) begin
+      clk_cnt_ctrl_reg   <= DATA_I[1:0];
+    end
+  end
+end
+//
 /////////////////////////////////////////////////////////////////////////////
 
 
@@ -80,9 +102,9 @@ always @(posedge CLK_I, posedge RST_I) begin
   if (RST_I) begin
     clk_cnt_reg   <= clk_cnt_rst;  
   end else begin
-    if (state == CLEAR) begin
+    if (clk_cnt_ctrl_reg == CLEAR) begin
       clk_cnt_reg <= clk_cnt_rst;
-    end else if (state == RUN) begin
+    end else if (clk_cnt_ctrl_reg == RUN) begin
       clk_cnt_reg <= clk_cnt_reg + 32'd1;
     end
   end
@@ -95,7 +117,8 @@ end
 //                             ASSIGN OUTPUTS
 /////////////////////////////////////////////////////////////////////////////
 
-assign CLK_CNT_DATA_O = clk_cnt_reg;
+assign CLK_CNT_CTRL_DATA_O = {6'd0, clk_cnt_ctrl_reg};
+assign CLK_CNT_DATA_O      = clk_cnt_reg;
 
 /////////////////////////////////////////////////////////////////////////////
 

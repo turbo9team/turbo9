@@ -50,43 +50,63 @@
 ;                  Turbo9 / 6809 BYTE sieve benchmark program
 ; ////////////////////////////////////////////////////////////////////////////
 
-  IFDEF _COCO
-prog_start  equ $4000
-clk_cnt     equ $0112
-  ELSE
-prog_start  equ $8000
-clk_cnt     equ $0004
-output_port equ $0000
-  ENDC
 
+; //////////// Memory Map
+;
+; Initialized RAM (Vector Table): FFFF - FFF0
+;
+; FFFE : FFFF   RESET_VECTOR
+; FFFC : FFFD   NMI_VECTOR
+; FFFA : FFFB   SWI_VECTOR
+; FFF8 : FFF9   IRQ_VECTOR
+; FFF6 : FFF7   FIRQ_VECTOR
+; FFF4 : FFF5   SWI2_VECTOR
+; FFF2 : FFF3   SWI3_VECTOR
+; FFF0 : FFF1   RESERVED_VECTOR
+;
+;
+; I/O Space: FFEF - FF00
+;
+; FF08          CLK_CNT_CTRL[1:0] (read)  /  CLK_CNT_CTRL (write)
+; FF04 : FF07   CLK_CNT[31:0]     (read)
+; FF03          ACIA_STATUS       (read)
+; FF02          ACIA_RX_DATA      (read)  /  ACIA_TX_DATA (write)
+; FF01          GPI PORT          (read)
+; FF00          GPO PORT          (read)  /  GPO_PORT    (write)
+;
+; Initialized RAM: FEFF - 0000
+;
+
+
+  include turbo9_boot_io_lib.sym
+
+
+clk_cnt_ctrl  equ $ff08
+clk_cnt       equ $ff04
+acia_status   equ $ff03
+acia_data     equ $ff02
+gpi_port      equ $ff01
+gpo_port      equ $ff00
+
+prog_start    equ $8000
 
 data_size   equ 8190
 iter        equ 10
-LF          equ $0a
 
 
   org  prog_start  ; 32k of memory at the top
 
-  IFDEF _COCO
- section code
-  ENDC
 ; ////////////////////////////////////////////////////////////////////////////
 ;                             Code Under Test
 ; ////////////////////////////////////////////////////////////////////////////
 code_under_test:
   leas  -1,s
 
-  ldx   #prog_title
-  jsr   print_x
+  ldd   #string_prog_title
+  jsr   print_string
 
-  IFDEF _COCO
-  ldd   #0
-  std   clk_cnt
-  ELSE
-  lda   >output_port
-  ora   #$02
-  sta   >output_port    ; Set output_port[1] = 1, starting clk_counter
-  ENDC
+  clr   clk_cnt_ctrl    ; Set clk_cnt_ctrl    = 0, clearing clk_counter
+  inc   clk_cnt_ctrl    ; Set clk_cnt_ctrl[0] = 1, starting clk_counter
 
 
 ; ////////////////////////////////////////////////////////////////////////////
@@ -201,50 +221,40 @@ interation_loop_done_1
 
 main_done:
 
-  IFDEF _COCO
-  ELSE
 ; //////////////////////// Stop Clock Counter / Test Bench
-  lda   >output_port
-  ora   #$40
-  sta   >output_port
-  ENDC
+  inc   clk_cnt_ctrl    ; set clk_cnt_ctrl[1] = 1 to stop clock counter
 
 ; //////////////////////// Print Primes Found
-  ldx   #primes_found
-  jsr   print_x
+  ldd   #string_primes_found
+  jsr   print_string
   tfr   u,d
   jsr   puthex_16bit
-  lda   #LF
-  jsr   putchar_a
+  ldd   #string_linefeed
+  jsr   print_string
 
 ; ////////; //////////////////////// Number of Iterations
-  ldx   #num_iter
-  jsr   print_x
-  lda   #iter
+  ldd   #string_num_iter
+  jsr   print_string
+  ldb   #iter
   jsr   puthex_byte
-  lda   #LF
-  jsr   putchar_a
+  ldd   #string_linefeed
+  jsr   print_string
  
   
 ; //////////////// Print Clock Count
-  ldx   #clk_cnt_output
-  jsr   print_x
+  ldd   #string_clk_cnt
+  jsr   print_string
   ldd   >clk_cnt
   jsr   puthex_16bit
 
-  IFDEF _COCO
-  ldx   #clk_cnt_unit
-  jsr   print_x
-  ELSE
   ldd   >(clk_cnt+2)
   jsr   puthex_16bit
-  ENDC
   
-  lda   #LF
-  jsr   putchar_a
+  ldd   #string_linefeed
+  jsr   print_string
   
   leas  1,s
-  jmp   terminate_prog
+  jmp   boot_return
 
 
 ; ////////////////////////////////////////////////////////////////////////////
@@ -258,21 +268,16 @@ flags:  .blkb  (data_size+1)
 
 data_end:
 
-clk_cnt_output
+string_clk_cnt
   fcc  "Clock count: $"
   fcb  $00
 
-  IFDEF _COCO
-clk_cnt_unit
-  fcc  " 16.67ms cycles"
-  fcb $00
-  ENDC
 
-primes_found
+string_primes_found
   fcc  "Primes found: $"
   fcb  $00
 
-prog_title:
+string_prog_title:
   fcb   $0a
   fcc   "BYTE Sieve Benchmark (Language: 6809 ASM)"
   fcb   $0a
@@ -280,23 +285,15 @@ prog_title:
   fcb   $0a
   fcc   "6809 Assembly port by Kevin Phillipson"
   fcb   $0a
+string_linefeed
   fcb   $0a
   fcb   $00
 
-num_iter:
+string_num_iter:
   fcc   "Number of iterations: $"
   fcb   $00
 
 
-  IFDEF _COCO
-  include coco_sys_io.asm
-  ELSE
-  include turbo9_sys_io.asm
-  ENDC
+  END   prog_start
 
-  include common_io.asm
-
-  IFDEF _COCO
-  endsect
-  ENDC
 

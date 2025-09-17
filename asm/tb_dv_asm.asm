@@ -47,28 +47,24 @@
 ;                       Turbo9 / 6809 testbench program
 ; ////////////////////////////////////////////////////////////////////////////
 
-output_port equ $0000
+gpo_port equ $ff00
 
-  org  $fc00
+  org  $fa00
 
 ; ////////////////////////////////////////////////////////////////////////////
 ;                    Testbench Program Start (S Stack Pointer)
 ; ////////////////////////////////////////////////////////////////////////////
 start_s_ptr:
 
-  ; initalize output_port[7:0] = 8'h00
-  lda   #$00
-  sta   >output_port
+  ; initalize gpo_port[7:0] = 8'h00
+  clr   >gpo_port
 
   ; Delay a few cycles
   nop
   nop
-  nop
-  nop
 
-  ; set start flag (output_port[0] = 1'b1)
-  lda   #$01
-  sta   >output_port
+  ; set start flag (gpo_port[0] = 1'b1)
+  inc   >gpo_port
 
   ; Use S as stack pointer
   lds   #init_stack_data
@@ -80,19 +76,15 @@ start_s_ptr:
 ; ////////////////////////////////////////////////////////////////////////////
 start_u_ptr:
 
-  ; initalize output_port[7:0] = 8'h00
-  lda   #$00
-  sta   >output_port
+  ; initalize gpo_port[7:0] = 8'h00
+  clr   >gpo_port
 
   ; Delay a few cycles
   nop
   nop
-  nop
-  nop
 
-  ; set start flag (output_port[0] = 1'b1)
-  lda   #$01
-  sta   >output_port
+  ; set start flag (gpo_port[0] = 1'b1)
+  inc   >gpo_port
 
   ; Use U as stack pointer
   ldu   #init_stack_data
@@ -105,10 +97,8 @@ start_u_ptr:
 done_s_ptr
   pshs  pc,u,y,x,dp,b,a,cc
 
-  ; set done flag (output_port[7] = 1'b1)
-  lda   >output_port
-  ora   #$80
-  sta   >output_port
+  ; set done flag (gpo_port[1] = 1'b1)
+  inc   >gpo_port
 
 done_s_ptr_loop:
   nop   ; make the PC change in sim model
@@ -121,10 +111,8 @@ done_s_ptr_loop:
 done_u_ptr
   pshu  pc,s,y,x,dp,b,a,cc
 
-  ; set done flag (output_port[7] = 1'b1)
-  lda   >output_port
-  ora   #$80
-  sta   >output_port
+  ; set done flag (gpo_port[1] = 1'b1)
+  inc   >gpo_port
 
 done_u_ptr_loop:
   nop   ; make the PC change in sim model
@@ -186,10 +174,10 @@ data_block_end:
 ; Used to load initial state and save run-time data for code under test
 ; and save the processor state after code under test complete
 
-  org  vector_table-32
+  org  io_block-32
 stack_end:
 
-  org  vector_table-12
+  org  io_block-12
 init_stack_data:
 init_cc:
   fcb   $78   ;cc
@@ -208,7 +196,11 @@ init_u_s:
 init_pc:
   fdb   code_under_test ;pc
 
-stack_start:
+; ////////////////////////////////////////////////////////////////////////////
+;                           I/O Block  (240 bytes)
+; ////////////////////////////////////////////////////////////////////////////
+  org $ff00
+io_block:
 
 ; ////////////////////////////////////////////////////////////////////////////
 ;                         reset / interrupt vector 

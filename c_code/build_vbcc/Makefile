@@ -79,8 +79,8 @@ lib_s.asm: lib.c
 hello.o: hello_world.c
 	@echo ""
 	@echo "//////////// Compile ////////////"
-	vc -S -O3 -speed $(VCOPTS) -I$(LIB)  $(HELLO_DIR)/hello_world.c -o hello.asm
-	vc -c -O3 -speed $(VCOPTS) -I$(LIB)  $(HELLO_DIR)/hello_world.c -o hello.o
+	vc -S -O2 -speed $(VCOPTS) -I$(LIB)  $(HELLO_DIR)/hello_world.c -o hello.asm
+	vc -c -O2 -speed $(VCOPTS) -I$(LIB)  $(HELLO_DIR)/hello_world.c -o hello.o
 
 sieve.asm: byte_sieve.c
 	@echo ""

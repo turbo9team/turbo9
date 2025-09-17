@@ -53,7 +53,37 @@ SECTION_START
 
    COUNTER_START
 
-   acia_print_str("\nHello, World!\n");
+   acia_print_str("\nHello, World!\n\n");
+
+
+    int size = 8;
+    for (int i = size / 2; i <= size; i += 2) {
+        for (int j = 1; j < size - i; j += 2) {
+            acia_print_str(" ");
+        }
+        for (int j = 1; j <= i; j++) {
+            acia_print_str("*");
+        }
+        for (int j = 1; j < size - i; j += 2) {
+            acia_print_str(" ");
+        }
+        for (int j = 1; j <= i; j++) {
+            acia_print_str("*");
+        }
+        acia_print_str("\n");
+    }
+    for (int i = size; i >= 1; i--) {
+        for (int j = i; j < size; j++) {
+            acia_print_str(" ");
+        }
+        for (int j = 1; j <= (i * 2) - 1; j++) {
+            acia_print_str("*");
+        }
+        acia_print_str("\n");
+    }
+
+ 
+   acia_print_str("\n");
 
    COUNTER_STOP
 

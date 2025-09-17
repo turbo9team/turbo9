@@ -51,34 +51,47 @@
 module tb_dv_top;
 
   ///////////////////// Select one of the following:
-  `define TURBO9 
+  //`define TURBO9 
   //`define TURBO9_S
-  //`define TURBO9_R
+  `define TURBO9_R
   /////////////////////
 
-  `define SIM_TURBO9  // Turns on debug strings in decode table verilog files
+  `define SIM_TURBO9      // Turns on debug strings in decode table verilog files
+  `define SIM_T6551_FAST  // Runs T6551 UART as fast as possible
 
-  `define MEM_ADDR_WIDTH  15 //32 Kbyte Memory, adjust the asm accordingly
+  `define MEM_ADDR_WIDTH  16 //64 Kbyte Memory, adjust the asm accordingly
 
-  `define model_mem       I_tb_dv_6809_model.I_tb_dv_6809_memory.memory
-//`define dut_mem         I_broken_6809_model.I_tb_dv_6809_memory.memory
+  `define model_mem          I_tb_dv_6809_model.I_tb_dv_6809_memory.memory
+  `define model_clk_cnt_ctrl I_tb_dv_6809_model.clk_cnt_ctrl_reg
+//`define dut_mem            I_broken_6809_model.I_tb_dv_6809_memory.memory
 
 `ifdef TURBO9_R
-  `define dut_mem_even    I_soc_top_r.I_even_syncram_8bit.ram
-  `define dut_mem_odd     I_soc_top_r.I_odd_syncram_8bit.ram
-  `define dut_cycle_cnt   I_soc_top_r.clk_cnt_rd_dat
+  `define dut_mem_even      I_soc_top_r.I_even_syncram_8bit.ram
+  `define dut_mem_odd       I_soc_top_r.I_odd_syncram_8bit.ram
+  `define dut_cycle_cnt     I_soc_top_r.clk_cnt_rd_dat
+  `define dut_clk_cnt_ctrl  I_soc_top_r.clk_cnt_ctrl_dat
+  `define dut_uart_clk      I_soc_top_r.I_t6551.CLK_I
+  `define dut_uart_rst      I_soc_top_r.I_t6551.RST_I
+  `define dut_uart_rx_full  I_soc_top_r.I_t6551.rx_data_reg_full
 `elsif TURBO9_S
-  `define dut_mem_even    I_soc_top_s.I_even_syncram_8bit.ram
-  `define dut_mem_odd     I_soc_top_s.I_odd_syncram_8bit.ram
-  `define dut_cycle_cnt   I_soc_top_s.clk_cnt_rd_dat
+  `define dut_mem_even      I_soc_top_s.I_even_syncram_8bit.ram
+  `define dut_mem_odd       I_soc_top_s.I_odd_syncram_8bit.ram
+  `define dut_cycle_cnt     I_soc_top_s.clk_cnt_rd_dat
+  `define dut_clk_cnt_ctrl  I_soc_top_s.clk_cnt_ctrl_dat
+  `define dut_uart_clk      I_soc_top_s.I_t6551.CLK_I
+  `define dut_uart_rst      I_soc_top_s.I_t6551.RST_I
+  `define dut_uart_rx_full  I_soc_top_s.I_t6551.rx_data_reg_full
 `else
-  `define dut_mem         I_soc_top.I_syncram_8bit.ram
-  `define dut_cycle_cnt   I_soc_top.clk_cnt_rd_dat
+  `define dut_mem           I_soc_top.I_syncram_8bit.ram
+  `define dut_cycle_cnt     I_soc_top.clk_cnt_rd_dat
+  `define dut_clk_cnt_ctrl  I_soc_top.clk_cnt_ctrl_dat
+  `define dut_uart_clk      I_soc_top.I_t6551.CLK_I
+  `define dut_uart_rst      I_soc_top.I_t6551.RST_I
+  `define dut_uart_rx_full  I_soc_top.I_t6551.rx_data_reg_full
 `endif
 
   `define tb_mem          I_tb_dv_memory.memory
 
-  `include "sim_boot.vh"            // Address defines from simulation bootloader 
   `include "tb_dv_asm.vh"           // Address defines from assembly testbench 
   `include "tb_dv_lib.v"            // Library of utility tasks & functions
   `include "tc_dv_dir_instr.v"      // Testcase for direct addressing instrutions
@@ -119,6 +132,9 @@ module tb_dv_top;
 
   reg sysclk;
   reg reset;
+  reg tb_done;
+  reg console_en;
+  wire upload_en;
 
   integer seed;
   integer rand_itr_total;
@@ -128,10 +144,15 @@ module tb_dv_top;
   reg [(128*8)-1:0] s19_file;
 
 
-  integer    model_cycle_cnt;
-  wire       model_error;
-  wire [7:0] model_output_port;
-  wire [7:0] dut_output_port;
+  wire [31:0] model_cycle_cnt;
+  wire        model_error;
+  wire [7:0]  model_output_port;
+  wire [7:0]  dut_output_port;
+
+  wire       dut_uart_rxd_pin;
+  wire       dut_uart_txd_pin;
+
+  wire       dut_uart_cts = ~`dut_uart_rx_full;
 
   ////////////////////////////////////////////////////////////////////////////
   // Dump VCD
@@ -189,6 +210,8 @@ module tb_dv_top;
 
     /////////// Initialize global variables / signals
     //
+    tb_done         = 0;
+    console_en      = 0;
     pass_test_cnt   = 0;
     fail_test_cnt   = 0;
     reset           = 1'b1;
@@ -369,6 +392,10 @@ module tb_dv_top;
     end
     $display("[TB; tb_dv_top      ]"); 
 
+    tb_done = 1'b1;
+
+    @(posedge sysclk);
+
     $finish();
 
   end
@@ -417,11 +444,12 @@ module tb_dv_top;
     .CLK_I         (sysclk), // Clock
     //
     // Inputs 
-    .RXD_PIN_I     (1'b1),
+    .RXD_PIN_I     (dut_uart_txd_pin),
+    .GPI_PORT_I    (8'h00),
   
     // Outputs
-    .TXD_PIN_O     (),
-    .OUTPUT_PORT_O (dut_output_port)
+    .TXD_PIN_O     (dut_uart_rxd_pin),
+    .GPO_PORT_O    (dut_output_port)
   );
 
   /////////////////////////////////////////////////////////////////////////////
@@ -441,13 +469,14 @@ module tb_dv_top;
     // Inputs
     .QUIET_I      (1'b1),
     .FAST_CLK_I   (1'b1),
+    .GPI_PORT_I   (8'h00),
 
 
     // Outputs
     .E_CLK_O        (),
     .Q_CLK_O        (),
     .ERROR_O        (model_error),
-    .OUTPUT_PORT_O  (model_output_port),
+    .GPO_PORT_O     (model_output_port),
     .CYCLE_CNT_O    (model_cycle_cnt)
   );
   
@@ -489,82 +518,42 @@ module tb_dv_top;
 
   always @(posedge sysclk)
   begin
-    if ((dut_output_port[1]) && (~dut_output_port[6]) && ((`dut_cycle_cnt % 100_000) == 0)) begin
+    if ((`dut_clk_cnt_ctrl[1:0] == 2'b10) && ((`dut_cycle_cnt % 100_000) == 0)) begin
       $display("[TB: tb_dv_top      ] DUT clock cycle count: %d", `dut_cycle_cnt);
     end
-    if ((model_output_port[1]) && (~model_output_port[6]) && ((model_cycle_cnt % 100_000) == 0)) begin
+    if ((`model_clk_cnt_ctrl[1:0] == 2'b10) && ((model_cycle_cnt % 100_000) == 0)) begin
       $display("[TB: tb_dv_top      ] Model E clock cycle count: %d", model_cycle_cnt);
-
-
     end
   end
 
-  ////////////////////////////////////////////////////////////////////////////
-  // Console File Output
-  ////////////////////////////////////////////////////////////////////////////
-  integer   model_console_file_ptr;
-  integer   dut_console_file_ptr;
-  reg       console_output_en;
-  integer   putchar_en_addr;
-  integer   putchar_buf_addr;
 
-  initial begin
-    console_output_en = 1'b0;
-    putchar_en_addr = `asm_sim_putchar_en-((2**16)-(2**`MEM_ADDR_WIDTH));
-    putchar_buf_addr = `asm_sim_putchar_buf-((2**16)-(2**`MEM_ADDR_WIDTH));
-  end
+  //////////////////////////////////////////////////////////////////////////////
+  // tb_bfm_uart Instance (DUT side)
+  //////////////////////////////////////////////////////////////////////////////
+  tb_uart_bfm I_tb_uart_bfm_dut
+  (
+    // Filenames
+    .CONSOLE_FILENAME_I ("dut_console.txt" ),
+    .UPLOAD_FILENAME_I  (s19_file          ),
+  
+    // Inputs: Clock & Reset
+    .RST_I              (`dut_uart_rst     ),   // Active high
+    .CLK_I              (`dut_uart_clk     ),   // UART clock
+  
+    // TB Control Inputs
+    .CONSOLE_EN_I       (console_en        ),
+    .UPLOAD_EN_I        (console_en        ),
+    .TB_DONE_I          (tb_done           ),
+  
+    .RXD_PIN_I          (dut_uart_rxd_pin  ), // from soc_top*.TXD_PIN_O
+    .CTS_PIN_I          (dut_uart_cts      ), // active-high CTS: 0 = clear to send
 
-  task console_file_open(input [(32*8)-1:0] test_name);
-    reg [(64*8)-1:0] console_file_name;
-  begin
-    $sformat(console_file_name,"%0s.model.console.txt",test_name);
-    model_console_file_ptr = $fopen(console_file_name,"w");
-    $display("[TB: console_file_open] Opening %0s for console output", console_file_name);
-    //
-    $sformat(console_file_name,"%0s.dut.console.txt",test_name);
-    dut_console_file_ptr = $fopen(console_file_name,"w");
-    $display("[TB: console_file_open] Opening %0s for console output", console_file_name);
-    //
-    console_output_en = 1'b1;
-  end
-  endtask
+    .TXD_PIN_O          (dut_uart_txd_pin  ),  // to   soc_top*.RXD_PIN_I
+    .UPLOAD_DONE_O      (                  ),
+    .RX_IDLE_O          (                  )
+  );
 
-  task console_file_close;
-  begin
-    $fclose(model_console_file_ptr);
-    $fclose(dut_console_file_ptr);
-  end
-  endtask
 
-  wire        model_putchar_en  = `model_mem[putchar_en_addr][0] & console_output_en;
-  wire [7:0]  model_putchar_buf = `model_mem[putchar_buf_addr];
-
-`ifdef TURBO9_R
-  wire        dut_putchar_en  = (~putchar_en_addr[0]) ? (`dut_mem_even[putchar_en_addr[15:1]][0] & console_output_en) :
-                                                        (`dut_mem_odd [putchar_en_addr[15:1]][0] & console_output_en) ;
-
-  wire [7:0]  dut_putchar_buf = (~putchar_buf_addr[0]) ? `dut_mem_even[putchar_buf_addr[15:1]] :
-                                                         `dut_mem_odd [putchar_buf_addr[15:1]] ;
-`elsif TURBO9_S
-  wire        dut_putchar_en  = (~putchar_en_addr[0]) ? (`dut_mem_even[putchar_en_addr[15:1]][0] & console_output_en) :
-                                                        (`dut_mem_odd [putchar_en_addr[15:1]][0] & console_output_en) ;
-
-  wire [7:0]  dut_putchar_buf = (~putchar_buf_addr[0]) ? `dut_mem_even[putchar_buf_addr[15:1]] :
-                                                         `dut_mem_odd [putchar_buf_addr[15:1]] ;
-`else
-  wire        dut_putchar_en  = `dut_mem[putchar_en_addr][0] & console_output_en;
-  wire [7:0]  dut_putchar_buf = `dut_mem[putchar_buf_addr];
-`endif
-
-  always @(posedge model_putchar_en)
-  begin
-    $fwrite(model_console_file_ptr,"%0s", model_putchar_buf);
-  end
-
-  always @(posedge dut_putchar_en)
-  begin
-    $fwrite(dut_console_file_ptr,"%0s", dut_putchar_buf);
-  end
 
 endmodule
 

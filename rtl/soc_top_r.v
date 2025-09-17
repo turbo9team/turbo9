@@ -40,6 +40,37 @@
 // 07.14.2023 - Kevin Phillipson
 //   File header added
 //
+
+
+  ////////////// Memory Map
+  //
+  //
+  // Initialized RAM (Vector Table): FFFF - FFF0
+  //
+  // FFFE : FFFF   RESET_VECTOR
+  // FFFC : FFFD   NMI_VECTOR
+  // FFFA : FFFB   SWI_VECTOR
+  // FFF8 : FFF9   IRQ_VECTOR
+  // FFF6 : FFF7   FIRQ_VECTOR
+  // FFF4 : FFF5   SWI2_VECTOR
+  // FFF2 : FFF3   SWI3_VECTOR
+  // FFF0 : FFF1   RESERVED_VECTOR
+  //
+  //
+  // I/O Space: FFEF - FF00
+  //
+  // FF08          CLK_CNT_CTRL[1:0] (read)  /  CLK_CNT_CTRL (write)
+  // FF04 : FF07   CLK_CNT[31:0]     (read)
+  // FF03          ACIA_STATUS       (read)
+  // FF02          ACIA_RX_DATA      (read)  /  ACIA_TX_DATA (write)
+  // FF01          GPI PORT          (read)
+  // FF00          GPO PORT          (read)  /  GPO_PORT    (write)
+  //
+  //
+  // Initialized RAM: FEFF - 0000
+  //
+  //
+
 //////////////////////////////////////////////////////////////////////////////
 // [TURBO9_HEADER_END]
 
@@ -48,7 +79,7 @@
 /////////////////////////////////////////////////////////////////////////////
 module soc_top_r
 #(
-  parameter MEM_ADDR_WIDTH = 15
+  parameter MEM_ADDR_WIDTH = 16
 )
 (
   // Inputs: Clock & Reset
@@ -57,15 +88,20 @@ module soc_top_r
 
   // Inputs 
   input          RXD_PIN_I,
-  
+  input    [7:0] GPI_PORT_I,
+
   // Outputs
   output         TXD_PIN_O,
-  output   [7:0] OUTPUT_PORT_O
+  output   [7:0] GPO_PORT_O
 );
 
 /////////////////////////////////////////////////////////////////////////////
 //                             INTERNAL SIGNALS
 /////////////////////////////////////////////////////////////////////////////
+
+// Comment / Uncomment to remove / add pipeline register:
+//`define SOC_PIPELINE_REG
+
 
 localparam FULL_MEM_ADDR_WIDTH = MEM_ADDR_WIDTH;
 localparam EVEN_MEM_ADDR_WIDTH = MEM_ADDR_WIDTH-1;
@@ -108,8 +144,8 @@ wire        odd_turbo9_we;
 wire  [7:0] acia_data_rd_dat;  
 wire  [7:0] acia_status_rd_dat;
 
-reg  acia_data_wr_en;
-reg  acia_data_rd_en;
+reg         acia_data_wr_en;
+reg         acia_data_rd_en;
 
 reg         even_ram_we;
 wire  [7:0] even_ram_rd_dat;
@@ -117,8 +153,12 @@ wire  [7:0] even_ram_rd_dat;
 reg         odd_ram_we;
 wire  [7:0] odd_ram_rd_dat;
 
-reg         port_we;
-wire  [7:0] port_rd_dat;
+reg         clk_cnt_ctrl_wr_en;
+wire  [7:0] clk_cnt_ctrl_dat;
+
+reg         gpo_port_we;
+wire  [7:0] gpo_port_rd_dat;
+wire  [7:0] gpi_port_rd_dat;
 
 wire [31:0] clk_cnt_rd_dat;
 
@@ -168,9 +208,11 @@ wire        ram_clk;
 
   );
 
-  /*
-  assign ram_clk = CLK_I;
 
+`ifdef SOC_PIPELINE_REG
+  //
+  assign ram_clk = CLK_I;
+  //
   // Wishbone Pipeline Registers (Even Bytes)
   always @(posedge CLK_I, posedge RST_I) begin
     if (RST_I) begin
@@ -185,7 +227,7 @@ wire        ram_clk;
       even_turbo9_we_reg  <= even_turbo9_we; 
     end
   end
-
+  //
   // Wishbone Pipeline Registers (Odd Bytes)
   always @(posedge CLK_I, posedge RST_I) begin
     if (RST_I) begin
@@ -196,10 +238,11 @@ wire        ram_clk;
       odd_turbo9_ack     <= odd_turbo9_stb;
     end
   end
-  */
-  
+  //
+`else
+  //
   assign ram_clk = ~CLK_I;
-
+  //
   always @* begin
     even_turbo9_adr_reg = even_turbo9_adr;
     even_turbo9_ack     = even_turbo9_stb;
@@ -208,25 +251,31 @@ wire        ram_clk;
     odd_turbo9_adr_reg  = odd_turbo9_adr;
     odd_turbo9_ack      = odd_turbo9_stb;
   end
-
+  //
+`endif
 
 
   // Write Enables (Even Bytes)
   always @* begin
     // Defaults
     even_ram_we = 1'b0;
-    port_we = 1'b0;
+    gpo_port_we = 1'b0;
     acia_data_wr_en = 1'b0;
+    clk_cnt_ctrl_wr_en = 1'b0;
     //
     // Even Memory Bus Read Data Mux
-    if (even_turbo9_adr_full[15:FULL_MEM_ADDR_WIDTH] == {(16-FULL_MEM_ADDR_WIDTH){1'b1}}) begin
+    if (even_turbo9_adr_full[15:8] == 8'hFF) begin
+      if (even_turbo9_adr_full[7:4] == 4'hF) begin  /////////// FFFF - FFF0 : Vector Table
+        even_ram_we = even_turbo9_we;
+      end else begin
+        case (even_turbo9_adr_full[3:0])            /////////// FFEF - FF00 : I/O Space
+          4'h8: clk_cnt_ctrl_wr_en = even_turbo9_we;
+          4'h2: acia_data_wr_en    = even_turbo9_we;
+          4'h0: gpo_port_we        = even_turbo9_we;
+        endcase
+      end
+    end else begin                                  /////////// FEFF - 0000 : RAM
       even_ram_we = even_turbo9_we;
-    end else begin
-      case (even_turbo9_adr_full[3:0])
-        //
-        4'h2: acia_data_wr_en = even_turbo9_we;
-        4'h0: port_we         = even_turbo9_we;
-      endcase
     end
   end
 
@@ -236,7 +285,11 @@ wire        ram_clk;
     odd_ram_we = 1'b0;
     //
     // Odd Memory Bus Read Data Mux
-    if (odd_turbo9_adr_full[15:FULL_MEM_ADDR_WIDTH] == {(16-FULL_MEM_ADDR_WIDTH){1'b1}}) begin
+    if (odd_turbo9_adr_full[15:8] == 8'hFF) begin
+      if (odd_turbo9_adr_full[7:4] == 4'hF) begin  /////////// FFFF - FFF0 : Vector Table
+        odd_ram_we = odd_turbo9_we;
+      end
+    end else begin                                 /////////// FEFF - 0000 : RAM
       odd_ram_we = odd_turbo9_we;
     end
   end
@@ -272,14 +325,22 @@ wire        ram_clk;
   );
 
   // Output Port
-  output_port I_output_port
+  gpo_port I_gpo_port
   (
-    .CLK_I  (CLK_I),
-    .RST_I  (RST_I),
-    .WE_I   (port_we),
-    .DAT_I  (even_turbo9_wr_dat),
-    .DAT_O  (port_rd_dat),
-    .PORT_O (OUTPUT_PORT_O)
+    .CLK_I      (CLK_I),
+    .RST_I      (RST_I),
+    .WE_I       (gpo_port_we),
+    .DAT_I      (even_turbo9_wr_dat),
+    .DAT_O      (gpo_port_rd_dat),
+    .GPO_PORT_O (GPO_PORT_O)
+  );
+
+  // Input Port
+  gpi_port I_gpi_port
+  (
+    .CLK_I       (CLK_I           ),
+    .GPI_PORT_I  (GPI_PORT_I      ),
+    .DAT_O       (gpi_port_rd_dat )
   );
 
   // UART 
@@ -301,15 +362,20 @@ wire        ram_clk;
     .STATUS_DATA_O    (acia_status_rd_dat )
   );
 
-  // Clock Count Timer
+ // Clock Count Timer
   clk_counter I_clk_counter
   (
     // Inputs: Clock & Reset
-    .RST_I            (RST_I          ),
-    .CLK_I            (CLK_I          ),
-    // Inputs             
-    .PORT_I           (OUTPUT_PORT_O  ),  
-    .CLK_CNT_DATA_O   (clk_cnt_rd_dat )
+    .RST_I                (RST_I          ),
+    .CLK_I                (CLK_I          ),
+
+    // Inputs
+    .DATA_I               (even_turbo9_wr_dat ),
+    .CLK_CNT_CTRL_WR_EN_I (clk_cnt_ctrl_wr_en ),
+
+    // Outputs
+    .CLK_CNT_CTRL_DATA_O  (clk_cnt_ctrl_dat   ),
+    .CLK_CNT_DATA_O       (clk_cnt_rd_dat     )
   );
 
 
@@ -319,20 +385,25 @@ wire        ram_clk;
     even_turbo9_rd_dat = 8'h00;
     acia_data_rd_en = 1'b0;
     //
-    if (even_turbo9_adr_reg_full[15:FULL_MEM_ADDR_WIDTH] == {(16-FULL_MEM_ADDR_WIDTH){1'b1}}) begin
+    if (even_turbo9_adr_reg_full[15:8] == 8'hFF) begin
+      if (even_turbo9_adr_reg_full[7:4] == 4'hF) begin  /////////// FFFF - FFF0 : Vector Table
+        even_turbo9_rd_dat = even_ram_rd_dat;
+      end else begin
+        case (even_turbo9_adr_reg_full[3:0])            /////////// FFEF - FF00 : I/O Space
+          //
+          4'h8:    even_turbo9_rd_dat = clk_cnt_ctrl_dat;
+          4'h6:    even_turbo9_rd_dat = clk_cnt_rd_dat[15: 8];
+          4'h4:    even_turbo9_rd_dat = clk_cnt_rd_dat[31:24];
+          4'h2: begin
+            even_turbo9_rd_dat = acia_data_rd_dat;
+            acia_data_rd_en =  ~even_turbo9_we_reg;
+          end
+          4'h0:    even_turbo9_rd_dat = gpo_port_rd_dat;
+          default: even_turbo9_rd_dat = 8'h00;
+        endcase
+      end
+    end else begin                                      /////////// FEFF - 0000 : RAM
       even_turbo9_rd_dat = even_ram_rd_dat;
-    end else begin
-      case (even_turbo9_adr_reg_full[3:0])
-        //
-        4'h6:    even_turbo9_rd_dat = clk_cnt_rd_dat[15: 8];
-        4'h4:    even_turbo9_rd_dat = clk_cnt_rd_dat[31:24];
-        4'h2: begin
-          even_turbo9_rd_dat = acia_data_rd_dat;
-          acia_data_rd_en =  ~even_turbo9_we_reg;
-        end
-        4'h0:    even_turbo9_rd_dat = port_rd_dat;
-        default: even_turbo9_rd_dat = 8'h00;
-      endcase
     end
   end
 
@@ -341,16 +412,21 @@ wire        ram_clk;
     // Defaults
     odd_turbo9_rd_dat = 8'h00;
     //
-    if (odd_turbo9_adr_reg_full[15:FULL_MEM_ADDR_WIDTH] == {(16-FULL_MEM_ADDR_WIDTH){1'b1}}) begin
+    if (odd_turbo9_adr_reg_full[15:8] == 8'hFF) begin
+      if (odd_turbo9_adr_reg_full[7:4] == 4'hF) begin  /////////// FFFF - FFF0 : Vector Table
+        odd_turbo9_rd_dat = odd_ram_rd_dat;
+      end else begin
+        case (odd_turbo9_adr_reg_full[3:0])            /////////// FFEF - FF00 : I/O Space
+          //
+          4'h7:    odd_turbo9_rd_dat = clk_cnt_rd_dat[ 7: 0];
+          4'h5:    odd_turbo9_rd_dat = clk_cnt_rd_dat[23:16];
+          4'h3:    odd_turbo9_rd_dat = acia_status_rd_dat;
+          4'h1:    odd_turbo9_rd_dat = gpi_port_rd_dat;
+          default: odd_turbo9_rd_dat = 8'h00;
+        endcase
+      end
+    end else begin                                     /////////// FEFF - 0000 : RAM
       odd_turbo9_rd_dat = odd_ram_rd_dat;
-    end else begin
-      case (odd_turbo9_adr_reg_full[3:0])
-        //
-        4'h7:    odd_turbo9_rd_dat = clk_cnt_rd_dat[ 7: 0];
-        4'h5:    odd_turbo9_rd_dat = clk_cnt_rd_dat[23:16];
-        4'h3:    odd_turbo9_rd_dat = acia_status_rd_dat;
-        default: odd_turbo9_rd_dat = 8'h00;
-      endcase
     end
   end
 

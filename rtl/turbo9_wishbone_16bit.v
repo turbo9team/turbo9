@@ -60,7 +60,7 @@ module turbo9_wishbone_16bit
   input    [4:0] TGD_I,
   input          ACK_I,
   input          STALL_I,
-  output  [15:1] ADR_O,
+  output  [15:0] ADR_O,
   output  [15:0] DAT_O,
   output   [1:0] SEL_O,
   output   [4:0] TGD_O,
@@ -190,9 +190,9 @@ module turbo9_wishbone_16bit
 localparam  WIDTH_16 =  1'b0;
 localparam  WIDTH_8  =  1'b1;
 
-reg   [15:1]  adr_o_reg;
-reg   [15:1]  adr_o_nxt;
-localparam    adr_o_rst = 15'h0000;
+reg   [15:0]  adr_o_reg;
+reg   [15:0]  adr_o_nxt;
+localparam    adr_o_rst = 16'h0000;
 
 reg   [15:0]  dat_o_reg;
 reg   [15:0]  dat_o_nxt;
@@ -296,7 +296,7 @@ always @* begin
   //
   tag_width_o_nxt   = DMEM_REQ_WIDTH_I;
   tag_adr0_o_nxt    = DMEM_ADR_I[0];
-  adr_o_nxt         = DMEM_ADR_I[15:1];
+  adr_o_nxt         = {DMEM_ADR_I[15:1], 1'b0};
   dat_o_nxt[15:8]   = DMEM_DAT_I[15:8];
   dat_o_nxt[ 7:0]   = DMEM_DAT_I[ 7:0];
   sel_o_nxt         = 2'b00;
@@ -370,7 +370,7 @@ always @* begin
         //
         tag_width_o_nxt   = DMEM_REQ_WIDTH_I;
         tag_adr0_o_nxt    = DMEM_ADR_I[0];
-        adr_o_nxt         = DMEM_ADR_I[15:1];
+        adr_o_nxt         = {DMEM_ADR_I[15:1], 1'b0};
         we_o_nxt          = DMEM_WE_I;
         stb_o_nxt         = 1'b1;
         //
@@ -390,7 +390,7 @@ always @* begin
         //end
         //
         tag_adr0_o_nxt  = PMEM_ADR_I[0];
-        adr_o_nxt       = PMEM_ADR_I[15:1] ;
+        adr_o_nxt       = {PMEM_ADR_I[15:1], 1'b0};
         we_o_nxt        = 1'b0;            
         stb_o_nxt       = 1'b1;            
         //
@@ -407,7 +407,8 @@ always @* begin
       tag_pmem_rd_o_nxt  = 1'b0;
       tag_width_o_nxt    = WIDTH_16;
       tag_adr0_o_nxt     = 1'b1;
-      adr_o_nxt          = adr_o_reg + 15'h0001;       
+      adr_o_nxt[15:1]    = adr_o_reg[15:1] + 15'h0001;       
+      adr_o_nxt[0]       = 1'b0;       
       dat_o_nxt[15:8]    = lsb_byte_reg; // lsb
       //dat_o_nxt[ 7:0]  = // don't care
       sel_o_nxt          = 2'b10;

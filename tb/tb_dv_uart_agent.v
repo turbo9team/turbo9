@@ -35,7 +35,7 @@
 // Engineer: Kevin Phillipson
 // Description:
 //
-// UART Bus Functional Model with t6551 (Verilog-2001)
+// UART Agent with t6551 (Verilog-2001)
 // - Instantiates t6551 to communicate over async serial
 // - Captures console RX to a file
 // - Sends an text file over TX with throttling
@@ -48,7 +48,7 @@
 //////////////////////////////////////////////////////////////////////////////
 // [TURBO9_HEADER_END]
 
-module tb_uart_bfm
+module tb_dv_uart_agent
 #(
   // Filename bus widths (bytes*8)
   parameter integer CONSOLE_FILENAME_LEN   = 128,
@@ -127,13 +127,12 @@ module tb_uart_bfm
     RX_IDLE_O      = 1'b0;
     rx_data_rd_en  = 1'b0;
 
+    wait (!RST_I);
     wait (CONSOLE_EN_I);
 
     // Use filename from port
     console_file_ptr  = $fopen(CONSOLE_FILENAME_I,"w");
-    $display("[TB: UART BFM Console] Opening %0s for console output", CONSOLE_FILENAME_I);
-
-    wait (!RST_I);
+    $display("[TB: tb_dv_uart_agent] Opening %0s for console output", CONSOLE_FILENAME_I);
 
     while (!TB_DONE_I) begin
       rx_data_rd_en = 1'b0;
@@ -172,12 +171,11 @@ module tb_uart_bfm
     tx_data       = 8'h00;
     tx_data_wr_en = 1'b0;
 
+    wait (!RST_I);
     wait (UPLOAD_EN_I);
 
-    $display("[TB: UART BFM Upload] Opening file for upload: %0s", UPLOAD_FILENAME_I);
+    $display("[TB: tb_dv_uart_agent] Opening file for upload: %0s", UPLOAD_FILENAME_I);
     upload_file_ptr = $fopen(UPLOAD_FILENAME_I,"r");
-
-    wait (!RST_I);
 
     read_byte    = $fgetc(upload_file_ptr);
     while ((read_byte > 0) && (!TB_DONE_I)) // ~EOF

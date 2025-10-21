@@ -51,21 +51,54 @@
 module tb_dv_top;
 
   ///////////////////// Select one of the following:
+  //`define TURBO9_GTR
+  //`define TURBO9_GTS
+  //`define TURBO9_R
+  `define TURBO9_S
   //`define TURBO9 
-  //`define TURBO9_S
-  `define TURBO9_R
   /////////////////////
 
   `define SIM_TURBO9      // Turns on debug strings in decode table verilog files
   `define SIM_T6551_FAST  // Runs T6551 UART as fast as possible
 
+  `define SIM_MODEL_FAST      // 6809 Model Fast Mode (Drop idle bus cycles)
+  //`define SIM_MODEL_VERBOSE   // 6809 Model Verbose Mode (More log infomation)
+  //`define SIM_MODEL_BREAK_DEC // 6809 Model Break DEC (force a failed test)
+
+
   `define MEM_ADDR_WIDTH  16 //64 Kbyte Memory, adjust the asm accordingly
 
-  `define model_mem          I_tb_dv_6809_model.I_tb_dv_6809_memory.memory
-  `define model_clk_cnt_ctrl I_tb_dv_6809_model.clk_cnt_ctrl_reg
-//`define dut_mem            I_broken_6809_model.I_tb_dv_6809_memory.memory
+  `define model_mem           I_tb_dv_soc_top_model.I_syncram_8bit.ram
+  `define model_cycle_cnt     I_tb_dv_soc_top_model.clk_cnt_rd_dat
+  `define model_clk_cnt_ctrl  I_tb_dv_soc_top_model.clk_cnt_ctrl_dat
+  `define model_error         I_tb_dv_soc_top_model.I_tb_dv_6809_model.model_error
+  `define model_fast          I_tb_dv_soc_top_model.I_tb_dv_6809_model.model_fast
+  `define model_verbose       I_tb_dv_soc_top_model.I_tb_dv_6809_model.model_verbose
+  `define model_break_dec     I_tb_dv_soc_top_model.I_tb_dv_6809_model.model_break_dec
+  `define model_uart_clk      I_tb_dv_soc_top_model.I_t6551.CLK_I
+  `define model_uart_rst      I_tb_dv_soc_top_model.I_t6551.RST_I
+  `define model_uart_rx_full  I_tb_dv_soc_top_model.I_t6551.rx_data_reg_full
 
-`ifdef TURBO9_R
+`ifdef TURBO9_GTR
+  `define TURBO9_16BIT
+  `define dut_mem_even      I_soc_top_gtr.I_even_syncram_8bit.ram
+  `define dut_mem_odd       I_soc_top_gtr.I_odd_syncram_8bit.ram
+  `define dut_cycle_cnt     I_soc_top_gtr.clk_cnt_rd_dat
+  `define dut_clk_cnt_ctrl  I_soc_top_gtr.clk_cnt_ctrl_dat
+  `define dut_uart_clk      I_soc_top_gtr.I_t6551.CLK_I
+  `define dut_uart_rst      I_soc_top_gtr.I_t6551.RST_I
+  `define dut_uart_rx_full  I_soc_top_gtr.I_t6551.rx_data_reg_full
+`elsif TURBO9_GTS
+  `define TURBO9_16BIT
+  `define dut_mem_even      I_soc_top_gts.I_even_syncram_8bit.ram
+  `define dut_mem_odd       I_soc_top_gts.I_odd_syncram_8bit.ram
+  `define dut_cycle_cnt     I_soc_top_gts.clk_cnt_rd_dat
+  `define dut_clk_cnt_ctrl  I_soc_top_gts.clk_cnt_ctrl_dat
+  `define dut_uart_clk      I_soc_top_gts.I_t6551.CLK_I
+  `define dut_uart_rst      I_soc_top_gts.I_t6551.RST_I
+  `define dut_uart_rx_full  I_soc_top_gts.I_t6551.rx_data_reg_full
+`elsif TURBO9_R
+  `define TURBO9_16BIT
   `define dut_mem_even      I_soc_top_r.I_even_syncram_8bit.ram
   `define dut_mem_odd       I_soc_top_r.I_odd_syncram_8bit.ram
   `define dut_cycle_cnt     I_soc_top_r.clk_cnt_rd_dat
@@ -74,6 +107,7 @@ module tb_dv_top;
   `define dut_uart_rst      I_soc_top_r.I_t6551.RST_I
   `define dut_uart_rx_full  I_soc_top_r.I_t6551.rx_data_reg_full
 `elsif TURBO9_S
+  `define TURBO9_16BIT
   `define dut_mem_even      I_soc_top_s.I_even_syncram_8bit.ram
   `define dut_mem_odd       I_soc_top_s.I_odd_syncram_8bit.ram
   `define dut_cycle_cnt     I_soc_top_s.clk_cnt_rd_dat
@@ -81,7 +115,7 @@ module tb_dv_top;
   `define dut_uart_clk      I_soc_top_s.I_t6551.CLK_I
   `define dut_uart_rst      I_soc_top_s.I_t6551.RST_I
   `define dut_uart_rx_full  I_soc_top_s.I_t6551.rx_data_reg_full
-`else
+`else // TURBO9
   `define dut_mem           I_soc_top.I_syncram_8bit.ram
   `define dut_cycle_cnt     I_soc_top.clk_cnt_rd_dat
   `define dut_clk_cnt_ctrl  I_soc_top.clk_cnt_ctrl_dat
@@ -101,7 +135,8 @@ module tb_dv_top;
   `include "tc_dv_rel16_instr.v"    // Testcase for relative addressing 16-bit instrutions
   `include "tc_dv_inh_instr.v"      // Testcase for inherent addressing instructions
   `include "tc_dv_sau_instr.v"      // Testcase for sequential arithmetic instructions
-  `include "tc_dv_run_code.v"       // Testcase for running code
+  `include "tc_dv_run_s19.v"        // Testcase for running s19 code
+  `include "tc_dv_run_hex.v"        // Testcase for running hex code
   `include "tc_dv_idx_a_instr.v"    // Testcase for indexed
   `include "tc_dv_idx_b_instr.v"    // Testcase for indexed
   `include "tc_dv_idx_d_instr.v"    // Testcase for indexed
@@ -133,8 +168,6 @@ module tb_dv_top;
   reg sysclk;
   reg reset;
   reg tb_done;
-  reg console_en;
-  wire upload_en;
 
   integer seed;
   integer rand_itr_total;
@@ -144,15 +177,23 @@ module tb_dv_top;
   reg [(128*8)-1:0] s19_file;
 
 
-  wire [31:0] model_cycle_cnt;
-  wire        model_error;
   wire [7:0]  model_output_port;
+  reg         model_console_en;
+  reg         model_upload_en;
+  wire        model_uart_rxd_pin;
+  wire        model_uart_cts = ~`model_uart_rx_full;
+  wire        model_uart_txd_pin;
+  wire        model_upload_done; 
+  wire        model_rx_idle;
+
   wire [7:0]  dut_output_port;
-
-  wire       dut_uart_rxd_pin;
-  wire       dut_uart_txd_pin;
-
-  wire       dut_uart_cts = ~`dut_uart_rx_full;
+  reg         dut_console_en;
+  reg         dut_upload_en;
+  wire        dut_uart_rxd_pin;
+  wire        dut_uart_cts = ~`dut_uart_rx_full;
+  wire        dut_uart_txd_pin;
+  wire        dut_upload_done; 
+  wire        dut_rx_idle;
 
   ////////////////////////////////////////////////////////////////////////////
   // Dump VCD
@@ -208,13 +249,31 @@ module tb_dv_top;
   /////////////////////////////////////////////////////////////////////////////
   initial begin
 
+    /////////// Setup 6809 model 
+    //
+    `ifdef SIM_MODEL_FAST          // 6809 Model Fast Mode (Drop idle bus cycles)
+      force `model_fast       = 1'b1;
+    `endif
+    `ifdef SIM_MODEL_VERBOSE       // 6809 Model Verbose Mode (More log infomation) 
+      force `model_verbose    = 1'b1;
+    `endif
+    `ifdef SIM_MODEL_BREAK_DEC     // 6809 Model Break DEC (force a failed test)
+      force `model_break_dec  = 1'b1;
+    `endif
+
     /////////// Initialize global variables / signals
     //
-    tb_done         = 0;
-    console_en      = 0;
+    reset           = 1'b1;
+    tb_done         = 1'b0;
+    
     pass_test_cnt   = 0;
     fail_test_cnt   = 0;
-    reset           = 1'b1;
+    
+    model_console_en = 1'b0;
+    model_upload_en  = 1'b0;
+    
+    dut_console_en   = 1'b0;
+    dut_upload_en    = 1'b0;
     
     
     $display("[TB; tb_dv_top      ] ////////////////////////////////////////////////////////////////////"); 
@@ -266,8 +325,12 @@ module tb_dv_top;
       tc_dv_rel16_instr;
     end
     //
-    if ($test$plusargs("tc_dv_run_code")) begin // Run HEX or S19 Code
-      tc_dv_run_code;
+    if ($test$plusargs("tc_dv_run_hex")) begin // Run HEX Code
+      tc_dv_run_hex;
+    end
+    //
+    if ($test$plusargs("tc_dv_run_s19")) begin // Run S19 Code
+      tc_dv_run_s19;
     end
     //
     if ($test$plusargs("tc_dv_inh_instr")) begin // Inherent Addressing Test
@@ -400,26 +463,41 @@ module tb_dv_top;
 
   end
 
+  /////////////////////////////////////////////////////////////////////////////
+  // Reset Synchronizer
+  /////////////////////////////////////////////////////////////////////////////
  
-  /////////////////////////////////////////////////////////////////////////////
-  // DUT
-  /////////////////////////////////////////////////////////////////////////////
-
-  reg turbo9_rst_meta;
-  reg turbo9_rst_sync;
+  reg tb_rst_meta;
+  reg tb_rst_sync;
 
   always @(posedge reset or posedge sysclk)
   begin
     if (reset) begin
-      turbo9_rst_meta <= 1'b1;
-      turbo9_rst_sync <= 1'b1;
+      tb_rst_meta <= 1'b1;
+      tb_rst_sync <= 1'b1;
     end else begin
-      turbo9_rst_meta <= 1'b0;
-      turbo9_rst_sync <= turbo9_rst_meta;
+      tb_rst_meta <= 1'b0;
+      tb_rst_sync <= tb_rst_meta;
     end
   end
 
-`ifdef TURBO9_R
+  /////////////////////////////////////////////////////////////////////////////
+  // DUT
+  /////////////////////////////////////////////////////////////////////////////
+
+`ifdef TURBO9_GTR
+  soc_top_gtr
+  #(
+    `MEM_ADDR_WIDTH // MEM_ADDR_WIDTH 
+  )
+  I_soc_top_gtr
+`elsif TURBO9_GTS
+  soc_top_gts
+  #(
+    `MEM_ADDR_WIDTH // MEM_ADDR_WIDTH 
+  )
+  I_soc_top_gts
+`elsif TURBO9_R
   soc_top_r
   #(
     `MEM_ADDR_WIDTH // MEM_ADDR_WIDTH 
@@ -440,7 +518,7 @@ module tb_dv_top;
 `endif
   (
     // Inputs: Clock & Reset
-    .RST_I         (turbo9_rst_sync), // Reset. Active high and synchronized to CLK_I
+    .RST_I         (tb_rst_sync), // Reset. Active high and synchronized to CLK_I
     .CLK_I         (sysclk), // Clock
     //
     // Inputs 
@@ -452,61 +530,76 @@ module tb_dv_top;
     .GPO_PORT_O    (dut_output_port)
   );
 
+  tb_dv_uart_agent I_tb_dv_uart_agent_dut
+  (
+    // Filenames
+    .CONSOLE_FILENAME_I ("dut_console.txt" ),
+    .UPLOAD_FILENAME_I  (s19_file          ),
+  
+    // Inputs: Clock & Reset
+    .RST_I              (`dut_uart_rst     ),   // Active high
+    .CLK_I              (`dut_uart_clk     ),   // UART clock
+  
+    // TB Control Inputs
+    .CONSOLE_EN_I       (dut_console_en    ),
+    .UPLOAD_EN_I        (dut_upload_en     ),
+    .TB_DONE_I          (tb_done           ),
+  
+    .RXD_PIN_I          (dut_uart_rxd_pin  ), // from soc_top*.TXD_PIN_O
+    .CTS_PIN_I          (dut_uart_cts      ), // active-high CTS: 0 = clear to send
+
+    .TXD_PIN_O          (dut_uart_txd_pin  ),  // to   soc_top*.RXD_PIN_I
+    .UPLOAD_DONE_O      (dut_upload_done   ),
+    .RX_IDLE_O          (dut_rx_idle       )
+  );
+
+
   /////////////////////////////////////////////////////////////////////////////
   // 6809 Behavioral Model
   /////////////////////////////////////////////////////////////////////////////
-  tb_dv_6809_model
+  tb_dv_soc_top_model
   #(
-    `MEM_ADDR_WIDTH, // MEM_ADDR_WIDTH 
-    0,  // BREAK_COM_DIR_OP 
+    `MEM_ADDR_WIDTH // MEM_ADDR_WIDTH 
   )
-  I_tb_dv_6809_model
+  I_tb_dv_soc_top_model
   (
     // Inputs: Clock & Reset
-    .RST_N_I        (~reset),
-    .CLK_I          (sysclk),
-
-    // Inputs
-    .QUIET_I      (1'b1),
-    .FAST_CLK_I   (1'b1),
-    .GPI_PORT_I   (8'h00),
-
-
+    .RST_I         (tb_rst_sync), // Reset. Active high and synchronized to CLK_I
+    .CLK_I         (sysclk), // Clock
+    //
+    // Inputs 
+    .RXD_PIN_I     (model_uart_txd_pin),
+    .GPI_PORT_I    (8'h00),
+  
     // Outputs
-    .E_CLK_O        (),
-    .Q_CLK_O        (),
-    .ERROR_O        (model_error),
-    .GPO_PORT_O     (model_output_port),
-    .CYCLE_CNT_O    (model_cycle_cnt)
+    .TXD_PIN_O     (model_uart_rxd_pin),
+    .GPO_PORT_O    (model_output_port)
   );
-  
-  
-  /////////////////////////////////////////////////////////////////////////////
-  // Broken 6809 Behavioral Model
-  /////////////////////////////////////////////////////////////////////////////
-  /*
-  tb_dv_6809_model
-  #(
-    `MEM_ADDR_WIDTH, // MEM_ADDR_WIDTH 
-    1,  // BREAK_COM_DIR_OP 
-  )
-  I_broken_6809_model
+
+  tb_dv_uart_agent I_tb_dv_uart_agent_model
   (
+    // Filenames
+    .CONSOLE_FILENAME_I ("model_console.txt" ),
+    .UPLOAD_FILENAME_I  (s19_file            ),
+  
     // Inputs: Clock & Reset
-    .RST_N_I        (~reset),
-    .CLK_I          (sysclk),
-
-    // Inputs
-    .QUIET_I      (1'b1),
-    .FAST_CLK_I   (1'b1),
-
-    // Outputs
-    .E_CLK_O        (),
-    .Q_CLK_O        (),
-    .ERROR_O        (),
-    .OUTPUT_PORT_O  (dut_output_port)
+    .RST_I              (`model_uart_rst     ),   // Active high
+    .CLK_I              (`model_uart_clk     ),   // UART clock
+                                            
+    // TB Control Inputs                    
+    .CONSOLE_EN_I       (model_console_en    ),
+    .UPLOAD_EN_I        (model_upload_en     ),
+    .TB_DONE_I          (tb_done             ),
+                                            
+    .RXD_PIN_I          (model_uart_rxd_pin  ), // from soc_top*.TXD_PIN_O
+    .CTS_PIN_I          (model_uart_cts      ), // active-high CTS: 0 = clear to send
+                                            
+    .TXD_PIN_O          (model_uart_txd_pin  ),  // to   soc_top*.RXD_PIN_I
+    .UPLOAD_DONE_O      (model_upload_done   ),
+    .RX_IDLE_O          (model_rx_idle       )
   );
-  */
+
+  
   /////////////////////////////////////////////////////////////////////////////
   // Testbench Memory
   /////////////////////////////////////////////////////////////////////////////
@@ -518,40 +611,13 @@ module tb_dv_top;
 
   always @(posedge sysclk)
   begin
-    if ((`dut_clk_cnt_ctrl[1:0] == 2'b10) && ((`dut_cycle_cnt % 100_000) == 0)) begin
-      $display("[TB: tb_dv_top      ] DUT clock cycle count: %d", `dut_cycle_cnt);
+    if (`dut_clk_cnt_ctrl[1:0] == 2'b10) begin
+      if (`dut_cycle_cnt[15:0] == 0) $display("[TB: tb_dv_top      ] DUT clock cycle count: %d", `dut_cycle_cnt);
     end
-    if ((`model_clk_cnt_ctrl[1:0] == 2'b10) && ((model_cycle_cnt % 100_000) == 0)) begin
-      $display("[TB: tb_dv_top      ] Model E clock cycle count: %d", model_cycle_cnt);
+    if (`model_clk_cnt_ctrl[1:0] == 2'b10) begin
+      if (`model_cycle_cnt[15:0] == 0) $display("[TB: tb_dv_top      ] Model E clock cycle count: %d", `model_cycle_cnt);
     end
   end
-
-
-  //////////////////////////////////////////////////////////////////////////////
-  // tb_bfm_uart Instance (DUT side)
-  //////////////////////////////////////////////////////////////////////////////
-  tb_uart_bfm I_tb_uart_bfm_dut
-  (
-    // Filenames
-    .CONSOLE_FILENAME_I ("dut_console.txt" ),
-    .UPLOAD_FILENAME_I  (s19_file          ),
-  
-    // Inputs: Clock & Reset
-    .RST_I              (`dut_uart_rst     ),   // Active high
-    .CLK_I              (`dut_uart_clk     ),   // UART clock
-  
-    // TB Control Inputs
-    .CONSOLE_EN_I       (console_en        ),
-    .UPLOAD_EN_I        (console_en        ),
-    .TB_DONE_I          (tb_done           ),
-  
-    .RXD_PIN_I          (dut_uart_rxd_pin  ), // from soc_top*.TXD_PIN_O
-    .CTS_PIN_I          (dut_uart_cts      ), // active-high CTS: 0 = clear to send
-
-    .TXD_PIN_O          (dut_uart_txd_pin  ),  // to   soc_top*.RXD_PIN_I
-    .UPLOAD_DONE_O      (                  ),
-    .RX_IDLE_O          (                  )
-  );
 
 
 

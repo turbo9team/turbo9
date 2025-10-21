@@ -5,9 +5,11 @@
 ../../tb/tb_dv_top.v
 ../../tb/tb_dv_memory.v
 ../../tb/tb_dv_6809_model.v
-../../tb/tb_uart_bfm.v
+../../tb/tb_dv_soc_top_model.v
+../../tb/tb_dv_uart_agent.v
 
 ../../rtl/soc_top_gtr.v
+../../rtl/soc_top_gts.v
 ../../rtl/soc_top_r.v
 ../../rtl/soc_top_s.v
 ../../rtl/soc_top.v
@@ -23,6 +25,7 @@
 ../../rtl/clk_counter.v
 
 ../../rtl/turbo9_gtr.v
+../../rtl/turbo9_gts.v
 ../../rtl/turbo9_r.v
 ../../rtl/turbo9_s.v
 ../../rtl/turbo9.v

@@ -140,13 +140,13 @@ end
 /////////////////////////////////////////////////////////////////////////////
 
 //soc_top
-soc_top_s
+soc_top_gts
 //soc_top
 #(
   16 // MEM_ADDR_WIDTH 
 )
 //I_soc_top
-I_soc_top_s
+I_soc_top_gts
 //I_soc_top
 (
   // Inputs: Clock & Reset

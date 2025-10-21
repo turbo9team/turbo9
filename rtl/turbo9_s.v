@@ -63,7 +63,7 @@ module turbo9_s
   input          STALL_I,
   
   // Outputs
-  output  [15:1] ADR_O,
+  output  [15:0] ADR_O,
   output  [15:0] DAT_O,
   output   [1:0] SEL_O,
   output   [4:0] TGD_O,

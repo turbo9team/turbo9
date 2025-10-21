@@ -354,7 +354,7 @@
           $display("[TB: tc_dv_ind_pc16_instr] Comparing DUT memory and Model memory...");
           error_cnt += mem_diff_cnt(1'b0);
         
-          error_cnt += model_error; //add model error to error count
+          error_cnt += `model_error; //add model error to error count
         
           ///////////////// Test PASS / FAIL summary 
           //

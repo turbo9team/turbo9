@@ -246,7 +246,7 @@ localparam   uop_jump_table_b_rst = 8'h00;
   turbo9_urtl_microcode I_turbo9_urtl_microcode
   (
     // Inputs:
-    .MICROCODE_ADR_I            ({1'b0,microcode_adr}     ),
+    .MICROCODE_ADR_I            (microcode_adr            ),
                                                             
     // Control Vectors
     .CV_MICRO_SEQ_OP_O          (cv_micro_seq_op          ),
@@ -345,7 +345,7 @@ always @(posedge CLK_I, posedge RST_I) begin
     uop_idx_indirect_en_reg       <= uop_idx_indirect_en_rst;
     uop_stack_done_reg            <= uop_stack_done_rst;
     uop_branch_sel_reg            <= uop_branch_sel_rst;
-    //                               //                           
+    //
     uop_data_reg                  <= uop_data_rst;
     uop_direct_en_reg             <= uop_direct_en_rst;
     uop_jump_table_b_reg          <= uop_jump_table_b_rst;

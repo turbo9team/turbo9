@@ -242,7 +242,7 @@
       
         wait_clk_cycles(4); // wait a few cycles to capture the output port in waveform dump
 
-    error_cnt += model_error; //add model error to error count
+    error_cnt += `model_error; //add model error to error count
 
 
 

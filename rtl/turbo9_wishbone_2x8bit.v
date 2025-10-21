@@ -63,7 +63,7 @@ module turbo9_wishbone_2x8bit
   input    [7:0] EVEN_DAT_I,
   input          EVEN_ACK_I,
   input          EVEN_STALL_I,
-  output  [14:0] EVEN_ADR_O,
+  output  [15:0] EVEN_ADR_O,
   output   [7:0] EVEN_DAT_O,
   output         EVEN_WE_O, 
   output         EVEN_STB_O,
@@ -73,7 +73,7 @@ module turbo9_wishbone_2x8bit
   input    [7:0] ODD_DAT_I,
   input          ODD_ACK_I,
   input          ODD_STALL_I,
-  output  [14:0] ODD_ADR_O,
+  output  [15:0] ODD_ADR_O,
   output   [7:0] ODD_DAT_O,
   output         ODD_WE_O, 
   output         ODD_STB_O,
@@ -190,9 +190,9 @@ localparam  WIDTH_16 =  1'b0;
 localparam  WIDTH_8  =  1'b1;
 
 
-reg   [14:0]  even_adr_o_reg;
-reg   [14:0]  even_adr_o_nxt;
-localparam    even_adr_o_rst = 15'h0000;
+reg   [15:0]  even_adr_o_reg;
+reg   [15:0]  even_adr_o_nxt;
+localparam    even_adr_o_rst = 16'h0000;
 
 reg    [7:0]  even_dat_o_reg;
 reg    [7:0]  even_dat_o_nxt;
@@ -206,9 +206,9 @@ reg           even_stb_o_reg;
 reg           even_stb_o_nxt;
 localparam    even_stb_o_rst = 1'b0;
            
-reg   [14:0]  odd_adr_o_reg;
-reg   [14:0]  odd_adr_o_nxt;
-localparam    odd_adr_o_rst = 15'h0000;
+reg   [15:0]  odd_adr_o_reg;
+reg   [15:0]  odd_adr_o_nxt;
+localparam    odd_adr_o_rst = 16'h0000;
 
 reg    [7:0]  odd_dat_o_reg;
 reg    [7:0]  odd_dat_o_nxt;
@@ -270,11 +270,13 @@ reg   [15:0]  pmem_dat;
 // STALL_I should be generated externally and must be _registered_
 //
 wire [14:0] dmem_even_adr_inc = DMEM_ADR_I[15:1] + {14'd0, DMEM_ADR_I[0]};
-wire [14:0] dmem_odd_adr      = DMEM_ADR_I[15:1];
+wire [15:0] dmem_even_adr     = {dmem_even_adr_inc, 1'b0};
+wire [15:0] dmem_odd_adr      = {DMEM_ADR_I[15:1], 1'b1};
 wire        dmem_adr0         = DMEM_ADR_I[0];
 //
 wire [14:0] pmem_even_adr_inc = PMEM_ADR_I[15:1] + {14'd0, PMEM_ADR_I[0]};
-wire [14:0] pmem_odd_adr      = PMEM_ADR_I[15:1];
+wire [15:0] pmem_even_adr     = {pmem_even_adr_inc, 1'b0};
+wire [15:0] pmem_odd_adr      = {PMEM_ADR_I[15:1], 1'b1};
 wire        pmem_adr0         = PMEM_ADR_I[0];
 
 wire        stall_i   = (EVEN_STALL_I|ODD_STALL_I);
@@ -293,7 +295,7 @@ always @* begin
   //
   even_stb_o_nxt  = 1'b0;
   even_we_o_nxt   = 1'b0;
-  even_adr_o_nxt  = dmem_even_adr_inc;
+  even_adr_o_nxt  = dmem_even_adr;
   even_dat_o_nxt  = DMEM_DAT_I[15:8];
   //
   odd_stb_o_nxt  = 1'b0;
@@ -323,7 +325,7 @@ always @* begin
       odd_we_o_nxt          = DMEM_WE_I;
     end
     //
-    even_adr_o_nxt = dmem_even_adr_inc;
+    even_adr_o_nxt = dmem_even_adr;
     odd_adr_o_nxt  = dmem_odd_adr;
     //
   end else if (PMEM_RD_REQ_I) begin
@@ -345,7 +347,7 @@ always @* begin
     even_we_o_nxt  = 1'b0;
     odd_we_o_nxt   = 1'b0;
     //
-    even_adr_o_nxt = pmem_even_adr_inc;
+    even_adr_o_nxt = pmem_even_adr;
     odd_adr_o_nxt  = pmem_odd_adr;
     //
   end

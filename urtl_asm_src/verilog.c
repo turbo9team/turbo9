@@ -257,7 +257,7 @@ s16 dump_verilog_ctrl_vec(ctrl_vec_ctx_t *ctx, u32 address, ctrl_vec_t *ctrl_vec
   
   if(addr != address)
   {
-    fprintf(_verilog_fp, "    %d'h%03lx: begin\n", ctx->addr_width, address);
+    fprintf(_verilog_fp, "    %d'h%02lx: begin\n", ctx->addr_width, address);
     addr = address;
   }
 

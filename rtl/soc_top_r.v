@@ -102,21 +102,15 @@ module soc_top_r
 // Comment / Uncomment to remove / add pipeline register:
 //`define SOC_PIPELINE_REG
 
-
-localparam FULL_MEM_ADDR_WIDTH = MEM_ADDR_WIDTH;
-localparam EVEN_MEM_ADDR_WIDTH = MEM_ADDR_WIDTH-1;
-localparam ODD_MEM_ADDR_WIDTH = MEM_ADDR_WIDTH-1;
+localparam WORD_MEM_ADDR_WIDTH = MEM_ADDR_WIDTH-1;
 
 wire  [4:0] even_turbo9_tgd_o;
 reg   [4:0] even_turbo9_tgd_reg;
 localparam  even_turbo9_tgd_rst = 5'b00000;
 
-wire [14:0] even_turbo9_adr;
-reg  [14:0] even_turbo9_adr_reg;
-localparam  even_turbo9_adr_rst = 15'h0000;
-
-wire [15:0] even_turbo9_adr_full     = {even_turbo9_adr, 1'b0};
-wire [15:0] even_turbo9_adr_reg_full = {even_turbo9_adr_reg, 1'b0};
+wire [15:0] even_turbo9_adr;
+reg  [15:0] even_turbo9_adr_reg;
+localparam  even_turbo9_adr_rst = 16'h0000;
 
 wire  [7:0] even_turbo9_wr_dat;
 reg   [7:0] even_turbo9_rd_dat;
@@ -127,12 +121,9 @@ wire        even_turbo9_we;
 reg         even_turbo9_we_reg;
 localparam  even_turbo9_we_rst = 1'b0;
 
-wire [14:0] odd_turbo9_adr;
-reg  [14:0] odd_turbo9_adr_reg;
-localparam  odd_turbo9_adr_rst = 15'h0000;
-
-wire [15:0] odd_turbo9_adr_full     = {odd_turbo9_adr, 1'b1};
-wire [15:0] odd_turbo9_adr_reg_full = {odd_turbo9_adr_reg, 1'b1};
+wire [15:0] odd_turbo9_adr;
+reg  [15:0] odd_turbo9_adr_reg;
+localparam  odd_turbo9_adr_rst = 16'h0000;
 
 wire  [7:0] odd_turbo9_wr_dat;
 reg   [7:0] odd_turbo9_rd_dat;
@@ -264,11 +255,11 @@ wire        ram_clk;
     clk_cnt_ctrl_wr_en = 1'b0;
     //
     // Even Memory Bus Read Data Mux
-    if (even_turbo9_adr_full[15:8] == 8'hFF) begin
-      if (even_turbo9_adr_full[7:4] == 4'hF) begin  /////////// FFFF - FFF0 : Vector Table
+    if (even_turbo9_adr[15:8] == 8'hFF) begin
+      if (even_turbo9_adr[7:4] == 4'hF) begin  /////////// FFFF - FFF0 : Vector Table
         even_ram_we = even_turbo9_we;
       end else begin
-        case (even_turbo9_adr_full[3:0])            /////////// FFEF - FF00 : I/O Space
+        case (even_turbo9_adr[3:0])            /////////// FFEF - FF00 : I/O Space
           4'h8: clk_cnt_ctrl_wr_en = even_turbo9_we;
           4'h2: acia_data_wr_en    = even_turbo9_we;
           4'h0: gpo_port_we        = even_turbo9_we;
@@ -285,8 +276,8 @@ wire        ram_clk;
     odd_ram_we = 1'b0;
     //
     // Odd Memory Bus Read Data Mux
-    if (odd_turbo9_adr_full[15:8] == 8'hFF) begin
-      if (odd_turbo9_adr_full[7:4] == 4'hF) begin  /////////// FFFF - FFF0 : Vector Table
+    if (odd_turbo9_adr[15:8] == 8'hFF) begin
+      if (odd_turbo9_adr[7:4] == 4'hF) begin  /////////// FFFF - FFF0 : Vector Table
         odd_ram_we = odd_turbo9_we;
       end
     end else begin                                 /////////// FEFF - 0000 : RAM
@@ -297,14 +288,14 @@ wire        ram_clk;
   // RAM (Even bytes)
   syncram_8bit
   #(
-    .MEM_ADDR_WIDTH (EVEN_MEM_ADDR_WIDTH),
+    .MEM_ADDR_WIDTH (WORD_MEM_ADDR_WIDTH),
     .MEM_INIT_FILE  ("default_even.hex")
   )
   I_even_syncram_8bit
   (
     .CLK_I  (ram_clk),
     .WE_I   (even_ram_we),
-    .ADR_I  (even_turbo9_adr[EVEN_MEM_ADDR_WIDTH-1:0]),
+    .ADR_I  (even_turbo9_adr[MEM_ADDR_WIDTH-1:1]),
     .DAT_I  (even_turbo9_wr_dat),
     .DAT_O  (even_ram_rd_dat)
   );
@@ -312,14 +303,14 @@ wire        ram_clk;
   // RAM (Odd bytes)
   syncram_8bit
   #(
-    .MEM_ADDR_WIDTH (ODD_MEM_ADDR_WIDTH),
+    .MEM_ADDR_WIDTH (WORD_MEM_ADDR_WIDTH),
     .MEM_INIT_FILE  ("default_odd.hex")
   )
   I_odd_syncram_8bit
   (
     .CLK_I  (ram_clk),
     .WE_I   (odd_ram_we),
-    .ADR_I  (odd_turbo9_adr[ODD_MEM_ADDR_WIDTH-1:0]),
+    .ADR_I  (odd_turbo9_adr[MEM_ADDR_WIDTH-1:1]),
     .DAT_I  (odd_turbo9_wr_dat),
     .DAT_O  (odd_ram_rd_dat)
   );
@@ -385,11 +376,11 @@ wire        ram_clk;
     even_turbo9_rd_dat = 8'h00;
     acia_data_rd_en = 1'b0;
     //
-    if (even_turbo9_adr_reg_full[15:8] == 8'hFF) begin
-      if (even_turbo9_adr_reg_full[7:4] == 4'hF) begin  /////////// FFFF - FFF0 : Vector Table
+    if (even_turbo9_adr_reg[15:8] == 8'hFF) begin
+      if (even_turbo9_adr_reg[7:4] == 4'hF) begin  /////////// FFFF - FFF0 : Vector Table
         even_turbo9_rd_dat = even_ram_rd_dat;
       end else begin
-        case (even_turbo9_adr_reg_full[3:0])            /////////// FFEF - FF00 : I/O Space
+        case (even_turbo9_adr_reg[3:0])            /////////// FFEF - FF00 : I/O Space
           //
           4'h8:    even_turbo9_rd_dat = clk_cnt_ctrl_dat;
           4'h6:    even_turbo9_rd_dat = clk_cnt_rd_dat[15: 8];
@@ -412,11 +403,11 @@ wire        ram_clk;
     // Defaults
     odd_turbo9_rd_dat = 8'h00;
     //
-    if (odd_turbo9_adr_reg_full[15:8] == 8'hFF) begin
-      if (odd_turbo9_adr_reg_full[7:4] == 4'hF) begin  /////////// FFFF - FFF0 : Vector Table
+    if (odd_turbo9_adr_reg[15:8] == 8'hFF) begin
+      if (odd_turbo9_adr_reg[7:4] == 4'hF) begin  /////////// FFFF - FFF0 : Vector Table
         odd_turbo9_rd_dat = odd_ram_rd_dat;
       end else begin
-        case (odd_turbo9_adr_reg_full[3:0])            /////////// FFEF - FF00 : I/O Space
+        case (odd_turbo9_adr_reg[3:0])            /////////// FFEF - FF00 : I/O Space
           //
           4'h7:    odd_turbo9_rd_dat = clk_cnt_rd_dat[ 7: 0];
           4'h5:    odd_turbo9_rd_dat = clk_cnt_rd_dat[23:16];

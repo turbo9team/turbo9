@@ -241,7 +241,7 @@
       
         wait_clk_cycles(4); // wait a few cycles to capture the output port in waveform dump
 
-        error_cnt += model_error; //add model error to error count
+        error_cnt += `model_error; //add model error to error count
 
         $display("[TB: tb_dv_test_code] Resetting DUT and Model");
         reset = 1'b1;

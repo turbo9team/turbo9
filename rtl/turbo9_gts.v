@@ -33,7 +33,7 @@
 // [TURBO9_LICENSE_END]
 //////////////////////////////////////////////////////////////////////////////
 // Engineer: Kevin Phillipson
-// Description: Turbo9R with shared 16bit program/data Wishbone memory bus
+// Description: Turbo9GTS with two 16-bit pipelined Wishbone memory buses
 //
 //////////////////////////////////////////////////////////////////////////////
 // History:
@@ -46,7 +46,7 @@
 /////////////////////////////////////////////////////////////////////////////
 //                                MODULE
 /////////////////////////////////////////////////////////////////////////////
-module turbo9_r
+module turbo9_gts
 #(
   parameter REGISTER_WB_OUTPUTS = 1, // Register Wishbone Ouputs: True=1, False=0
   parameter QUEUE_SIZE          = 6  // Fetch Queue Size: 6=Default, 4=Min, 7=Max 
@@ -56,29 +56,33 @@ module turbo9_r
   input          RST_I,
   input          CLK_I,
 
-  // Wishbone Interface (Even bytes)
-  input    [4:0] EVEN_TGD_I,
-  output   [4:0] EVEN_TGD_O,
+  // Inputs
+  input   [15:0] PMEM_DAT_I,
+  input    [4:0] PMEM_TGD_I,
+  input          PMEM_ACK_I,
+  input          PMEM_STALL_I,
   //
-  input    [7:0] EVEN_DAT_I,
-  input          EVEN_ACK_I,
-  input          EVEN_STALL_I,
-  output  [15:0] EVEN_ADR_O,
-  output   [7:0] EVEN_DAT_O,
-  output         EVEN_WE_O, 
-  output         EVEN_STB_O,
-  output         EVEN_CYC_O,
-
-  // Wishbone Interface (Odd bytes)
-  input    [7:0] ODD_DAT_I,
-  input          ODD_ACK_I,
-  input          ODD_STALL_I,
-  output  [15:0] ODD_ADR_O,
-  output   [7:0] ODD_DAT_O,
-  output         ODD_WE_O, 
-  output         ODD_STB_O,
-  output         ODD_CYC_O
-
+  input   [15:0] DMEM_DAT_I,
+  input    [4:0] DMEM_TGD_I,
+  input          DMEM_ACK_I,
+  input          DMEM_STALL_I,
+  
+  // Outputs
+  output  [15:0] PMEM_ADR_O,
+  output  [15:0] PMEM_DAT_O,
+  output   [1:0] PMEM_SEL_O,
+  output   [4:0] PMEM_TGD_O,
+  output         PMEM_WE_O,
+  output         PMEM_STB_O,
+  output         PMEM_CYC_O,
+  //
+  output  [15:0] DMEM_ADR_O,
+  output  [15:0] DMEM_DAT_O,
+  output   [1:0] DMEM_SEL_O,
+  output   [4:0] DMEM_TGD_O,
+  output         DMEM_WE_O,
+  output         DMEM_STB_O,
+  output         DMEM_CYC_O
 
 );
 
@@ -86,7 +90,7 @@ module turbo9_r
 /////////////////////////////////////////////////////////////////////////////
 //                             INTERNAL SIGNALS
 /////////////////////////////////////////////////////////////////////////////
-
+//
 // This must match the MSB of the *_REG_SEL control vectors
 localparam  WIDTH_16 =  1'b0;
 localparam  WIDTH_8  =  1'b1;
@@ -105,21 +109,20 @@ wire        dmem_ack_width_i;
 wire [15:0] pmem_dat_i;   
 wire [15:0] pmem_adr_o;   
 wire        pmem_busy_i;  
-wire        pmem_rd_req_o;   
+wire        pmem_rd_req_o; 
 wire        pmem_rd_ack_i;
-
+wire        pmem_ack_width_i;
 /////////////////////////////////////////////////////////////////////////////
 
 
 /////////////////////////////////////////////////////////////////////////////
-//                           Turbo9R Top Level 
+//                            CPU ARCHITECTURE
 /////////////////////////////////////////////////////////////////////////////
-
   
 
   turbo9_pipeline
   #(
-    .TURBO9_TYPE  (2),          // Turbo9 Type: 0=Turbo9, 1=Turbo9S, 2=Turbo9R
+    .TURBO9_TYPE  (1),          // Turbo9 Type: 0=Turbo9, 1=Turbo9S, 2=Turbo9R
     .QUEUE_SIZE   (QUEUE_SIZE)  // Fetch Queue Size: 6=Default, 4=Min, 7=Max
   )
   I_turbo9_pipeline
@@ -147,41 +150,77 @@ wire        pmem_rd_ack_i;
     .PMEM_REQ_WIDTH_O (                 ),
     .PMEM_RD_REQ_O    (pmem_rd_req_o    ),
     .PMEM_RD_ACK_I    (pmem_rd_ack_i    ),
-    .PMEM_ACK_WIDTH_I (WIDTH_16         )
+    .PMEM_ACK_WIDTH_I (pmem_ack_width_i )
   );
 
-  turbo9_wishbone_2x8bit
+
+  turbo9_wishbone_16bit
   #(
-    .REGISTER_WB_OUTPUTS  (REGISTER_WB_OUTPUTS)
+    .REGISTER_WB_OUTPUTS  (REGISTER_WB_OUTPUTS)  // Register Wishbone Ouputs: True=1, False=0
   )
-  I_turbo9_wishbone_2x8bit
+  I_turbo9_wishbone_16bit_pmem
   (
     // Inputs: Clock & Reset
     .RST_I            (RST_I            ),
     .CLK_I            (CLK_I            ),
     //                                 
-    // Wishbone Interface (Even bytes)
-    .EVEN_TGD_I       (EVEN_TGD_I       ),
-    .EVEN_TGD_O       (EVEN_TGD_O       ),
+    // External Wishbone Interface     
+    .DAT_I            (PMEM_DAT_I       ),
+    .TGD_I            (PMEM_TGD_I       ),
+    .ACK_I            (PMEM_ACK_I       ),
+    .STALL_I          (PMEM_STALL_I     ),
+    .ADR_O            (PMEM_ADR_O       ),
+    .DAT_O            (PMEM_DAT_O       ),
+    .SEL_O            (PMEM_SEL_O       ),
+    .TGD_O            (PMEM_TGD_O       ),
+    .WE_O             (PMEM_WE_O        ), 
+    .STB_O            (PMEM_STB_O       ),
+    .CYC_O            (PMEM_CYC_O       ),
+    //                                 
+    // Data Memory Interface           
+    .DMEM_DAT_I       (16'h0000         ),
+    .DMEM_DAT_O       (                 ),
+    .DMEM_ADR_I       (16'h0000         ),
+    .DMEM_BUSY_O      (                 ),
+    .DMEM_REQ_I       (1'b0             ),
+    .DMEM_REQ_WIDTH_I (WIDTH_16         ),
+    .DMEM_WE_I        (1'b0             ),
+    .DMEM_RD_ACK_O    (                 ),
+    .DMEM_WR_ACK_O    (                 ),
+    .DMEM_ACK_WIDTH_O (                 ),
     //
-    .EVEN_DAT_I       (EVEN_DAT_I       ),
-    .EVEN_ACK_I       (EVEN_ACK_I       ),
-    .EVEN_STALL_I     (EVEN_STALL_I     ),
-    .EVEN_ADR_O       (EVEN_ADR_O       ),
-    .EVEN_DAT_O       (EVEN_DAT_O       ),
-    .EVEN_WE_O        (EVEN_WE_O        ),
-    .EVEN_STB_O       (EVEN_STB_O       ),
-    .EVEN_CYC_O       (EVEN_CYC_O       ),
-    //
-    // Wishbone Interface (Odd bytes)
-    .ODD_DAT_I        (ODD_DAT_I        ),
-    .ODD_ACK_I        (ODD_ACK_I        ),
-    .ODD_STALL_I      (ODD_STALL_I      ),
-    .ODD_ADR_O        (ODD_ADR_O        ),
-    .ODD_DAT_O        (ODD_DAT_O        ),
-    .ODD_WE_O         (ODD_WE_O         ), 
-    .ODD_STB_O        (ODD_STB_O        ),
-    .ODD_CYC_O        (ODD_CYC_O        ),
+    // Program Memory Interface
+    .PMEM_DAT_O       (pmem_dat_i       ),
+    .PMEM_ADR_I       (pmem_adr_o       ),
+    .PMEM_BUSY_O      (pmem_busy_i      ),
+    .PMEM_RD_REQ_I    (pmem_rd_req_o    ),
+    .PMEM_RD_ACK_O    (pmem_rd_ack_i    ),
+    .PMEM_ACK_WIDTH_O (pmem_ack_width_i )
+  );
+
+
+  turbo9_wishbone_16bit
+  #(
+    .REGISTER_WB_OUTPUTS  (REGISTER_WB_OUTPUTS)  // Register Wishbone Ouputs: True=1, False=0
+  )
+  I_turbo9_wishbone_16bit_dmem
+  (
+    // Inputs: Clock & Reset
+    .RST_I            (RST_I            ),
+    .CLK_I            (CLK_I            ),
+    //                                 
+    // External Wishbone Interface     
+    .DAT_I            (DMEM_DAT_I       ),
+    .TGD_I            (DMEM_TGD_I       ),
+    .ACK_I            (DMEM_ACK_I       ),
+    .STALL_I          (DMEM_STALL_I     ),
+    .ADR_O            (DMEM_ADR_O       ),
+    .DAT_O            (DMEM_DAT_O       ),
+    .SEL_O            (DMEM_SEL_O       ),
+    .TGD_O            (DMEM_TGD_O       ),
+    .WE_O             (DMEM_WE_O        ), 
+    .STB_O            (DMEM_STB_O       ),
+    .CYC_O            (DMEM_CYC_O       ),
     //                                 
     // Data Memory Interface           
     .DMEM_DAT_I       (dmem_dat_o       ),
@@ -196,12 +235,14 @@ wire        pmem_rd_ack_i;
     .DMEM_ACK_WIDTH_O (dmem_ack_width_i ),
     //
     // Program Memory Interface
-    .PMEM_DAT_O       (pmem_dat_i       ),
-    .PMEM_ADR_I       (pmem_adr_o       ),
-    .PMEM_BUSY_O      (pmem_busy_i      ),
-    .PMEM_RD_REQ_I    (pmem_rd_req_o    ),
-    .PMEM_RD_ACK_O    (pmem_rd_ack_i    )
+    .PMEM_DAT_O       (                 ),
+    .PMEM_ADR_I       (16'h0000         ),
+    .PMEM_BUSY_O      (                 ),
+    .PMEM_RD_REQ_I    (1'b0             ),
+    .PMEM_RD_ACK_O    (                 ),
+    .PMEM_ACK_WIDTH_O (                 )
   );
+
 
 
 /////////////////////////////////////////////////////////////////////////////

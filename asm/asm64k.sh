@@ -57,12 +57,11 @@ set filename=$1
 
 lwasm -f srec -o ${filename}.s19 -l${filename}.lst ${filename}.asm --symbol-dump=${filename}.sym
 
-#./s192mif8 < ${filename}.s19 > ${filename}.mif
-./s192hex8_offset0x0000      < ${filename}.s19 > ${filename}.hex
-./s192hex8_offset0x0000_even < ${filename}.s19 > ${filename}_even.hex
-./s192hex8_offset0x0000_odd  < ${filename}.s19 > ${filename}_odd.hex
 
 if ($filename == "tb_dv_asm") then
+  ./s192hex8_offset0x0000      < ${filename}.s19 > ${filename}.hex
+  ./s192hex8_offset0x0000_even < ${filename}.s19 > ${filename}_even.hex
+  ./s192hex8_offset0x0000_odd  < ${filename}.s19 > ${filename}_odd.hex
   ./verihead -i ${filename}.sym -o ${filename}.vh
   #sed 's/^/  `define  tb_asm_/g' ${filename}.sym | sed 's/EQU.*\$/             16\x27h/g' > ${filename}.vh
   echo "Copying ${filename}.vh to ../tb/."
@@ -70,6 +69,9 @@ if ($filename == "tb_dv_asm") then
 endif
 
 if ($filename == "turbo9_boot") then
+  ./s192hex8_offset0x0000      < ${filename}.s19 > ${filename}.hex
+  ./s192hex8_offset0x0000_even < ${filename}.s19 > ${filename}_even.hex
+  ./s192hex8_offset0x0000_odd  < ${filename}.s19 > ${filename}_odd.hex
   echo "Copying ${filename}.hex to ../rtl/default.hex"
   cp ${filename}.hex ../rtl/default.hex
   echo "Copying ${filename}_even.hex to ../rtl/default_even.hex"
@@ -79,10 +81,5 @@ if ($filename == "turbo9_boot") then
   echo "Creating turbo9_boot_io_lib.sym"
   grep _io_lib  turbo9_boot.sym > turbo9_boot_io_lib.sym
   sed -i 's/_io_lib//g' turbo9_boot_io_lib.sym
-  ./chead -i turbo9_boot_io_lib.sym -o turbo9_boot_io_lib.h
-  echo "Copying turbo9_boot_io_lib.h to ../c_code/lib_vbcc/."
-  cp turbo9_boot_io_lib.h ../c_code/lib_vbcc/.
-  echo "Copying turbo9_boot_io_lib.h to ../c_code/lib_gcc/."
-  cp turbo9_boot_io_lib.h ../c_code/lib_gcc/.
 endif
 

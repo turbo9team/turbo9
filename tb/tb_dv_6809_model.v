@@ -35,6 +35,9 @@
 // Engineer: Kevin Phillipson
 // Description: Testbench: 6809 behavioral model
 //
+// Includes Turbo9 extentions
+// 6809 instuctions use correct cycle timing
+//
 //////////////////////////////////////////////////////////////////////////////
 // History:
 // 07.14.2023 - Kevin Phillipson
@@ -48,39 +51,34 @@
 /////////////////////////////////////////////////////////////////////////////
 
 module tb_dv_6809_model
-#(
-  parameter MEM_ADDR_WIDTH = 12,
-  parameter BREAK_COM_DIR_OP = 0
-)
 (
   // Inputs: Clock & Reset
-  input         RST_N_I,
-  input         CLK_I,
+  input             RST_I, //RST_I should be sync'ed outside
+  input             CLK_I,
 
   // Inputs
-  input         QUIET_I,
-  input         FAST_CLK_I,
-  input  [ 7:0] GPI_PORT_I,
-
+  input       [7:0] DAT_I,
+  input       [3:0] TGD_I,
+  input             ACK_I,
+  input             STALL_I,
+  
   // Outputs
-  output        E_CLK_O,
-  output        Q_CLK_O,
-  output        ERROR_O,
-  output [ 7:0] GPO_PORT_O,
-  output [31:0] CYCLE_CNT_O
+  output reg [15:0] ADR_O,
+  output reg  [7:0] DAT_O,
+  output reg  [3:0] TGD_O,
+  output reg        WE_O,
+  output reg        STB_O,
+  output reg        CYC_O
+
 );
 
-  tb_dv_memory
-  #(
-    MEM_ADDR_WIDTH
-  )
-  I_tb_dv_6809_memory ();
+  ////////////////////////////////////////////////////////////////////////////
+  // Model Options (Can be forced by top level testbench)
+  ////////////////////////////////////////////////////////////////////////////
+  wire model_fast       = 1'b0; // 6809 Model Fast Mode (Drop idle bus cycles)
+  wire model_verbose    = 1'b0; // 6809 Model Verbose Mode (More log infomation)
+  wire model_break_dec  = 1'b0; // 6809 Model Break DEC (force a failed test)
 
-  reg [7:0] gpo_port;
-  reg [1:0] clk_cnt_ctrl_reg;
-  integer   clk_cnt_reg;
-
-  wire quiet = QUIET_I;
 
   ////////////////////////////////////////////////////////////////////////////
   // 6809 Model Signals
@@ -88,154 +86,97 @@ module tb_dv_6809_model
 
   ///////////////////////////////////////////// Programmer Model Regs
   //
-  reg [15:0]  d_model;
-  reg [15:0]  x_model;
-  reg [15:0]  y_model;
-  reg [15:0]  u_model;
-  reg [15:0]  s_model;
-  reg [15:0]  pc_model;
-  reg [ 7:0]  dp_model;
-  reg [ 7:0]  cc_model;
+  reg [15:0]    model_d;
+  reg [15:0]    model_x;
+  reg [15:0]    model_y;
+  reg [15:0]    model_u;
+  reg [15:0]    model_s;
+  reg [15:0]    model_pc;
+  reg [ 7:0]    model_dp;
+  reg [ 7:0]    model_cc;
+               
+  `define d     model_d
+  `define a     model_d[15:8]
+  `define b     model_d[ 7:0]
+               
+  `define x     model_x
+  `define y     model_y
+  `define u     model_u
+  `define s     model_s
+  `define pc    model_pc
+  `define dp    model_dp
 
-  `define d   d_model
-  `define a   d_model[15:8]
-  `define b   d_model[ 7:0]
-
-  `define x   x_model
-  `define y   y_model
-  `define u   u_model
-  `define s   s_model
-  `define pc  pc_model
-  `define dp  dp_model
-
-  `define cc    cc_model
-  `define cc_e  cc_model[7]
-  `define cc_f  cc_model[6]
-  `define cc_h  cc_model[5]
-  `define cc_i  cc_model[4]
-  `define cc_n  cc_model[3]
-  `define cc_z  cc_model[2]
-  `define cc_v  cc_model[1]
-  `define cc_c  cc_model[0]
+  `define cc    model_cc
+  `define cc_e  model_cc[7]
+  `define cc_f  model_cc[6]
+  `define cc_h  model_cc[5]
+  `define cc_i  model_cc[4]
+  `define cc_n  model_cc[3]
+  `define cc_z  model_cc[2]
+  `define cc_v  model_cc[1]
+  `define cc_c  model_cc[0]
 
   // For viewing in simulation
-  wire [7:0] a_model = `a;
-  wire [7:0] b_model = `b;
-  wire cc_e_model    = `cc_e;
-  wire cc_f_model    = `cc_f;
-  wire cc_h_model    = `cc_h;
-  wire cc_i_model    = `cc_i;
-  wire cc_n_model    = `cc_n;
-  wire cc_z_model    = `cc_z;
-  wire cc_v_model    = `cc_v;
-  wire cc_c_model    = `cc_c;
+  wire [7:0] model_a = `a;
+  wire [7:0] model_b = `b;
+  wire model_cc_e    = `cc_e;
+  wire model_cc_f    = `cc_f;
+  wire model_cc_h    = `cc_h;
+  wire model_cc_i    = `cc_i;
+  wire model_cc_n    = `cc_n;
+  wire model_cc_z    = `cc_z;
+  wire model_cc_v    = `cc_v;
+  wire model_cc_c    = `cc_c;
 
   ///////////////////////////////////////////// Other Model Regs & Signals
   //
-  reg         exe_state;
-  reg         reset_meta;
-  reg         reset_sync;
-  wire        e_clk_model;
-  reg         e_clk_i;
-  wire        q_clk_model;
-  reg         q_clk_i;
-  reg         error_model;
-  reg [ 7:0]  prebyte_model;
-  reg [ 7:0]  opcode_model;
-  reg [ 7:0]  postbyte_model;
-  reg [15:0]  ea_model;
+  reg [15:0]        model_ea;
+  reg [ 7:0]        model_prebyte;
+  reg [ 7:0]        model_opcode;
+  reg [ 7:0]        model_postbyte;
+  reg               model_error;
 
-  `define e_clk         e_clk_model
-  `define q_clk         q_clk_model
-  `define error         error_model
-  `define prebyte       prebyte_model
-  `define opcode        opcode_model
-  `define postbyte      postbyte_model
-  `define ea            ea_model
-  `define memory        I_tb_dv_6809_memory.memory
+  `define ea        model_ea
+  `define prebyte   model_prebyte
+  `define opcode    model_opcode
+  `define postbyte  model_postbyte
+  `define error     model_error
 
-  ////////////////////////////////////////////////////////////////////////////
-  // Quaduature Clock Generation
-  ////////////////////////////////////////////////////////////////////////////
-  initial begin
-    e_clk_i = 1'b0;
-    q_clk_i = 1'b0;
-    forever begin
-      @ (negedge CLK_I) q_clk_i = ~q_clk_i;
-      @ (negedge CLK_I) e_clk_i = ~e_clk_i;
-    end
-  end
+  reg        data_cin;
+  reg        data_cout;
+  reg        data_hout;
 
-  assign `q_clk = (FAST_CLK_I) ? ~CLK_I : q_clk_i;
-  assign `e_clk = (FAST_CLK_I) ?  CLK_I : e_clk_i;
+  reg [ 7:0] data8_a;
+  reg [ 7:0] data8_b;
+  reg [ 7:0] data8_y;
+
+  reg [15:0] data16_a;
+  reg [15:0] data16_b;
+  reg [15:0] data16_y;
+
+  reg [31:0] data32_a;
+  reg [31:0] data32_b;
+  reg [31:0] data32_y;
+
+  reg [ 7:0] instruction_reg;
+  reg [ 7:0] instruction_reg2;
+
+  integer bus_cycles;
 
   ////////////////////////////////////////////////////////////////////////////
-  // Reset Synchronizer (async set, sync release)
+  // 6809 Execution Model
   ////////////////////////////////////////////////////////////////////////////
-  always @(negedge RST_N_I or negedge `e_clk)
-  begin
-    if (~RST_N_I) begin
-      reset_meta <= 1'b1;
-      reset_sync <= 1'b1;
-    end else begin
-      if (~exe_state) begin
-        reset_meta <= 1'b0;
-        reset_sync <= reset_meta;
-      end
-    end
-  end
+  initial forever begin
+    //
+    wait (RST_I == 1'b1);
+    `error = 1'b0;
 
-  ////////////////////////////////////////////////////////////////////////////
-  // Execute Model
-  ////////////////////////////////////////////////////////////////////////////
-  initial begin
-    forever begin
-      exe_state = 1'b0;
-      //
-      wait (reset_sync == 1'b1);
-      `error           = 1'b0;
-      gpo_port         = 8'h00;
-      clk_cnt_ctrl_reg = 2'h0;
-      //
-      @ (negedge reset_sync) exe_state = 1'b1;
-      //
-      if (~quiet) $display("[TB: tb_dv_6809_model] Reset released synchonized to falling edge of E clock");
-      execute6809;
-      //
-    end
-  end
-
-  ////////////////////////////////////////////////////////////////////////////
-  // 6809 Model Execution Task
-  ////////////////////////////////////////////////////////////////////////////
-  task execute6809;
-
-    reg        tmp1;
-    reg [ 7:0] tmp8;
-    reg [15:0] tmp16;
-
-    reg        cin;
-    reg        cout;
-    reg        hout;
-
-    reg [ 7:0] data8_a;
-    reg [ 7:0] data8_b;
-    reg [ 7:0] data8_y;
-
-    reg [15:0] data16_a;
-    reg [15:0] data16_b;
-    reg [15:0] data16_y;
-
-    reg [31:0] data32_a;
-    reg [31:0] data32_b;
-    reg [31:0] data32_y;
-
-    reg [ 7:0] instruction_reg;
-    reg [ 7:0] instruction_reg2;
-
-    integer bus_cycles;
-
-  begin
+    ADR_O = 16'h0000;
+    DAT_O = 8'h00;
+    TGD_O = 4'h0;
+    WE_O  = 1'b0;
+    STB_O = 1'b0;
+    CYC_O = 1'b0;
 
 
     // Reset the 6809 model
@@ -250,15 +191,20 @@ module tb_dv_6809_model
 
     `cc_i = 1'b1;
     `cc_f = 1'b1;
+    
+    bus_cycles = 8; // 8 cycles from reset
+    //
+    wait (RST_I == 1'b0);
+    //
+    if (model_verbose) $display("[TB: tb_dv_6809_model] Reset released!");
 
-    `pc = read_mem16(16'hfffe); // Read the reset vector
+    read_mem16(16'hfffe, `pc); // Read the reset vector
 
-    if (~quiet) $display("[TB: tb_dv_6809_model] @ 0x%4x : Loading from reset vector, PC = 0x%4x", 16'hfffe, `pc);
+    if (model_verbose) $display("[TB: tb_dv_6809_model] @ 0x%4x : Loading from reset vector, PC = 0x%4x", 16'hfffe, `pc);
 
-    bus_cycles = 6; // reset syncho give 2 cycles so total is 8
-    e_clock_cycles(bus_cycles);
+    idle_bus_cycles();
 
-    while (~reset_sync & ~`error) begin // While not in reset and no error
+    while (~RST_I & ~`error) begin // While not in reset and no error
       
       bus_cycles = 0;
 
@@ -266,9 +212,9 @@ module tb_dv_6809_model
       `prebyte  = 8'hxx;
       `postbyte = 8'hxx;
 
-      if (~quiet) $write("[TB: tb_dv_6809_model] @ 0x%4x : Executing ", `pc);
-      `opcode   = read_mem8(`pc++);
-      if (~quiet) print_opcode_info(`prebyte, `opcode, 1'b1);
+      if (model_verbose) $write("[TB: tb_dv_6809_model] @ 0x%4x : Executing ", `pc);
+      read_mem8(`pc++,`opcode);
+      if (model_verbose) print_opcode_info(`prebyte, `opcode, 1'b1);
 
       instruction_reg = `opcode;
 
@@ -281,15 +227,15 @@ module tb_dv_6809_model
         8'h60, // NEG  (idx)
         8'h70: // NEG  (ext)
         begin 
-          bus_cycles = 6; //dir
+          bus_cycles += 6; //dir
           data8_a = 8'h00;
-          load_mm(`ea, data8_b, bus_cycles);
-          {cout, data8_y} = {1'b0, data8_a} - {1'b0, data8_b};
+          load_mm(`ea, data8_b);
+          {data_cout, data8_y} = {1'b0, data8_a} - {1'b0, data8_b};
           //`cc_h = 1'b0; // INFO: Spec H Undefined, Turbo9 H not affected
           `cc_n = data8_y[7];
           `cc_z = (data8_y == 8'h00);
           `cc_v = (data8_b == 8'h80);
-          `cc_c = cout;
+          `cc_c = data_cout;
           store_mm(`ea, data8_y);
         end
 
@@ -300,13 +246,9 @@ module tb_dv_6809_model
         8'h63, // COM  (idx)
         8'h73: // COM  (ext)
         begin 
-          bus_cycles = 6; //dir
-          load_mm(`ea, data8_b, bus_cycles);
-          if (BREAK_COM_DIR_OP) begin
-            data8_y = data8_b;
-          end else begin
-            data8_y = ~data8_b;
-          end
+          bus_cycles += 6; //dir
+          load_mm(`ea, data8_b);
+          data8_y = ~data8_b;
           //`cc_h = 1'b0; // Not affected
           `cc_n = data8_y[7];
           `cc_z = (data8_y == 8'h00);
@@ -322,8 +264,8 @@ module tb_dv_6809_model
         8'h64, // LSR  (idx)
         8'h74: // LSR  (ext)
         begin 
-          bus_cycles = 6; //dir
-          load_mm(`ea, data8_b, bus_cycles);
+          bus_cycles += 6; //dir
+          load_mm(`ea, data8_b);
           data8_y = {1'b0, data8_b[7:1]};
           //`cc_h = 1'b0; // Not affected
           `cc_n = 1'b0;
@@ -340,8 +282,8 @@ module tb_dv_6809_model
         8'h66, // ROR  (idx)
         8'h76: // ROR  (ext)
         begin 
-          bus_cycles = 6; //dir
-          load_mm(`ea, data8_b, bus_cycles);
+          bus_cycles += 6; //dir
+          load_mm(`ea, data8_b);
           data8_y = {`cc_c, data8_b[7:1]};
           //`cc_h = 1'b0; // Not affected
           `cc_n = data8_y[7];
@@ -358,8 +300,8 @@ module tb_dv_6809_model
         8'h67, // ASR  (idx)
         8'h77: // ASR  (ext)
         begin 
-          bus_cycles = 6; //dir
-          load_mm(`ea, data8_b, bus_cycles);
+          bus_cycles += 6; //dir
+          load_mm(`ea, data8_b);
           data8_y = {data8_b[7], data8_b[7:1]};
           //`cc_h = 1'b0; // INFO: Spec H Undefined, Turbo9 H not affected
           `cc_n = data8_y[7];
@@ -376,8 +318,8 @@ module tb_dv_6809_model
         8'h68, // ASL  (idx)
         8'h78: // ASL  (ext)
         begin 
-          bus_cycles = 6; //dir
-          load_mm(`ea, data8_b, bus_cycles);
+          bus_cycles += 6; //dir
+          load_mm(`ea, data8_b);
           data8_y = {data8_b[6:0], 1'b0};
           //`cc_h = 1'b0; // INFO: Spec H Undefined, Turbo9 H not affected
           `cc_n = data8_y[7];
@@ -394,8 +336,8 @@ module tb_dv_6809_model
         8'h69, // ROL  (idx)
         8'h79: // ROL  (ext)
         begin 
-          bus_cycles = 6; //dir
-          load_mm(`ea, data8_b, bus_cycles);
+          bus_cycles += 6; //dir
+          load_mm(`ea, data8_b);
           data8_y = {data8_b[6:0], `cc_c};
           //`cc_h = 1'b0; // Not affected
           `cc_n = data8_y[7];
@@ -412,9 +354,9 @@ module tb_dv_6809_model
         8'h6A, // DEC  (idx)
         8'h7A: // DEC  (ext)
         begin 
-          bus_cycles = 6; //dir
-          load_mm(`ea, data8_a, bus_cycles);
-          data8_b = 8'h01;
+          bus_cycles += 6; //dir
+          load_mm(`ea, data8_a);
+          data8_b = {7'h00, ~model_break_dec}; // INFO: Break DEC to force a failed test.
           data8_y = data8_a - data8_b;
           //`cc_h = 1'b0; // Not affected
           `cc_n = data8_y[7];
@@ -431,8 +373,8 @@ module tb_dv_6809_model
         8'h6C, // INC  (idx)
         8'h7C: // INC  (ext)
         begin 
-          bus_cycles = 6; //dir
-          load_mm(`ea, data8_a, bus_cycles);
+          bus_cycles += 6; //dir
+          load_mm(`ea, data8_a);
           data8_b = 8'h01;
           data8_y = data8_a + data8_b;
           //`cc_h = 1'b0; // Not affected
@@ -450,8 +392,8 @@ module tb_dv_6809_model
         8'h6D, // TST  (idx)
         8'h7D: // TST  (ext)
         begin 
-          bus_cycles = 6; //dir
-          load_mm(`ea, data8_b, bus_cycles);
+          bus_cycles += 6; //dir
+          load_mm(`ea, data8_b);
           data8_y = data8_b;
           //`cc_h = 1'b0; // Not affected
           `cc_n = data8_y[7];
@@ -466,8 +408,8 @@ module tb_dv_6809_model
         8'h6E, // JMP  (idx)
         8'h7E: // JMP  (ext)
         begin 
-          bus_cycles = 3; //dir
-          calc_ea16(`ea, bus_cycles);
+          bus_cycles += 3; //dir
+          calc_ea16(`ea);
           `pc = `ea;
         end
 
@@ -478,8 +420,8 @@ module tb_dv_6809_model
         8'h6F, // CLR  (idx)
         8'h7F: // CLR  (ext)
         begin 
-          bus_cycles = 6; //dir
-          load_mm(`ea, data8_b, bus_cycles);
+          bus_cycles += 6; //dir
+          load_mm(`ea, data8_b);
           data8_y = 8'h00;
           //`cc_h = 1'b0; // Not affected
           `cc_n = 1'b0;
@@ -493,9 +435,9 @@ module tb_dv_6809_model
         8'h10 : begin
           //
           `prebyte  = `opcode;
-          `opcode   = read_mem8(`pc++);
+          read_mem8(`pc++,`opcode);
           instruction_reg2 = `opcode;
-          if (~quiet) print_opcode_info(`prebyte, `opcode, 1'b1);
+          if (model_verbose) print_opcode_info(`prebyte, `opcode, 1'b1);
           //
           case (instruction_reg2)
 
@@ -522,7 +464,7 @@ module tb_dv_6809_model
             //
             8'h15 : // EDIVS (inh)
             begin 
-              bus_cycles = 25;
+              bus_cycles += 25;
               data32_a = $signed({`y,`d});
               data32_b = $signed(`x);
               data32_y = $signed(data32_a) / $signed(data32_b);
@@ -561,7 +503,7 @@ module tb_dv_6809_model
             //
             8'h18 : // IDIVS (inh)
             begin 
-              bus_cycles = 25;
+              bus_cycles += 25;
               data32_a = $signed(`d);
               data32_b = $signed(`x);
               data32_y = $signed(data32_a) / $signed(data32_b);
@@ -600,7 +542,7 @@ module tb_dv_6809_model
             //
             8'h14 : // EDIV (inh)
             begin 
-              bus_cycles = 25;
+              bus_cycles += 25;
               data32_a = {`y,`d};
               data32_b = {16'h0000, `x};
               data32_y = $unsigned(data32_a) / $unsigned(data32_b);
@@ -642,7 +584,7 @@ module tb_dv_6809_model
             //
             8'h19 : // FDIV (inh)
             begin
-              bus_cycles = 25;
+              bus_cycles += 25;
               data32_a = {`d, 16'h0000};
               data32_b = {16'h0000, `x};
               data32_y = $unsigned(data32_a) / $unsigned(data32_b);
@@ -680,12 +622,11 @@ module tb_dv_6809_model
             8'h2E, // LBGT
             8'h2F: // LBLE
             begin
+              bus_cycles += 5;
               rel16_ea(`ea);
               if (eval_branch(`opcode[3:0])) begin
                 `pc = `ea;
-                bus_cycles = 6;
-              end else begin
-                bus_cycles = 5;
+                bus_cycles += 1;
               end
             end
 
@@ -695,15 +636,15 @@ module tb_dv_6809_model
             8'hA3, // CMPD (idx)
             8'hB3: // CMPD (ext)
             begin 
-              bus_cycles = 7; // dir
-              load_op16(`ea,data16_b,bus_cycles);
+              bus_cycles += 7; // dir
+              load_op16(`ea,data16_b);
               data16_a = `d;
-              {cout, data16_y} = {1'b0, data16_a} - {1'b0, data16_b};
+              {data_cout, data16_y} = {1'b0, data16_a} - {1'b0, data16_b};
               //`cc_h = 1'b0; // Not affected
               `cc_n = data16_y[15];
               `cc_z = (data16_y == 16'h00);
               `cc_v = sub_vout16(data16_y, data16_a, data16_b);
-              `cc_c = cout;
+              `cc_c = data_cout;
             end
            
             ///////////////////////////////////////////// CMPY
@@ -712,15 +653,15 @@ module tb_dv_6809_model
             8'hAC, // CMPY (idx)
             8'hBC: // CMPY (ext)
             begin 
-              bus_cycles = 7; // dir
-              load_op16(`ea,data16_b,bus_cycles);
+              bus_cycles += 7; // dir
+              load_op16(`ea,data16_b);
               data16_a = `y;
-              {cout, data16_y} = {1'b0, data16_a} - {1'b0, data16_b};
+              {data_cout, data16_y} = {1'b0, data16_a} - {1'b0, data16_b};
               //`cc_h = 1'b0; // Not affected
               `cc_n = data16_y[15];
               `cc_z = (data16_y == 16'h00);
               `cc_v = sub_vout16(data16_y, data16_a, data16_b);
-              `cc_c = cout;
+              `cc_c = data_cout;
             end
            
             ///////////////////////////////////////////// LDY
@@ -729,8 +670,8 @@ module tb_dv_6809_model
             8'hAE, // LDY (idx)
             8'hBE: // LDY (ext)
             begin 
-              bus_cycles = 6; // dir
-              load_op16(`ea,data16_y,bus_cycles);
+              bus_cycles += 6; // dir
+              load_op16(`ea,data16_y);
               //`cc_h = 1'b0; // Not affected
               `cc_n = data16_y[15];
               `cc_z = (data16_y == 16'h00);
@@ -744,8 +685,8 @@ module tb_dv_6809_model
             8'hAF, // STY (idx)
             8'hBF: // STY (ext)
             begin 
-              bus_cycles = 6; // dir
-              calc_ea16(`ea, bus_cycles);
+              bus_cycles += 6; // dir
+              calc_ea16(`ea);
               data16_y = `y;
               //`cc_h = 1'b0; // Not affected
               `cc_n = data16_y[15];
@@ -761,8 +702,8 @@ module tb_dv_6809_model
             8'hEE, // LDS (idx)
             8'hFE: // LDS (ext)
             begin 
-              bus_cycles = 6; // dir
-              load_op16(`ea,data16_y,bus_cycles);
+              bus_cycles += 6; // dir
+              load_op16(`ea,data16_y);
               //`cc_h = 1'b0; // Not affected
               `cc_n = data16_y[15];
               `cc_z = (data16_y == 16'h00);
@@ -776,8 +717,8 @@ module tb_dv_6809_model
             8'hEF, // STS (idx)
             8'hFF: // STS (ext)
             begin 
-              bus_cycles = 6; // dir
-              calc_ea16(`ea, bus_cycles);
+              bus_cycles += 6; // dir
+              calc_ea16(`ea);
               data16_y = `s;
               //`cc_h = 1'b0; // Not affected
               `cc_n = data16_y[15];
@@ -799,9 +740,9 @@ module tb_dv_6809_model
         8'h11 : begin
           //
           `prebyte  = `opcode;
-          `opcode   = read_mem8(`pc++);
+          read_mem8(`pc++,`opcode);
           instruction_reg2 = `opcode;
-          if (~quiet) print_opcode_info(`prebyte, `opcode, 1'b1);
+          if (model_verbose) print_opcode_info(`prebyte, `opcode, 1'b1);
           //
           case (instruction_reg2)
 
@@ -811,15 +752,15 @@ module tb_dv_6809_model
             8'hA3, // CMPU (idx)
             8'hB3: // CMPU (ext)
             begin 
-              bus_cycles = 7; // dir
-              load_op16(`ea,data16_b,bus_cycles);
+              bus_cycles += 7; // dir
+              load_op16(`ea,data16_b);
               data16_a = `u;
-              {cout, data16_y} = {1'b0, data16_a} - {1'b0, data16_b};
+              {data_cout, data16_y} = {1'b0, data16_a} - {1'b0, data16_b};
               //`cc_h = 1'b0; // Not affected
               `cc_n = data16_y[15];
               `cc_z = (data16_y == 16'h00);
               `cc_v = sub_vout16(data16_y, data16_a, data16_b);
-              `cc_c = cout;
+              `cc_c = data_cout;
             end
            
             ///////////////////////////////////////////// CMPS
@@ -828,15 +769,15 @@ module tb_dv_6809_model
             8'hAC, // CMPS (idx)
             8'hBC: // CMPS (ext)
             begin 
-              bus_cycles = 7; // dir
-              load_op16(`ea,data16_b,bus_cycles);
+              bus_cycles += 7; // dir
+              load_op16(`ea,data16_b);
               data16_a = `s;
-              {cout, data16_y} = {1'b0, data16_a} - {1'b0, data16_b};
+              {data_cout, data16_y} = {1'b0, data16_a} - {1'b0, data16_b};
               //`cc_h = 1'b0; // Not affected
               `cc_n = data16_y[15];
               `cc_z = (data16_y == 16'h00);
               `cc_v = sub_vout16(data16_y, data16_a, data16_b);
-              `cc_c = cout;
+              `cc_c = data_cout;
             end
 
             default : begin // Unimplemented Page 3 Opcode
@@ -849,7 +790,7 @@ module tb_dv_6809_model
 
         ///////////////////////////////////////////// NOP (inh)
         8'h12 : begin 
-          bus_cycles = 2;
+          bus_cycles += 2;
         end
 
         ///////////////////////////////////////////// SYNC (inh) FIXME
@@ -872,7 +813,7 @@ module tb_dv_6809_model
         //
         8'h14 : // EMUL (inh)
         begin 
-          bus_cycles = 19;
+          bus_cycles += 19;
           data16_a = `d;
           data16_b = `y;
           data32_y = $unsigned(data16_a) * $unsigned(data16_b);
@@ -899,7 +840,7 @@ module tb_dv_6809_model
         //
         8'h15 : // EMULS (inh)
         begin 
-          bus_cycles = 19;
+          bus_cycles += 19;
           data16_a = `d;
           data16_b = `y;
           data32_y = $signed(data16_a) * $signed(data16_b);
@@ -915,18 +856,18 @@ module tb_dv_6809_model
         ///////////////////////////////////////////// LBRA (rel)
         8'h16 : // LBRA
         begin
+          bus_cycles += 5;
           rel16_ea(`ea);
           `pc = `ea;
-          bus_cycles = 5;
         end
 
         ///////////////////////////////////////////// LBSR (rel)
         8'h17 : begin
+          bus_cycles += 9;
           rel16_ea(`ea);
           write_mem8(--`s,`pc[ 7:0]);
           write_mem8(--`s,`pc[15:8]);
           `pc = `ea;
-          bus_cycles = 9;
         end
 
         ///////////////////////////////////////////// IDIV
@@ -948,7 +889,7 @@ module tb_dv_6809_model
         //
         8'h18 : // IDIV (inh)
         begin
-          bus_cycles = 19;
+          bus_cycles += 19;
           data16_a = `d;
           data16_b = `x;
           data16_y = $unsigned(data16_a) / $unsigned(data16_b);
@@ -970,6 +911,7 @@ module tb_dv_6809_model
 
         ///////////////////////////////////////////// DAA (inh)
         8'h19 : begin
+          bus_cycles += 2;
           //
           data8_a = `a;
           //
@@ -983,34 +925,34 @@ module tb_dv_6809_model
           else
             data8_b[7:4] = 4'h0;
           //
-          {tmp1, data8_y} = {1'b0, data8_a} + {1'b0, data8_b};
+          {data_cout, data8_y} = {1'b0, data8_a} + {1'b0, data8_b};
           //`cc_h = 1'b0; // INFO: Not affected
           `cc_n = data8_y[7];
           `cc_z = (data8_y == 8'h00);
           //`cc_v = 1'b0; // INFO: Undefined (Turbo9: Not affected)
-          `cc_c |= tmp1;
+          `cc_c |= data_cout;
           `a = data8_y;
-          bus_cycles = 2;
         end
 
         ///////////////////////////////////////////// ORCC (imm)
         8'h1A : begin
-          imm8_ea(`ea, bus_cycles);
-          bus_cycles = 3; // set
-          data8_a = read_mem8(`ea);
+          bus_cycles += 5; // set to imaginary ORCC (dir) cycle count
+          imm8_ea(`ea);
+          read_mem8(`ea, data8_a);
           `cc |= data8_a;
         end
 
         ///////////////////////////////////////////// ANDCC (imm)
         8'h1C : begin
-          imm8_ea(`ea, bus_cycles);
-          bus_cycles = 3; // set
-          data8_a = read_mem8(`ea);
+          bus_cycles += 5; // set to imaginary ANDCC (dir) cycle count
+          imm8_ea(`ea);
+          read_mem8(`ea, data8_a);
           `cc &= data8_a;
         end
 
         ///////////////////////////////////////////// SEX (inh)
         8'h1D : begin
+          bus_cycles += 2;
           data8_b = `b;
           data16_y = {{8{data8_b[7]}}, data8_b};
           `d = data16_y;
@@ -1019,31 +961,29 @@ module tb_dv_6809_model
           `cc_z = (data16_y == 16'h00);
           `cc_v = 1'b0; // INFO Prog Man says V unaffected, datasheet says v=0
           //`cc_c = 1'b0; // Not affected
-          bus_cycles = 2;
         end
 
         ///////////////////////////////////////////// EXG (inh)
         8'h1E : begin
+          bus_cycles += 8;
           `ea = `pc++;
-          tmp8 = read_mem8(`ea);
+          read_mem8(`ea, data8_a);
           //
-          data16_a = read_reg(tmp8[7:4]);
-          data16_b = read_reg(tmp8[3:0]);
-          write_reg(tmp8[7:4],data16_b);
-          write_reg(tmp8[3:0],data16_a);
-          //
-          bus_cycles = 8;
+          data16_a = read_reg(data8_a[7:4]);
+          data16_b = read_reg(data8_a[3:0]);
+          write_reg(data8_a[7:4],data16_b);
+          write_reg(data8_a[3:0],data16_a);
         end
 
         ///////////////////////////////////////////// TFR (inh)
         8'h1F : begin
+          bus_cycles += 6;
           `ea = `pc++;
-          tmp8 = read_mem8(`ea);
+          read_mem8(`ea, data8_a);
           //
-          data16_a = read_reg(tmp8[7:4]);
-          write_reg(tmp8[3:0],data16_a);
+          data16_a = read_reg(data8_a[7:4]);
+          write_reg(data8_a[3:0],data16_a);
           //
-          bus_cycles = 6;
         end
 
         ///////////////////////////////////////////// Bxx (rel)
@@ -1064,20 +1004,18 @@ module tb_dv_6809_model
         8'h2E, // BGT
         8'h2F: // BLE
         begin
+          bus_cycles += 3;
           rel8_ea(`ea);
           if (eval_branch(`opcode[3:0])) begin
             `pc = `ea;
-            bus_cycles = 3;
-          end else begin
-            bus_cycles = 3;
           end
         end
 
         ///////////////////////////////////////////// LEAX
         8'h30 : // LEAX (idx)
         begin 
-          bus_cycles = 4;
-          idx_ea(`ea, bus_cycles);
+          bus_cycles += 4;
+          idx_ea(`ea);
           data16_y = `ea;
           //`cc_h = 1'b0; // Not affected
           //`cc_n = 1'b0; // Not affected
@@ -1090,8 +1028,8 @@ module tb_dv_6809_model
         ///////////////////////////////////////////// LEAY
         8'h31 : // LEAY (idx)
         begin 
-          bus_cycles = 4;
-          idx_ea(`ea, bus_cycles);
+          bus_cycles += 4;
+          idx_ea(`ea);
           data16_y = `ea;
           //`cc_h = 1'b0; // Not affected
           //`cc_n = 1'b0; // Not affected
@@ -1104,8 +1042,8 @@ module tb_dv_6809_model
         ///////////////////////////////////////////// LEAS
         8'h32 : // LEAS (idx)
         begin 
-          bus_cycles = 4;
-          idx_ea(`ea, bus_cycles);
+          bus_cycles += 4;
+          idx_ea(`ea);
           data16_y = `ea;
           //`cc_h = 1'b0; // Not affected
           //`cc_n = 1'b0; // Not affected
@@ -1118,8 +1056,8 @@ module tb_dv_6809_model
         ///////////////////////////////////////////// LEAU
         8'h33 : // LEAU (idx)
         begin 
-          bus_cycles = 4;
-          idx_ea(`ea, bus_cycles);
+          bus_cycles += 4;
+          idx_ea(`ea);
           data16_y = `ea;
           //`cc_h = 1'b0; // Not affected
           //`cc_n = 1'b0; // Not affected
@@ -1131,47 +1069,43 @@ module tb_dv_6809_model
 
         ///////////////////////////////////////////// PSHS (stack)
         8'h34 : begin
-          `postbyte = read_mem8(`pc++);
-          push_regs(`postbyte, `s, `u, tmp16, bus_cycles);
-          `s = tmp16;
           bus_cycles += 5;
+          read_mem8(`pc++, `postbyte);
+          push_regs(`postbyte, `s, `u);
         end
 
         ///////////////////////////////////////////// PULS (stack)
         8'h35 : begin
-          `postbyte = read_mem8(`pc++);
-          pull_regs(`postbyte, `s, `u, tmp16, bus_cycles);
-          `s = tmp16;
           bus_cycles += 5;
+          read_mem8(`pc++, `postbyte);
+          pull_regs(`postbyte, `s, `u);
         end
 
         ///////////////////////////////////////////// PSHU (stack)
         8'h36 : begin
-          `postbyte = read_mem8(`pc++);
-          push_regs(`postbyte, `u, `s, tmp16, bus_cycles);
-          `u = tmp16;
           bus_cycles += 5;
+          read_mem8(`pc++, `postbyte);
+          push_regs(`postbyte, `u, `s);
         end
 
         ///////////////////////////////////////////// PULU (stack)
         8'h37 : begin
-          `postbyte = read_mem8(`pc++);
-          pull_regs(`postbyte, `u, `s, tmp16, bus_cycles);
-          `u = tmp16;
           bus_cycles += 5;
+          read_mem8(`pc++, `postbyte);
+          pull_regs(`postbyte, `u, `s);
         end
 
         ///////////////////////////////////////////// RTS (stack)
         8'h39 : begin
-          `pc[15:8] = read_mem8(`s++);
-          `pc[ 7:0] = read_mem8(`s++);
-          bus_cycles = 5;
+          bus_cycles += 5;
+          read_mem8(`s++, `pc[15:8]);
+          read_mem8(`s++, `pc[ 7:0]);
         end
 
         ///////////////////////////////////////////// ABX
         8'h3A : // ABX (inh)
         begin 
-          bus_cycles = 11;
+          bus_cycles += 11;
           data16_a = `x;
           data16_b = {8'h00,`b};
           data16_y =  data16_a + data16_b;
@@ -1185,23 +1119,19 @@ module tb_dv_6809_model
 
         ///////////////////////////////////////////// RTI (stack)
         8'h3B : begin
-          pull_regs(8'h01, `s, `u, tmp16, bus_cycles);
-          `s = tmp16;
+          bus_cycles += 4; // 4+2=6 (E=0) / 4+11=15 (E=1) 
+          pull_regs(8'h01, `s, `u);
           if (`cc_e) begin
-            pull_regs(8'hFE, `s, `u, tmp16, bus_cycles);
-            `s = tmp16;
-            bus_cycles = 15;
+            pull_regs(8'hFE, `s, `u);
           end else begin
-            pull_regs(8'h80, `s, `u, tmp16, bus_cycles);
-            `s = tmp16;
-            bus_cycles = 6;
+            pull_regs(8'h80, `s, `u);
           end
         end
 
         ///////////////////////////////////////////// MUL
         8'h3D : // MUL (inh)
         begin 
-          bus_cycles = 11;
+          bus_cycles += 11;
           data8_a = `a;
           data8_b = `b;
           data16_y = $unsigned(data8_a) * $unsigned(data8_b);
@@ -1215,13 +1145,12 @@ module tb_dv_6809_model
 
         ///////////////////////////////////////////// SWI (stack)
         8'h3F : begin
+          bus_cycles += 7; // 7+12 = 19
           `cc_e = 1'b1;
-          push_regs(8'hFF, `s, `u, tmp16, bus_cycles);
-          `s = tmp16;
+          push_regs(8'hFF, `s, `u);
           `cc_i = 1'b1;
           `cc_f = 1'b1;
-          `pc = read_mem16(16'hFFFA);
-          bus_cycles = 19;
+          read_mem16(16'hFFFA, `pc);
         end
 
         ///////////////////////////////////////////// SUBA
@@ -1230,15 +1159,15 @@ module tb_dv_6809_model
         8'hA0, // SUBA (idx)
         8'hB0: // SUBA (ext)
         begin 
-          bus_cycles = 4; // dir
-          load_op8(`ea,data8_b,bus_cycles);
+          bus_cycles += 4; // dir
+          load_op8(`ea,data8_b);
           data8_a = `a;
-          {cout, data8_y} = {1'b0, data8_a} - {1'b0, data8_b};
+          {data_cout, data8_y} = {1'b0, data8_a} - {1'b0, data8_b};
           //`cc_h = 1'b0; // INFO: Undefined (Turbo9: Not affected)
           `cc_n = data8_y[7];
           `cc_z = (data8_y == 8'h00);
           `cc_v = sub_vout8(data8_y, data8_a, data8_b);
-          `cc_c = cout;
+          `cc_c = data_cout;
           `a = data8_y;
         end
 
@@ -1248,15 +1177,15 @@ module tb_dv_6809_model
         8'hA1, // CMPA (idx)
         8'hB1: // CMPA (ext)
         begin 
-          bus_cycles = 4; // dir
-          load_op8(`ea,data8_b,bus_cycles);
+          bus_cycles += 4; // dir
+          load_op8(`ea,data8_b);
           data8_a = `a;
-          {cout, data8_y} = {1'b0, data8_a} - {1'b0, data8_b};
+          {data_cout, data8_y} = {1'b0, data8_a} - {1'b0, data8_b};
           //`cc_h = 1'b0; // INFO: Undefined (Turbo9: Not affected)
           `cc_n = data8_y[7];
           `cc_z = (data8_y == 8'h00);
           `cc_v = sub_vout8(data8_y, data8_a, data8_b);
-          `cc_c = cout;
+          `cc_c = data_cout;
         end
 
         ///////////////////////////////////////////// SBCA
@@ -1265,16 +1194,16 @@ module tb_dv_6809_model
         8'hA2, // SBCA (idx)
         8'hB2: // SBCA (ext)
         begin 
-          bus_cycles = 4; // dir
-          load_op8(`ea,data8_b,bus_cycles);
+          bus_cycles += 4; // dir
+          load_op8(`ea,data8_b);
           data8_a = `a;
-          cin = `cc_c;
-          {cout, data8_y} = {1'b0, data8_a} - {1'b0, data8_b} - {8'h00, cin};
+          data_cin = `cc_c;
+          {data_cout, data8_y} = {1'b0, data8_a} - {1'b0, data8_b} - {8'h00, data_cin};
           //`cc_h = 1'b0; // INFO: Undefined (Turbo9: Not affected)
           `cc_n = data8_y[7];
           `cc_z = (data8_y == 8'h00);
           `cc_v = sub_vout8(data8_y, data8_a, data8_b);
-          `cc_c = cout;
+          `cc_c = data_cout;
           `a = data8_y;
         end
 
@@ -1284,15 +1213,15 @@ module tb_dv_6809_model
         8'hA3, // SUBD (idx)
         8'hB3: // SUBD (ext)
         begin 
-          bus_cycles = 6; // dir
-          load_op16(`ea,data16_b,bus_cycles);
+          bus_cycles += 6; // dir
+          load_op16(`ea,data16_b);
           data16_a = `d;
-          {cout, data16_y} = {1'b0, data16_a} - {1'b0, data16_b};
+          {data_cout, data16_y} = {1'b0, data16_a} - {1'b0, data16_b};
           //`cc_h = 1'b0; // Not affected
           `cc_n = data16_y[15];
           `cc_z = (data16_y == 16'h00);
           `cc_v = sub_vout16(data16_y, data16_a, data16_b);
-          `cc_c = cout;
+          `cc_c = data_cout;
           `d = data16_y;
         end
 
@@ -1302,8 +1231,8 @@ module tb_dv_6809_model
         8'hA4, // ANDA (idx)
         8'hB4: // ANDA (ext)
         begin 
-          bus_cycles = 4; // dir
-          load_op8(`ea,data8_b,bus_cycles);
+          bus_cycles += 4; // dir
+          load_op8(`ea,data8_b);
           data8_a = `a;
           data8_y = data8_a & data8_b;
           //`cc_h = 1'b0; // Not affected
@@ -1320,8 +1249,8 @@ module tb_dv_6809_model
         8'hA5, // BITA (idx)
         8'hB5: // BITA (ext)
         begin 
-          bus_cycles = 4; // dir
-          load_op8(`ea,data8_b,bus_cycles);
+          bus_cycles += 4; // dir
+          load_op8(`ea,data8_b);
           data8_a = `a;
           data8_y = data8_a & data8_b;
           //`cc_h = 1'b0; // Not affected
@@ -1337,8 +1266,8 @@ module tb_dv_6809_model
         8'hA6, // LDA (idx)
         8'hB6: // LDA (ext)
         begin 
-          bus_cycles = 4; // dir
-          load_op8(`ea,data8_y,bus_cycles);
+          bus_cycles += 4; // dir
+          load_op8(`ea,data8_y);
           //`cc_h = 1'b0; // Not affected
           `cc_n = data8_y[7];
           `cc_z = (data8_y == 8'h00);
@@ -1352,8 +1281,8 @@ module tb_dv_6809_model
         8'hA7, // STA (idx)
         8'hB7: // STA (ext)
         begin 
-          bus_cycles = 4; // dir
-          calc_ea8(`ea, bus_cycles);
+          bus_cycles += 4; // dir
+          calc_ea8(`ea);
           data8_y = `a;
           //`cc_h = 1'b0; // Not affected
           `cc_n = data8_y[7];
@@ -1369,8 +1298,8 @@ module tb_dv_6809_model
         8'hA8, // EORA (idx)
         8'hB8: // EORA (ext)
         begin 
-          bus_cycles = 4; // dir
-          load_op8(`ea,data8_b,bus_cycles);
+          bus_cycles += 4; // dir
+          load_op8(`ea,data8_b);
           data8_a = `a;
           data8_y = data8_a ^ data8_b;
           //`cc_h = 1'b0; // Not affected
@@ -1387,17 +1316,17 @@ module tb_dv_6809_model
         8'hA9, // ADCA (idx)
         8'hB9: // ADCA (ext)
         begin 
-          bus_cycles = 4; // dir
-          load_op8(`ea,data8_b,bus_cycles);
+          bus_cycles += 4; // dir
+          load_op8(`ea,data8_b);
           data8_a = `a;
-          cin = `cc_c;
-          {hout, data8_y[3:0]} = {1'b0, data8_a[3:0]} + {1'b0, data8_b[3:0]} + {4'h0, cin};
-          {cout, data8_y} = {1'b0, data8_a} + {1'b0, data8_b} + {8'h00, cin};
-          `cc_h = hout;
+          data_cin = `cc_c;
+          {data_hout, data8_y[3:0]} = {1'b0, data8_a[3:0]} + {1'b0, data8_b[3:0]} + {4'h0, data_cin};
+          {data_cout, data8_y} = {1'b0, data8_a} + {1'b0, data8_b} + {8'h00, data_cin};
+          `cc_h = data_hout;
           `cc_n = data8_y[7];
           `cc_z = (data8_y == 8'h00);
           `cc_v = add_vout8(data8_y, data8_a, data8_b);
-          `cc_c = cout;
+          `cc_c = data_cout;
           `a = data8_y;
         end
 
@@ -1407,8 +1336,8 @@ module tb_dv_6809_model
         8'hAA, // ORA (idx)
         8'hBA: // ORA (ext)
         begin
-          bus_cycles = 4; // dir
-          load_op8(`ea,data8_b,bus_cycles);
+          bus_cycles += 4; // dir
+          load_op8(`ea,data8_b);
           data8_a = `a;
           data8_y = data8_a | data8_b;
           //`cc_h = 1'b0; // Not affected
@@ -1425,16 +1354,16 @@ module tb_dv_6809_model
         8'hAB, // ADDA (idx)
         8'hBB: // ADDA (ext)
         begin 
-          bus_cycles = 4; // dir
-          load_op8(`ea,data8_b,bus_cycles);
+          bus_cycles += 4; // dir
+          load_op8(`ea,data8_b);
           data8_a = `a;
-          {hout, data8_y[3:0]} = {1'b0, data8_a[3:0]} + {1'b0, data8_b[3:0]};
-          {cout, data8_y} = {1'b0, data8_a} + {1'b0, data8_b};
-          `cc_h = hout;
+          {data_hout, data8_y[3:0]} = {1'b0, data8_a[3:0]} + {1'b0, data8_b[3:0]};
+          {data_cout, data8_y} = {1'b0, data8_a} + {1'b0, data8_b};
+          `cc_h = data_hout;
           `cc_n = data8_y[7];
           `cc_z = (data8_y == 8'h00);
           `cc_v = add_vout8(data8_y, data8_a, data8_b);
-          `cc_c = cout;
+          `cc_c = data_cout;
           `a = data8_y;
         end
 
@@ -1444,26 +1373,26 @@ module tb_dv_6809_model
         8'hAC, // CMPX (idx)
         8'hBC: // CMPX (ext)
         begin 
-          bus_cycles = 6; // dir
-          load_op16(`ea,data16_b,bus_cycles);
+          bus_cycles += 6; // dir
+          load_op16(`ea,data16_b);
           data16_a = `x;
-          {cout, data16_y} = {1'b0, data16_a} - {1'b0, data16_b};
+          {data_cout, data16_y} = {1'b0, data16_a} - {1'b0, data16_b};
           //`cc_h = 1'b0; // Not affected
           `cc_n = data16_y[15];
           `cc_z = (data16_y == 16'h00);
           `cc_v = sub_vout16(data16_y, data16_a, data16_b);
-          `cc_c = cout;
+          `cc_c = data_cout;
         end
 
 
         ///////////////////////////////////////////// BSR
         8'h8D: // BSR  (rel)
         begin
+          bus_cycles += 7;
           rel8_ea(`ea);
           write_mem8(--`s,`pc[ 7:0]);
           write_mem8(--`s,`pc[15:8]);
           `pc = `ea;
-          bus_cycles = 7;
         end
 
         ///////////////////////////////////////////// JSR
@@ -1471,8 +1400,8 @@ module tb_dv_6809_model
         8'hAD, // JSR  (idx)
         8'hBD: // JSR  (ext)
         begin 
-          bus_cycles = 7; //dir
-          calc_ea16(`ea, bus_cycles);
+          bus_cycles += 7; //dir
+          calc_ea16(`ea);
           write_mem8(--`s,`pc[ 7:0]);
           write_mem8(--`s,`pc[15:8]);
           `pc = `ea;
@@ -1484,8 +1413,8 @@ module tb_dv_6809_model
         8'hAE, // LDX (idx)
         8'hBE: // LDX (ext)
         begin 
-          bus_cycles = 5; // dir
-          load_op16(`ea,data16_y,bus_cycles);
+          bus_cycles += 5; // dir
+          load_op16(`ea,data16_y);
           //`cc_h = 1'b0; // Not affected
           `cc_n = data16_y[15];
           `cc_z = (data16_y == 16'h00);
@@ -1499,8 +1428,8 @@ module tb_dv_6809_model
         8'hAF, // STX (idx)
         8'hBF: // STX (ext)
         begin 
-          bus_cycles = 5; // dir
-          calc_ea16(`ea, bus_cycles);
+          bus_cycles += 5; // dir
+          calc_ea16(`ea);
           data16_y = `x;
           //`cc_h = 1'b0; // Not affected
           `cc_n = data16_y[15];
@@ -1516,15 +1445,15 @@ module tb_dv_6809_model
         8'hE0, // SUBB (idx)
         8'hF0: // SUBB (ext)
         begin 
-          bus_cycles = 4; // dir
-          load_op8(`ea,data8_b,bus_cycles);
+          bus_cycles += 4; // dir
+          load_op8(`ea,data8_b);
           data8_a = `b;
-          {cout, data8_y} = {1'b0, data8_a} - {1'b0, data8_b};
+          {data_cout, data8_y} = {1'b0, data8_a} - {1'b0, data8_b};
           //`cc_h = 1'b0; // INFO: Undefined (Turbo9: Not affected)
           `cc_n = data8_y[7];
           `cc_z = (data8_y == 8'h00);
           `cc_v = sub_vout8(data8_y, data8_a, data8_b);
-          `cc_c = cout;
+          `cc_c = data_cout;
           `b = data8_y;
         end
 
@@ -1534,15 +1463,15 @@ module tb_dv_6809_model
         8'hE1, // CMPB (idx)
         8'hF1: // CMPB (ext)
         begin 
-          bus_cycles = 4; // dir
-          load_op8(`ea,data8_b,bus_cycles);
+          bus_cycles += 4; // dir
+          load_op8(`ea,data8_b);
           data8_a = `b;
-          {cout, data8_y} = {1'b0, data8_a} - {1'b0, data8_b};
+          {data_cout, data8_y} = {1'b0, data8_a} - {1'b0, data8_b};
           //`cc_h = 1'b0; // INFO: Undefined (Turbo9: Not affected)
           `cc_n = data8_y[7];
           `cc_z = (data8_y == 8'h00);
           `cc_v = sub_vout8(data8_y, data8_a, data8_b);
-          `cc_c = cout;
+          `cc_c = data_cout;
         end
 
         ///////////////////////////////////////////// SBCB
@@ -1551,16 +1480,16 @@ module tb_dv_6809_model
         8'hE2, // SBCB (idx)
         8'hF2: // SBCB (ext)
         begin 
-          bus_cycles = 4; // dir
-          load_op8(`ea,data8_b,bus_cycles);
+          bus_cycles += 4; // dir
+          load_op8(`ea,data8_b);
           data8_a = `b;
-          cin = `cc_c;
-          {cout, data8_y} = {1'b0, data8_a} - {1'b0, data8_b} - {8'h00, cin};
+          data_cin = `cc_c;
+          {data_cout, data8_y} = {1'b0, data8_a} - {1'b0, data8_b} - {8'h00, data_cin};
           //`cc_h = 1'b0; // INFO: Undefined (Turbo9: Not affected)
           `cc_n = data8_y[7];
           `cc_z = (data8_y == 8'h00);
           `cc_v = sub_vout8(data8_y, data8_a, data8_b);
-          `cc_c = cout;
+          `cc_c = data_cout;
           `b = data8_y;
         end
 
@@ -1570,15 +1499,15 @@ module tb_dv_6809_model
         8'hE3, // ADDD (idx)
         8'hF3: // ADDD (ext)
         begin 
-          bus_cycles = 6; // dir
-          load_op16(`ea,data16_b,bus_cycles);
+          bus_cycles += 6; // dir
+          load_op16(`ea,data16_b);
           data16_a = `d;
-          {cout, data16_y} = {1'b0, data16_a} + {1'b0, data16_b};
+          {data_cout, data16_y} = {1'b0, data16_a} + {1'b0, data16_b};
           //`cc_h = 1'b0; // Not affected
           `cc_n = data16_y[15];
           `cc_z = (data16_y == 16'h00);
           `cc_v = add_vout16(data16_y, data16_a, data16_b);
-          `cc_c = cout;
+          `cc_c = data_cout;
           `d = data16_y;
         end
 
@@ -1588,8 +1517,8 @@ module tb_dv_6809_model
         8'hE4, // ANDB (idx)
         8'hF4: // ANDB (ext)
         begin 
-          bus_cycles = 4; // dir
-          load_op8(`ea,data8_b,bus_cycles);
+          bus_cycles += 4; // dir
+          load_op8(`ea,data8_b);
           data8_a = `b;
           data8_y = data8_a & data8_b;
           //`cc_h = 1'b0; // Not affected
@@ -1606,8 +1535,8 @@ module tb_dv_6809_model
         8'hE5, // BITB (idx)
         8'hF5: // BITB (ext)
         begin 
-          bus_cycles = 4; // dir
-          load_op8(`ea,data8_b,bus_cycles);
+          bus_cycles += 4; // dir
+          load_op8(`ea,data8_b);
           data8_a = `b;
           data8_y = data8_a & data8_b;
           //`cc_h = 1'b0; // Not affected
@@ -1623,8 +1552,8 @@ module tb_dv_6809_model
         8'hE6, // LDB (idx)
         8'hF6: // LDB (ext)
         begin 
-          bus_cycles = 4; // dir
-          load_op8(`ea,data8_y,bus_cycles);
+          bus_cycles += 4; // dir
+          load_op8(`ea,data8_y);
           //`cc_h = 1'b0; // Not affected
           `cc_n = data8_y[7];
           `cc_z = (data8_y == 8'h00);
@@ -1638,8 +1567,8 @@ module tb_dv_6809_model
         8'hE7, // STB (idx)
         8'hF7: // STB (ext)
         begin 
-          bus_cycles = 4; // dir
-          calc_ea8(`ea, bus_cycles);
+          bus_cycles += 4; // dir
+          calc_ea8(`ea);
           data8_y = `b;
           //`cc_h = 1'b0; // Not affected
           `cc_n = data8_y[7];
@@ -1655,8 +1584,8 @@ module tb_dv_6809_model
         8'hE8, // EORB (idx)
         8'hF8: // EORB (ext)
         begin 
-          bus_cycles = 4; // dir
-          load_op8(`ea,data8_b,bus_cycles);
+          bus_cycles += 4; // dir
+          load_op8(`ea,data8_b);
           data8_a = `b;
           data8_y = data8_a ^ data8_b;
           //`cc_h = 1'b0; // Not affected
@@ -1673,17 +1602,17 @@ module tb_dv_6809_model
         8'hE9, // ADCB (idx)
         8'hF9: // ADCB (ext)
         begin 
-          bus_cycles = 4; // dir
-          load_op8(`ea,data8_b,bus_cycles);
+          bus_cycles += 4; // dir
+          load_op8(`ea,data8_b);
           data8_a = `b;
-          cin = `cc_c;
-          {hout, data8_y[3:0]} = {1'b0, data8_a[3:0]} + {1'b0, data8_b[3:0]} + {4'h0, cin};
-          {cout, data8_y} = {1'b0, data8_a} + {1'b0, data8_b} + {8'h00, cin};
-          `cc_h = hout;
+          data_cin = `cc_c;
+          {data_hout, data8_y[3:0]} = {1'b0, data8_a[3:0]} + {1'b0, data8_b[3:0]} + {4'h0, data_cin};
+          {data_cout, data8_y} = {1'b0, data8_a} + {1'b0, data8_b} + {8'h00, data_cin};
+          `cc_h = data_hout;
           `cc_n = data8_y[7];
           `cc_z = (data8_y == 8'h00);
           `cc_v = add_vout8(data8_y, data8_a, data8_b);
-          `cc_c = cout;
+          `cc_c = data_cout;
           `b = data8_y;
         end
 
@@ -1693,8 +1622,8 @@ module tb_dv_6809_model
         8'hEA, // ORB (idx)
         8'hFA: // ORB (ext)
         begin
-          bus_cycles = 4; // dir
-          load_op8(`ea,data8_b,bus_cycles);
+          bus_cycles += 4; // dir
+          load_op8(`ea,data8_b);
           data8_a = `b;
           data8_y = data8_a | data8_b;
           //`cc_h = 1'b0; // Not affected
@@ -1711,16 +1640,16 @@ module tb_dv_6809_model
         8'hEB, // ADDB (idx)
         8'hFB: // ADDB (ext)
         begin 
-          bus_cycles = 4; // dir
-          load_op8(`ea,data8_b,bus_cycles);
+          bus_cycles += 4; // dir
+          load_op8(`ea,data8_b);
           data8_a = `b;
-          {hout, data8_y[3:0]} = {1'b0, data8_a[3:0]} + {1'b0, data8_b[3:0]};
-          {cout, data8_y} = {1'b0, data8_a} + {1'b0, data8_b};
-          `cc_h = hout;
+          {data_hout, data8_y[3:0]} = {1'b0, data8_a[3:0]} + {1'b0, data8_b[3:0]};
+          {data_cout, data8_y} = {1'b0, data8_a} + {1'b0, data8_b};
+          `cc_h = data_hout;
           `cc_n = data8_y[7];
           `cc_z = (data8_y == 8'h00);
           `cc_v = add_vout8(data8_y, data8_a, data8_b);
-          `cc_c = cout;
+          `cc_c = data_cout;
           `b = data8_y;
         end
 
@@ -1730,8 +1659,8 @@ module tb_dv_6809_model
         8'hEC, // LDD (idx)
         8'hFC: // LDD (ext)
         begin 
-          bus_cycles = 5; // dir
-          load_op16(`ea,data16_y,bus_cycles);
+          bus_cycles += 5; // dir
+          load_op16(`ea,data16_y);
           //`cc_h = 1'b0; // Not affected
           `cc_n = data16_y[15];
           `cc_z = (data16_y == 16'h00);
@@ -1745,8 +1674,8 @@ module tb_dv_6809_model
         8'hED, // STD (idx)
         8'hFD: // STD (ext)
         begin 
-          bus_cycles = 5; // dir
-          calc_ea16(`ea, bus_cycles);
+          bus_cycles += 5; // dir
+          calc_ea16(`ea);
           data16_y = `d;
           //`cc_h = 1'b0; // Not affected
           `cc_n = data16_y[15];
@@ -1762,8 +1691,8 @@ module tb_dv_6809_model
         8'hEE, // LDU (idx)
         8'hFE: // LDU (ext)
         begin 
-          bus_cycles = 5; // dir
-          load_op16(`ea,data16_y,bus_cycles);
+          bus_cycles += 5; // dir
+          load_op16(`ea,data16_y);
           //`cc_h = 1'b0; // Not affected
           `cc_n = data16_y[15];
           `cc_z = (data16_y == 16'h00);
@@ -1777,8 +1706,8 @@ module tb_dv_6809_model
         8'hEF, // STU (idx)
         8'hFF: // STU (ext)
         begin 
-          bus_cycles = 5; // dir
-          calc_ea16(`ea, bus_cycles);
+          bus_cycles += 5; // dir
+          calc_ea16(`ea);
           data16_y = `u;
           //`cc_h = 1'b0; // Not affected
           `cc_n = data16_y[15];
@@ -1795,94 +1724,100 @@ module tb_dv_6809_model
         
       endcase
       
-      if (bus_cycles) begin
-        e_clock_cycles(bus_cycles);
-      end else begin
-        $display("[TB: tb_dv_6809_model] ERROR: Bus cycles not set!");
-        hasta_la_vista_baby;
-      end
+      idle_bus_cycles();
 
     end
 
+  end
+
+  ////////////////////////////////////////////////////////////////////////////
+  // Wait Bus Cycles
+  ////////////////////////////////////////////////////////////////////////////
+  task idle_bus_cycles;
+    integer i, idle_cycles;
+  begin
+    idle_cycles = bus_cycles;
+    //
+    if (idle_cycles >= 0) begin
+      for (i=0; i<idle_cycles; i=i+1) begin
+        ADR_O = 16'h0000;
+        DAT_O = 8'h00;
+        TGD_O = 4'h0;
+        WE_O  = 1'b0;
+        STB_O = 1'b0;
+        CYC_O = 1'b0;
+        //
+        if (~model_fast) begin
+          @ (negedge CLK_I);
+          #1;
+          //
+          @ (posedge CLK_I);
+          #1;
+          //
+        end
+        bus_cycles--;
+      end
+    end else begin
+      $display("[TB: tb_dv_6809_model] ERROR: Bus cycles negative!");
+      hasta_la_vista_baby;
+    end
   end
   endtask
 
   ////////////////////////////////////////////////////////////////////////////
   // Read Memory (8-bit)
   ////////////////////////////////////////////////////////////////////////////
-  //
-  ////////////// Memory Map
-  //
-  //
-  // Initialized RAM (Vector Table): FFFF - FFF0
-  //
-  // FFFE : FFFF   RESET_VECTOR
-  // FFFC : FFFD   NMI_VECTOR
-  // FFFA : FFFB   SWI_VECTOR
-  // FFF8 : FFF9   IRQ_VECTOR
-  // FFF6 : FFF7   FIRQ_VECTOR
-  // FFF4 : FFF5   SWI2_VECTOR
-  // FFF2 : FFF3   SWI3_VECTOR
-  // FFF0 : FFF1   RESERVED_VECTOR
-  //
-  //
-  // I/O Space: FFEF - FF00
-  // 
-  // FF08          CLK_CNT_CTRL[1:0] (read)  /  CLK_CNT_CTRL (write)
-  // FF04 : FF07   CLK_CNT[31:0]     (read)
-  // FF03          ACIA_STATUS       (read)
-  // FF02          ACIA_RX_DATA      (read)  /  ACIA_TX_DATA (write)
-  // FF01          GPI PORT          (read)
-  // FF00          GPO PORT          (read)  /  GPO_PORT    (write)
-  //
-  //
-  // Initialized RAM: FEFF - 0000
-  //
-  function reg [7:0] read_mem8(input [15:0] addr);
+  task read_mem8(input [15:0] addr, output reg [7:0] read_data8);
   begin
-    if (addr == 16'hFF00) begin
-      read_mem8 = gpo_port;
-    end else if (addr == 16'hFF01) begin
-      read_mem8 = GPI_PORT_I;
-    end else if (addr == 16'hFF04) begin
-      read_mem8 = clk_cnt_reg[31:24];
-    end else if (addr == 16'hFF05) begin
-      read_mem8 = clk_cnt_reg[23:16];
-    end else if (addr == 16'hFF06) begin
-      read_mem8 = clk_cnt_reg[15: 8];
-    end else if (addr == 16'hFF07) begin
-      read_mem8 = clk_cnt_reg[ 7: 0]; 
-    end else if (addr == 16'hFF08) begin
-      read_mem8 = {6'd0, clk_cnt_ctrl_reg[1:0]}; 
-    end else begin
-      read_mem8 = `memory[addr[(MEM_ADDR_WIDTH-1):0]];
-    end
+    ADR_O = addr;
+    DAT_O = 8'h00;
+    TGD_O = 4'h0;
+    WE_O  = 1'b0;
+    STB_O = 1'b1;
+    CYC_O = 1'b1;
+    //
+    @ (negedge CLK_I);
+    #1; // delay just past negedge before sampling data
+    read_data8 = DAT_I;
+    //
+    @ (posedge CLK_I);
+    #1; // hold bus signals just past posedge
+    //
+    bus_cycles--;
   end
-  endfunction
-
-  ////////////////////////////////////////////////////////////////////////////
-  // Read Memory (16-bit)
-  ////////////////////////////////////////////////////////////////////////////
-  function reg [15:0] read_mem16(input [15:0] addr);
-    reg [15:0] addr_inc;
-  begin
-    addr_inc = addr + 'h1;
-    read_mem16 = {read_mem8(addr), read_mem8(addr_inc)};
-  end
-  endfunction
+  endtask
 
   ////////////////////////////////////////////////////////////////////////////
   // Write Memory (8-bit)
   ////////////////////////////////////////////////////////////////////////////
   task write_mem8(input [15:0] addr, input [7:0] data);
   begin
-    if (addr == 16'hFF00) begin
-      gpo_port = data;
-    end else if (addr == 16'hFF08) begin
-      clk_cnt_ctrl_reg = data[1:0];
-    end else begin
-      `memory[addr[(MEM_ADDR_WIDTH-1):0]] = data;
-    end
+    ADR_O = addr;
+    DAT_O = data;
+    TGD_O = 4'h0;
+    WE_O  = 1'b1;
+    STB_O = 1'b1;
+    CYC_O = 1'b1;
+    //
+    @ (negedge CLK_I);
+    #1;
+    //
+    @ (posedge CLK_I);
+    #1; // hold bus signals just past posedge
+    //
+    bus_cycles--;
+  end
+  endtask
+
+  ////////////////////////////////////////////////////////////////////////////
+  // Read Memory (16-bit)
+  ////////////////////////////////////////////////////////////////////////////
+  task read_mem16(input [15:0] addr, output reg [15:0] read_data16);
+    reg [15:0] addr_inc;
+  begin
+    addr_inc = addr + 'h1;
+    read_mem8(addr, read_data16[15:8]);
+    read_mem8(addr_inc, read_data16[7:0]);
   end
   endtask
 
@@ -1895,18 +1830,6 @@ module tb_dv_6809_model
     addr_inc = addr + 'h1;
     write_mem8(addr,data[15:8]);
     write_mem8(addr_inc,data[7:0]);
-  end
-  endtask
-
-  ////////////////////////////////////////////////////////////////////////////
-  // Run E clock
-  ////////////////////////////////////////////////////////////////////////////
-  task e_clock_cycles(input integer cycles);
-    integer i;
-  begin
-    for (i=0; i<cycles; i=i+1) begin
-      @ (negedge `e_clk);
-    end
   end
   endtask
 
@@ -2011,100 +1934,94 @@ module tb_dv_6809_model
   ////////////////////////////////////////////////////////////////////////////
   // Push Regs
   ////////////////////////////////////////////////////////////////////////////
-  task push_regs(input [7:0] mask, input [15:0] push_ptr, input [15:0] save_ptr, output [15:0] push_ptr_update, output integer cycles);
-    reg [15:0] ptr;
+  task push_regs(input [7:0] mask, inout reg [15:0] push_ptr, inout reg [15:0] save_ptr);
   begin
-    ptr = push_ptr;
-    cycles = 0;
+    //bus_cycles = 0; //base cycle count provided. Adjust from there.
     
     if (mask[7]) begin
-      write_mem8(--ptr, `pc[ 7:0]);
-      write_mem8(--ptr, `pc[15:8]);
-      cycles += 2;
+      bus_cycles += 2;
+      write_mem8(--push_ptr, `pc[ 7:0]);
+      write_mem8(--push_ptr, `pc[15:8]);
     end
     if (mask[6]) begin
-      write_mem8(--ptr, save_ptr[ 7:0]);
-      write_mem8(--ptr, save_ptr[15:8]);
-      cycles += 2;
+      bus_cycles += 2;
+      write_mem8(--push_ptr, save_ptr[ 7:0]);
+      write_mem8(--push_ptr, save_ptr[15:8]);
     end
     if (mask[5]) begin
-      write_mem8(--ptr, `y[ 7:0]);
-      write_mem8(--ptr, `y[15:8]);
-      cycles += 2;
+      bus_cycles += 2;
+      write_mem8(--push_ptr, `y[ 7:0]);
+      write_mem8(--push_ptr, `y[15:8]);
     end
     if (mask[4]) begin
-      write_mem8(--ptr, `x[ 7:0]);
-      write_mem8(--ptr, `x[15:8]);
-      cycles += 2;
+      bus_cycles += 2;
+      write_mem8(--push_ptr, `x[ 7:0]);
+      write_mem8(--push_ptr, `x[15:8]);
     end
     if (mask[3]) begin
-      write_mem8(--ptr, `dp);
-      cycles++;
+      bus_cycles += 1;
+      write_mem8(--push_ptr, `dp);
     end
     if (mask[2]) begin
-      write_mem8(--ptr, `b);
-      cycles++;
+      bus_cycles += 1;
+      write_mem8(--push_ptr, `b);
     end
     if (mask[1]) begin
-      write_mem8(--ptr, `a);
-      cycles++;
+      bus_cycles += 1;
+      write_mem8(--push_ptr, `a);
     end
     if (mask[0]) begin
-      write_mem8(--ptr, `cc);
-      cycles++;
+      bus_cycles += 1;
+      write_mem8(--push_ptr, `cc);
     end
 
-    push_ptr_update = ptr;
   end
   endtask
  
   ////////////////////////////////////////////////////////////////////////////
   // Pull Regs
   ////////////////////////////////////////////////////////////////////////////
-  task pull_regs(input [7:0] mask, input [15:0] pull_ptr, output [15:0] restore_ptr, output [15:0] pull_ptr_update, output integer cycles);
-    reg [15:0] ptr;
+  task pull_regs(input [7:0] mask, inout reg [15:0] pull_ptr, inout reg [15:0] restore_ptr);
   begin
-    ptr = pull_ptr;
-    cycles = 0;
+    //bus_cycles = 0; //base cycle count provided. Adjust from there.
 
     if (mask[0]) begin
-      `cc = read_mem8(ptr++);
-      cycles++;
+      bus_cycles += 1;
+      read_mem8(pull_ptr++, `cc);
     end
     if (mask[1]) begin
-      `a = read_mem8(ptr++);
-      cycles++;
+      bus_cycles += 1;
+      read_mem8(pull_ptr++, `a);
     end
     if (mask[2]) begin
-      `b = read_mem8(ptr++);
-      cycles++;
+      bus_cycles += 1;
+      read_mem8(pull_ptr++, `b);
     end
     if (mask[3]) begin
-      `dp = read_mem8(ptr++);
-      cycles++;
+      bus_cycles += 1;
+      read_mem8(pull_ptr++, `dp);
     end
     if (mask[4]) begin
-      `x[15:8] = read_mem8(ptr++);
-      `x[ 7:0] = read_mem8(ptr++);
-      cycles += 2;
+      bus_cycles += 2;
+      read_mem8(pull_ptr++, `x[15:8]);
+      read_mem8(pull_ptr++, `x[ 7:0]);
     end
     if (mask[5]) begin
-      `y[15:8] = read_mem8(ptr++);
-      `y[ 7:0] = read_mem8(ptr++);
-      cycles += 2;
+      bus_cycles += 2;
+      read_mem8(pull_ptr++, `y[15:8]);
+      read_mem8(pull_ptr++, `y[ 7:0]);
     end
     if (mask[6]) begin
-      restore_ptr[15:8] = read_mem8(ptr++);
-      restore_ptr[ 7:0] = read_mem8(ptr++);
-      cycles += 2;
+      bus_cycles += 2;
+      read_mem8(pull_ptr++, restore_ptr[15:8]);
+      read_mem8(pull_ptr++, restore_ptr[ 7:0]);
     end
     if (mask[7]) begin
-      `pc[15:8] = read_mem8(ptr++);
-      `pc[ 7:0] = read_mem8(ptr++);
-      cycles += 2;
+      bus_cycles += 2;
+      read_mem8(pull_ptr++, `pc[15:8]);
+      read_mem8(pull_ptr++, `pc[ 7:0]);
     end
 
-    pull_ptr_update = ptr;
   end
   endtask
 
@@ -2112,30 +2029,30 @@ module tb_dv_6809_model
   ////////////////////////////////////////////////////////////////////////////
   // Memory Modify Load
   ////////////////////////////////////////////////////////////////////////////
-  task load_mm(output reg [15:0] ea, output reg [7:0] op8, inout integer cycles);
+  task load_mm(output reg [15:0] ea, output reg [7:0] op8);
   begin
     case (`opcode[7:4])
       4'h0    : begin //////////////////////// Direct
-        dir_ea(ea, cycles);
-        op8 = read_mem8(ea);
+        dir_ea(ea);
+        read_mem8(ea, op8);
       end
       4'h4    : begin //////////////////////// Acc A
+        bus_cycles -= 4; //(Direct used as base cycle count)
         ea = 16'hxxxx;
         op8 = `a;
-        cycles -= 4; //(Direct used as base cycle count)
       end
       4'h5    : begin //////////////////////// Acc B
+        bus_cycles -= 4; //(Direct used as base cycle count)
         ea = 16'hxxxx;
         op8 = `b;
-        cycles -= 4; //(Direct used as base cycle count)
       end
       4'h6    : begin //////////////////////// Indexed
-        idx_ea(ea, cycles);
-        op8 = read_mem8(ea);
+        idx_ea(ea);
+        read_mem8(ea, op8);
       end
       default : begin //////////////////////// Extended
-        ext_ea(ea, cycles);
-        op8 = read_mem8(ea);
+        ext_ea(ea);
+        read_mem8(ea, op8);
       end
     endcase
   end
@@ -2163,48 +2080,48 @@ module tb_dv_6809_model
   ////////////////////////////////////////////////////////////////////////////
   // Load Operand 8-bit
   ////////////////////////////////////////////////////////////////////////////
-  task load_op8(output reg [15:0] ea, output reg [7:0] op8, inout integer cycles);
+  task load_op8(output reg [15:0] ea, output reg [7:0] op8);
   begin
-    calc_ea8(ea, cycles);
-    op8 = read_mem8(ea);
+    calc_ea8(ea);
+    read_mem8(ea, op8);
   end
   endtask
 
   ////////////////////////////////////////////////////////////////////////////
   // Load Operand 16-bit
   ////////////////////////////////////////////////////////////////////////////
-  task load_op16(output reg [15:0] ea, output reg [15:0] op16, inout integer cycles);
+  task load_op16(output reg [15:0] ea, output reg [15:0] op16);
   begin
-    calc_ea16(ea, cycles);
-    op16 = read_mem16(ea);
+    calc_ea16(ea);
+    read_mem16(ea, op16);
   end
   endtask
 
   ////////////////////////////////////////////////////////////////////////////
   // Calculate Effective Address 8-bit
   ////////////////////////////////////////////////////////////////////////////
-  task calc_ea8(output reg [15:0] ea, inout integer cycles);
+  task calc_ea8(output reg [15:0] ea);
   begin
     case (`opcode[7:4])
       4'h8,
       4'hC    : begin //////////////////////// Immediate
-        imm8_ea(ea, cycles);
+        imm8_ea(ea);
       end
       4'h0,
       4'h9,
       4'hD    : begin //////////////////////// Direct
-        dir_ea(ea, cycles);
+        dir_ea(ea);
       end
       4'h6,
       4'hA,
       4'hE    : begin //////////////////////// Indexed
-        idx_ea(ea, cycles);
+        idx_ea(ea);
       end
       //4'h7,
       //4'hB,
       //4'hF,
       default : begin //////////////////////// Extended
-        ext_ea(ea, cycles);
+        ext_ea(ea);
       end
     endcase
   end
@@ -2213,28 +2130,28 @@ module tb_dv_6809_model
   ////////////////////////////////////////////////////////////////////////////
   // Calculate Effective Address 16-bit
   ////////////////////////////////////////////////////////////////////////////
-  task calc_ea16(output reg [15:0] ea, inout integer cycles);
+  task calc_ea16(output reg [15:0] ea);
   begin
     case (`opcode[7:4])
       4'h8,
       4'hC    : begin //////////////////////// Immediate
-        imm16_ea(ea, cycles);
+        imm16_ea(ea);
       end
       4'h0,
       4'h9,
       4'hD    : begin //////////////////////// Direct
-        dir_ea(ea, cycles);
+        dir_ea(ea);
       end
       4'h6,
       4'hA,
       4'hE    : begin //////////////////////// Indexed
-        idx_ea(ea, cycles);
+        idx_ea(ea);
       end
       //4'h7,
       //4'hB,
       //4'hF,
       default : begin //////////////////////// Extended
-        ext_ea(ea, cycles);
+        ext_ea(ea);
       end
     endcase
   end
@@ -2246,7 +2163,7 @@ module tb_dv_6809_model
   task rel8_ea(output reg [15:0] ea);
     reg [15:0] offset;
   begin
-    offset[ 7:0] = read_mem8(`pc++);
+    read_mem8(`pc++, offset[ 7:0]);
     offset[15:8] = {8{offset[7]}};
     ea = `pc + offset;
   end
@@ -2258,7 +2175,7 @@ module tb_dv_6809_model
   task rel16_ea(output reg [15:0] ea);
     reg [15:0] offset;
   begin
-    offset = read_mem16(`pc);
+    read_mem16(`pc, offset);
     `pc += 2;
     ea = `pc + offset;
   end
@@ -2267,50 +2184,50 @@ module tb_dv_6809_model
   ////////////////////////////////////////////////////////////////////////////
   // Immediate 8-bit Effective Address
   ////////////////////////////////////////////////////////////////////////////
-  task imm8_ea(output reg [15:0] ea, inout integer cycles);
+  task imm8_ea(output reg [15:0] ea);
   begin
+    bus_cycles -= 2; //(Direct used as base cycle count)
     ea = `pc++;
-    cycles -= 2; //(Direct used as base cycle count)
   end
   endtask
 
   ////////////////////////////////////////////////////////////////////////////
   // Immediate 16-bit Effective Address
   ////////////////////////////////////////////////////////////////////////////
-  task imm16_ea(output reg [15:0] ea, inout integer cycles);
+  task imm16_ea(output reg [15:0] ea);
   begin
+    bus_cycles -= 2; //(Direct used as base cycle count)
     ea = `pc;
     `pc += 2;
-    cycles -= 2; //(Direct used as base cycle count)
   end
   endtask
 
   ////////////////////////////////////////////////////////////////////////////
   // Direct Effective Address
   ////////////////////////////////////////////////////////////////////////////
-  task dir_ea(output reg [15:0] ea, inout integer cycles);
+  task dir_ea(output reg [15:0] ea);
   begin
-    ea[ 7:0] = read_mem8(`pc++);
+    //bus_cycles += 0; //(Direct used as base cycle count)
+    read_mem8(`pc++, ea[7:0]);
     ea[15:8] = `dp;
-    //cycles += 0; //(Direct used as base cycle count)
   end
   endtask
 
   ////////////////////////////////////////////////////////////////////////////
   // Extended Effective Address
   ////////////////////////////////////////////////////////////////////////////
-  task ext_ea(output reg [15:0] ea, inout integer cycles);
+  task ext_ea(output reg [15:0] ea);
   begin
-    ea = read_mem16(`pc);
+    bus_cycles += 1; //(Direct used as base cycle count)
+    read_mem16(`pc, ea);
     `pc += 2;
-    cycles += 1; //(Direct used as base cycle count)
   end
   endtask
 
   ////////////////////////////////////////////////////////////////////////////
   // Indexed Effective Address
   ////////////////////////////////////////////////////////////////////////////
-  task idx_ea(output reg [15:0] ea, inout integer cycles);
+  task idx_ea(output reg [15:0] ea);
     reg [ 7:0] postbyte_idx; 
     reg [15:0] base_reg;
     reg [15:0] offset;
@@ -2318,106 +2235,106 @@ module tb_dv_6809_model
     reg [15:0] temp_ea;
   begin
 
-    //cycles += 0; //(Direct used as base cycle count)
+    //bus_cycles += 0; //(Direct used as base cycle count)
 
-    postbyte_idx = read_mem8(`pc++);
+    read_mem8(`pc++, postbyte_idx);
 
     // Decode Offset
     if (postbyte_idx[7] == 1'b1) begin
       case (postbyte_idx[3:0])
         //
         4'b0000 : begin //////////////////////////// Post Inc 1
+          bus_cycles += 2;
           offset = 16'h0001; // pos1
-          cycles += 2;
         end
         //
         4'b0001 : begin //////////////////////////// Post Inc 2
+          bus_cycles += 3;
           offset = 16'h0002; // pos2
-          cycles += 3;
         end
         //
         4'b0010 : begin //////////////////////////// Pre Dec 1
+          bus_cycles += 2;
           offset = 16'hFFFF; // neg1
-          cycles += 2;
         end
         //
         4'b0011 : begin //////////////////////////// Pre Dec 2
+          bus_cycles += 3;
           offset = 16'hFFFE; // neg2
-          cycles += 3;
         end
         //
         4'b0100 : begin //////////////////////////// No Offset
+          //bus_cycles += 0;
           offset = 16'h0000; // zero
-          //cycles += 0;
         end
         //
         4'b0101 : begin //////////////////////////// Acc Offset B
+          bus_cycles += 1;
           offset[7:0] = `b;
           offset[15:8] = {8{offset[7]}}; // 8-bit (signed)
-          cycles += 1;
         end
         //
         4'b0110 : begin //////////////////////////// Acc Offset A
+          bus_cycles += 1;
           offset[7:0] = `a;
           offset[15:8] = {8{offset[7]}}; // 8-bit (signed)
-          cycles += 1;
         end
         //
         4'b0111 : begin //////////////////////////// Acc Offset D (Undefined)
+          bus_cycles += 4;
           offset = `d;
-          cycles += 4;
         end
         //
         4'b1000 : begin //////////////////////////// 8-bit Offset
-          offset[7:0] = read_mem8(`pc++);
+          bus_cycles += 1;
+          read_mem8(`pc++, offset[7:0]);
           offset[15:8] = {8{offset[7]}}; // 8-bit (signed)
-          cycles += 1;
         end
         //
         4'b1001 : begin //////////////////////////// 16-bit Offset
-          offset = read_mem16(`pc); // 16 bit (signed)
+          bus_cycles += 4;
+          read_mem16(`pc, offset); // 16 bit (signed)
           `pc += 2;
-          cycles += 4;
         end
         //
         4'b1010 : begin //////////////////////////// Acc Offset D (Undefined)
+          bus_cycles += 4;
           offset = `d;
-          cycles += 4;
         end
         //
         4'b1011 : begin //////////////////////////// Acc Offset D
+          bus_cycles += 4;
           offset = `d;
-          cycles += 4;
         end
         //
         4'b1100 : begin //////////////////////////// 8-bit Offset PC
-          offset[7:0] = read_mem8(`pc++);
+          bus_cycles += 1;
+          read_mem8(`pc++, offset[7:0]);
           offset[15:8] = {8{offset[7]}}; // 8-bit (signed)
-          cycles += 1;
         end
         //
         4'b1101 : begin //////////////////////////// 16-bit Offset PC
-          offset = read_mem16(`pc); // 16 bit (signed)
+          bus_cycles += 5;
+          read_mem16(`pc, offset); // 16 bit (signed)
           `pc += 2;
-          cycles += 5;
         end
         //
         4'b1110 : begin //////////////////////////// 8-bit (Undefined)
-          offset[7:0] = read_mem8(`pc++);
+          bus_cycles += 1;
+          read_mem8(`pc++, offset[7:0]);
           offset[15:8] = {8{offset[7]}}; // 8-bit (signed)
-          cycles += 1;
         end
         //
         default : begin // 4'b1111 ///////////////// 16-bit (Undefined)
-          offset = read_mem16(`pc); // 16 bit (signed)
+          bus_cycles += 2;
+          read_mem16(`pc, offset); // 16 bit (signed)
           `pc += 2;
-          cycles += 2;
         end
       endcase
     end else begin /////////////////// 5 bit (signed)
+      bus_cycles += 1;
       offset[4:0] = postbyte_idx[4:0];
       offset[15:5] = {11{offset[4]}}; // 5-bit (signed)
-      cycles += 1;
     end
 
     // Decode Base Reg
@@ -2456,8 +2373,8 @@ module tb_dv_6809_model
 
     // Indexed Indirect
     if ((postbyte_idx[7] == 1'b1) &&  (postbyte_idx[4] == 1'b1)) begin
-      ea = read_mem16(temp_ea);
-      cycles += 3;
+      bus_cycles += 3;
+      read_mem16(temp_ea, ea);
     end else begin
       ea = temp_ea;
     end
@@ -2506,24 +2423,7 @@ module tb_dv_6809_model
   endfunction
 
   ////////////////////////////////////////////////////////////////////////////
-  // Clock Counter
-  ////////////////////////////////////////////////////////////////////////////
-  always @(negedge `e_clk)
-  begin
-    if (clk_cnt_ctrl_reg == 2'b00) begin
-      clk_cnt_reg <= 0;
-    end else if (clk_cnt_ctrl_reg == 2'b01) begin
-      clk_cnt_reg <= clk_cnt_reg + 1;
-    end
-  end
-
-  ////////////////////////////////////////////////////////////////////////////
   // Outputs
   ////////////////////////////////////////////////////////////////////////////
-  assign        E_CLK_O       = `e_clk;
-  assign        Q_CLK_O       = `q_clk;
-  assign        ERROR_O       = `error;
-  assign        GPO_PORT_O    = gpo_port;
-  assign        CYCLE_CNT_O   = clk_cnt_reg;
 
 endmodule

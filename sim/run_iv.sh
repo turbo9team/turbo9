@@ -140,7 +140,7 @@ if ($tb == "tb_dv_top") then #######################################  TB = tb_dv
     case "tc_dv_run_hex":
       echo "Setting up tb_dv_top tc_dv_run_hex..."
       
-      set test_list = ( "tc_dv_run_code" )
+      set test_list = ( "tc_dv_run_hex" )
       set s19_file = ""
 
       if ($#argv >= 3) then
@@ -155,7 +155,7 @@ if ($tb == "tb_dv_top") then #######################################  TB = tb_dv
     case "tc_dv_run_s19":
       echo "Setting up tb_dv_top tc_dv_run_s19..."
       
-      set test_list = ( "tc_dv_run_code" )
+      set test_list = ( "tc_dv_run_s19" )
       set hex_file = "../../../asm/turbo9_boot.hex" # not necessary set below
 
       if ($#argv >= 3) then
@@ -241,17 +241,11 @@ foreach test_x ( $test_list )
   cd ${test_x}
 
   # Setup S19 & HEX files
-  if ($test_x == "tc_dv_run_code") then
-    if (s19_file == "") then
-      cp ${hex_file} .
-      set hex_arg = "+hex_file=${hex_file}"
-      set s19_arg = ""
-    else
-      cp ../../../asm/turbo9_boot.hex .
-      set hex_arg = "+hex_file=../../../asm/turbo9_boot.hex"
-      cp ${s19_file} .
-      set s19_arg = "+s19_file=${s19_file}"
-    endif
+  if ($test_x == "tc_dv_run_s19") then
+    cp ../../../asm/turbo9_boot.hex .
+    set hex_arg = "+hex_file=../../../asm/turbo9_boot.hex"
+    cp ${s19_file} .
+    set s19_arg = "+s19_file=${s19_file}"
   else
     cp ${hex_file} .
     set hex_arg = "+hex_file=${hex_file}"

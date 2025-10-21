@@ -99,13 +99,7 @@
 
   function reg [7:0] read_dut_mem8(input [15:0] addr);
   begin
-`ifdef TURBO9_R
-    if (addr[0] == 1'b0) begin
-      read_dut_mem8 = `dut_mem_even[addr[15:1]];
-    end else begin
-      read_dut_mem8 = `dut_mem_odd[addr[15:1]];
-    end
-`elsif TURBO9_S
+`ifdef TURBO9_16BIT
     if (addr[0] == 1'b0) begin
       read_dut_mem8 = `dut_mem_even[addr[15:1]];
     end else begin
@@ -122,20 +116,14 @@
   ////////////////////////////////////////////////////////////////////////////
   task write_dut_mem8(input [15:0] addr, input [7:0] data);
   begin
-`ifdef TURBO9_R
-      if (addr[0] == 1'b0) begin
-        `dut_mem_even[addr[15:1]]  = data;
-      end else begin
-        `dut_mem_odd[addr[15:1]]   = data;
-      end
-`elsif TURBO9_S
-      if (addr[0] == 1'b0) begin
-        `dut_mem_even[addr[15:1]]  = data;
-      end else begin
-        `dut_mem_odd[addr[15:1]]   = data;
-      end
+`ifdef TURBO9_16BIT
+    if (addr[0] == 1'b0) begin
+      `dut_mem_even[addr[15:1]]  = data;
+    end else begin
+      `dut_mem_odd[addr[15:1]]   = data;
+    end
 `else
-      `dut_mem[addr] = data;
+    `dut_mem[addr] = data;
 `endif
   end
   endtask
@@ -558,11 +546,17 @@
   ////////////////////////////////////////////////////////////////////////////
   task wait_bits_clear(input [7:0] mask, input integer timeout, inout integer error_cnt);
     integer clk_cycles;
+    reg model_clr;
+    reg dut_clr;
   begin
     $display("[TB: wait_bits_clear] Waiting for masked output_port bits of Model and DUT to clear. mask = 0x%2x", mask);
+    model_clr  = 1'b0;
+    dut_clr    = 1'b0;
     clk_cycles = 0;
-    while ((~model_error) && (clk_cycles < timeout) && (((model_output_port&mask) != 8'h00) || ((dut_output_port&mask) != 8'h00)))
+    while ((~`model_error) && (clk_cycles < timeout) && ~(model_clr && dut_clr))
     begin
+      if ((model_output_port&mask) == 8'h00) model_clr = 1'b1;
+      if ((dut_output_port&mask) == 8'h00) dut_clr = 1'b1;
       @(posedge sysclk) clk_cycles++;
     end
     //
@@ -579,7 +573,7 @@
           dut_output_port, mask, (dut_output_port&mask));
         error_cnt++;
       end
-    end if (model_error) begin
+    end if (`model_error) begin
       $display("[TB: wait_bits_set  ] ERROR Model error detected");
     end else begin
       $display("[TB: wait_bits_clear] Masked output_port bits of Model and DUT clear! clk_cycles: %0d", clk_cycles);
@@ -593,11 +587,17 @@
   ////////////////////////////////////////////////////////////////////////////
   task wait_bits_set(input [7:0] mask, input integer timeout, inout integer error_cnt);
     integer clk_cycles;
+    reg model_set;
+    reg dut_set;
   begin
     $display("[TB: wait_bits_set  ] Waiting for masked output_port bits of Model and DUT to set. mask = 0x%2x", mask);
+    model_set  = 1'b0;
+    dut_set    = 1'b0;
     clk_cycles = 0;
-    while ((~model_error) && (clk_cycles < timeout) && (((model_output_port|(~mask)) != 8'hFF) || ((dut_output_port|(~mask)) != 8'hFF)))
+    while ((~`model_error) && (clk_cycles < timeout) && ~(model_set && dut_set))
     begin
+      if ((model_output_port|(~mask)) == 8'hFF) model_set = 1'b1;
+      if ((dut_output_port|(~mask)) == 8'hFF) dut_set = 1'b1;
       @(posedge sysclk) clk_cycles++;
     end
     //
@@ -614,7 +614,7 @@
           dut_output_port, mask, (dut_output_port&mask));
         error_cnt++;
       end
-    end if (model_error) begin
+    end if (`model_error) begin
       $display("[TB: wait_bits_set  ] ERROR Model error detected");
     end else begin
       $display("[TB: wait_bits_set  ] Masked output_port bits of Model and DUT set! clk_cycles: %0d", clk_cycles);

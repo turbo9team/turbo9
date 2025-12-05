@@ -161,7 +161,12 @@ wire [15:0] pos1_u16 = 16'h0001;
 wire [15:0] pos2_u16 = 16'h0002;
 wire [15:0] neg1_s16 = 16'hFFFF;
 wire [15:0] neg2_s16 = 16'hFFFE;
-localparam REG_DONT_CARE = 16'hxxxx;
+
+`ifdef TURBO9_USE_X
+localparam REG_DEFAULT = 16'hxxxx; //INFO: REDUCE_LOGIC
+`else
+localparam REG_DEFAULT = 16'h0000;
+`endif
 
 wire [15:0] a_reg_u16   = {8'h00, a_reg};
 wire [15:0] a_reg_s16   = {{8{a_reg[7]}}, a_reg};
@@ -181,9 +186,26 @@ wire [15:0] instr_data  = (INSTR_DIRECT_EN_I) ? {dpr_reg, INSTR_DATA_I[7:0]} :
 /////////////////////////////////////////////////////////////////////////////
 //                                LOGIC
 /////////////////////////////////////////////////////////////////////////////
-
+//
+`ifdef TURBO9_SYNC_RESET
+always @(posedge CLK_I) begin
+`else
 always @(posedge CLK_I, posedge RST_I) begin
+`endif
   if (RST_I) begin
+    //
+`ifdef TURBO9_MIN_RESET 
+    // a_reg      <= a_rst;  // INFO: RESET_NO
+    // b_reg      <= b_rst;  // INFO: RESET_NO
+    // x_reg      <= x_rst;  // INFO: RESET_NO
+    // y_reg      <= y_rst;  // INFO: RESET_NO
+    // u_reg      <= u_rst;  // INFO: RESET_NO
+    // s_reg      <= s_rst;  // INFO: RESET_NO
+    // pc_reg     <= pc_rst; // INFO: RESET_NO
+    dpr_reg    <= dpr_rst;   // INFO: RESET_YES
+    // ea_reg     <= ea_rst; // INFO: RESET_NO
+    // new_pc_wr_en_reg <= new_pc_wr_en_rst; // INFO: RESET_NO
+`else
     a_reg      <= a_rst;
     b_reg      <= b_rst;
     x_reg      <= x_rst;
@@ -194,6 +216,8 @@ always @(posedge CLK_I, posedge RST_I) begin
     dpr_reg    <= dpr_rst;
     ea_reg     <= ea_rst;
     new_pc_wr_en_reg <= new_pc_wr_en_rst;
+`endif
+    //
   end else begin
 
     if (~STALL_MICROCYCLE_I) begin
@@ -201,15 +225,15 @@ always @(posedge CLK_I, posedge RST_I) begin
       // A & D Register
       if        (DATA_ALU_WR_SEL_I   == A)  a_reg <= DATA_ALU_Y_I[ 7:0];
       else   if (DATA_ALU_WR_SEL_I   == D)  a_reg <= DATA_ALU_Y_I[15:8];
-    //else   if (ADDR_ALU_REG_SEL_I == A) a_reg <= ADDR_ALU_Y_I[ 7:0];
-    //else   if (ADDR_ALU_REG_SEL_I == D) a_reg <= ADDR_ALU_Y_I[15:8];
+    //else   if (ADDR_ALU_REG_SEL_I == A) a_reg <= ADDR_ALU_Y_I[ 7:0]; // INFO: REDUCE_LOGIC: Not used
+    //else   if (ADDR_ALU_REG_SEL_I == D) a_reg <= ADDR_ALU_Y_I[15:8]; // INFO: REDUCE_LOGIC: Not used
       else                               a_reg <= a_reg;
       //                                
       // B & D Register                 
       if        (DATA_ALU_WR_SEL_I   == B)  b_reg <= DATA_ALU_Y_I[ 7:0];
       else   if (DATA_ALU_WR_SEL_I   == D)  b_reg <= DATA_ALU_Y_I[ 7:0];
-    //else   if (ADDR_ALU_REG_SEL_I == B) b_reg <= ADDR_ALU_Y_I[ 7:0];
-    //else   if (ADDR_ALU_REG_SEL_I == D) b_reg <= ADDR_ALU_Y_I[ 7:0];
+    //else   if (ADDR_ALU_REG_SEL_I == B) b_reg <= ADDR_ALU_Y_I[ 7:0]; // INFO: REDUCE_LOGIC: Not used
+    //else   if (ADDR_ALU_REG_SEL_I == D) b_reg <= ADDR_ALU_Y_I[ 7:0]; // INFO: REDUCE_LOGIC: Not used
       else                               b_reg <= b_reg;
       //                                
       // X Register                     
@@ -240,7 +264,7 @@ always @(posedge CLK_I, posedge RST_I) begin
         pc_reg      <= DATA_ALU_Y_I;
         new_pc_wr_en_reg  <= 1'b1;
     //end else if (ADDR_ALU_REG_SEL_I == PC) begin
-    //  pc_reg      <= ADDR_ALU_Y_I; //PC is never written from ADDR_ALU
+    //  pc_reg      <= ADDR_ALU_Y_I; //PC is never written from ADDR_ALU // INFO: REDUCE_LOGIC: Not used
     //  new_pc_wr_en_reg  <= 1'b1;
       end else begin
         pc_reg      <= pc_reg;
@@ -248,15 +272,15 @@ always @(posedge CLK_I, posedge RST_I) begin
       end
       //                                 
       // DPR Register
-    //if (data_alu_wr_sel  == DPR)  dpr_reg <= DATA_ALU_Y_I[ 7:0];
+    //if (data_alu_wr_sel  == DPR)  dpr_reg <= DATA_ALU_Y_I[ 7:0]; // INFO: REDUCE_LOGIC: Not used
       if        (DATA_ALU_WR_SEL_I  == DPR)  dpr_reg <= DATA_ALU_Y_I[ 7:0];
-    //else if   (ADDR_ALU_REG_SEL_I == DPR) dpr_reg <= ADDR_ALU_Y_I[ 7:0];
+    //else if   (ADDR_ALU_REG_SEL_I == DPR) dpr_reg <= ADDR_ALU_Y_I[ 7:0]; // INFO: REDUCE_LOGIC: Not used
       else                                 dpr_reg <= dpr_reg;
       //                                 
       // EA Register                     
       if        (ADDR_ALU_EA_WR_EN_I)      ea_reg <= ADDR_ALU_EA_I;
       else   if (DATA_ALU_WR_SEL_I  == EA)   ea_reg <= DATA_ALU_Y_I;
-      //else   if (ADDR_ALU_REG_SEL_I == EA)  ea_reg <= ADDR_ALU_Y_I; //Not needed
+      //else   if (ADDR_ALU_REG_SEL_I == EA)  ea_reg <= ADDR_ALU_Y_I; // INFO: REDUCE_LOGIC: Not used
       else                                 ea_reg <= ea_reg;
       //
     end
@@ -292,8 +316,7 @@ always @* begin
     X       : DATA_ALU_A_O = x_reg;
     D       : DATA_ALU_A_O = d_reg;
     //
-  //default : DATA_ALU_A_O = zero_u16;
-    default : DATA_ALU_A_O = REG_DONT_CARE;
+    default : DATA_ALU_A_O = REG_DEFAULT;
   endcase
 end
 
@@ -319,8 +342,7 @@ always @* begin
     X       : DATA_ALU_B_O = x_reg;
     D       : DATA_ALU_B_O = d_reg;
     //
-  //default : DATA_ALU_B_O = zero_u16;
-    default : DATA_ALU_B_O = REG_DONT_CARE;
+    default : DATA_ALU_B_O = REG_DEFAULT;
   endcase
 end
 
@@ -331,23 +353,22 @@ always @* begin
     DMEM_RD : ADDR_ALU_REG_O = DMEM_RD_DATA_REG_I;
     EA      : ADDR_ALU_REG_O = ea_reg;
     //
-  //DPR     : ADDR_ALU_REG_O = dpr_reg_u16;
-  //CCR     : ADDR_ALU_REG_O = RA_CCR_RD_DATA_I;
-  //B       : ADDR_ALU_REG_O = b_reg_u16;
-  //A       : ADDR_ALU_REG_O = a_reg_u16;
+  //DPR     : ADDR_ALU_REG_O = dpr_reg_u16;      // INFO: REDUCE_LOGIC: Not used
+  //CCR     : ADDR_ALU_REG_O = RA_CCR_RD_DATA_I; // INFO: REDUCE_LOGIC: Not used
+  //B       : ADDR_ALU_REG_O = b_reg_u16;        // INFO: REDUCE_LOGIC: Not used
+  //A       : ADDR_ALU_REG_O = a_reg_u16;        // INFO: REDUCE_LOGIC: Not used
+    //                                          
+  //SEXB    : ADDR_ALU_REG_O = b_reg_s16;        // INFO: REDUCE_LOGIC: Not used
+    //      : ADDR_ALU_REG_O = ;                
+    PC      : ADDR_ALU_REG_O = pc_reg;           // used in indexed mode
+    S       : ADDR_ALU_REG_O = s_reg;           
+    //                                          
+    U       : ADDR_ALU_REG_O = u_reg;           
+    Y       : ADDR_ALU_REG_O = y_reg;           
+    X       : ADDR_ALU_REG_O = x_reg;           
+  //D       : ADDR_ALU_REG_O = d_reg;            // INFO: REDUCE_LOGIC: Not used
     //
-  //SEXB    : ADDR_ALU_REG_O = b_reg_s16;
-    //      : ADDR_ALU_REG_O = ;
-    PC      : ADDR_ALU_REG_O = pc_reg; // used in indexed mode
-    S       : ADDR_ALU_REG_O = s_reg;
-    //
-    U       : ADDR_ALU_REG_O = u_reg;
-    Y       : ADDR_ALU_REG_O = y_reg;
-    X       : ADDR_ALU_REG_O = x_reg;
-  //D       : ADDR_ALU_REG_O = d_reg;
-    //
-  //default : ADDR_ALU_REG_O = zero_u16;
-    default : ADDR_ALU_REG_O = REG_DONT_CARE;
+    default : ADDR_ALU_REG_O = REG_DEFAULT;
   endcase
 end
 
@@ -364,8 +385,7 @@ always @* begin
     ADDR_OFFSET_SEL_D     : ADDR_ALU_OFFSET_O = d_reg;
     ADDR_OFFSET_SEL_IDATA : ADDR_ALU_OFFSET_O = instr_data;
     //  
-  //default              : ADDR_ALU_OFFSET_O = instr_data;
-    default              : ADDR_ALU_OFFSET_O = REG_DONT_CARE;
+    default               : ADDR_ALU_OFFSET_O = REG_DEFAULT;
   endcase
 end
 

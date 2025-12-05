@@ -70,7 +70,11 @@ module turbo9_instr_format_decode
 
 
 // Instruction Data
-wire [15:0] instr_data_x       = {8'hxx               , 8'hxx           }; // dont_care
+`ifdef TURBO9_USE_X
+wire [15:0] instr_data_x       = {8'hxx               , 8'hxx           }; //INFO: REDUCE_LOGIC
+`else
+wire [15:0] instr_data_x       = {8'h00               , 8'h00           };
+`endif
 wire [15:0] instr_data_s08     = {{8{QUEUE_D1_I[7]}}  , QUEUE_D1_I      }; // instr_data_s08
 wire [15:0] instr_data_u08     = {8'h00               , QUEUE_D1_I      }; // instr_data_u08    
 wire [15:0] instr_data_u16     = {QUEUE_D1_I          , QUEUE_D2_I      }; // instr_data_u16    
@@ -86,11 +90,14 @@ localparam   len_4 = 3'h4;
 
 localparam   dir_1 = 1'b1;
 localparam   dir_0 = 1'b0;
-localparam   dir_x = 1'bx;
+`ifdef TURBO9_USE_X
+localparam   dir_x = 1'bx; //INFO: REDUCE_LOGIC
+`else
+localparam   dir_x = 1'b0;
+`endif
 
 localparam   inh_1 = 1'b1;
 localparam   inh_0 = 1'b0;
-localparam   inh_x = 1'bx;
 
 localparam   page_sel_2 = 2'b10;
 localparam   page_sel_3 = 2'b11;

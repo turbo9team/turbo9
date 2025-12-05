@@ -46,6 +46,19 @@
 /////////////////////////////////////////////////////////////////////////////
 //                                MODULE
 /////////////////////////////////////////////////////////////////////////////
+
+
+///////////////////// Reset Logic Defines
+//
+`define TURBO9_SYNC_RESET
+`define TURBO9_MIN_RESET
+`define TURBO9_USE_X
+
+///////////////////// Simulator Defines
+//
+//`define SIM_TURBO9      // Turns on debug strings in decode table verilog files
+
+
 module turbo9_s
 #(
   parameter REGISTER_WB_OUTPUTS = 1, // Register Wishbone Ouputs: True=1, False=0

@@ -275,16 +275,23 @@ end
 //                                REGISTERS
 /////////////////////////////////////////////////////////////////////////////
 //
+
+
+`ifdef TURBO9_SYNC_RESET
+always @(posedge CLK_I) begin
+`else
 always @(posedge CLK_I, posedge RST_I) begin
-  if (RST_I) begin
+`endif
+
+ if (RST_I) begin
     //
-    pc_base_reg       <= pc_base_rst;
-    fetch_state_reg   <= FETCH_LOAD_QUEUE_STATE;
-    pc_offset_reg     <= pc_offset_rst;   
-    ack_pending_reg   <= ack_pending_rst;
-    ack_1_pending_reg <= ack_1_pending_rst;
-    ack_0_pending_reg <= ack_0_pending_rst;
-    ack_to_flush_reg  <= ack_to_flush_rst;
+    pc_base_reg       <= pc_base_rst;             // INFO: RESET_YES
+    fetch_state_reg   <= FETCH_LOAD_QUEUE_STATE;  // INFO: RESET_YES
+    pc_offset_reg     <= pc_offset_rst;           // INFO: RESET_YES
+    ack_pending_reg   <= ack_pending_rst;         // INFO: RESET_YES
+    ack_1_pending_reg <= ack_1_pending_rst;       // INFO: RESET_YES
+    ack_0_pending_reg <= ack_0_pending_rst;       // INFO: RESET_YES
+    ack_to_flush_reg  <= ack_to_flush_rst;        // INFO: RESET_YES
     //
   end else begin
     //

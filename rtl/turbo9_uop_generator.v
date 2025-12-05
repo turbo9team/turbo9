@@ -321,9 +321,44 @@ localparam   uop_jump_table_b_rst = 8'h00;
 //                          MICRO-OPERATION REGISTER
 /////////////////////////////////////////////////////////////////////////////
 //
+`ifdef TURBO9_SYNC_RESET
+always @(posedge CLK_I) begin
+`else
 always @(posedge CLK_I, posedge RST_I) begin
+`endif
   if (RST_I) begin
     //
+`ifdef TURBO9_MIN_RESET 
+    uop_micro_seq_op_reg          <= uop_micro_seq_op_rst;           // INFO: RESET_YES Jump to branch_addr = 00
+    uop_micro_seq_branch_addr_reg <= uop_micro_seq_branch_addr_rst;  // INFO: RESET_YES branch_addr = 00
+
+    uop_data_alu_a_sel_reg        <= uop_data_alu_a_sel_rst;         // INFO: RESET_YES Needed for stall logic on startup
+    uop_data_alu_b_sel_reg        <= uop_data_alu_b_sel_rst;         // INFO: RESET_YES Needed for stall logic on startup
+    // uop_data_alu_wr_sel_reg       <= uop_data_alu_wr_sel_rst;     // INFO: RESET_NO
+    uop_addr_alu_reg_sel_reg      <= uop_addr_alu_reg_sel_rst;       // INFO: RESET_YES Needed for stall logic on startup
+    // uop_addr_alu_offset_sel_reg   <= uop_addr_alu_offset_sel_rst; // INFO: RESET_NO
+
+    // uop_addr_alu_ea_op_reg        <= uop_addr_alu_ea_op_rst;      // INFO: RESET_NO
+    // uop_addr_alu_ea_wr_en_reg     <= uop_addr_alu_ea_wr_en_rst;   // INFO: RESET_NO
+    // uop_addr_alu_y_op_reg         <= uop_addr_alu_y_op_rst;       // INFO: RESET_NO
+    // uop_data_alu_op_reg           <= uop_data_alu_op_rst;         // INFO: RESET_NO
+    // uop_ccr_op_reg                <= uop_ccr_op_rst;              // INFO: RESET_NO
+    // uop_data_alu_cond_sel_reg     <= uop_data_alu_cond_sel_rst;   // INFO: RESET_NO
+    uop_micro_seq_cond_sel_reg    <= uop_micro_seq_cond_sel_rst;     // INFO: RESET_YES Unconditional jump
+
+    uop_dmem_op_reg               <= uop_dmem_op_rst;                // INFO: RESET_YES Needed for stall logic on startup
+    // uop_data_width_reg            <= uop_data_width_rst;          // INFO: RESET_NO
+    // uop_data_alu_sau_en_reg       <= uop_data_alu_sau_en_rst;     // INFO: RESET_NO
+    // uop_data_alu_sau_op_reg       <= uop_data_alu_sau_op_rst;     // INFO: RESET_NO
+    // uop_idx_indirect_en_reg       <= uop_idx_indirect_en_rst;     // INFO: RESET_NO
+
+    // uop_stack_done_reg            <= uop_stack_done_rst;          // INFO: RESET_NO
+    // uop_branch_sel_reg            <= uop_branch_sel_rst;          // INFO: RESET_NO
+    //
+    // uop_data_reg                  <= uop_data_rst;                // INFO: RESET_NO
+    // uop_direct_en_reg             <= uop_direct_en_rst;           // INFO: RESET_NO
+    // uop_jump_table_b_reg          <= uop_jump_table_b_rst;        // INFO: RESET_NO
+`else
     uop_micro_seq_op_reg          <= uop_micro_seq_op_rst;
     uop_micro_seq_branch_addr_reg <= uop_micro_seq_branch_addr_rst;
     uop_data_alu_a_sel_reg        <= uop_data_alu_a_sel_rst;
@@ -349,6 +384,7 @@ always @(posedge CLK_I, posedge RST_I) begin
     uop_data_reg                  <= uop_data_rst;
     uop_direct_en_reg             <= uop_direct_en_rst;
     uop_jump_table_b_reg          <= uop_jump_table_b_rst;
+`endif
     //
   end else begin
     if (~STALL_MICROCYCLE_I) begin

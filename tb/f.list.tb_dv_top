@@ -38,8 +38,6 @@
 
 ../../rtl/turbo9_fetch_stage.v
 ../../rtl/turbo9_fetch_queue.v
-../../rtl/turbo9_fifo_8x4.v
-../../rtl/turbo9_fifo_8x8.v
 
 ../../rtl/turbo9_decode_stage.v
 ../../rtl/turbo9_instr_format_decode.v

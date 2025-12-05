@@ -429,10 +429,31 @@ assign pending_cnt_term = ( stb_o_nxt & ~ACK_I) ? 3'b001 : // inc
                                                   3'b000 ; // hold
 assign pending_cnt_nxt  = pending_cnt_reg + pending_cnt_term;
 
-
+`ifdef TURBO9_SYNC_RESET
+always @(posedge CLK_I) begin
+`else
 always @(posedge CLK_I, posedge RST_I) begin
-
- if (RST_I) begin
+`endif
+  if (RST_I) begin
+    //
+`ifdef TURBO9_MIN_RESET 
+    //adr_o_reg                <= adr_o_rst;              // INFO: RESET_NO
+    //dat_o_reg                <= dat_o_rst;              // INFO: RESET_NO
+    sel_o_reg                <= sel_o_rst;                // INFO: RESET_YES
+    we_o_reg                 <= we_o_rst;                 // INFO: RESET_YES
+    stb_o_reg                <= stb_o_rst;                // INFO: RESET_YES
+    cyc_o_reg                <= cyc_o_rst;                // INFO: RESET_YES
+    tag_dmem_rd_o_reg        <= tag_dmem_rd_o_rst;        // INFO: RESET_YES
+    tag_dmem_wr_o_reg        <= tag_dmem_wr_o_rst;        // INFO: RESET_YES
+    tag_pmem_rd_o_reg        <= tag_pmem_rd_o_rst;        // INFO: RESET_YES
+    tag_dmem_rd_o_cycle1_reg <= tag_dmem_rd_o_cycle1_rst; // INFO: RESET_YES
+    tag_dmem_wr_o_cycle1_reg <= tag_dmem_wr_o_cycle1_rst; // INFO: RESET_YES
+    tag_width_o_reg          <= tag_width_o_rst;          // INFO: RESET_YES
+    tag_adr0_o_reg           <= tag_adr0_o_rst;           // INFO: RESET_YES
+    pending_cnt_reg          <= pending_cnt_rst;          // INFO: RESET_YES
+    //lsb_byte_reg             <= lsb_byte_rst;           // INFO: RESET_NO
+    wishbone_state_reg       <= WISHBONE_CYCLE0;          // INFO: RESET_YES
+`else
     adr_o_reg                <= adr_o_rst;
     dat_o_reg                <= dat_o_rst;
     sel_o_reg                <= sel_o_rst;
@@ -448,7 +469,9 @@ always @(posedge CLK_I, posedge RST_I) begin
     tag_adr0_o_reg           <= tag_adr0_o_rst;
     pending_cnt_reg          <= pending_cnt_rst;
     lsb_byte_reg             <= lsb_byte_rst;
-    wishbone_state_reg       <= WISHBONE_CYCLE0;  
+    wishbone_state_reg       <= WISHBONE_CYCLE0;
+`endif
+    //
   end else begin
     if (~STALL_I) begin // STALL_I should be generated externally and must be _registered_
       adr_o_reg                <= adr_o_nxt;

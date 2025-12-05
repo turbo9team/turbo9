@@ -215,7 +215,11 @@ localparam  U                     = 4'b0011;
 localparam  Y                     = 4'b0010;
 localparam  X                     = 4'b0001;
 localparam  D                     = 4'b0000;
-localparam  IDX_REG_SEL_DONT_CARE = 4'bxxxx;
+`ifdef TURBO9_USE_X
+localparam  IDX_REG_SEL_DONT_CARE = 4'bxxxx; //INFO: REDUCE_LOGIC
+`else
+localparam  IDX_REG_SEL_DONT_CARE = 4'b0000;
+`endif
 
 
 // ADDR_ALU_OFFSET_SEL_O - Index Offset Select Decoding
@@ -228,7 +232,11 @@ localparam  OFFSET_SEL_B         = 4'b0101;
 localparam  OFFSET_SEL_A         = 4'b0110;
 localparam  OFFSET_SEL_D         = 4'b0111;
 localparam  OFFSET_SEL_IDATA     = 4'b1000;
-localparam  OFFSET_SEL_DONT_CARE = 4'bxxxx;
+`ifdef TURBO9_USE_X
+localparam  OFFSET_SEL_DONT_CARE = 4'bxxxx; //INFO: REDUCE_LOGIC
+`else
+localparam  OFFSET_SEL_DONT_CARE = 4'b0000;
+`endif
 
 //////////////////////////////////////// ADDR_ALU_EA_OP_I / ADDR_ALU_Y_OP_I defines
 //
@@ -393,7 +401,7 @@ always @* begin
 
   if (indexed_en) begin
     if (idx_postbyte[7] == 1'b1) begin
-      case (idx_postbyte[3:0]) // FIXME optimize undefined
+      case (idx_postbyte[3:0]) // TODO optimize undefined
         4'b0000 : ADDR_ALU_OFFSET_SEL_O = OFFSET_SEL_POS1;  
         4'b0001 : ADDR_ALU_OFFSET_SEL_O = OFFSET_SEL_POS2;
         4'b0010 : ADDR_ALU_OFFSET_SEL_O = OFFSET_SEL_NEG1; 
@@ -514,13 +522,24 @@ end
 //        Maintain Instruction Decodes for Multiple Micro Cycles
 /////////////////////////////////////////////////////////////////////////////
 //
+`ifdef TURBO9_SYNC_RESET
+always @(posedge CLK_I) begin
+`else
 always @(posedge CLK_I, posedge RST_I) begin
+`endif
   if (RST_I) begin
     //
+`ifdef TURBO9_MIN_RESET 
+    //instr_inh_en_reg      <= instr_inh_en_rst;    // INFO: RESET_NO
+    instr_r1_sel_reg      <= instr_r1_sel_rst;      // INFO: RESET_YES
+    instr_r2_sel_reg      <= instr_r2_sel_rst;      // INFO: RESET_YES
+    //instr_ar_sel_reg      <= instr_ar_sel_rst;    // INFO: RESET_NO
+`else
     instr_inh_en_reg      <= instr_inh_en_rst;
     instr_r1_sel_reg      <= instr_r1_sel_rst;
     instr_r2_sel_reg      <= instr_r2_sel_rst;
     instr_ar_sel_reg      <= instr_ar_sel_rst;
+`endif
     //
   end else begin
     //
@@ -536,7 +555,7 @@ always @(posedge CLK_I, posedge RST_I) begin
 end
 
 always @* begin
-  if (~STALL_MICROCYCLE_I & NEXT_INSTR_ACK_I) begin // FIXME ~STALL_MICROCYCLE_I needed?
+  if (~STALL_MICROCYCLE_I & NEXT_INSTR_ACK_I) begin // TODO ~STALL_MICROCYCLE_I needed?
     instr_inh_en   = INSTR_INH_EN_I;
     instr_r1_sel   = INSTR_R1_SEL_I;
     instr_r2_sel   = INSTR_R2_SEL_I;
@@ -575,9 +594,13 @@ end
 always @* begin
   //Defaults
   stk_postbyte_msk   = 8'b1111_1111;
-  stk_a_sel_nxt   = 4'hx; //INFO: Don't care!
+`ifdef TURBO9_USE_X
+  stk_a_sel_nxt   = 4'hx; //INFO: REDUCE_LOGIC
+`else
+  stk_a_sel_nxt   = 4'h0;
+`endif
 
-  if (CV_STACK_OP_I[0]) begin // INFO: Partial Decode STACK_OP_PULL! // FIXME maybe seperate this logic
+  if (CV_STACK_OP_I[0]) begin // INFO: Partial Decode STACK_OP_PULL! // TODO maybe seperate this logic
          if (stk_postbyte_nxt[0]) begin stk_postbyte_msk[0] = 1'b0; stk_a_sel_nxt =  CCR;                       end
     else if (stk_postbyte_nxt[1]) begin stk_postbyte_msk[1] = 1'b0; stk_a_sel_nxt =  A;                         end
     else if (stk_postbyte_nxt[2]) begin stk_postbyte_msk[2] = 1'b0; stk_a_sel_nxt =  B;                         end
@@ -599,12 +622,23 @@ always @* begin
 
 end
 
+
+`ifdef TURBO9_SYNC_RESET
+always @(posedge CLK_I) begin
+`else
 always @(posedge CLK_I, posedge RST_I) begin
+`endif
   if (RST_I) begin
     //
+`ifdef TURBO9_MIN_RESET 
+    //stk_postbyte_reg  <= stk_postbyte_rst; // INFO: RESET_NO
+    //stk_a_sel_reg     <= stk_a_sel_rst;    // INFO: RESET_NO
+    //stk_wr_sel_reg    <= stk_wr_sel_rst;   // INFO: RESET_NO
+`else
     stk_postbyte_reg  <= stk_postbyte_rst;
     stk_a_sel_reg     <= stk_a_sel_rst;
     stk_wr_sel_reg    <= stk_wr_sel_rst;
+`endif
     //
   end else begin
     //

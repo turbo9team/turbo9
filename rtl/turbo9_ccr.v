@@ -168,19 +168,36 @@ assign masked_h = DATA_WIDTH_I ? alu_h : h_reg; // masked for 16bit operations
 
 //////////////////////////////////////// Condition Code Register
 //
+`ifdef TURBO9_SYNC_RESET
+always @(posedge CLK_I) begin
+`else
 always @(posedge CLK_I, posedge RST_I) begin
+`endif
   if (RST_I) begin
-    // c_reg <=  alu_c;
-    // v_reg <=  alu_v;
-    // z_reg <=  alu_z;
-    // n_reg <=  alu_n;
+    //
+`ifdef TURBO9_MIN_RESET 
+    // c_reg <=  1'b0;        // INFO: RESET_NO 
+    // v_reg <=  1'b0;        // INFO: RESET_NO
+    // z_reg <=  1'b0;        // INFO: RESET_NO
+    // n_reg <=  1'b0;        // INFO: RESET_NO
+    i_reg <=  1'b1;           // INFO: RESET_YES 1 -> CCR(I)
+    // h_reg <=  1'b0;        // INFO: RESET_NO
+    f_reg <=  1'b1;           // INFO: RESET_YES 1 -> CCR(F)
+    // e_reg <=  1'b0;        // INFO: RESET_NO
+`else
+    c_reg <=  1'b0;
+    v_reg <=  1'b0;
+    z_reg <=  1'b0;
+    n_reg <=  1'b0;
     i_reg <=  1'b1;
-    // h_reg <=  masked_h;
+    h_reg <=  1'b0;
     f_reg <=  1'b1;
-    e_reg <=  1'b1;
+    e_reg <=  1'b0;
+`endif
+    //
   end else begin
     if (STALL_MICROCYCLE_I == 1'b0) begin
-      //unique case (CCR_OP_I) // FIXME optimize logic
+      //unique case (CCR_OP_I) // TODO: optimize logic
       case (CCR_OP_I)
         OP_oooooooo : begin
           // c_reg <=  alu_c;

@@ -147,13 +147,22 @@ end
 /////////////////////////////////////////////////////////////////////////////
 //                                REGISTERS
 /////////////////////////////////////////////////////////////////////////////
+`ifdef TURBO9_SYNC_RESET
+always @(posedge CLK_I) begin
+`else
 always @(posedge CLK_I, posedge RST_I) begin
+`endif
   if (RST_I) begin
 
+`ifdef TURBO9_MIN_RESET 
+    micro_pc_reg         <= micro_pc_rst;          // INFO: RESET_YES
+    //return_reg           <= return_rst;          // INFO: RESET_NO
+    microcycle_start_reg <= microcycle_start_rst;  // INFO: RESET_YES
+`else
     micro_pc_reg         <= micro_pc_rst;
     return_reg           <= return_rst;
     microcycle_start_reg <= microcycle_start_rst;
-
+`endif
   end else begin
 
     if (~STALL_MICROCYCLE_I) begin

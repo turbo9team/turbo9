@@ -195,24 +195,36 @@ end
 
 
 /////////////////////////////////////////////////////////////////////////////
-//               MEMORY ACCESS TAG FIFO & WISHBONE OUTPUT REGISTERS
+//                     DATA MEMORY CONTROLLER REGISTERS
 /////////////////////////////////////////////////////////////////////////////
 //
-
+`ifdef TURBO9_SYNC_RESET
+always @(posedge CLK_I) begin
+`else
 always @(posedge CLK_I, posedge RST_I) begin
+`endif
   if (RST_I) begin
-
+    //
+`ifdef TURBO9_MIN_RESET 
+    //dmem_dat_o_reg         <= dmem_dat_o_rst;           // INFO: RESET_NO 
+    //dmem_adr_o_reg         <= dmem_adr_o_rst;           // INFO: RESET_NO 
+    dmem_req_o_reg         <= dmem_req_o_rst;             // INFO: RESET_YES clear data memory access REQ 
+    //dmem_we_o_reg          <= dmem_we_o_rst;            // INFO: RESET_NO 
+    //dmem_req_width_o_reg   <= dmem_req_width_o_rst;     // INFO: RESET_NO  
+    dmem_state_reg         <= dmem_state_rst;             // INFO: RESET_YES reinitialize state machine 
+    //dmem_rd_data_ready_reg <= dmem_rd_data_ready_rst;   // INFO: RESET_NO read data attempt only after a read data request
+    //dmem_rd_data_reg       <= dmem_rd_data_rst;         // INFO: RESET_NO 
+`else
     dmem_dat_o_reg         <= dmem_dat_o_rst;
     dmem_adr_o_reg         <= dmem_adr_o_rst;
     dmem_req_o_reg         <= dmem_req_o_rst;
     dmem_we_o_reg          <= dmem_we_o_rst;
     dmem_req_width_o_reg   <= dmem_req_width_o_rst;
-                          
     dmem_state_reg         <= dmem_state_rst;
-
     dmem_rd_data_ready_reg <= dmem_rd_data_ready_rst;
     dmem_rd_data_reg       <= dmem_rd_data_rst;
-
+`endif
+    //
   end else begin
 
     dmem_dat_o_reg        <= dmem_dat_o_nxt;

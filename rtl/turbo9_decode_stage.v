@@ -193,19 +193,24 @@ always @* begin
   end
 end
 
+
+`ifdef TURBO9_SYNC_RESET
+always @(posedge CLK_I) begin
+`else
 always @(posedge CLK_I, posedge RST_I) begin
+`endif
   if (RST_I) begin
-    //
+
+`ifdef TURBO9_MIN_RESET 
+    // page_sel_reg  <= page_sel_rst; // INFO: RESET_NO will be cleared via DEC_EXE_NEW_PC_WR_EN_I
+`else
     page_sel_reg  <= page_sel_rst;
-    //
-  end else begin
-    //
-    if (page_sel_load) begin
-      page_sel_reg  <= {1'b1, FET_DEC_REG_QUEUE_D0_I[0]};
-    end else if (page_sel_clear) begin
-      page_sel_reg  <= page_sel_rst;
-    end
-    //
+`endif
+
+  end else if (page_sel_load) begin
+    page_sel_reg  <= {1'b1, FET_DEC_REG_QUEUE_D0_I[0]};
+  end else if (page_sel_clear) begin
+    page_sel_reg  <= page_sel_rst;
   end
 end
 

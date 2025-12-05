@@ -1012,19 +1012,39 @@ end
 //                             Registers
 /////////////////////////////////////////////////////////////////////////////
 //
+`ifdef TURBO9_SYNC_RESET
+always @(posedge CLK_I) begin
+`else
 always @(posedge CLK_I, posedge RST_I) begin
-  //   a_reg          <= a_rst;         // NO_INIT
-  //   m_reg          <= m_rst;         // NO_INIT
-  //   q_reg          <= q_rst;         // NO_INIT
-  //   s_reg          <= s_rst;         // NO_INIT
-  //   n_reg          <= n_rst;         // NO_INIT
-  //   z_reg          <= z_rst;         // NO_INIT
-  //   v_reg          <= v_rst;         // NO_INIT
-  //   c_reg          <= c_rst;         // NO_INIT
-  //   cycle_reg      <= cycle_rst;     // NO_INIT
-  //   done_reg       <= done_rst;      // NO_INIT
+`endif
   if (RST_I) begin
+    //
+`ifdef TURBO9_MIN_RESET 
+    // a_reg     <= a_rst;     // INFO: RESET_NO
+    // m_reg     <= m_rst;     // INFO: RESET_NO
+    // q_reg     <= q_rst;     // INFO: RESET_NO
+    // s_reg     <= s_rst;     // INFO: RESET_NO
+    // n_reg     <= n_rst;     // INFO: RESET_NO
+    // z_reg     <= z_rst;     // INFO: RESET_NO
+    // v_reg     <= v_rst;     // INFO: RESET_NO
+    // c_reg     <= c_rst;     // INFO: RESET_NO
+    // cycle_reg <= cycle_rst; // INFO: RESET_NO
+    // done_reg  <= done_rst;  // INFO: RESET_NO
+    state_reg <= state_rst;    // INFO: RESET_YES
+`else
+    a_reg     <= a_rst;    
+    m_reg     <= m_rst;    
+    q_reg     <= q_rst;    
+    s_reg     <= s_rst;    
+    n_reg     <= n_rst;    
+    z_reg     <= z_rst;    
+    v_reg     <= v_rst;    
+    c_reg     <= c_rst;    
+    cycle_reg <= cycle_rst;
+    done_reg  <= done_rst; 
     state_reg <= state_rst;
+`endif
+    //
   end else begin
     if (~STALL_MICROCYCLE_I) begin
       state_reg <= state_nxt;

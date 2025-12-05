@@ -245,19 +245,15 @@ wire sau_op_is_idivs = (SAU_OP_I == SAU_IDIVS);
 wire sau_op_is_fdiv  = (SAU_OP_I == SAU_FDIV);
 wire sau_op_is_cpy   = (SAU_OP_I == SAU_CPY);
 
-wire sau_op_is_emul_or_emuls  = (sau_op_is_emul | sau_op_is_emuls);
+wire sau_op_is_emul_or_emuls;
+wire sau_op_is_ediv_or_edivs;
+wire sau_op_is_idivs_or_edivs;
+wire sau_op_is_idiv_or_fdiv;
+wire sau_op_is_idiv_or_fdiv_or_ediv;
 
-wire sau_op_is_ediv_or_edivs  = (sau_op_is_ediv | sau_op_is_edivs);
-
-wire sau_op_is_idivs_or_edivs = (sau_op_is_idivs | sau_op_is_edivs);
-
-wire sau_op_is_idiv_or_fdiv   = (sau_op_is_idiv | sau_op_is_fdiv);
-
-wire sau_op_is_idiv_or_fdiv_or_ediv = (sau_op_is_idiv_or_fdiv | sau_op_is_ediv);
-
-wire divisor_sign  = (m_reg[15] & sau_op_is_idivs_or_edivs);
-wire dividend_sign = (n_reg & sau_op_is_idivs_or_edivs);
-wire quotient_sign = (dividend_sign ^ divisor_sign);
+wire divisor_sign;
+wire dividend_sign;
+wire quotient_sign;
 
 ///////////////////// A register
 //
@@ -336,7 +332,22 @@ reg         c_reg;
 reg         c_nxt;
 localparam  c_rst = 1'b0;
 
-wire        c_nor_v = ~(c_reg | v_reg);
+wire        c_nor_v;
+wire        z_adder_15_8;
+wire        z_adder_15_1;
+wire        z_adder_15_0;
+           
+wire        z_q_14_0;
+wire        z_q_15_0;
+                    
+wire        z_m_15_0;
+                      
+wire        z_mul_15_0;
+wire        z_mul_31_0;
+           
+wire        v_div_pos;
+wire        v_div_neg;
+wire        v_div;
 
 ///////////////////// Left and Right Muxes
 //
@@ -399,14 +410,35 @@ reg         cycle_load;
 reg   [3:0] cycle_reg;
 reg   [3:0] cycle_nxt;
 //
-wire cycle_reg_3_1_z = ~|cycle_reg[3:1];
-wire cycle_reg_is_0  = cycle_reg_3_1_z & ~cycle_reg[0];
-wire cycle_reg_is_1  = cycle_reg_3_1_z &  cycle_reg[0];
+wire        cycle_reg_3_1_z;
+wire        cycle_reg_is_0;
+wire        cycle_reg_is_1;
 //
 reg         done_reg;
 reg         done_nxt;
 localparam  done_rst = 1'h0;
+/////////////////////////////////////////////////////////////////////////////
 
+
+/////////////////////////////////////////////////////////////////////////////
+//                             SIMPLE LOGIC
+/////////////////////////////////////////////////////////////////////////////
+//
+assign sau_op_is_emul_or_emuls  = (sau_op_is_emul | sau_op_is_emuls);
+assign sau_op_is_ediv_or_edivs  = (sau_op_is_ediv | sau_op_is_edivs);
+assign sau_op_is_idivs_or_edivs = (sau_op_is_idivs | sau_op_is_edivs);
+assign sau_op_is_idiv_or_fdiv   = (sau_op_is_idiv | sau_op_is_fdiv);
+assign sau_op_is_idiv_or_fdiv_or_ediv = (sau_op_is_idiv_or_fdiv | sau_op_is_ediv);
+
+assign divisor_sign  = (m_reg[15] & sau_op_is_idivs_or_edivs);
+assign dividend_sign = (n_reg & sau_op_is_idivs_or_edivs);
+assign quotient_sign = (dividend_sign ^ divisor_sign);
+
+assign c_nor_v = ~(c_reg | v_reg);
+
+assign cycle_reg_3_1_z = ~|cycle_reg[3:1];
+assign cycle_reg_is_0  = cycle_reg_3_1_z & ~cycle_reg[0];
+assign cycle_reg_is_1  = cycle_reg_3_1_z &  cycle_reg[0];
 //
 /////////////////////////////////////////////////////////////////////////////
 
@@ -909,23 +941,23 @@ assign {adder_c_out, adder_out} = adder_l_in + adder_r_in + {16'h0000,adder_c_in
 //                              Flags
 /////////////////////////////////////////////////////////////////////////////
 //
-wire  z_adder_15_8 = ~|adder_out[15:8];
-wire  z_adder_15_1 = z_adder_15_8 & ~|adder_out[7:1];
-wire  z_adder_15_0 = z_adder_15_1 & ~adder_out[0];
+assign  z_adder_15_8 = ~|adder_out[15:8];
+assign  z_adder_15_1 = z_adder_15_8 & ~|adder_out[7:1];
+assign  z_adder_15_0 = z_adder_15_1 & ~adder_out[0];
 //
-wire  z_q_14_0     = ~|q_nxt[14:0];
-wire  z_q_15_0     = ~q_nxt[15] & z_q_14_0; // FIXME
+assign  z_q_14_0     = ~|q_nxt[14:0];
+assign  z_q_15_0     = ~q_nxt[15] & z_q_14_0; // FIXME
 // FIXME (cont) adjust CPY to use q_reg for zero test not q_nxt
 // FIXME (cont) q_nxt has a path to registers outside this block
 //              
-wire  z_m_15_0     = ~|m_reg[15:0];
+assign  z_m_15_0     = ~|m_reg[15:0];
 //                
-wire  z_mul_15_0   = ~adder_c_out & z_adder_15_1;
-wire  z_mul_31_0   = z_q_15_0 & z_mul_15_0;
+assign  z_mul_15_0   = ~adder_c_out & z_adder_15_1;
+assign  z_mul_31_0   = z_q_15_0 & z_mul_15_0;
 //
-wire  v_div_pos    = ~quotient_sign & ~adder_c_out;
-wire  v_div_neg    =  quotient_sign & ~adder_c_out & ~(z_adder_15_0 & z_q_14_0);
-wire  v_div        =  v_div_pos | v_div_neg | z_m_15_0;
+assign  v_div_pos    = ~quotient_sign & ~adder_c_out;
+assign  v_div_neg    =  quotient_sign & ~adder_c_out & ~(z_adder_15_0 & z_q_14_0);
+assign  v_div        =  v_div_pos | v_div_neg | z_m_15_0;
 // 16 / 16 = 16
 // 
 // 16 / 16 = 16

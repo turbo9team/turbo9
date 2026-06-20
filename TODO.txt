@@ -1,0 +1,63 @@
+
+
+Fix:
+  Testcases: Run S19, Run Hex, Stimbench
+
+Finish:
+  Interrupts
+
+
+Reset Audit:
+
+On Reset:
+  0 -> DPR
+  1 -> R_Wn
+  1 -> CCR(F) 
+  1 -> CCR(I)
+  Clear NMIn Logic
+  Disarm NMIn
+
+
+
+
+clk_counter.v:                            . Required
+clk_div.v:                                . Required
+fpga_leds.v:                              . Required
+fpga_top.v:                               . Required
+gpo_port.v:                               . Required
+soc_top_gtr.v:                            . RST_I used for Wishbone pipeline bus registers 
+soc_top_gts.v:                            . RST_I used for Wishbone pipeline bus registers 
+soc_top_r.v:                              . RST_I used for Wishbone pipeline bus registers 
+soc_top_s.v:                              . RST_I used for Wishbone pipeline bus registers 
+soc_top.v:                                . RST_I used for Wishbone pipeline bus registers 
+t6551_rx.v:                               . RST_I to initialize  
+t6551_tx.v:                               . RST_I to initialize 
+t6551.v:                                  . RST_I to initialize 
+turbo9_ccr.v:                             . ifdef 1 -> CCR(F), 1 -> CCR(I)
+turbo9_data_alu.v:                        . RST_I passthrough 
+turbo9_data_mem_ctrl.v:                   . ifdef dmem_req_o_reg, dmem_state_reg // reinitialize state machine, clear REQ
+
+turbo9_decode_stage.v:                    . ifdef do not reset page_sel_reg
+turbo9_execute_stage.v:                   . RST_I passthrough
+turbo9_fetch_queue.v:                     . ifdef reset nothing
+turbo9_fetch_stage.v:                     . ifdef everything needs reset
+turbo9_fifo_8x4.v:                        . Delete
+turbo9_fifo_8x8.v:                        . Delete
+turbo9_gtr.v:                             . RST_I passthrough
+turbo9_gts.v:                             . RST_I passthrough
+turbo9_microsequencer.v:                  . ifdef no reset: return_reg
+turbo9_pipeline.v:                        . RST_I passthrough
+turbo9_reg_addr_ctrl.v:                   . ifdef'ed
+turbo9_register_array.v:                  . ifdef'ed
+turbo9_r.v:                               . RST_I passthrough
+turbo9_seq_arithmetic_unit.mul.v:         . Delete
+turbo9_seq_arithmetic_unit.non_restore.v: . Delete
+turbo9_seq_arithmetic_unit.v:             . ifdef'ed 
+turbo9_s.v:                               . RST_I passthrough
+turbo9_uop_generator.v:                   . ifdef'ed
+turbo9.v:                                 . RST_I passthrough
+turbo9_wishbone_16bit.v:                  .
+turbo9_wishbone_2x8bit.v:                 .
+turbo9_wishbone_8bit.v:                   .
+
+

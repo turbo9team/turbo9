@@ -47,9 +47,20 @@
 /////////////////////////////////////////////////////////////////////////////
 //                                MODULE
 /////////////////////////////////////////////////////////////////////////////
+
+///////////////////// Reset & Logic Defines
+//
+//`define TURBO9_SYNC_RESET // Use Synchronous Reset
+//`define TURBO9_MIN_RESET  // Reset minimal registers
+//`define TURBO9_USE_X      // Assign X in dont care logic for optimization
+
+///////////////////// Simulator Defines
+//
+//`define SIM_TURBO9        // Turns on debug strings in decode table verilog files
+
 module turbo9_gtr
 #(
-  parameter REGISTER_WB_OUTPUTS = 1, // Register Wishbone Ouputs: True=1, False=0
+  parameter REGISTER_WB_OUTPUTS = 1, // Register Wishbone Outputs: True=1, False=0
   parameter QUEUE_SIZE          = 6  // Fetch Queue Size: 6=Default, 4=Min, 7=Max 
 )
 (
@@ -115,6 +126,13 @@ module turbo9_gtr
 localparam  WIDTH_16 =  1'b0;
 localparam  WIDTH_8  =  1'b1;
 
+localparam TYPE_TURBO9    = 0; // Shared   Program & Data  8-bit Bus
+localparam TYPE_TURBO9S   = 1; // Shared   Program & Data 16-bit Bus (Aligned)
+localparam TYPE_TURBO9R   = 2; // Shared   Program & Data 16-bit Bus (Non-aligned)
+localparam TYPE_TURBO9GT  = 3; // Separate Program & Data  8-bit Buses
+localparam TYPE_TURBO9GTS = 4; // Separate Program & Data 16-bit Buses (Aligned)
+localparam TYPE_TURBO9GTR = 5; // Separate Program & Data 16-bit Buses (Non-aligned)
+
 wire [15:0] dmem_dat_o;   
 wire [15:0] dmem_dat_i;  
 wire [15:0] dmem_adr_o;   
@@ -142,8 +160,8 @@ wire        pmem_rd_ack_i;
 
   turbo9_pipeline
   #(
-    .TURBO9_TYPE  (2),          // Turbo9 Type: 0=Turbo9, 1=Turbo9S, 2=Turbo9R
-    .QUEUE_SIZE   (QUEUE_SIZE)  // Fetch Queue Size: 6=Default, 4=Min, 7=Max
+    .TURBO9_TYPE  (TYPE_TURBO9GTR), // 0=Turbo9, 1=Turbo9S, 2=Turbo9R, 3=Turbo9GT, 4=Turbo9GTS, 5=Turbo9GTR
+    .QUEUE_SIZE   (QUEUE_SIZE)      // Fetch Queue Size: 6=Default, 4=Min, 7=Max
   )
   I_turbo9_pipeline
   (
@@ -285,4 +303,3 @@ wire        pmem_rd_ack_i;
 /////////////////////////////////////////////////////////////////////////////
 
 endmodule
-

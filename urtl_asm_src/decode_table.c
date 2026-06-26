@@ -707,7 +707,7 @@ s16 build_decode_table_file(decode_table_ctx_t *ctx, u32 table_num, char *filena
   fprintf(fp, "end\n\n");
   //////////////////////////////////////
   
-  fprintf(fp, "`ifdef SIM_TURBO9\n\n");
+  fprintf(fp, "`ifdef TURBO9_SIM\n\n");
   fprintf(fp, "reg [(8*64):0] %s_op;\n\n", uppercase_str);
   fprintf(fp, "always @* begin\n");
   fprintf(fp, "  case (OPCODE_I)\n");

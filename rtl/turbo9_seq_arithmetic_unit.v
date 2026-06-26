@@ -409,6 +409,7 @@ localparam  state_rst = SAU_STATE_IDLE;
 reg         cycle_load;
 reg   [3:0] cycle_reg;
 reg   [3:0] cycle_nxt;
+localparam  cycle_rst = 4'b0000;
 //
 wire        cycle_reg_3_1_z;
 wire        cycle_reg_is_0;

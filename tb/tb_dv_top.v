@@ -54,11 +54,11 @@ module tb_dv_top;
   //`define TURBO9_GTR
   //`define TURBO9_GTS
   //`define TURBO9_R
-  `define TURBO9_S
+  //`define TURBO9_S (enabled by default)
   //`define TURBO9 
   /////////////////////
 
-  `define SIM_TURBO9      // Turns on debug strings in decode table verilog files
+  `define TURBO9_SIM      // Turns on debug strings in decode table verilog files
   `define SIM_T6551_FAST  // Runs T6551 UART as fast as possible
 
   `define SIM_MODEL_FAST      // 6809 Model Fast Mode (Drop idle bus cycles)
@@ -106,7 +106,15 @@ module tb_dv_top;
   `define dut_uart_clk      I_soc_top_r.I_t6551.CLK_I
   `define dut_uart_rst      I_soc_top_r.I_t6551.RST_I
   `define dut_uart_rx_full  I_soc_top_r.I_t6551.rx_data_reg_full
-`elsif TURBO9_S
+`elsif TURBO9
+  `define dut_mem           I_soc_top.I_syncram_8bit.ram
+  `define dut_cycle_cnt     I_soc_top.clk_cnt_rd_dat
+  `define dut_clk_cnt_ctrl  I_soc_top.clk_cnt_ctrl_dat
+  `define dut_uart_clk      I_soc_top.I_t6551.CLK_I
+  `define dut_uart_rst      I_soc_top.I_t6551.RST_I
+  `define dut_uart_rx_full  I_soc_top.I_t6551.rx_data_reg_full
+`else // TURBO9_S (default)
+  `define TURBO9_S
   `define TURBO9_16BIT
   `define dut_mem_even      I_soc_top_s.I_even_syncram_8bit.ram
   `define dut_mem_odd       I_soc_top_s.I_odd_syncram_8bit.ram
@@ -115,13 +123,6 @@ module tb_dv_top;
   `define dut_uart_clk      I_soc_top_s.I_t6551.CLK_I
   `define dut_uart_rst      I_soc_top_s.I_t6551.RST_I
   `define dut_uart_rx_full  I_soc_top_s.I_t6551.rx_data_reg_full
-`else // TURBO9
-  `define dut_mem           I_soc_top.I_syncram_8bit.ram
-  `define dut_cycle_cnt     I_soc_top.clk_cnt_rd_dat
-  `define dut_clk_cnt_ctrl  I_soc_top.clk_cnt_ctrl_dat
-  `define dut_uart_clk      I_soc_top.I_t6551.CLK_I
-  `define dut_uart_rst      I_soc_top.I_t6551.RST_I
-  `define dut_uart_rx_full  I_soc_top.I_t6551.rx_data_reg_full
 `endif
 
   `define tb_mem          I_tb_dv_memory.memory

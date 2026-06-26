@@ -47,9 +47,10 @@
 #include <stdarg.h>
 #include <time.h>
 #include "log.h"
+#include "mytypedef.h"
 
 #define LOG_PATH "./urtl_debug.log"
-extern int log_level;
+extern u08 log_level;
 
 void clear_log(int level)
 {
@@ -99,4 +100,3 @@ void write_log(const char * caller_name, int level, int timestamp, int show_call
     }
   }
 }
-

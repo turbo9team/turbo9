@@ -45,7 +45,7 @@
 #ifndef _LOG_H_
 #define _LOG_H_
 
-void clear_log();
+void clear_log(int level);
 void write_log(const char * caller_name, int level, int timestamp, int show_caller, char * log_entry, ...);
 
 #define LOG_DEBUG_LEVEL 2
@@ -62,4 +62,3 @@ void write_log(const char * caller_name, int level, int timestamp, int show_call
 #define WRITE_LOG_NF(level, ...) write_log(__func__, level, 0, 0,  __VA_ARGS__);
 
 #endif
-

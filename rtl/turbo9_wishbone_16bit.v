@@ -48,7 +48,7 @@
 /////////////////////////////////////////////////////////////////////////////
 module turbo9_wishbone_16bit
 #(
-  parameter REGISTER_WB_OUTPUTS = 1 // Register Wishbone Ouputs: True=1, False=0
+  parameter REGISTER_WB_OUTPUTS = 1 // Register Wishbone Outputs: True=1, False=0
 )
 (
   // Inputs: Clock & Reset
@@ -642,4 +642,3 @@ assign PMEM_ACK_WIDTH_O = tag_width_i;
 /////////////////////////////////////////////////////////////////////////////
 
 endmodule
-

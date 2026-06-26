@@ -48,7 +48,7 @@
 /////////////////////////////////////////////////////////////////////////////
 module turbo9_fetch_stage
 #(
-  parameter TURBO9_TYPE = 0, // Turbo9 Type: 0=Turbo9, 1=Turbo9S, 2=Turbo9R
+  parameter TURBO9_TYPE = 0, // 0=Turbo9, 1=Turbo9S, 2=Turbo9R, 3=Turbo9GT, 4=Turbo9GTS, 5=Turbo9GTR
   parameter QUEUE_SIZE  = 6  // Fetch Queue Size: 6=Default, 4=Min, 7=Max
 )
 (
@@ -89,6 +89,13 @@ module turbo9_fetch_stage
 // This must match the MSB of the *_REG_SEL control vectors
 localparam  WIDTH_16 =  1'b0;
 localparam  WIDTH_8  =  1'b1;
+
+localparam TYPE_TURBO9    = 0; // Shared   Program & Data  8-bit Bus
+localparam TYPE_TURBO9S   = 1; // Shared   Program & Data 16-bit Bus (Aligned)
+localparam TYPE_TURBO9R   = 2; // Shared   Program & Data 16-bit Bus (Non-aligned)
+localparam TYPE_TURBO9GT  = 3; // Separate Program & Data  8-bit Buses
+localparam TYPE_TURBO9GTS = 4; // Separate Program & Data 16-bit Buses (Aligned)
+localparam TYPE_TURBO9GTR = 5; // Separate Program & Data 16-bit Buses (Non-aligned)
 
 wire   [3:0] size_const    = QUEUE_SIZE;
 
@@ -160,13 +167,13 @@ assign pmem_rd_req         = (pc_offset_reg <= size_const) | FET_DEC_LOAD_PC_I;
 assign pmem_rd_en          = pmem_rd_req & ~PMEM_BUSY_I;
 
 generate
-  if (TURBO9_TYPE == 0) begin // Turbo9
+  if ((TURBO9_TYPE == TYPE_TURBO9) || (TURBO9_TYPE == TYPE_TURBO9GT)) begin
     assign pmem_rd_len = 4'h1;
     assign PMEM_REQ_WIDTH_O = WIDTH_8;
-  end else if (TURBO9_TYPE == 1) begin // Turbo9S
+  end else if ((TURBO9_TYPE == TYPE_TURBO9S) || (TURBO9_TYPE == TYPE_TURBO9GTS)) begin
     assign pmem_rd_len      = (PMEM_ADR_O[0]) ?  4'h1    : 4'h2;
     assign PMEM_REQ_WIDTH_O = (PMEM_ADR_O[0]) ?  WIDTH_8 : WIDTH_16;
-  end else if (TURBO9_TYPE == 2) begin // Turbo9R
+  end else if ((TURBO9_TYPE == TYPE_TURBO9R) || (TURBO9_TYPE == TYPE_TURBO9GTR)) begin
     assign pmem_rd_len = 4'h2;
     assign PMEM_REQ_WIDTH_O = WIDTH_16;
   end
@@ -317,7 +324,7 @@ end
 
 turbo9_fetch_queue
 #(
-  .TURBO9_TYPE  (TURBO9_TYPE), // Turbo9 Type: 0=Turbo9, 1=Turbo9S, 2=Turbo9R
+  .TURBO9_TYPE  (TURBO9_TYPE), // 0=Turbo9, 1=Turbo9S, 2=Turbo9R, 3=Turbo9GT, 4=Turbo9GTS, 5=Turbo9GTR
   .QUEUE_SIZE   (QUEUE_SIZE)   // Fetch Queue Size: 6=Default, 4=Min, 7=Max
 )
 I_turbo9_fetch_queue
@@ -342,4 +349,3 @@ I_turbo9_fetch_queue
 
 
 endmodule
-

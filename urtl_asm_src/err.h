@@ -59,7 +59,7 @@ enum error_codes {
   ERR_OK = 0
 };
 
-u08 log_level;
+extern u08 log_level;
 
 const char * get_error_by_name(enum error_codes code);
 

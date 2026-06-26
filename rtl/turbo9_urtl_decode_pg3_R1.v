@@ -71,7 +71,7 @@ always @* begin
   endcase
 end
 
-`ifdef SIM_TURBO9
+`ifdef TURBO9_SIM
 
 reg [(8*64):0] PG3_R1_op;
 

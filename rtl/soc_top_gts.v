@@ -183,7 +183,7 @@ wire        ram_clk;
   
   turbo9_gts
   #(
-    .REGISTER_WB_OUTPUTS  (0), // Register Wishbone Ouputs: True=1, False=0
+    .REGISTER_WB_OUTPUTS  (0), // Register Wishbone Outputs: True=1, False=0
     .QUEUE_SIZE           (7)  // Fetch Queue Size: 6=Default, 4=Min, 7=Max                 
   )
   I_turbo9_gts
@@ -451,4 +451,3 @@ wire        ram_clk;
 /////////////////////////////////////////////////////////////////////////////
 
 endmodule
-

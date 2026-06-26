@@ -48,7 +48,7 @@
 /////////////////////////////////////////////////////////////////////////////
 module turbo9_fetch_queue
 #(
-  parameter TURBO9_TYPE = 0, // Turbo9 Type: 0=Turbo9, 1=Turbo9S, 2=Turbo9R
+  parameter TURBO9_TYPE = 0, // 0=Turbo9, 1=Turbo9S, 2=Turbo9R, 3=Turbo9GT, 4=Turbo9GTS, 5=Turbo9GTR
   parameter QUEUE_SIZE  = 6  // Fetch Queue Size: 6=Default, 4=Min, 7=Max
 )
 (
@@ -84,8 +84,15 @@ module turbo9_fetch_queue
 localparam  CLOG2_SIZE = 3; // Solve: 2^CLOG2_SIZE >= QUEUE_SIZE (keep it Verilog2001!)
 
 // This must match the MSB of the *_REG_SEL control vectors
-localparam  WIDTH_16 =  1'b0;
-localparam  WIDTH_8  =  1'b1;
+localparam WIDTH_16 =  1'b0;
+localparam WIDTH_8  =  1'b1;
+
+localparam TYPE_TURBO9    = 0; // Shared   Program & Data  8-bit Bus
+localparam TYPE_TURBO9S   = 1; // Shared   Program & Data 16-bit Bus (Aligned)
+localparam TYPE_TURBO9R   = 2; // Shared   Program & Data 16-bit Bus (Non-aligned)
+localparam TYPE_TURBO9GT  = 3; // Separate Program & Data  8-bit Buses
+localparam TYPE_TURBO9GTS = 4; // Separate Program & Data 16-bit Buses (Aligned)
+localparam TYPE_TURBO9GTR = 5; // Separate Program & Data 16-bit Buses (Non-aligned)
 
 wire   [(CLOG2_SIZE-1):0] size_const    = QUEUE_SIZE;
 wire   [(CLOG2_SIZE-1):0] size_m1_const = QUEUE_SIZE-1;
@@ -236,7 +243,7 @@ endgenerate
 /////////////////////////////////// Write Logic
 //
 generate
-  if (TURBO9_TYPE == 0) begin // 0:Turbo9, 1:Turbo9S, 2:Turbo9R
+  if ((TURBO9_TYPE == TYPE_TURBO9) || (TURBO9_TYPE == TYPE_TURBO9GT)) begin
     //
     // Write Enable Logic (8bit)
     // assign queue_data_nxt[0] = (queue_wr_en[0]) ? QUEUE_DAT_I[ 7:0] : queue_data_shift1[0];
@@ -355,4 +362,3 @@ assign PREBYTE_EN_O   = prebyte_en_reg;
 /////////////////////////////////////////////////////////////////////////////
 
 endmodule
-

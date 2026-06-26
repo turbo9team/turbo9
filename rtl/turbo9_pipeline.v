@@ -49,7 +49,7 @@
 /////////////////////////////////////////////////////////////////////////////
 module turbo9_pipeline
 #(
-  parameter TURBO9_TYPE = 0, // Turbo9 Type: 0=Turbo9, 1=Turbo9S, 2=Turbo9R
+  parameter TURBO9_TYPE = 0, // 0=Turbo9, 1=Turbo9S, 2=Turbo9R, 3=Turbo9GT, 4=Turbo9GTS, 5=Turbo9GTR
   parameter QUEUE_SIZE  = 6  // Fetch Queue Size: 6=Default, 4=Min, 7=Max
 )
 (
@@ -83,6 +83,13 @@ module turbo9_pipeline
 /////////////////////////////////////////////////////////////////////////////
 //                             INTERNAL SIGNALS
 /////////////////////////////////////////////////////////////////////////////
+
+localparam TYPE_TURBO9    = 0; // Shared   Program & Data  8-bit Bus
+localparam TYPE_TURBO9S   = 1; // Shared   Program & Data 16-bit Bus (Aligned)
+localparam TYPE_TURBO9R   = 2; // Shared   Program & Data 16-bit Bus (Non-aligned)
+localparam TYPE_TURBO9GT  = 3; // Separate Program & Data  8-bit Buses
+localparam TYPE_TURBO9GTS = 4; // Separate Program & Data 16-bit Buses (Aligned)
+localparam TYPE_TURBO9GTR = 5; // Separate Program & Data 16-bit Buses (Non-aligned)
 
 wire [15:0] fet_dec_pc;
 wire        fet_dec_load_pc;
@@ -140,7 +147,7 @@ wire [15:0] dec_exe_new_pc;
   //////////////////////////////////////// Fetch Stage
   turbo9_fetch_stage
   #(
-    .TURBO9_TYPE  (TURBO9_TYPE), // Turbo9 Type: 0=Turbo9, 1=Turbo9S, 2=Turbo9R
+    .TURBO9_TYPE  (TURBO9_TYPE), // 0=Turbo9, 1=Turbo9S, 2=Turbo9R, 3=Turbo9GT, 4=Turbo9GTS, 5=Turbo9GTR
     .QUEUE_SIZE   (QUEUE_SIZE)   // Fetch Queue Size: 6=Default, 4=Min, 7=Max
   )
   I_turbo9_fetch_stage
@@ -287,4 +294,3 @@ wire [15:0] dec_exe_new_pc;
 /////////////////////////////////////////////////////////////////////////////
 
 endmodule
-

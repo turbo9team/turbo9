@@ -48,7 +48,7 @@
 /////////////////////////////////////////////////////////////////////////////
 module turbo9_wishbone_8bit
 #(
-  parameter REGISTER_WB_OUTPUTS = 1 // Register Wishbone Ouputs: True=1, False=0
+  parameter REGISTER_WB_OUTPUTS = 1 // Register Wishbone Outputs: True=1, False=0
 )
 (
   // Inputs: Clock & Reset
@@ -461,4 +461,3 @@ assign PMEM_RD_ACK_O    = tag_pmem_rd_i & ~STALL_I;
 /////////////////////////////////////////////////////////////////////////////
 
 endmodule
-

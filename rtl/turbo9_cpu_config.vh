@@ -33,61 +33,27 @@
 // [TURBO9_LICENSE_END]
 //////////////////////////////////////////////////////////////////////////////
 // Engineer: Kevin Phillipson
-// Description: 16-bit Address ALU
+// Description: Turbo9 CPU configuration macros
 //
 //////////////////////////////////////////////////////////////////////////////
 // History:
-// 07.14.2023 - Kevin Phillipson
+// 06.27.2026 - Kevin Phillipson
 //   File header added
 //
 //////////////////////////////////////////////////////////////////////////////
 // [TURBO9_HEADER_END]
 
-/////////////////////////////////////////////////////////////////////////////
-//                                MODULE
-/////////////////////////////////////////////////////////////////////////////
-`include "turbo9_cpu_config.vh"
+`ifndef TURBO9_CPU_CONFIG_VH
+`define TURBO9_CPU_CONFIG_VH
 
-module turbo9_address_alu
-(
-  //
-  // Address ALU Operation
-  input           ADDR_ALU_EA_OP_I,
-  input           ADDR_ALU_Y_OP_I,
-  //
-  // Address ALU Data Inputs / Outputs
-  input    [15:0] ADDR_ALU_REG_I,
-  input    [15:0] ADDR_ALU_OFFSET_I,
-  output   [15:0] ADDR_ALU_Y_O,
-  output   [15:0] ADDR_ALU_EA_O
-);
-
-/////////////////////////////////////////////////////////////////////////////
-//                             INTERNAL SIGNALS
-/////////////////////////////////////////////////////////////////////////////
+///////////////////// Reset & Logic Defines
 //
+//`define TURBO9_CPU_SYNC_RESET // Use Synchronous Reset
+//`define TURBO9_CPU_MIN_RESET  // Reset minimal registers
+//`define TURBO9_CPU_USE_X      // Assign X in dont care logic for optimization
 
-//////////////////////////////////////// ADDR_ALU_EA_OP_I / ADDR_ALU_Y_OP_I defines
+///////////////////// Simulator Defines
 //
-localparam  EQU_REG = 1'b0;
-localparam  EQU_SUM = 1'b1;
+//`define TURBO9_CPU_SIM_DEBUG  // Turns on debug strings in decode table verilog files
 
-wire [15:0] adder_sum;
-
-/////////////////////////////////////////////////////////////////////////////
-
-
-/////////////////////////////////////////////////////////////////////////////
-//                                  LOGIC
-/////////////////////////////////////////////////////////////////////////////
-
-assign adder_sum = ADDR_ALU_REG_I + ADDR_ALU_OFFSET_I;
-
-assign ADDR_ALU_Y_O  = (ADDR_ALU_Y_OP_I == EQU_SUM)  ? adder_sum : ADDR_ALU_REG_I;
-
-assign ADDR_ALU_EA_O = (ADDR_ALU_EA_OP_I == EQU_SUM) ? adder_sum : ADDR_ALU_REG_I;
-
-/////////////////////////////////////////////////////////////////////////////
-
-endmodule
-
+`endif

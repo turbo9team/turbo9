@@ -58,7 +58,7 @@ module tb_dv_top;
   //`define TURBO9 
   /////////////////////
 
-  `define TURBO9_SIM      // Turns on debug strings in decode table verilog files
+  `define TURBO9_CPU_SIM_DEBUG      // Turns on debug strings in decode table verilog files
   `define SIM_T6551_FAST  // Runs T6551 UART as fast as possible
 
   `define SIM_MODEL_FAST      // 6809 Model Fast Mode (Drop idle bus cycles)

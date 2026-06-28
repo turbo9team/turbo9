@@ -46,6 +46,8 @@
 /////////////////////////////////////////////////////////////////////////////
 //                                MODULE
 /////////////////////////////////////////////////////////////////////////////
+`include "turbo9_cpu_config.vh"
+
 module turbo9_data_mem_ctrl
 (
   // Inputs: Clock & Reset
@@ -198,14 +200,14 @@ end
 //                     DATA MEMORY CONTROLLER REGISTERS
 /////////////////////////////////////////////////////////////////////////////
 //
-`ifdef TURBO9_SYNC_RESET
+`ifdef TURBO9_CPU_SYNC_RESET
 always @(posedge CLK_I) begin
 `else
 always @(posedge CLK_I, posedge RST_I) begin
 `endif
   if (RST_I) begin
     //
-`ifdef TURBO9_MIN_RESET 
+`ifdef TURBO9_CPU_MIN_RESET 
     //dmem_dat_o_reg         <= dmem_dat_o_rst;           // INFO: RESET_NO 
     //dmem_adr_o_reg         <= dmem_adr_o_rst;           // INFO: RESET_NO 
     dmem_req_o_reg         <= dmem_req_o_rst;             // INFO: RESET_YES clear data memory access REQ 

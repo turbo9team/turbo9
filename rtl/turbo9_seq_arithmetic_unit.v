@@ -180,6 +180,8 @@
 /////////////////////////////////////////////////////////////////////////////
 //                                MODULE
 /////////////////////////////////////////////////////////////////////////////
+`include "turbo9_cpu_config.vh"
+
 module turbo9_seq_arithmetic_unit
 (
   // Inputs: Clock & Reset
@@ -1045,14 +1047,14 @@ end
 //                             Registers
 /////////////////////////////////////////////////////////////////////////////
 //
-`ifdef TURBO9_SYNC_RESET
+`ifdef TURBO9_CPU_SYNC_RESET
 always @(posedge CLK_I) begin
 `else
 always @(posedge CLK_I, posedge RST_I) begin
 `endif
   if (RST_I) begin
     //
-`ifdef TURBO9_MIN_RESET 
+`ifdef TURBO9_CPU_MIN_RESET 
     // a_reg     <= a_rst;     // INFO: RESET_NO
     // m_reg     <= m_rst;     // INFO: RESET_NO
     // q_reg     <= q_rst;     // INFO: RESET_NO

@@ -48,6 +48,8 @@
 /////////////////////////////////////////////////////////////////////////////
 //                                MODULE
 /////////////////////////////////////////////////////////////////////////////
+`include "turbo9_cpu_config.vh"
+
 module turbo9_urtl_decode_pg2_AR(
   input      [7:0] OPCODE_I,
   output reg [3:0] PG2_AR_O
@@ -69,7 +71,7 @@ always @* begin
   endcase
 end
 
-`ifdef TURBO9_SIM
+`ifdef TURBO9_CPU_SIM_DEBUG
 
 reg [(8*64):0] PG2_AR_op;
 

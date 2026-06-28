@@ -46,6 +46,8 @@
 /////////////////////////////////////////////////////////////////////////////
 //                                MODULE
 /////////////////////////////////////////////////////////////////////////////
+`include "turbo9_cpu_config.vh"
+
 module turbo9_fetch_stage
 #(
   parameter TURBO9_TYPE = 0, // 0=Turbo9, 1=Turbo9S, 2=Turbo9R, 3=Turbo9GT, 4=Turbo9GTS, 5=Turbo9GTR
@@ -284,7 +286,7 @@ end
 //
 
 
-`ifdef TURBO9_SYNC_RESET
+`ifdef TURBO9_CPU_SYNC_RESET
 always @(posedge CLK_I) begin
 `else
 always @(posedge CLK_I, posedge RST_I) begin

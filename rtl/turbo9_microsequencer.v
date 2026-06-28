@@ -46,6 +46,8 @@
 /////////////////////////////////////////////////////////////////////////////
 //                                MODULE
 /////////////////////////////////////////////////////////////////////////////
+`include "turbo9_cpu_config.vh"
+
 module turbo9_microsequencer
 (
   // Inputs: Clock & Reset
@@ -147,14 +149,14 @@ end
 /////////////////////////////////////////////////////////////////////////////
 //                                REGISTERS
 /////////////////////////////////////////////////////////////////////////////
-`ifdef TURBO9_SYNC_RESET
+`ifdef TURBO9_CPU_SYNC_RESET
 always @(posedge CLK_I) begin
 `else
 always @(posedge CLK_I, posedge RST_I) begin
 `endif
   if (RST_I) begin
 
-`ifdef TURBO9_MIN_RESET 
+`ifdef TURBO9_CPU_MIN_RESET 
     micro_pc_reg         <= micro_pc_rst;          // INFO: RESET_YES
     //return_reg           <= return_rst;          // INFO: RESET_NO
     microcycle_start_reg <= microcycle_start_rst;  // INFO: RESET_YES

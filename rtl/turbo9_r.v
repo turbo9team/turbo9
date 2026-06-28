@@ -47,15 +47,7 @@
 //                                MODULE
 /////////////////////////////////////////////////////////////////////////////
 
-///////////////////// Reset & Logic Defines
-//
-//`define TURBO9_SYNC_RESET // Use Synchronous Reset
-//`define TURBO9_MIN_RESET  // Reset minimal registers
-//`define TURBO9_USE_X      // Assign X in dont care logic for optimization
-
-///////////////////// Simulator Defines
-//
-//`define SIM_TURBO9        // Turns on debug strings in decode table verilog files
+`include "turbo9_cpu_config.vh"
 
 module turbo9_r
 #(

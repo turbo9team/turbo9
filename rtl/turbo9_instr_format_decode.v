@@ -46,6 +46,8 @@
 /////////////////////////////////////////////////////////////////////////////
 //                                MODULE
 /////////////////////////////////////////////////////////////////////////////
+`include "turbo9_cpu_config.vh"
+
 module turbo9_instr_format_decode
 (
   input         [7:0] QUEUE_D3_I,
@@ -70,7 +72,7 @@ module turbo9_instr_format_decode
 
 
 // Instruction Data
-`ifdef TURBO9_USE_X
+`ifdef TURBO9_CPU_USE_X
 wire [15:0] instr_data_x       = {8'hxx               , 8'hxx           }; //INFO: REDUCE_LOGIC
 `else
 wire [15:0] instr_data_x       = {8'h00               , 8'h00           };
@@ -90,7 +92,7 @@ localparam   len_4 = 3'h4;
 
 localparam   dir_1 = 1'b1;
 localparam   dir_0 = 1'b0;
-`ifdef TURBO9_USE_X
+`ifdef TURBO9_CPU_USE_X
 localparam   dir_x = 1'bx; //INFO: REDUCE_LOGIC
 `else
 localparam   dir_x = 1'b0;

@@ -46,6 +46,8 @@
 /////////////////////////////////////////////////////////////////////////////
 //                                MODULE
 /////////////////////////////////////////////////////////////////////////////
+`include "turbo9_cpu_config.vh"
+
 module turbo9_decode_stage
 (
   // Inputs: Clock & Reset
@@ -194,14 +196,14 @@ always @* begin
 end
 
 
-`ifdef TURBO9_SYNC_RESET
+`ifdef TURBO9_CPU_SYNC_RESET
 always @(posedge CLK_I) begin
 `else
 always @(posedge CLK_I, posedge RST_I) begin
 `endif
   if (RST_I) begin
 
-`ifdef TURBO9_MIN_RESET 
+`ifdef TURBO9_CPU_MIN_RESET 
     // page_sel_reg  <= page_sel_rst; // INFO: RESET_NO will be cleared via DEC_EXE_NEW_PC_WR_EN_I
 `else
     page_sel_reg  <= page_sel_rst;

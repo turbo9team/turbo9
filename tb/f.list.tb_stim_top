@@ -1,4 +1,5 @@
 +incdir+../../tb
++incdir+../../rtl
 
 +libext+.v
 

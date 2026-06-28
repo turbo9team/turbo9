@@ -46,6 +46,8 @@
 /////////////////////////////////////////////////////////////////////////////
 //                                MODULE
 /////////////////////////////////////////////////////////////////////////////
+`include "turbo9_cpu_config.vh"
+
 module turbo9_register_array
 (
   // Inputs: Clock & Reset
@@ -162,7 +164,7 @@ wire [15:0] pos2_u16 = 16'h0002;
 wire [15:0] neg1_s16 = 16'hFFFF;
 wire [15:0] neg2_s16 = 16'hFFFE;
 
-`ifdef TURBO9_USE_X
+`ifdef TURBO9_CPU_USE_X
 localparam REG_DEFAULT = 16'hxxxx; //INFO: REDUCE_LOGIC
 `else
 localparam REG_DEFAULT = 16'h0000;
@@ -187,14 +189,14 @@ wire [15:0] instr_data  = (INSTR_DIRECT_EN_I) ? {dpr_reg, INSTR_DATA_I[7:0]} :
 //                                LOGIC
 /////////////////////////////////////////////////////////////////////////////
 //
-`ifdef TURBO9_SYNC_RESET
+`ifdef TURBO9_CPU_SYNC_RESET
 always @(posedge CLK_I) begin
 `else
 always @(posedge CLK_I, posedge RST_I) begin
 `endif
   if (RST_I) begin
     //
-`ifdef TURBO9_MIN_RESET 
+`ifdef TURBO9_CPU_MIN_RESET 
     // a_reg      <= a_rst;  // INFO: RESET_NO
     // b_reg      <= b_rst;  // INFO: RESET_NO
     // x_reg      <= x_rst;  // INFO: RESET_NO

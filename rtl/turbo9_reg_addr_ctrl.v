@@ -47,6 +47,8 @@
 /////////////////////////////////////////////////////////////////////////////
 //                                MODULE
 /////////////////////////////////////////////////////////////////////////////
+`include "turbo9_cpu_config.vh"
+
 module turbo9_reg_addr_ctrl
 (
   // Inputs: Clock & Reset
@@ -215,7 +217,7 @@ localparam  U                     = 4'b0011;
 localparam  Y                     = 4'b0010;
 localparam  X                     = 4'b0001;
 localparam  D                     = 4'b0000;
-`ifdef TURBO9_USE_X
+`ifdef TURBO9_CPU_USE_X
 localparam  IDX_REG_SEL_DONT_CARE = 4'bxxxx; //INFO: REDUCE_LOGIC
 `else
 localparam  IDX_REG_SEL_DONT_CARE = 4'b0000;
@@ -232,7 +234,7 @@ localparam  OFFSET_SEL_B         = 4'b0101;
 localparam  OFFSET_SEL_A         = 4'b0110;
 localparam  OFFSET_SEL_D         = 4'b0111;
 localparam  OFFSET_SEL_IDATA     = 4'b1000;
-`ifdef TURBO9_USE_X
+`ifdef TURBO9_CPU_USE_X
 localparam  OFFSET_SEL_DONT_CARE = 4'bxxxx; //INFO: REDUCE_LOGIC
 `else
 localparam  OFFSET_SEL_DONT_CARE = 4'b0000;
@@ -522,14 +524,14 @@ end
 //        Maintain Instruction Decodes for Multiple Micro Cycles
 /////////////////////////////////////////////////////////////////////////////
 //
-`ifdef TURBO9_SYNC_RESET
+`ifdef TURBO9_CPU_SYNC_RESET
 always @(posedge CLK_I) begin
 `else
 always @(posedge CLK_I, posedge RST_I) begin
 `endif
   if (RST_I) begin
     //
-`ifdef TURBO9_MIN_RESET 
+`ifdef TURBO9_CPU_MIN_RESET 
     //instr_inh_en_reg      <= instr_inh_en_rst;    // INFO: RESET_NO
     instr_r1_sel_reg      <= instr_r1_sel_rst;      // INFO: RESET_YES
     instr_r2_sel_reg      <= instr_r2_sel_rst;      // INFO: RESET_YES
@@ -594,7 +596,7 @@ end
 always @* begin
   //Defaults
   stk_postbyte_msk   = 8'b1111_1111;
-`ifdef TURBO9_USE_X
+`ifdef TURBO9_CPU_USE_X
   stk_a_sel_nxt   = 4'hx; //INFO: REDUCE_LOGIC
 `else
   stk_a_sel_nxt   = 4'h0;
@@ -623,14 +625,14 @@ always @* begin
 end
 
 
-`ifdef TURBO9_SYNC_RESET
+`ifdef TURBO9_CPU_SYNC_RESET
 always @(posedge CLK_I) begin
 `else
 always @(posedge CLK_I, posedge RST_I) begin
 `endif
   if (RST_I) begin
     //
-`ifdef TURBO9_MIN_RESET 
+`ifdef TURBO9_CPU_MIN_RESET 
     //stk_postbyte_reg  <= stk_postbyte_rst; // INFO: RESET_NO
     //stk_a_sel_reg     <= stk_a_sel_rst;    // INFO: RESET_NO
     //stk_wr_sel_reg    <= stk_wr_sel_rst;   // INFO: RESET_NO

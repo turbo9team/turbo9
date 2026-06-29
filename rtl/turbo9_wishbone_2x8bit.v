@@ -51,7 +51,7 @@
 
 module turbo9_wishbone_2x8bit
 #(
-  parameter REGISTER_WB_OUTPUTS = 1
+  parameter TURBO9_CPU_WB_PIPELINE_REG = 0 // CPU WB Pipeline Registers: True=1, False=0
 )
 (
   // Inputs: Clock & Reset
@@ -67,7 +67,7 @@ module turbo9_wishbone_2x8bit
   input          EVEN_STALL_I,
   output  [15:0] EVEN_ADR_O,
   output   [7:0] EVEN_DAT_O,
-  output         EVEN_WE_O, 
+  output         EVEN_WE_O,
   output         EVEN_STB_O,
   output         EVEN_CYC_O,
 
@@ -77,7 +77,7 @@ module turbo9_wishbone_2x8bit
   input          ODD_STALL_I,
   output  [15:0] ODD_ADR_O,
   output   [7:0] ODD_DAT_O,
-  output         ODD_WE_O, 
+  output         ODD_WE_O,
   output         ODD_STB_O,
   output         ODD_CYC_O,
 
@@ -111,10 +111,10 @@ module turbo9_wishbone_2x8bit
 //input        RST_I;  // Reset. Active high and synchronized to CLK_I
 //input        CLK_I;  // Clock
 
-// Wishbone Inputs 
+// Wishbone Inputs
 //input [15:0] DAT_I;  // The data input array [DAT_I()] is used to pass
                        // binary data.
-                       // 
+                       //
 //input        ACK_I;  // The acknowledge input [ACK_I], when asserted,
                        // indicates the normal termination of a bus cycle.
                        // Also see the [ERR_I] and [RTY_I] signal descriptions.
@@ -145,25 +145,25 @@ module turbo9_wishbone_2x8bit
                        // [ADR_O(n..2)]. In some cases (such as FIFO
                        // interfaces) the array may not be present on the
                        // interface.
-                       // 
+                       //
 //output [15:0] DAT_O; // The data output array [DAT_O()] is used to pass
                        // binary data. The array boundaries are determined by
                        // the port size, with a maximum port size of 64-bits
                        // (e.g. [DAT_I(63..0)]). Also see the [DAT_I()] and
                        // [SEL_O()] signal descriptions.
-                       // 
+                       //
 //output        WE_O;  // The write enable output [WE_O] indicates whether
                        // the current local bus cycle is a READ or WRITE
                        // cycle. The signal is negated during READ cycles,
                        // and is asserted during WRITE cycles.
-                       // 
+                       //
 //output        STB_O; //  The strobe output [STB_O] indicates a valid data
                        // transfer cycle. It is used to qualify various other
                        // signals on the interface such as [SEL_O()]. The
                        // SLAVE asserts either the [ACK_I], [ERR_I] or
                        // [RTY_I] signals in response to every assertion of
                        // the [STB_O] signal.
-                       // 
+                       //
 //output        CYC_O; // The cycle output [CYC_O], when asserted, indicates
                        // that a valid bus cycle is in progress. The signal
                        // is asserted for the duration of all bus cycles. For
@@ -203,11 +203,11 @@ localparam    even_dat_o_rst = 8'h00;
 reg           even_we_o_reg;
 reg           even_we_o_nxt;
 localparam    even_we_o_rst = 1'b0;
-           
+
 reg           even_stb_o_reg;
 reg           even_stb_o_nxt;
 localparam    even_stb_o_rst = 1'b0;
-           
+
 reg   [15:0]  odd_adr_o_reg;
 reg   [15:0]  odd_adr_o_nxt;
 localparam    odd_adr_o_rst = 16'h0000;
@@ -219,11 +219,11 @@ localparam    odd_dat_o_rst = 8'h00;
 reg           odd_we_o_reg;
 reg           odd_we_o_nxt;
 localparam    odd_we_o_rst = 1'b0;
-           
+
 reg           odd_stb_o_reg;
 reg           odd_stb_o_nxt;
 localparam    odd_stb_o_rst = 1'b0;
-           
+
 reg           cyc_o_reg;
 wire          cyc_o_nxt;
 localparam    cyc_o_rst = 1'b0;
@@ -377,7 +377,7 @@ always @* begin
     end
     //
   endcase
-end 
+end
 
 assign cyc_o_nxt = (pending_cnt_nxt != 3'b000) ? 1'b1 : 1'b0;
 
@@ -486,19 +486,19 @@ end
 
 
 /////////////////////////////////////////////////////////////////////////////
-//                        EXTERNAL WISHBONE INTERFACE 
+//                        EXTERNAL WISHBONE INTERFACE
 /////////////////////////////////////////////////////////////////////////////
 generate
-  if (REGISTER_WB_OUTPUTS) begin
+  if (TURBO9_CPU_WB_PIPELINE_REG) begin
     assign ODD_ADR_O = odd_adr_o_reg;
     assign ODD_DAT_O = odd_dat_o_reg;
-    assign ODD_WE_O  = odd_we_o_reg ; 
+    assign ODD_WE_O  = odd_we_o_reg ;
     assign ODD_STB_O = odd_stb_o_reg;
     assign ODD_CYC_O = cyc_o_reg;
 
     assign EVEN_ADR_O = even_adr_o_reg;
     assign EVEN_DAT_O = even_dat_o_reg;
-    assign EVEN_WE_O  = even_we_o_reg ; 
+    assign EVEN_WE_O  = even_we_o_reg ;
     assign EVEN_STB_O = even_stb_o_reg;
     assign EVEN_CYC_O = cyc_o_reg;
 
@@ -510,13 +510,13 @@ generate
   end else begin
     assign ODD_ADR_O = odd_adr_o_nxt;
     assign ODD_DAT_O = odd_dat_o_nxt;
-    assign ODD_WE_O  = odd_we_o_nxt; 
+    assign ODD_WE_O  = odd_we_o_nxt;
     assign ODD_STB_O = odd_stb_o_nxt;
     assign ODD_CYC_O = cyc_o_nxt;
 
     assign EVEN_ADR_O = even_adr_o_nxt;
     assign EVEN_DAT_O = even_dat_o_nxt;
-    assign EVEN_WE_O  = even_we_o_nxt; 
+    assign EVEN_WE_O  = even_we_o_nxt;
     assign EVEN_STB_O = even_stb_o_nxt;
     assign EVEN_CYC_O = cyc_o_nxt;
 
@@ -557,4 +557,3 @@ assign PMEM_RD_ACK_O      = even_tag_pmem_rd_i & ~stall_i;
 /////////////////////////////////////////////////////////////////////////////
 
 endmodule
-

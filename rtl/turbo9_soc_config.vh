@@ -33,67 +33,29 @@
 // [TURBO9_LICENSE_END]
 //////////////////////////////////////////////////////////////////////////////
 // Engineer: Kevin Phillipson
-// Description: Dual port 8bit Synchronous RAM
+// Description: Turbo9 SoC configuration macros. This header centralizes
+// optional SoC-level synthesis and simulation controls that are shared by the
+// top-level SoC wrappers and their directly instantiated peripheral RTL.
 //
 //////////////////////////////////////////////////////////////////////////////
 // History:
-// 07.14.2023 - Kevin Phillipson
+// 06.29.2026 - Kevin Phillipson
 //   File header added
 //
 //////////////////////////////////////////////////////////////////////////////
 // [TURBO9_HEADER_END]
 
-/////////////////////////////////////////////////////////////////////////////
-//                                MODULE
-/////////////////////////////////////////////////////////////////////////////
-`include "turbo9_soc_config.vh"
+`ifndef TURBO9_SOC_CONFIG_VH
+`define TURBO9_SOC_CONFIG_VH
 
-module syncram_dp_8bit
-#(
-  parameter MEM_ADDR_WIDTH = 12,                  // RAM Address Width: 12=4KB
-  parameter MEM_INIT_FILE  = "syncram_8bit.hex"   // RAM Init File: syncram_8bit.hex
-)
-(
-  input          CLK_I,
-  input          A_WE_I,
-  input   [MEM_ADDR_WIDTH-1:0] A_ADR_I,
-  input   [ 7:0] A_DAT_I,
-  output  [ 7:0] A_DAT_O,
-  
-  input   [MEM_ADDR_WIDTH-1:0] B_ADR_I,
-  output  [ 7:0] B_DAT_O
-);
+///////////////////// Reset & Logic Defines
+//
+//`define TURBO9_SOC_SYNC_RESET // Use Synchronous Reset
+//`define TURBO9_SOC_MIN_RESET  // Reset minimal registers
+//`define TURBO9_SOC_USE_X      // Assign X in dont care logic for optimization
 
-/////////////////////////////////////////////////////////////////////////////
-//                                LOGIC
-/////////////////////////////////////////////////////////////////////////////
+///////////////////// Simulator Defines
+//
+//`define TURBO9_SOC_SIM_T6551_FAST // Runs T6551 UART as fast as possible
 
-reg [7:0] ram [0:(2**MEM_ADDR_WIDTH)-1];
-reg [7:0] a_dat_o_reg;
-reg [7:0] b_dat_o_reg;
-
-initial
-begin
-  $readmemh(MEM_INIT_FILE,ram);
-end
-
-always @(posedge CLK_I)
-begin
-  if (A_WE_I) begin
-    ram[A_ADR_I] <= A_DAT_I;
-    a_dat_o_reg  <= A_DAT_I; //'write first' or transparent mode, less logic in FPGA block rams
-  end else begin
-    a_dat_o_reg  <= ram[A_ADR_I];
-  end
-  //
-  b_dat_o_reg  <= ram[B_ADR_I];
-  //
-end
-
-
-assign A_DAT_O = a_dat_o_reg;
-assign B_DAT_O = b_dat_o_reg;
-
-/////////////////////////////////////////////////////////////////////////////
-
-endmodule
+`endif

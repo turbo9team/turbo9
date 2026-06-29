@@ -46,6 +46,8 @@
 /////////////////////////////////////////////////////////////////////////////
 //                                MODULE
 /////////////////////////////////////////////////////////////////////////////
+`include "turbo9_soc_config.vh"
+
 module t6551
 (
   // Inputs: Clock & Reset
@@ -153,7 +155,7 @@ always @(posedge CLK_I, posedge RST_I) begin
   end
 end
 
-`ifdef SIM_T6551_FAST
+`ifdef TURBO9_SOC_SIM_T6551_FAST
 assign baud_div_en = 1'b1;
 `else
 assign baud_div_en = baud_div_en_reg;
@@ -222,4 +224,3 @@ assign STATUS_DATA_O[0] = 1'b0; // Parity Error
 /////////////////////////////////////////////////////////////////////////////
 
 endmodule
-

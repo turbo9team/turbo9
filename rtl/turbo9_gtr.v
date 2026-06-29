@@ -34,7 +34,7 @@
 //////////////////////////////////////////////////////////////////////////////
 // Engineer: Kevin Phillipson
 // Description: Turbo9GTR with separate 16-bit program and 16-bit data
-// Wishbone memory buses 
+// Wishbone memory buses
 //
 //////////////////////////////////////////////////////////////////////////////
 // History:
@@ -52,8 +52,8 @@
 
 module turbo9_gtr
 #(
-  parameter REGISTER_WB_OUTPUTS = 1, // Register Wishbone Outputs: True=1, False=0
-  parameter QUEUE_SIZE          = 6  // Fetch Queue Size: 6=Default, 4=Min, 7=Max 
+  parameter TURBO9_CPU_WB_PIPELINE_REG = 0, // CPU WB Pipeline Registers: True=1, False=0
+  parameter TURBO9_CPU_QUEUE_SIZE = 6 // CPU Fetch Queue Size: 6=Default, 4=Min, 7=Max
 )
 (
   // Inputs: Clock & Reset
@@ -69,7 +69,7 @@ module turbo9_gtr
   input          PMEM_EVEN_STALL_I,
   output  [15:0] PMEM_EVEN_ADR_O,
   output   [7:0] PMEM_EVEN_DAT_O,
-  output         PMEM_EVEN_WE_O, 
+  output         PMEM_EVEN_WE_O,
   output         PMEM_EVEN_STB_O,
   output         PMEM_EVEN_CYC_O,
 
@@ -79,7 +79,7 @@ module turbo9_gtr
   input          PMEM_ODD_STALL_I,
   output  [15:0] PMEM_ODD_ADR_O,
   output   [7:0] PMEM_ODD_DAT_O,
-  output         PMEM_ODD_WE_O, 
+  output         PMEM_ODD_WE_O,
   output         PMEM_ODD_STB_O,
   output         PMEM_ODD_CYC_O,
 
@@ -92,7 +92,7 @@ module turbo9_gtr
   input          DMEM_EVEN_STALL_I,
   output  [15:0] DMEM_EVEN_ADR_O,
   output   [7:0] DMEM_EVEN_DAT_O,
-  output         DMEM_EVEN_WE_O, 
+  output         DMEM_EVEN_WE_O,
   output         DMEM_EVEN_STB_O,
   output         DMEM_EVEN_CYC_O,
 
@@ -102,7 +102,7 @@ module turbo9_gtr
   input          DMEM_ODD_STALL_I,
   output  [15:0] DMEM_ODD_ADR_O,
   output   [7:0] DMEM_ODD_DAT_O,
-  output         DMEM_ODD_WE_O, 
+  output         DMEM_ODD_WE_O,
   output         DMEM_ODD_STB_O,
   output         DMEM_ODD_CYC_O
 
@@ -125,35 +125,35 @@ localparam TYPE_TURBO9GT  = 3; // Separate Program & Data  8-bit Buses
 localparam TYPE_TURBO9GTS = 4; // Separate Program & Data 16-bit Buses (Aligned)
 localparam TYPE_TURBO9GTR = 5; // Separate Program & Data 16-bit Buses (Non-aligned)
 
-wire [15:0] dmem_dat_o;   
-wire [15:0] dmem_dat_i;  
-wire [15:0] dmem_adr_o;   
+wire [15:0] dmem_dat_o;
+wire [15:0] dmem_dat_i;
+wire [15:0] dmem_adr_o;
 wire        dmem_busy_i;
-wire        dmem_req_o;   
-wire        dmem_req_width_o;   
+wire        dmem_req_o;
+wire        dmem_req_width_o;
 wire        dmem_we_o;
 wire        dmem_rd_ack_i;
 wire        dmem_wr_ack_i;
 wire        dmem_ack_width_i;
 
-wire [15:0] pmem_dat_i;   
-wire [15:0] pmem_adr_o;   
-wire        pmem_busy_i;  
-wire        pmem_rd_req_o;   
+wire [15:0] pmem_dat_i;
+wire [15:0] pmem_adr_o;
+wire        pmem_busy_i;
+wire        pmem_rd_req_o;
 wire        pmem_rd_ack_i;
 
 /////////////////////////////////////////////////////////////////////////////
 
 
 /////////////////////////////////////////////////////////////////////////////
-//                           Turbo9R Top Level 
+//                           Turbo9R Top Level
 /////////////////////////////////////////////////////////////////////////////
 
 
   turbo9_pipeline
   #(
-    .TURBO9_TYPE  (TYPE_TURBO9GTR), // 0=Turbo9, 1=Turbo9S, 2=Turbo9R, 3=Turbo9GT, 4=Turbo9GTS, 5=Turbo9GTR
-    .QUEUE_SIZE   (QUEUE_SIZE)      // Fetch Queue Size: 6=Default, 4=Min, 7=Max
+    .TURBO9_TYPE            (TYPE_TURBO9GTR), // 0=Turbo9, 1=Turbo9S, 2=Turbo9R, 3=Turbo9GT, 4=Turbo9GTS, 5=Turbo9GTR
+    .TURBO9_CPU_QUEUE_SIZE  (TURBO9_CPU_QUEUE_SIZE) // CPU Fetch Queue Size: 6=Default, 4=Min, 7=Max
   )
   I_turbo9_pipeline
   (
@@ -187,14 +187,14 @@ wire        pmem_rd_ack_i;
 
   turbo9_wishbone_2x8bit
   #(
-    .REGISTER_WB_OUTPUTS  (REGISTER_WB_OUTPUTS)
+    .TURBO9_CPU_WB_PIPELINE_REG (TURBO9_CPU_WB_PIPELINE_REG)
   )
   I_turbo9_wishbone_2x8bit_pmem
   (
     // Inputs: Clock & Reset
     .RST_I            (RST_I             ),
     .CLK_I            (CLK_I             ),
-    //                                 
+    //
     // Wishbone Interface (Even bytes)
     .EVEN_TGD_I       (PMEM_EVEN_TGD_I   ),
     .EVEN_TGD_O       (PMEM_EVEN_TGD_O   ),
@@ -214,11 +214,11 @@ wire        pmem_rd_ack_i;
     .ODD_STALL_I      (PMEM_ODD_STALL_I  ),
     .ODD_ADR_O        (PMEM_ODD_ADR_O    ),
     .ODD_DAT_O        (PMEM_ODD_DAT_O    ),
-    .ODD_WE_O         (PMEM_ODD_WE_O     ), 
+    .ODD_WE_O         (PMEM_ODD_WE_O     ),
     .ODD_STB_O        (PMEM_ODD_STB_O    ),
     .ODD_CYC_O        (PMEM_ODD_CYC_O    ),
-    //                                 
-    // Data Memory Interface           
+    //
+    // Data Memory Interface
     .DMEM_DAT_I       (16'h0000      ),
     .DMEM_DAT_O       (              ),
     .DMEM_ADR_I       (16'h0000      ),
@@ -229,8 +229,8 @@ wire        pmem_rd_ack_i;
     .DMEM_RD_ACK_O    (              ),
     .DMEM_WR_ACK_O    (              ),
     .DMEM_ACK_WIDTH_O (              ),
-    //                               
-    // Program Memory Interface      
+    //
+    // Program Memory Interface
     .PMEM_DAT_O       (pmem_dat_i    ),
     .PMEM_ADR_I       (pmem_adr_o    ),
     .PMEM_BUSY_O      (pmem_busy_i   ),
@@ -241,14 +241,14 @@ wire        pmem_rd_ack_i;
 
   turbo9_wishbone_2x8bit
   #(
-    .REGISTER_WB_OUTPUTS  (REGISTER_WB_OUTPUTS)
+    .TURBO9_CPU_WB_PIPELINE_REG (TURBO9_CPU_WB_PIPELINE_REG)
   )
   I_turbo9_wishbone_2x8bit_dmem
   (
     // Inputs: Clock & Reset
     .RST_I            (RST_I            ),
     .CLK_I            (CLK_I            ),
-    //                                 
+    //
     // Wishbone Interface (Even bytes)
     .EVEN_TGD_I       (DMEM_EVEN_TGD_I       ),
     .EVEN_TGD_O       (DMEM_EVEN_TGD_O       ),
@@ -268,11 +268,11 @@ wire        pmem_rd_ack_i;
     .ODD_STALL_I      (DMEM_ODD_STALL_I      ),
     .ODD_ADR_O        (DMEM_ODD_ADR_O        ),
     .ODD_DAT_O        (DMEM_ODD_DAT_O        ),
-    .ODD_WE_O         (DMEM_ODD_WE_O         ), 
+    .ODD_WE_O         (DMEM_ODD_WE_O         ),
     .ODD_STB_O        (DMEM_ODD_STB_O        ),
     .ODD_CYC_O        (DMEM_ODD_CYC_O        ),
-    //                                 
-    // Data Memory Interface           
+    //
+    // Data Memory Interface
     .DMEM_DAT_I       (dmem_dat_o       ),
     .DMEM_DAT_O       (dmem_dat_i       ),
     .DMEM_ADR_I       (dmem_adr_o       ),

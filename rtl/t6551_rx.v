@@ -46,6 +46,8 @@
 /////////////////////////////////////////////////////////////////////////////
 //                                MODULE
 /////////////////////////////////////////////////////////////////////////////
+`include "turbo9_soc_config.vh"
+
 module t6551_rx
 (
   // Inputs: Clock & Reset
@@ -82,7 +84,7 @@ reg         clk_cnt_dec;
 wire        clk_cnt_zero;
 reg [ 3:0]  clk_cnt_reg;
 
-`ifdef SIM_T6551_FAST
+`ifdef TURBO9_SOC_SIM_T6551_FAST
 localparam  clk_cnt_rst = 4'h6; // Works at 5, but lets do 6...
 `else
 localparam  clk_cnt_rst = 4'hF; // 16 cycles per bit
@@ -293,4 +295,3 @@ assign RX_DATA_REG_O      = rx_data_reg;
 /////////////////////////////////////////////////////////////////////////////
 
 endmodule
-

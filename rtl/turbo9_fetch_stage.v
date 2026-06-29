@@ -51,7 +51,7 @@
 module turbo9_fetch_stage
 #(
   parameter TURBO9_TYPE = 0, // 0=Turbo9, 1=Turbo9S, 2=Turbo9R, 3=Turbo9GT, 4=Turbo9GTS, 5=Turbo9GTR
-  parameter QUEUE_SIZE  = 6  // Fetch Queue Size: 6=Default, 4=Min, 7=Max
+  parameter TURBO9_CPU_QUEUE_SIZE = 6 // CPU Fetch Queue Size: 6=Default, 4=Min, 7=Max
 )
 (
   // Inputs: Clock & Reset
@@ -99,7 +99,7 @@ localparam TYPE_TURBO9GT  = 3; // Separate Program & Data  8-bit Buses
 localparam TYPE_TURBO9GTS = 4; // Separate Program & Data 16-bit Buses (Aligned)
 localparam TYPE_TURBO9GTR = 5; // Separate Program & Data 16-bit Buses (Non-aligned)
 
-wire   [3:0] size_const    = QUEUE_SIZE;
+wire   [3:0] size_const    = TURBO9_CPU_QUEUE_SIZE;
 
 reg         fetch_state_reg;
 reg         fetch_state_nxt;
@@ -150,7 +150,7 @@ localparam   pc_base_rst = 16'h0000;
 
 wire  [15:0] pmem_adr_add_a;
 wire  [15:0] pmem_adr_add_b;
-wire  [15:0] pmem_adr_add_y; 
+wire  [15:0] pmem_adr_add_y;
 
 wire  [3:0]  pmem_rd_len;
 
@@ -182,11 +182,11 @@ generate
 endgenerate
 
 assign PMEM_RD_REQ_O       = pmem_rd_req;
-//                       
-// QUEUE Read Length     
+//
+// QUEUE Read Length
 assign queue_rd_len        = (FET_DEC_INSTR_RD_EN_I) ? FET_DEC_INSTR_LEN_I :
                                                        3'b000              ;
-//                       
+//
 // Program Counter Base Register
 assign pc_base_add_a       = pc_base_reg ;
 assign pc_base_add_b       = {13'd0, queue_rd_len};
@@ -194,14 +194,14 @@ assign pc_base_add_y       = pc_base_add_a + pc_base_add_b;
 assign pc_base_nxt         = (FET_DEC_LOAD_PC_I) ? FET_DEC_PC_I  :
                                                    pc_base_add_y ;
 assign FET_DEC_NXT_PC_O    = pc_base_nxt;
-//                      
+//
 // Program Memory Address Calculation
 assign pmem_adr_add_a      = pc_base_reg;
 assign pmem_adr_add_b      = {12'h000, pc_offset_reg} ;
-assign pmem_adr_add_y      = pmem_adr_add_a + pmem_adr_add_b; 
+assign pmem_adr_add_y      = pmem_adr_add_a + pmem_adr_add_b;
 assign PMEM_ADR_O          = (FET_DEC_LOAD_PC_I) ? FET_DEC_PC_I   :
                                                    pmem_adr_add_y ;
-//                      
+//
 // Program Counter Offset Calculation
 assign pc_offset_add_a     = pc_offset_reg ;
 assign pc_offset_add_b     = {1'b0, queue_rd_len};
@@ -306,7 +306,7 @@ always @(posedge CLK_I, posedge RST_I) begin
     //
     pc_base_reg       <= pc_base_nxt;
     fetch_state_reg   <= fetch_state_nxt;
-    pc_offset_reg     <= pc_offset_nxt;   
+    pc_offset_reg     <= pc_offset_nxt;
     ack_pending_reg   <= ack_pending_nxt;
     ack_1_pending_reg <= ack_1_pending_nxt;
     ack_0_pending_reg <= ack_0_pending_nxt;
@@ -326,8 +326,8 @@ end
 
 turbo9_fetch_queue
 #(
-  .TURBO9_TYPE  (TURBO9_TYPE), // 0=Turbo9, 1=Turbo9S, 2=Turbo9R, 3=Turbo9GT, 4=Turbo9GTS, 5=Turbo9GTR
-  .QUEUE_SIZE   (QUEUE_SIZE)   // Fetch Queue Size: 6=Default, 4=Min, 7=Max
+  .TURBO9_TYPE            (TURBO9_TYPE), // 0=Turbo9, 1=Turbo9S, 2=Turbo9R, 3=Turbo9GT, 4=Turbo9GTS, 5=Turbo9GTR
+  .TURBO9_CPU_QUEUE_SIZE  (TURBO9_CPU_QUEUE_SIZE) // CPU Fetch Queue Size: 6=Default, 4=Min, 7=Max
 )
 I_turbo9_fetch_queue
 (

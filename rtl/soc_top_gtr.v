@@ -77,19 +77,24 @@
 /////////////////////////////////////////////////////////////////////////////
 //                                MODULE
 /////////////////////////////////////////////////////////////////////////////
+`include "turbo9_soc_config.vh"
+
 module soc_top_gtr
 #(
-  parameter MEM_ADDR_WIDTH = 16
+  parameter TURBO9_SOC_MEM_ADDR_WIDTH = 16, // SoC Memory Address Width: 16=64KB
+  parameter TURBO9_SOC_WB_PIPELINE_REG = 0, // SoC WB Pipeline Registers: True=1, False=0
+  parameter TURBO9_CPU_WB_PIPELINE_REG = 0, // CPU WB Pipeline Registers: True=1, False=0
+  parameter TURBO9_CPU_QUEUE_SIZE = 6 // CPU Fetch Queue Size: 6=Default, 4=Min, 7=Max
 )
 (
   // Inputs: Clock & Reset
   input          RST_I, // Reset. Active high and synchronized to CLK_I
   input          CLK_I, // Clock
 
-  // Inputs 
+  // Inputs
   input          RXD_PIN_I,
   input    [7:0] GPI_PORT_I,
-  
+
   // Outputs
   output         TXD_PIN_O,
   output   [7:0] GPO_PORT_O
@@ -99,10 +104,7 @@ module soc_top_gtr
 //                             INTERNAL SIGNALS
 /////////////////////////////////////////////////////////////////////////////
 
-// Comment / Uncomment to remove / add pipeline register:
-//`define SOC_PIPELINE_REG
-
-localparam WORD_MEM_ADDR_WIDTH = MEM_ADDR_WIDTH-1;
+localparam WORD_MEM_ADDR_WIDTH = TURBO9_SOC_MEM_ADDR_WIDTH-1;
 
 
 wire  [4:0] pmem_even_turbo9_tgd_o;
@@ -174,7 +176,7 @@ wire  [7:0] dmem_even_ram_rd_dat;
 reg         dmem_odd_ram_we;
 wire  [7:0] dmem_odd_ram_rd_dat;
 
-wire  [7:0] acia_data_rd_dat;  
+wire  [7:0] acia_data_rd_dat;
 wire  [7:0] acia_status_rd_dat;
 
 reg         clk_cnt_ctrl_wr_en;
@@ -201,15 +203,15 @@ wire        ram_clk;
   // Turbo9R
   turbo9_gtr
   #(
-    .REGISTER_WB_OUTPUTS  (0),
-    .QUEUE_SIZE           (7)
+    .TURBO9_CPU_WB_PIPELINE_REG (TURBO9_CPU_WB_PIPELINE_REG), // CPU WB Pipeline Registers: True=1, False=0
+    .TURBO9_CPU_QUEUE_SIZE      (TURBO9_CPU_QUEUE_SIZE) // CPU Fetch Queue Size: 6=Default, 4=Min, 7=Max
   )
   I_turbo9_gtr
   (
     // Inputs: Clock & Reset
     .RST_I  (RST_I),
     .CLK_I  (CLK_I),
-    //                                 
+    //
     // Program Memory Wishbone Interface (Even bytes)
     .PMEM_EVEN_TGD_I       (pmem_even_turbo9_tgd_reg  ),
     .PMEM_EVEN_TGD_O       (pmem_even_turbo9_tgd_o    ),
@@ -229,10 +231,10 @@ wire        ram_clk;
     .PMEM_ODD_STALL_I      (1'b0                      ),
     .PMEM_ODD_ADR_O        (pmem_odd_turbo9_adr       ),
     .PMEM_ODD_DAT_O        (pmem_odd_turbo9_wr_dat    ),
-    .PMEM_ODD_WE_O         (pmem_odd_turbo9_we        ), 
+    .PMEM_ODD_WE_O         (pmem_odd_turbo9_we        ),
     .PMEM_ODD_STB_O        (pmem_odd_turbo9_stb       ),
     .PMEM_ODD_CYC_O        (    ),
-    //                                 
+    //
     // Data Memory Wishbone Interface (Even bytes)
     .DMEM_EVEN_TGD_I       (dmem_even_turbo9_tgd_reg  ),
     .DMEM_EVEN_TGD_O       (dmem_even_turbo9_tgd_o    ),
@@ -252,13 +254,14 @@ wire        ram_clk;
     .DMEM_ODD_STALL_I      (1'b0                      ),
     .DMEM_ODD_ADR_O        (dmem_odd_turbo9_adr       ),
     .DMEM_ODD_DAT_O        (dmem_odd_turbo9_wr_dat    ),
-    .DMEM_ODD_WE_O         (dmem_odd_turbo9_we        ), 
+    .DMEM_ODD_WE_O         (dmem_odd_turbo9_we        ),
     .DMEM_ODD_STB_O        (dmem_odd_turbo9_stb       ),
     .DMEM_ODD_CYC_O        (    )
 
   );
 
-`ifdef SOC_PIPELINE_REG
+generate
+  if (TURBO9_SOC_WB_PIPELINE_REG) begin: gen_soc_pipeline_reg
   //
   assign ram_clk = CLK_I;
   //
@@ -267,7 +270,7 @@ wire        ram_clk;
     if (RST_I) begin
       dmem_even_turbo9_adr_reg <= dmem_even_turbo9_adr_rst;
       dmem_even_turbo9_ack     <= 1'b0;
-      dmem_even_turbo9_tgd_reg <= dmem_even_turbo9_tgd_rst; 
+      dmem_even_turbo9_tgd_reg <= dmem_even_turbo9_tgd_rst;
       dmem_even_turbo9_we_reg  <= dmem_even_turbo9_we_rst;
       //
       dmem_odd_turbo9_adr_reg  <= dmem_odd_turbo9_adr_rst;
@@ -288,7 +291,7 @@ wire        ram_clk;
     if (RST_I) begin
       pmem_even_turbo9_adr_reg <= pmem_even_turbo9_adr_rst;
       pmem_even_turbo9_ack     <= 1'b0;
-      pmem_even_turbo9_tgd_reg <= pmem_even_turbo9_tgd_rst; 
+      pmem_even_turbo9_tgd_reg <= pmem_even_turbo9_tgd_rst;
       pmem_even_turbo9_we_reg  <= pmem_even_turbo9_we_rst;
       //
       pmem_odd_turbo9_adr_reg  <= pmem_odd_turbo9_adr_rst;
@@ -297,14 +300,14 @@ wire        ram_clk;
       pmem_even_turbo9_adr_reg <= pmem_even_turbo9_adr;
       pmem_even_turbo9_ack     <= pmem_even_turbo9_stb;
       pmem_even_turbo9_tgd_reg <= pmem_even_turbo9_tgd_o;
-      pmem_even_turbo9_we_reg  <= pmem_even_turbo9_we; 
+      pmem_even_turbo9_we_reg  <= pmem_even_turbo9_we;
       //
       pmem_odd_turbo9_adr_reg  <= pmem_odd_turbo9_adr;
       pmem_odd_turbo9_ack      <= pmem_odd_turbo9_stb;
     end
   end
   //
-`else
+  end else begin: gen_soc_no_pipeline_reg
   //
   assign ram_clk = ~CLK_I;
   //
@@ -312,7 +315,8 @@ wire        ram_clk;
     dmem_even_turbo9_adr_reg = dmem_even_turbo9_adr;
     dmem_even_turbo9_ack     = dmem_even_turbo9_stb;
     dmem_even_turbo9_tgd_reg = dmem_even_turbo9_tgd_o;
-    dmem_even_turbo9_we_reg  = dmem_even_turbo9_we; 
+    dmem_even_turbo9_we_reg  = dmem_even_turbo9_we;
+    //
     dmem_odd_turbo9_adr_reg  = dmem_odd_turbo9_adr;
     dmem_odd_turbo9_ack      = dmem_odd_turbo9_stb;
   end
@@ -321,12 +325,14 @@ wire        ram_clk;
     pmem_even_turbo9_adr_reg = pmem_even_turbo9_adr;
     pmem_even_turbo9_ack     = pmem_even_turbo9_stb;
     pmem_even_turbo9_tgd_reg = pmem_even_turbo9_tgd_o;
-    pmem_even_turbo9_we_reg  = pmem_even_turbo9_we; 
+    pmem_even_turbo9_we_reg  = pmem_even_turbo9_we;
+    //
     pmem_odd_turbo9_adr_reg  = pmem_odd_turbo9_adr;
     pmem_odd_turbo9_ack      = pmem_odd_turbo9_stb;
   end
   //
-`endif
+  end
+endgenerate
 
 
   // Write Enables (Even Bytes)
@@ -369,42 +375,42 @@ wire        ram_clk;
       dmem_odd_ram_we = dmem_odd_turbo9_we;
     end
   end
-  
+
   // RAM (Even bytes)
   syncram_dp_8bit
   #(
-    .MEM_ADDR_WIDTH (WORD_MEM_ADDR_WIDTH),
-    .MEM_INIT_FILE  ("default_even.hex")
+    .MEM_ADDR_WIDTH (WORD_MEM_ADDR_WIDTH),   // RAM Address Width: word address excludes byte lane bit
+    .MEM_INIT_FILE  ("default_even.hex")     // RAM Init File: default_even.hex
   )
   I_even_syncram_8bit
   (
     .CLK_I    (ram_clk),
 
     .A_WE_I   (dmem_even_ram_we),
-    .A_ADR_I  (dmem_even_turbo9_adr[MEM_ADDR_WIDTH-1:1]),
+    .A_ADR_I  (dmem_even_turbo9_adr[TURBO9_SOC_MEM_ADDR_WIDTH-1:1]),
     .A_DAT_I  (dmem_even_turbo9_wr_dat),
     .A_DAT_O  (dmem_even_ram_rd_dat),
 
-    .B_ADR_I  (pmem_even_turbo9_adr[MEM_ADDR_WIDTH-1:1]),
+    .B_ADR_I  (pmem_even_turbo9_adr[TURBO9_SOC_MEM_ADDR_WIDTH-1:1]),
     .B_DAT_O  (pmem_even_ram_rd_dat)
   );
 
   // RAM (Odd bytes)
   syncram_dp_8bit
   #(
-    .MEM_ADDR_WIDTH (WORD_MEM_ADDR_WIDTH),
-    .MEM_INIT_FILE  ("default_odd.hex")
+    .MEM_ADDR_WIDTH (WORD_MEM_ADDR_WIDTH),   // RAM Address Width: word address excludes byte lane bit
+    .MEM_INIT_FILE  ("default_odd.hex")      // RAM Init File: default_odd.hex
   )
   I_odd_syncram_8bit
   (
     .CLK_I    (ram_clk),
 
     .A_WE_I   (dmem_odd_ram_we),
-    .A_ADR_I  (dmem_odd_turbo9_adr[MEM_ADDR_WIDTH-1:1]),
+    .A_ADR_I  (dmem_odd_turbo9_adr[TURBO9_SOC_MEM_ADDR_WIDTH-1:1]),
     .A_DAT_I  (dmem_odd_turbo9_wr_dat),
     .A_DAT_O  (dmem_odd_ram_rd_dat),
 
-    .B_ADR_I  (pmem_odd_turbo9_adr[MEM_ADDR_WIDTH-1:1]),
+    .B_ADR_I  (pmem_odd_turbo9_adr[TURBO9_SOC_MEM_ADDR_WIDTH-1:1]),
     .B_DAT_O  (pmem_odd_ram_rd_dat)
   );
 
@@ -429,20 +435,20 @@ wire        ram_clk;
   );
 
 
-  // UART 
+  // UART
   t6551 I_t6551
   (
     // Inputs: Clock & Reset
     .RST_I            (RST_I              ),
     .CLK_I            (CLK_I              ),
-                                          
-    // Inputs                             
+
+    // Inputs
     .TX_DATA_I        (dmem_even_turbo9_wr_dat ),
     .TX_DATA_WR_EN_I  (acia_data_wr_en    ),
     .RXD_PIN_I        (RXD_PIN_I          ),
     .RX_DATA_RD_EN_I  (acia_data_rd_en    ),
-                                     
-    // Outputs                       
+
+    // Outputs
     .TXD_PIN_O        (TXD_PIN_O          ),
     .RX_DATA_O        (acia_data_rd_dat   ),
     .STATUS_DATA_O    (acia_status_rd_dat )
@@ -538,4 +544,3 @@ wire        ram_clk;
 /////////////////////////////////////////////////////////////////////////////
 
 endmodule
-

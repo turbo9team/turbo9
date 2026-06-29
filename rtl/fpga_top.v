@@ -143,7 +143,7 @@ end
 soc_top_gts
 //soc_top
 #(
-  16 // MEM_ADDR_WIDTH 
+  .TURBO9_SOC_MEM_ADDR_WIDTH (16) // SoC Memory Address Width: 16=64KB
 )
 //I_soc_top
 I_soc_top_gts
@@ -196,4 +196,3 @@ fpga_leds I_fpga_leds
 /////////////////////////////////////////////////////////////////////////////
 
 endmodule
-

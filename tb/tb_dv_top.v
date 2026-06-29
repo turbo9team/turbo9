@@ -59,7 +59,7 @@ module tb_dv_top;
   /////////////////////
 
   `define TURBO9_CPU_SIM_DEBUG      // Turns on debug strings in decode table verilog files
-  `define SIM_T6551_FAST  // Runs T6551 UART as fast as possible
+  `define TURBO9_SOC_SIM_T6551_FAST  // Runs T6551 UART as fast as possible
 
   `define SIM_MODEL_FAST      // 6809 Model Fast Mode (Drop idle bus cycles)
   //`define SIM_MODEL_VERBOSE   // 6809 Model Verbose Mode (More log infomation)
@@ -489,31 +489,31 @@ module tb_dv_top;
 `ifdef TURBO9_GTR
   soc_top_gtr
   #(
-    `MEM_ADDR_WIDTH // MEM_ADDR_WIDTH 
+    .TURBO9_SOC_MEM_ADDR_WIDTH (`MEM_ADDR_WIDTH) // SoC Memory Address Width: 16=64KB
   )
   I_soc_top_gtr
 `elsif TURBO9_GTS
   soc_top_gts
   #(
-    `MEM_ADDR_WIDTH // MEM_ADDR_WIDTH 
+    .TURBO9_SOC_MEM_ADDR_WIDTH (`MEM_ADDR_WIDTH) // SoC Memory Address Width: 16=64KB
   )
   I_soc_top_gts
 `elsif TURBO9_R
   soc_top_r
   #(
-    `MEM_ADDR_WIDTH // MEM_ADDR_WIDTH 
+    .TURBO9_SOC_MEM_ADDR_WIDTH (`MEM_ADDR_WIDTH) // SoC Memory Address Width: 16=64KB
   )
   I_soc_top_r
 `elsif TURBO9_S
   soc_top_s
   #(
-    `MEM_ADDR_WIDTH // MEM_ADDR_WIDTH 
+    .TURBO9_SOC_MEM_ADDR_WIDTH (`MEM_ADDR_WIDTH) // SoC Memory Address Width: 16=64KB
   )
   I_soc_top_s
 `else
   soc_top
   #(
-    `MEM_ADDR_WIDTH // MEM_ADDR_WIDTH 
+    .TURBO9_SOC_MEM_ADDR_WIDTH (`MEM_ADDR_WIDTH) // SoC Memory Address Width: 16=64KB
   )
   I_soc_top
 `endif
@@ -560,7 +560,7 @@ module tb_dv_top;
   /////////////////////////////////////////////////////////////////////////////
   tb_dv_soc_top_model
   #(
-    `MEM_ADDR_WIDTH // MEM_ADDR_WIDTH 
+    .TURBO9_SOC_MEM_ADDR_WIDTH (`MEM_ADDR_WIDTH) // SoC Model Memory Address Width: 16=64KB
   )
   I_tb_dv_soc_top_model
   (
@@ -606,7 +606,7 @@ module tb_dv_top;
   /////////////////////////////////////////////////////////////////////////////
   tb_dv_memory
   #(
-    `MEM_ADDR_WIDTH
+    `MEM_ADDR_WIDTH // TB Memory Address Width: 16=64KB
   )
   I_tb_dv_memory ();
 
@@ -623,4 +623,3 @@ module tb_dv_top;
 
 
 endmodule
-

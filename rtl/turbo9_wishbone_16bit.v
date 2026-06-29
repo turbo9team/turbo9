@@ -50,7 +50,7 @@
 
 module turbo9_wishbone_16bit
 #(
-  parameter REGISTER_WB_OUTPUTS = 1 // Register Wishbone Outputs: True=1, False=0
+  parameter TURBO9_CPU_WB_PIPELINE_REG = 0 // CPU WB Pipeline Registers: True=1, False=0
 )
 (
   // Inputs: Clock & Reset
@@ -66,7 +66,7 @@ module turbo9_wishbone_16bit
   output  [15:0] DAT_O,
   output   [1:0] SEL_O,
   output   [4:0] TGD_O,
-  output         WE_O, 
+  output         WE_O,
   output         STB_O,
   output         CYC_O,
 
@@ -99,10 +99,10 @@ module turbo9_wishbone_16bit
 //input        RST_I;  // Reset. Active high and synchronized to CLK_I
 //input        CLK_I;  // Clock
 
-// Wishbone Inputs 
+// Wishbone Inputs
 //input  [7:0] DAT_I;  // The data input array [DAT_I()] is used to pass
                        // binary data.
-                       // 
+                       //
 //input        ACK_I;  // The acknowledge input [ACK_I], when asserted,
                        // indicates the normal termination of a bus cycle.
                        // Also see the [ERR_I] and [RTY_I] signal descriptions.
@@ -133,25 +133,25 @@ module turbo9_wishbone_16bit
                        // [ADR_O(n..2)]. In some cases (such as FIFO
                        // interfaces) the array may not be present on the
                        // interface.
-                       // 
+                       //
 //output  [7:0] DAT_O; // The data output array [DAT_O()] is used to pass
                        // binary data. The array boundaries are determined by
                        // the port size, with a maximum port size of 64-bits
                        // (e.g. [DAT_I(63..0)]). Also see the [DAT_I()] and
                        // [SEL_O()] signal descriptions.
-                       // 
+                       //
 //output        WE_O;  // The write enable output [WE_O] indicates whether
                        // the current local bus cycle is a READ or WRITE
                        // cycle. The signal is negated during READ cycles,
                        // and is asserted during WRITE cycles.
-                       // 
+                       //
 //output        STB_O; //  The strobe output [STB_O] indicates a valid data
                        // transfer cycle. It is used to qualify various other
                        // signals on the interface such as [SEL_O()]. The
                        // SLAVE asserts either the [ACK_I], [ERR_I] or
                        // [RTY_I] signals in response to every assertion of
                        // the [STB_O] signal.
-                       // 
+                       //
 //output        CYC_O; // The cycle output [CYC_O], when asserted, indicates
                        // that a valid bus cycle is in progress. The signal
                        // is asserted for the duration of all bus cycles. For
@@ -185,7 +185,7 @@ module turbo9_wishbone_16bit
 //                             INTERNAL SIGNALS
 /////////////////////////////////////////////////////////////////////////////
 
-  
+
 //////////////////////////////////////// WIDTH_I defines
 //
 // This must match the MSB of the *_REG_SEL control vectors
@@ -215,11 +215,11 @@ localparam    sel_o_rst = 2'b00;
 reg           we_o_reg;
 reg           we_o_nxt;
 localparam    we_o_rst = 1'b0;
-           
+
 reg           stb_o_reg;
 reg           stb_o_nxt;
 localparam    stb_o_rst = 1'b0;
-           
+
 reg           cyc_o_reg;
 wire          cyc_o_nxt;
 localparam    cyc_o_rst = 1'b0;
@@ -280,7 +280,7 @@ wire   [7:0]  odd_byte;
 
 
 /////////////////////////////////////////////////////////////////////////////
-//                      WISHBONE PIPELINE OUTPUT LOGIC 
+//                      WISHBONE PIPELINE OUTPUT LOGIC
 /////////////////////////////////////////////////////////////////////////////
 //
 //
@@ -393,8 +393,8 @@ always @* begin
         //
         tag_adr0_o_nxt  = PMEM_ADR_I[0];
         adr_o_nxt       = {PMEM_ADR_I[15:1], 1'b0};
-        we_o_nxt        = 1'b0;            
-        stb_o_nxt       = 1'b1;            
+        we_o_nxt        = 1'b0;
+        stb_o_nxt       = 1'b1;
         //
       end else begin
         wishbone_state_nxt = WISHBONE_CYCLE0;
@@ -409,18 +409,18 @@ always @* begin
       tag_pmem_rd_o_nxt  = 1'b0;
       tag_width_o_nxt    = WIDTH_16;
       tag_adr0_o_nxt     = 1'b1;
-      adr_o_nxt[15:1]    = adr_o_reg[15:1] + 15'h0001;       
-      adr_o_nxt[0]       = 1'b0;       
+      adr_o_nxt[15:1]    = adr_o_reg[15:1] + 15'h0001;
+      adr_o_nxt[0]       = 1'b0;
       dat_o_nxt[15:8]    = lsb_byte_reg; // lsb
       //dat_o_nxt[ 7:0]  = // don't care
       sel_o_nxt          = 2'b10;
-      we_o_nxt           = we_o_reg;         
+      we_o_nxt           = we_o_reg;
       stb_o_nxt          = 1'b1;
-      wishbone_state_nxt = WISHBONE_CYCLE0;  
+      wishbone_state_nxt = WISHBONE_CYCLE0;
 
     end
   endcase
-end 
+end
 
 assign lsb_byte_nxt     = DMEM_DAT_I[7:0];
 
@@ -438,7 +438,7 @@ always @(posedge CLK_I, posedge RST_I) begin
 `endif
   if (RST_I) begin
     //
-`ifdef TURBO9_CPU_MIN_RESET 
+`ifdef TURBO9_CPU_MIN_RESET
     //adr_o_reg                <= adr_o_rst;              // INFO: RESET_NO
     //dat_o_reg                <= dat_o_rst;              // INFO: RESET_NO
     sel_o_reg                <= sel_o_rst;                // INFO: RESET_YES
@@ -491,19 +491,19 @@ always @(posedge CLK_I, posedge RST_I) begin
       tag_adr0_o_reg           <= tag_adr0_o_nxt;
       pending_cnt_reg          <= pending_cnt_nxt;
       lsb_byte_reg             <= lsb_byte_nxt;
-      wishbone_state_reg       <= wishbone_state_nxt;  
+      wishbone_state_reg       <= wishbone_state_nxt;
     end
   end
 end
 
 
 generate
-  if (REGISTER_WB_OUTPUTS) begin
+  if (TURBO9_CPU_WB_PIPELINE_REG) begin
     //
     assign ADR_O       = adr_o_reg;
     assign DAT_O       = dat_o_reg;
     assign SEL_O       = sel_o_reg;
-    assign WE_O        = we_o_reg ; 
+    assign WE_O        = we_o_reg ;
     assign STB_O       = stb_o_reg;
     assign CYC_O       = cyc_o_reg;
     //
@@ -518,7 +518,7 @@ generate
     assign ADR_O       = adr_o_nxt;
     assign DAT_O       = dat_o_nxt;
     assign SEL_O       = sel_o_nxt;
-    assign WE_O        = we_o_nxt ; 
+    assign WE_O        = we_o_nxt ;
     assign STB_O       = stb_o_nxt;
     assign CYC_O       = cyc_o_nxt;
     //

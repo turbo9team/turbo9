@@ -53,7 +53,7 @@
   //
   //
   // I/O Space: FFEF - FF00
-  // 
+  //
   // FF08          CLK_CNT_CTRL[1:0] (read)  /  CLK_CNT_CTRL (write)
   // FF04 : FF07   CLK_CNT[31:0]     (read)
   // FF03          ACIA_STATUS       (read)
@@ -79,19 +79,24 @@
 /////////////////////////////////////////////////////////////////////////////
 //                                MODULE
 /////////////////////////////////////////////////////////////////////////////
+`include "turbo9_soc_config.vh"
+
 module soc_top
 #(
-  parameter MEM_ADDR_WIDTH = 16 // 64KB Memory
+  parameter TURBO9_SOC_MEM_ADDR_WIDTH = 16, // SoC Memory Address Width: 16=64KB
+  parameter TURBO9_SOC_WB_PIPELINE_REG = 0, // SoC WB Pipeline Registers: True=1, False=0
+  parameter TURBO9_CPU_WB_PIPELINE_REG = 0, // CPU WB Pipeline Registers: True=1, False=0
+  parameter TURBO9_CPU_QUEUE_SIZE = 6 // CPU Fetch Queue Size: 6=Default, 4=Min, 7=Max
 )
 (
   // Inputs: Clock & Reset
   input          RST_I, // Reset. Active high and synchronized to CLK_I
   input          CLK_I, // Clock
 
-  // Inputs 
+  // Inputs
   input          RXD_PIN_I,
   input    [7:0] GPI_PORT_I,
-  
+
   // Outputs
   output         TXD_PIN_O,
   output   [7:0] GPO_PORT_O
@@ -100,9 +105,6 @@ module soc_top
 /////////////////////////////////////////////////////////////////////////////
 //                             INTERNAL SIGNALS
 /////////////////////////////////////////////////////////////////////////////
-
-// Comment / Uncomment to remove / add pipeline register:
-//`define SOC_PIPELINE_REG
 
 wire  [3:0] turbo9_tgd_o;
 reg   [3:0] turbo9_tgd_reg;
@@ -121,7 +123,7 @@ wire        turbo9_we;
 reg         turbo9_we_reg;
 localparam  turbo9_we_rst = 1'b0;
 
-wire  [7:0] acia_data_rd_dat;  
+wire  [7:0] acia_data_rd_dat;
 wire  [7:0] acia_status_rd_dat;
 
 reg         acia_data_wr_en;
@@ -147,36 +149,35 @@ wire        ram_clk;
 /////////////////////////////////////////////////////////////////////////////
 //                                REGISTERS
 /////////////////////////////////////////////////////////////////////////////
-  
+
   turbo9
   #(
-    .REGISTER_WB_OUTPUTS  (0), // Register Wishbone Outputs: True=1, False=0
-    .QUEUE_SIZE           (6)  // Fetch Queue Size: 6=Default, 4=Min, 7=Max                 
+    .TURBO9_CPU_WB_PIPELINE_REG (TURBO9_CPU_WB_PIPELINE_REG), // CPU WB Pipeline Registers: True=1, False=0
+    .TURBO9_CPU_QUEUE_SIZE      (TURBO9_CPU_QUEUE_SIZE) // CPU Fetch Queue Size: 6=Default, 4=Min, 7=Max
   )
   I_turbo9
   (
     // Inputs: Clock & Reset
     .RST_I  (RST_I),
     .CLK_I  (CLK_I),
- 
-    // Inputs 
+
+    // Inputs
     .DAT_I   (turbo9_rd_dat),
     .TGD_I   (turbo9_tgd_reg),
     .ACK_I   (turbo9_ack),
     .STALL_I (1'b0),
-    
+
     // Outputs
     .ADR_O   (turbo9_adr),
     .DAT_O   (turbo9_wr_dat),
     .TGD_O   (turbo9_tgd_o),
-    .WE_O    (turbo9_we), 
+    .WE_O    (turbo9_we),
     .STB_O   (turbo9_stb),
     .CYC_O   ()
   );
 
-
-
-`ifdef SOC_PIPELINE_REG
+generate
+  if (TURBO9_SOC_WB_PIPELINE_REG) begin: gen_soc_pipeline_reg
   //
   assign ram_clk = CLK_I;
   //
@@ -185,17 +186,17 @@ wire        ram_clk;
     if (RST_I) begin
       turbo9_adr_reg <= turbo9_adr_rst;
       turbo9_ack     <= 1'b0;
-      turbo9_tgd_reg <= turbo9_tgd_rst; 
-      turbo9_we_reg  <= turbo9_we_rst; 
+      turbo9_tgd_reg <= turbo9_tgd_rst;
+      turbo9_we_reg  <= turbo9_we_rst;
     end else begin
       turbo9_adr_reg <= turbo9_adr;
       turbo9_ack     <= turbo9_stb;
       turbo9_tgd_reg <= turbo9_tgd_o;
-      turbo9_we_reg  <= turbo9_we; 
+      turbo9_we_reg  <= turbo9_we;
     end
   end
   //
-`else
+  end else begin: gen_soc_no_pipeline_reg
   //
   assign ram_clk = ~CLK_I;
   //
@@ -203,10 +204,11 @@ wire        ram_clk;
     turbo9_adr_reg = turbo9_adr;
     turbo9_ack     = turbo9_stb;
     turbo9_tgd_reg = turbo9_tgd_o;
-    turbo9_we_reg  = turbo9_we; 
+    turbo9_we_reg  = turbo9_we;
   end
   //
-`endif
+  end
+endgenerate
 
 
   // Write Enables
@@ -236,14 +238,14 @@ wire        ram_clk;
   // RAM
   syncram_8bit
   #(
-    .MEM_ADDR_WIDTH (MEM_ADDR_WIDTH),
-    .MEM_INIT_FILE  ("default.hex")
+    .MEM_ADDR_WIDTH (TURBO9_SOC_MEM_ADDR_WIDTH), // RAM Address Width: 16=64KB
+    .MEM_INIT_FILE  ("default.hex")              // RAM Init File: default.hex
   )
   I_syncram_8bit
   (
     .CLK_I  (ram_clk),
     .WE_I   (ram_we),
-    .ADR_I  (turbo9_adr[MEM_ADDR_WIDTH-1:0]),
+    .ADR_I  (turbo9_adr[TURBO9_SOC_MEM_ADDR_WIDTH-1:0]),
     .DAT_I  (turbo9_wr_dat),
     .DAT_O  (ram_rd_dat)
   );
@@ -259,7 +261,7 @@ wire        ram_clk;
     .GPO_PORT_O (GPO_PORT_O)
   );
 
-  // Input Port 
+  // Input Port
   gpi_port I_gpi_port
   (
     .CLK_I       (CLK_I           ),
@@ -267,20 +269,20 @@ wire        ram_clk;
     .DAT_O       (gpi_port_rd_dat )
   );
 
-  // UART 
+  // UART
   t6551 I_t6551
   (
     // Inputs: Clock & Reset
     .RST_I            (RST_I              ),
     .CLK_I            (CLK_I              ),
-                                          
-    // Inputs                             
+
+    // Inputs
     .TX_DATA_I        (turbo9_wr_dat      ),
     .TX_DATA_WR_EN_I  (acia_data_wr_en    ),
     .RXD_PIN_I        (RXD_PIN_I          ),
     .RX_DATA_RD_EN_I  (acia_data_rd_en    ),
-                                     
-    // Outputs                       
+
+    // Outputs
     .TXD_PIN_O        (TXD_PIN_O          ),
     .RX_DATA_O        (acia_data_rd_dat   ),
     .STATUS_DATA_O    (acia_status_rd_dat )
@@ -293,11 +295,11 @@ wire        ram_clk;
     .RST_I                (RST_I          ),
     .CLK_I                (CLK_I          ),
 
-    // Inputs         
+    // Inputs
     .DATA_I               (turbo9_wr_dat      ),
     .CLK_CNT_CTRL_WR_EN_I (clk_cnt_ctrl_wr_en ),
 
-    // Outputs         
+    // Outputs
     .CLK_CNT_CTRL_DATA_O  (clk_cnt_ctrl_dat   ),
     .CLK_CNT_DATA_O       (clk_cnt_rd_dat     )
   );

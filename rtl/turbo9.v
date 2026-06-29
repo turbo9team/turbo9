@@ -51,8 +51,8 @@
 
 module turbo9
 #(
-  parameter REGISTER_WB_OUTPUTS = 1, // Register Wishbone Outputs: True=1, False=0
-  parameter QUEUE_SIZE          = 6  // Fetch Queue Size: 6=Default, 4=Min, 7=Max 
+  parameter TURBO9_CPU_WB_PIPELINE_REG = 0, // CPU WB Pipeline Registers: True=1, False=0
+  parameter TURBO9_CPU_QUEUE_SIZE = 6 // CPU Fetch Queue Size: 6=Default, 4=Min, 7=Max
 )
 (
   // Inputs: Clock & Reset
@@ -64,7 +64,7 @@ module turbo9
   input    [3:0] TGD_I,
   input          ACK_I,
   input          STALL_I,
-  
+
   // Outputs
   output  [15:0] ADR_O,
   output   [7:0] DAT_O,
@@ -91,21 +91,21 @@ localparam TYPE_TURBO9GT  = 3; // Separate Program & Data  8-bit Buses
 localparam TYPE_TURBO9GTS = 4; // Separate Program & Data 16-bit Buses (Aligned)
 localparam TYPE_TURBO9GTR = 5; // Separate Program & Data 16-bit Buses (Non-aligned)
 
-wire [15:0] dmem_dat_o;   
-wire [15:0] dmem_dat_i;  
-wire [15:0] dmem_adr_o;   
+wire [15:0] dmem_dat_o;
+wire [15:0] dmem_dat_i;
+wire [15:0] dmem_adr_o;
 wire        dmem_busy_i;
-wire        dmem_req_o;   
-wire        dmem_req_width_o;   
+wire        dmem_req_o;
+wire        dmem_req_width_o;
 wire        dmem_we_o;
 wire        dmem_rd_ack_i;
 wire        dmem_wr_ack_i;
 wire        dmem_ack_width_i;
 
-wire [15:0] pmem_dat_i;   
-wire [15:0] pmem_adr_o;   
-wire        pmem_busy_i;  
-wire        pmem_rd_req_o; 
+wire [15:0] pmem_dat_i;
+wire [15:0] pmem_adr_o;
+wire        pmem_busy_i;
+wire        pmem_rd_req_o;
 wire        pmem_rd_ack_i;
 
 /////////////////////////////////////////////////////////////////////////////
@@ -114,12 +114,12 @@ wire        pmem_rd_ack_i;
 /////////////////////////////////////////////////////////////////////////////
 //                            CPU ARCHITECTURE
 /////////////////////////////////////////////////////////////////////////////
-  
+
 
   turbo9_pipeline
   #(
-    .TURBO9_TYPE  (TYPE_TURBO9), // 0=Turbo9, 1=Turbo9S, 2=Turbo9R, 3=Turbo9GT, 4=Turbo9GTS, 5=Turbo9GTR
-    .QUEUE_SIZE   (QUEUE_SIZE)   // Fetch Queue Size: 6=Default, 4=Min, 7=Max
+    .TURBO9_TYPE            (TYPE_TURBO9), // 0=Turbo9, 1=Turbo9S, 2=Turbo9R, 3=Turbo9GT, 4=Turbo9GTS, 5=Turbo9GTR
+    .TURBO9_CPU_QUEUE_SIZE  (TURBO9_CPU_QUEUE_SIZE) // CPU Fetch Queue Size: 6=Default, 4=Min, 7=Max
   )
   I_turbo9_pipeline
   (
@@ -151,15 +151,15 @@ wire        pmem_rd_ack_i;
 
   turbo9_wishbone_8bit
   #(
-    .REGISTER_WB_OUTPUTS  (REGISTER_WB_OUTPUTS)  // Register Wishbone Outputs: True=1, False=0
+    .TURBO9_CPU_WB_PIPELINE_REG (TURBO9_CPU_WB_PIPELINE_REG) // CPU WB Pipeline Registers: True=1, False=0
   )
   I_turbo9_wishbone_8bit
   (
     // Inputs: Clock & Reset
     .RST_I            (RST_I            ),
     .CLK_I            (CLK_I            ),
-    //                                 
-    // External Wishbone Interface     
+    //
+    // External Wishbone Interface
     .DAT_I            (DAT_I            ),
     .TGD_I            (TGD_I            ),
     .ACK_I            (ACK_I            ),
@@ -167,11 +167,11 @@ wire        pmem_rd_ack_i;
     .ADR_O            (ADR_O            ),
     .DAT_O            (DAT_O            ),
     .TGD_O            (TGD_O            ),
-    .WE_O             (WE_O             ), 
+    .WE_O             (WE_O             ),
     .STB_O            (STB_O            ),
     .CYC_O            (CYC_O            ),
-    //                                 
-    // Data Memory Interface           
+    //
+    // Data Memory Interface
     .DMEM_DAT_I       (dmem_dat_o       ),
     .DMEM_DAT_O       (dmem_dat_i       ),
     .DMEM_ADR_I       (dmem_adr_o       ),

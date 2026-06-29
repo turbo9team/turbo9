@@ -46,10 +46,12 @@
 /////////////////////////////////////////////////////////////////////////////
 //                                MODULE
 /////////////////////////////////////////////////////////////////////////////
+`include "turbo9_soc_config.vh"
+
 module syncram_8bit
 #(
-  parameter MEM_ADDR_WIDTH = 12,
-  parameter MEM_INIT_FILE = "syncram_8bit.hex"
+  parameter MEM_ADDR_WIDTH = 12,                  // RAM Address Width: 12=4KB
+  parameter MEM_INIT_FILE  = "syncram_8bit.hex"   // RAM Init File: syncram_8bit.hex
 )
 (
   input          CLK_I,
@@ -87,5 +89,3 @@ assign DAT_O = dat_o_reg;
 /////////////////////////////////////////////////////////////////////////////
 
 endmodule
-
-

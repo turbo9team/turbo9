@@ -52,13 +52,13 @@
 module turbo9_pipeline
 #(
   parameter TURBO9_TYPE = 0, // 0=Turbo9, 1=Turbo9S, 2=Turbo9R, 3=Turbo9GT, 4=Turbo9GTS, 5=Turbo9GTR
-  parameter QUEUE_SIZE  = 6  // Fetch Queue Size: 6=Default, 4=Min, 7=Max
+  parameter TURBO9_CPU_QUEUE_SIZE = 6 // CPU Fetch Queue Size: 6=Default, 4=Min, 7=Max
 )
 (
   // Inputs: Clock & Reset
   input          RST_I,
   input          CLK_I,
-  //                                 
+  //
   // Data Memory Interface
   output  [15:0] DMEM_DAT_O,
   input   [15:0] DMEM_DAT_I,
@@ -149,21 +149,21 @@ wire [15:0] dec_exe_new_pc;
   //////////////////////////////////////// Fetch Stage
   turbo9_fetch_stage
   #(
-    .TURBO9_TYPE  (TURBO9_TYPE), // 0=Turbo9, 1=Turbo9S, 2=Turbo9R, 3=Turbo9GT, 4=Turbo9GTS, 5=Turbo9GTR
-    .QUEUE_SIZE   (QUEUE_SIZE)   // Fetch Queue Size: 6=Default, 4=Min, 7=Max
+    .TURBO9_TYPE            (TURBO9_TYPE), // 0=Turbo9, 1=Turbo9S, 2=Turbo9R, 3=Turbo9GT, 4=Turbo9GTS, 5=Turbo9GTR
+    .TURBO9_CPU_QUEUE_SIZE  (TURBO9_CPU_QUEUE_SIZE) // CPU Fetch Queue Size: 6=Default, 4=Min, 7=Max
   )
   I_turbo9_fetch_stage
   (
     // Inputs: Clock & Reset
     .RST_I                    (RST_I                  ),
     .CLK_I                    (CLK_I                  ),
-    //                                                
-    // Fetch/Decode Interface                         
+    //
+    // Fetch/Decode Interface
     .FET_DEC_PC_I             (fet_dec_pc             ),
     .FET_DEC_LOAD_PC_I        (fet_dec_load_pc        ),
     .FET_DEC_INSTR_RD_EN_I    (fet_dec_instr_rd_en    ),
     .FET_DEC_INSTR_LEN_I      (fet_dec_instr_len      ),
-    //                                                
+    //
     .FET_DEC_NXT_PC_O         (fet_dec_nxt_pc         ),
     .FET_DEC_REG_QUEUE_LVL_O  (fet_dec_reg_queue_lvl  ),
     .FET_DEC_REG_QUEUE_D3_O   (fet_dec_reg_queue_d3   ),
@@ -171,7 +171,7 @@ wire [15:0] dec_exe_new_pc;
     .FET_DEC_REG_QUEUE_D1_O   (fet_dec_reg_queue_d1   ),
     .FET_DEC_REG_QUEUE_D0_O   (fet_dec_reg_queue_d0   ),
     .FET_DEC_REG_PREBYTE_EN_O (fet_dec_reg_prebyte_en ),
-    //                                                
+    //
     // Program Memory Interface
     .PMEM_DAT_I               (PMEM_DAT_I             ),
     .PMEM_ADR_O               (PMEM_ADR_O             ),
@@ -188,7 +188,7 @@ wire [15:0] dec_exe_new_pc;
     // Inputs: Clock & Reset
     .RST_I                               (RST_I                          ),
     .CLK_I                               (CLK_I                          ),
-    //                                                                           
+    //
     // Decode Execute Control Interface
     .DEC_EXE_STALL_MICROCYCLE_O          (dec_exe_stall_microcycle       ),
     .DEC_EXE_DMEM_OP_READY_I             (dec_exe_dmem_op_ready          ),
@@ -198,7 +198,7 @@ wire [15:0] dec_exe_new_pc;
     .DEC_EXE_NXT_PC_O                    (dec_exe_nxt_pc                 ),
     .DEC_EXE_NEW_PC_WR_EN_I              (dec_exe_new_pc_wr_en           ),
     .DEC_EXE_NEW_PC_I                    (dec_exe_new_pc                 ),
-    // 
+    //
     // Micro-Op
     .DEC_EXE_UOP_DATA_ALU_A_SEL_O        (dec_exe_uop_data_alu_a_sel     ),
     .DEC_EXE_UOP_DATA_ALU_B_SEL_O        (dec_exe_uop_data_alu_b_sel     ),
@@ -227,7 +227,7 @@ wire [15:0] dec_exe_new_pc;
     .FET_DEC_LOAD_PC_O                   (fet_dec_load_pc                ),
     .FET_DEC_INSTR_RD_EN_O               (fet_dec_instr_rd_en            ),
     .FET_DEC_INSTR_LEN_O                 (fet_dec_instr_len              ),
-    //                                                                         
+    //
     .FET_DEC_NXT_PC_I                    (fet_dec_nxt_pc                 ),
     .FET_DEC_REG_QUEUE_LVL_I             (fet_dec_reg_queue_lvl          ),
     .FET_DEC_REG_QUEUE_D3_I              (fet_dec_reg_queue_d3           ),
@@ -278,8 +278,8 @@ wire [15:0] dec_exe_new_pc;
     .DEC_EXE_UOP_IDX_INDIRECT_EN_I       (dec_exe_uop_idx_indirect_en    ),
     .DEC_EXE_UOP_BRANCH_SEL_I            (dec_exe_uop_branch_sel         ),
     .DEC_EXE_UOP_STACK_DONE_I            (dec_exe_uop_stack_done         ),
-    //                                                                              
-    // Data Memory Interface                                                        
+    //
+    // Data Memory Interface
     .DMEM_DAT_O                          (DMEM_DAT_O                     ),
     .DMEM_DAT_I                          (DMEM_DAT_I                     ),
     .DMEM_ADR_O                          (DMEM_ADR_O                     ),

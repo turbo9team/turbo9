@@ -51,7 +51,7 @@
 
 module turbo9_pipeline
 #(
-  parameter TURBO9_TYPE = 0, // 0=Turbo9, 1=Turbo9S, 2=Turbo9R, 3=Turbo9GT, 4=Turbo9GTS, 5=Turbo9GTR
+  parameter TURBO9_CPU_TYPE       = 0, // 0=Turbo9, 1=Turbo9S, 2=Turbo9R, 3=Turbo9GT, 4=Turbo9GTS, 5=Turbo9GTR
   parameter TURBO9_CPU_QUEUE_SIZE = 6 // CPU Fetch Queue Size: 6=Default, 4=Min, 7=Max
 )
 (
@@ -149,7 +149,7 @@ wire [15:0] dec_exe_new_pc;
   //////////////////////////////////////// Fetch Stage
   turbo9_fetch_stage
   #(
-    .TURBO9_TYPE            (TURBO9_TYPE), // 0=Turbo9, 1=Turbo9S, 2=Turbo9R, 3=Turbo9GT, 4=Turbo9GTS, 5=Turbo9GTR
+    .TURBO9_CPU_TYPE        (TURBO9_CPU_TYPE), // 0=Turbo9, 1=Turbo9S, 2=Turbo9R, 3=Turbo9GT, 4=Turbo9GTS, 5=Turbo9GTR
     .TURBO9_CPU_QUEUE_SIZE  (TURBO9_CPU_QUEUE_SIZE) // CPU Fetch Queue Size: 6=Default, 4=Min, 7=Max
   )
   I_turbo9_fetch_stage

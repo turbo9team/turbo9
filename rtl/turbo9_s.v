@@ -119,7 +119,7 @@ wire        pmem_ack_width_i;
 
   turbo9_pipeline
   #(
-    .TURBO9_TYPE            (TYPE_TURBO9S), // 0=Turbo9, 1=Turbo9S, 2=Turbo9R, 3=Turbo9GT, 4=Turbo9GTS, 5=Turbo9GTR
+    .TURBO9_CPU_TYPE        (TYPE_TURBO9S), // 0=Turbo9, 1=Turbo9S, 2=Turbo9R, 3=Turbo9GT, 4=Turbo9GTS, 5=Turbo9GTR
     .TURBO9_CPU_QUEUE_SIZE  (TURBO9_CPU_QUEUE_SIZE) // CPU Fetch Queue Size: 6=Default, 4=Min, 7=Max
   )
   I_turbo9_pipeline

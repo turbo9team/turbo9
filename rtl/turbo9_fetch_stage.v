@@ -50,7 +50,7 @@
 
 module turbo9_fetch_stage
 #(
-  parameter TURBO9_TYPE = 0, // 0=Turbo9, 1=Turbo9S, 2=Turbo9R, 3=Turbo9GT, 4=Turbo9GTS, 5=Turbo9GTR
+  parameter TURBO9_CPU_TYPE       = 0, // 0=Turbo9, 1=Turbo9S, 2=Turbo9R, 3=Turbo9GT, 4=Turbo9GTS, 5=Turbo9GTR
   parameter TURBO9_CPU_QUEUE_SIZE = 6 // CPU Fetch Queue Size: 6=Default, 4=Min, 7=Max
 )
 (
@@ -169,13 +169,13 @@ assign pmem_rd_req         = (pc_offset_reg <= size_const) | FET_DEC_LOAD_PC_I;
 assign pmem_rd_en          = pmem_rd_req & ~PMEM_BUSY_I;
 
 generate
-  if ((TURBO9_TYPE == TYPE_TURBO9) || (TURBO9_TYPE == TYPE_TURBO9GT)) begin
+  if ((TURBO9_CPU_TYPE == TYPE_TURBO9) || (TURBO9_CPU_TYPE == TYPE_TURBO9GT)) begin
     assign pmem_rd_len = 4'h1;
     assign PMEM_REQ_WIDTH_O = WIDTH_8;
-  end else if ((TURBO9_TYPE == TYPE_TURBO9S) || (TURBO9_TYPE == TYPE_TURBO9GTS)) begin
+  end else if ((TURBO9_CPU_TYPE == TYPE_TURBO9S) || (TURBO9_CPU_TYPE == TYPE_TURBO9GTS)) begin
     assign pmem_rd_len      = (PMEM_ADR_O[0]) ?  4'h1    : 4'h2;
     assign PMEM_REQ_WIDTH_O = (PMEM_ADR_O[0]) ?  WIDTH_8 : WIDTH_16;
-  end else if ((TURBO9_TYPE == TYPE_TURBO9R) || (TURBO9_TYPE == TYPE_TURBO9GTR)) begin
+  end else if ((TURBO9_CPU_TYPE == TYPE_TURBO9R) || (TURBO9_CPU_TYPE == TYPE_TURBO9GTR)) begin
     assign pmem_rd_len = 4'h2;
     assign PMEM_REQ_WIDTH_O = WIDTH_16;
   end
@@ -326,7 +326,7 @@ end
 
 turbo9_fetch_queue
 #(
-  .TURBO9_TYPE            (TURBO9_TYPE), // 0=Turbo9, 1=Turbo9S, 2=Turbo9R, 3=Turbo9GT, 4=Turbo9GTS, 5=Turbo9GTR
+  .TURBO9_CPU_TYPE        (TURBO9_CPU_TYPE), // 0=Turbo9, 1=Turbo9S, 2=Turbo9R, 3=Turbo9GT, 4=Turbo9GTS, 5=Turbo9GTR
   .TURBO9_CPU_QUEUE_SIZE  (TURBO9_CPU_QUEUE_SIZE) // CPU Fetch Queue Size: 6=Default, 4=Min, 7=Max
 )
 I_turbo9_fetch_queue

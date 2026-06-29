@@ -50,7 +50,7 @@
 
 module turbo9_fetch_queue
 #(
-  parameter TURBO9_TYPE = 0, // 0=Turbo9, 1=Turbo9S, 2=Turbo9R, 3=Turbo9GT, 4=Turbo9GTS, 5=Turbo9GTR
+  parameter TURBO9_CPU_TYPE       = 0, // 0=Turbo9, 1=Turbo9S, 2=Turbo9R, 3=Turbo9GT, 4=Turbo9GTS, 5=Turbo9GTR
   parameter TURBO9_CPU_QUEUE_SIZE = 6 // CPU Fetch Queue Size: 6=Default, 4=Min, 7=Max
 )
 (
@@ -243,7 +243,7 @@ endgenerate
 /////////////////////////////////// Write Logic
 //
 generate
-  if ((TURBO9_TYPE == TYPE_TURBO9) || (TURBO9_TYPE == TYPE_TURBO9GT)) begin
+  if ((TURBO9_CPU_TYPE == TYPE_TURBO9) || (TURBO9_CPU_TYPE == TYPE_TURBO9GT)) begin
     //
     // Write Enable Logic (8bit)
     // assign queue_data_nxt[0] = (queue_wr_en[0]) ? QUEUE_DAT_I[ 7:0] : queue_data_shift1[0];

@@ -48,6 +48,8 @@
 //////////////////////////////////////////////////////////////////////////////
 // [TURBO9_HEADER_END]
 
+`include "turbo9_tb_config.vh"
+
 module tb_dv_uart_agent
 #(
   // Filename bus widths (bytes*8)
@@ -199,5 +201,4 @@ module tb_dv_uart_agent
   end
 
 endmodule
-
 

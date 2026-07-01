@@ -53,7 +53,7 @@
   ////////////////////////////////////////////////////////////////////////////
   task write_tb_mem8(input [15:0] addr, input [7:0] data);
   begin
-    `tb_mem[addr[(`MEM_ADDR_WIDTH-1):0]] = data;
+    `tb_mem[addr[(`TURBO9_TB_MEM_ADDR_WIDTH-1):0]] = data;
   end
   endtask
 
@@ -64,8 +64,8 @@
     reg [15:0] addr_inc;
   begin
     addr_inc = addr + 'h1;
-    `tb_mem[addr[(`MEM_ADDR_WIDTH-1):0]] = data[15:8];
-    `tb_mem[addr_inc[(`MEM_ADDR_WIDTH-1):0]] = data[7:0];
+    `tb_mem[addr[(`TURBO9_TB_MEM_ADDR_WIDTH-1):0]] = data[15:8];
+    `tb_mem[addr_inc[(`TURBO9_TB_MEM_ADDR_WIDTH-1):0]] = data[7:0];
   end
   endtask
 
@@ -75,7 +75,7 @@
   task write_tb_mem8p(input [15:0] addr, input [7:0] data);
   begin
     $write("[TB: write_tb_mem8p ] @ 0x%4x <=   0x%2x : ", addr, data);
-    `tb_mem[addr[(`MEM_ADDR_WIDTH-1):0]] = data;
+    `tb_mem[addr[(`TURBO9_TB_MEM_ADDR_WIDTH-1):0]] = data;
   end
   endtask
 
@@ -87,8 +87,8 @@
   begin
     $write("[TB: write_tb_mem16p] @ 0x%4x <= 0x%4x : ", addr, data);
     addr_inc = addr + 'h1;
-    `tb_mem[addr[(`MEM_ADDR_WIDTH-1):0]] = data[15:8];
-    `tb_mem[addr_inc[(`MEM_ADDR_WIDTH-1):0]] = data[7:0];
+    `tb_mem[addr[(`TURBO9_TB_MEM_ADDR_WIDTH-1):0]] = data[15:8];
+    `tb_mem[addr_inc[(`TURBO9_TB_MEM_ADDR_WIDTH-1):0]] = data[7:0];
   end
   endtask
 
@@ -101,9 +101,9 @@
   begin
 `ifdef TURBO9_16BIT
     if (addr[0] == 1'b0) begin
-      read_dut_mem8 = `dut_mem_even[addr[15:1]];
+      read_dut_mem8 = `dut_mem_even[addr[(`TURBO9_TB_MEM_ADDR_WIDTH-1):1]];
     end else begin
-      read_dut_mem8 = `dut_mem_odd[addr[15:1]];
+      read_dut_mem8 = `dut_mem_odd[addr[(`TURBO9_TB_MEM_ADDR_WIDTH-1):1]];
     end
 `else
     read_dut_mem8 = `dut_mem[addr];
@@ -118,9 +118,9 @@
   begin
 `ifdef TURBO9_16BIT
     if (addr[0] == 1'b0) begin
-      `dut_mem_even[addr[15:1]]  = data;
+      `dut_mem_even[addr[(`TURBO9_TB_MEM_ADDR_WIDTH-1):1]]  = data;
     end else begin
-      `dut_mem_odd[addr[15:1]]   = data;
+      `dut_mem_odd[addr[(`TURBO9_TB_MEM_ADDR_WIDTH-1):1]]   = data;
     end
 `else
     `dut_mem[addr] = data;
@@ -137,11 +137,11 @@
     reg [15:0] addr;
   begin
     $display("[TB: copy_tb_mem    ] Copy testbench program into model and DUT memory");
-    for (ptr = 0; ptr < (2**`MEM_ADDR_WIDTH); ptr++) begin
+    for (ptr = 0; ptr < (2**`TURBO9_TB_MEM_ADDR_WIDTH); ptr++) begin
       write_dut_mem8(ptr,`tb_mem[ptr]);
       `model_mem[ptr] = `tb_mem[ptr];
       //
-      addr = {{(16-`MEM_ADDR_WIDTH){1'b1}},ptr[(`MEM_ADDR_WIDTH-1):0]};
+      addr = {{(16-`TURBO9_TB_MEM_ADDR_WIDTH){1'b1}},ptr[(`TURBO9_TB_MEM_ADDR_WIDTH-1):0]};
       if (addr >= `asm_init_stack_data) begin 
         case(addr)
             `asm_init_cc      : $display("[TB: copy_tb_mem    ] Stack Initialized Reg: EFHI_NZVC  = 0x%2x", `tb_mem[ptr]);
@@ -174,9 +174,9 @@
   begin
     ptr = 0;
     diff_cnt = 0;
-    while ((ptr < (2**`MEM_ADDR_WIDTH)) && ((diff_cnt == 0) || ~stop_on_err) ) begin
+    while ((ptr < (2**`TURBO9_TB_MEM_ADDR_WIDTH)) && ((diff_cnt == 0) || ~stop_on_err) ) begin
 
-      addr = {{(16-`MEM_ADDR_WIDTH){1'b1}},ptr[(`MEM_ADDR_WIDTH-1):0]};
+      addr = {{(16-`TURBO9_TB_MEM_ADDR_WIDTH){1'b1}},ptr[(`TURBO9_TB_MEM_ADDR_WIDTH-1):0]};
       mdc_dut_mem = read_dut_mem8(ptr);
 
       if (addr >= `asm_init_stack_data) begin 
@@ -471,7 +471,7 @@
       $sformat(hex_file_name,"%0s.0x%2x.%0d.hex",test_name,opcode,itr_idx);
     end
     hex_file_ptr = $fopen(hex_file_name,"w");
-    for (hex_file_idx = 0; hex_file_idx<(2**`MEM_ADDR_WIDTH); hex_file_idx++) begin
+    for (hex_file_idx = 0; hex_file_idx<(2**`TURBO9_TB_MEM_ADDR_WIDTH); hex_file_idx++) begin
       $fwrite(hex_file_ptr,"%2x\n",`tb_mem[hex_file_idx]);
     end
     $fclose(hex_file_ptr);

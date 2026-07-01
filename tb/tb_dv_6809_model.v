@@ -50,6 +50,8 @@
 //                        6809 Behavioral Model
 /////////////////////////////////////////////////////////////////////////////
 
+`include "turbo9_tb_config.vh"
+
 module tb_dv_6809_model
 (
   // Inputs: Clock & Reset
@@ -71,14 +73,6 @@ module tb_dv_6809_model
   output reg        CYC_O
 
 );
-
-  ////////////////////////////////////////////////////////////////////////////
-  // Model Options (Can be forced by top level testbench)
-  ////////////////////////////////////////////////////////////////////////////
-  wire model_fast       = 1'b0; // 6809 Model Fast Mode (Drop idle bus cycles)
-  wire model_verbose    = 1'b0; // 6809 Model Verbose Mode (More log infomation)
-  wire model_break_dec  = 1'b0; // 6809 Model Break DEC (force a failed test)
-
 
   ////////////////////////////////////////////////////////////////////////////
   // 6809 Model Signals
@@ -196,11 +190,15 @@ module tb_dv_6809_model
     //
     wait (RST_I == 1'b0);
     //
-    if (model_verbose) $display("[TB: tb_dv_6809_model] Reset released!");
+`ifdef TURBO9_TB_MODEL_VERBOSE
+    $display("[TB: tb_dv_6809_model] Reset released!");
+`endif
 
     read_mem16(16'hfffe, `pc); // Read the reset vector
 
-    if (model_verbose) $display("[TB: tb_dv_6809_model] @ 0x%4x : Loading from reset vector, PC = 0x%4x", 16'hfffe, `pc);
+`ifdef TURBO9_TB_MODEL_VERBOSE
+    $display("[TB: tb_dv_6809_model] @ 0x%4x : Loading from reset vector, PC = 0x%4x", 16'hfffe, `pc);
+`endif
 
     idle_bus_cycles();
 
@@ -212,9 +210,13 @@ module tb_dv_6809_model
       `prebyte  = 8'hxx;
       `postbyte = 8'hxx;
 
-      if (model_verbose) $write("[TB: tb_dv_6809_model] @ 0x%4x : Executing ", `pc);
+`ifdef TURBO9_TB_MODEL_VERBOSE
+      $write("[TB: tb_dv_6809_model] @ 0x%4x : Executing ", `pc);
+`endif
       read_mem8(`pc++,`opcode);
-      if (model_verbose) print_opcode_info(`prebyte, `opcode, 1'b1);
+`ifdef TURBO9_TB_MODEL_VERBOSE
+      print_opcode_info(`prebyte, `opcode, 1'b1);
+`endif
 
       instruction_reg = `opcode;
 
@@ -356,7 +358,11 @@ module tb_dv_6809_model
         begin 
           bus_cycles += 6; //dir
           load_mm(`ea, data8_a);
-          data8_b = {7'h00, ~model_break_dec}; // INFO: Break DEC to force a failed test.
+`ifdef TURBO9_TB_MODEL_BREAK_DEC
+          data8_b = 8'h00; // Force a failed test by suppressing the decrement.
+`else
+          data8_b = 8'h01;
+`endif
           data8_y = data8_a - data8_b;
           //`cc_h = 1'b0; // Not affected
           `cc_n = data8_y[7];
@@ -437,7 +443,9 @@ module tb_dv_6809_model
           `prebyte  = `opcode;
           read_mem8(`pc++,`opcode);
           instruction_reg2 = `opcode;
-          if (model_verbose) print_opcode_info(`prebyte, `opcode, 1'b1);
+`ifdef TURBO9_TB_MODEL_VERBOSE
+          print_opcode_info(`prebyte, `opcode, 1'b1);
+`endif
           //
           case (instruction_reg2)
 
@@ -742,7 +750,9 @@ module tb_dv_6809_model
           `prebyte  = `opcode;
           read_mem8(`pc++,`opcode);
           instruction_reg2 = `opcode;
-          if (model_verbose) print_opcode_info(`prebyte, `opcode, 1'b1);
+`ifdef TURBO9_TB_MODEL_VERBOSE
+          print_opcode_info(`prebyte, `opcode, 1'b1);
+`endif
           //
           case (instruction_reg2)
 
@@ -1747,14 +1757,14 @@ module tb_dv_6809_model
         STB_O = 1'b0;
         CYC_O = 1'b0;
         //
-        if (~model_fast) begin
+`ifndef TURBO9_TB_MODEL_FAST
           @ (negedge CLK_I);
           #1;
           //
           @ (posedge CLK_I);
           #1;
           //
-        end
+`endif
         bus_cycles--;
       end
     end else begin

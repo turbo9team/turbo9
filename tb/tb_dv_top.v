@@ -48,84 +48,12 @@
 /////////////////////////////////////////////////////////////////////////////
 `timescale 1ps/1ps
 
-module tb_dv_top;
+`include "turbo9_tb_config.vh"
 
-  ///////////////////// Select one of the following:
-  //`define TURBO9_GTR
-  //`define TURBO9_GTS
-  //`define TURBO9_R
-  //`define TURBO9_S (enabled by default)
-  //`define TURBO9 
-  /////////////////////
+module tb_dv_top;
 
   `define TURBO9_CPU_SIM_DEBUG      // Turns on debug strings in decode table verilog files
   `define TURBO9_SOC_SIM_T6551_FAST  // Runs T6551 UART as fast as possible
-
-  `define SIM_MODEL_FAST      // 6809 Model Fast Mode (Drop idle bus cycles)
-  //`define SIM_MODEL_VERBOSE   // 6809 Model Verbose Mode (More log infomation)
-  //`define SIM_MODEL_BREAK_DEC // 6809 Model Break DEC (force a failed test)
-
-
-  `define MEM_ADDR_WIDTH  16 //64 Kbyte Memory, adjust the asm accordingly
-
-  `define model_mem           I_tb_dv_soc_top_model.I_syncram_8bit.ram
-  `define model_cycle_cnt     I_tb_dv_soc_top_model.clk_cnt_rd_dat
-  `define model_clk_cnt_ctrl  I_tb_dv_soc_top_model.clk_cnt_ctrl_dat
-  `define model_error         I_tb_dv_soc_top_model.I_tb_dv_6809_model.model_error
-  `define model_fast          I_tb_dv_soc_top_model.I_tb_dv_6809_model.model_fast
-  `define model_verbose       I_tb_dv_soc_top_model.I_tb_dv_6809_model.model_verbose
-  `define model_break_dec     I_tb_dv_soc_top_model.I_tb_dv_6809_model.model_break_dec
-  `define model_uart_clk      I_tb_dv_soc_top_model.I_t6551.CLK_I
-  `define model_uart_rst      I_tb_dv_soc_top_model.I_t6551.RST_I
-  `define model_uart_rx_full  I_tb_dv_soc_top_model.I_t6551.rx_data_reg_full
-
-`ifdef TURBO9_GTR
-  `define TURBO9_16BIT
-  `define dut_mem_even      I_soc_top_gtr.I_even_syncram_8bit.ram
-  `define dut_mem_odd       I_soc_top_gtr.I_odd_syncram_8bit.ram
-  `define dut_cycle_cnt     I_soc_top_gtr.clk_cnt_rd_dat
-  `define dut_clk_cnt_ctrl  I_soc_top_gtr.clk_cnt_ctrl_dat
-  `define dut_uart_clk      I_soc_top_gtr.I_t6551.CLK_I
-  `define dut_uart_rst      I_soc_top_gtr.I_t6551.RST_I
-  `define dut_uart_rx_full  I_soc_top_gtr.I_t6551.rx_data_reg_full
-`elsif TURBO9_GTS
-  `define TURBO9_16BIT
-  `define dut_mem_even      I_soc_top_gts.I_even_syncram_8bit.ram
-  `define dut_mem_odd       I_soc_top_gts.I_odd_syncram_8bit.ram
-  `define dut_cycle_cnt     I_soc_top_gts.clk_cnt_rd_dat
-  `define dut_clk_cnt_ctrl  I_soc_top_gts.clk_cnt_ctrl_dat
-  `define dut_uart_clk      I_soc_top_gts.I_t6551.CLK_I
-  `define dut_uart_rst      I_soc_top_gts.I_t6551.RST_I
-  `define dut_uart_rx_full  I_soc_top_gts.I_t6551.rx_data_reg_full
-`elsif TURBO9_R
-  `define TURBO9_16BIT
-  `define dut_mem_even      I_soc_top_r.I_even_syncram_8bit.ram
-  `define dut_mem_odd       I_soc_top_r.I_odd_syncram_8bit.ram
-  `define dut_cycle_cnt     I_soc_top_r.clk_cnt_rd_dat
-  `define dut_clk_cnt_ctrl  I_soc_top_r.clk_cnt_ctrl_dat
-  `define dut_uart_clk      I_soc_top_r.I_t6551.CLK_I
-  `define dut_uart_rst      I_soc_top_r.I_t6551.RST_I
-  `define dut_uart_rx_full  I_soc_top_r.I_t6551.rx_data_reg_full
-`elsif TURBO9
-  `define dut_mem           I_soc_top.I_syncram_8bit.ram
-  `define dut_cycle_cnt     I_soc_top.clk_cnt_rd_dat
-  `define dut_clk_cnt_ctrl  I_soc_top.clk_cnt_ctrl_dat
-  `define dut_uart_clk      I_soc_top.I_t6551.CLK_I
-  `define dut_uart_rst      I_soc_top.I_t6551.RST_I
-  `define dut_uart_rx_full  I_soc_top.I_t6551.rx_data_reg_full
-`else // TURBO9_S (default)
-  `define TURBO9_S
-  `define TURBO9_16BIT
-  `define dut_mem_even      I_soc_top_s.I_even_syncram_8bit.ram
-  `define dut_mem_odd       I_soc_top_s.I_odd_syncram_8bit.ram
-  `define dut_cycle_cnt     I_soc_top_s.clk_cnt_rd_dat
-  `define dut_clk_cnt_ctrl  I_soc_top_s.clk_cnt_ctrl_dat
-  `define dut_uart_clk      I_soc_top_s.I_t6551.CLK_I
-  `define dut_uart_rst      I_soc_top_s.I_t6551.RST_I
-  `define dut_uart_rx_full  I_soc_top_s.I_t6551.rx_data_reg_full
-`endif
-
-  `define tb_mem          I_tb_dv_memory.memory
 
   `include "tb_dv_asm.vh"           // Address defines from assembly testbench 
   `include "tb_dv_lib.v"            // Library of utility tasks & functions
@@ -221,7 +149,7 @@ module tb_dv_top;
         //$dumpvars(0, `tb_mem[dump_idx]);
       end
       
-      for (dump_idx = (2**`MEM_ADDR_WIDTH)-4096; dump_idx < (2**`MEM_ADDR_WIDTH); dump_idx = dump_idx + 1) begin
+      for (dump_idx = (2**`TURBO9_TB_MEM_ADDR_WIDTH)-4096; dump_idx < (2**`TURBO9_TB_MEM_ADDR_WIDTH); dump_idx = dump_idx + 1) begin
         $dumpvars(0, `model_mem[dump_idx]);
         $dumpvars(0, `dut_mem[dump_idx]);
         //$dumpvars(0, `tb_mem[dump_idx]);
@@ -249,18 +177,6 @@ module tb_dv_top;
   // Testbench "Main"
   /////////////////////////////////////////////////////////////////////////////
   initial begin
-
-    /////////// Setup 6809 model 
-    //
-    `ifdef SIM_MODEL_FAST          // 6809 Model Fast Mode (Drop idle bus cycles)
-      force `model_fast       = 1'b1;
-    `endif
-    `ifdef SIM_MODEL_VERBOSE       // 6809 Model Verbose Mode (More log infomation) 
-      force `model_verbose    = 1'b1;
-    `endif
-    `ifdef SIM_MODEL_BREAK_DEC     // 6809 Model Break DEC (force a failed test)
-      force `model_break_dec  = 1'b1;
-    `endif
 
     /////////// Initialize global variables / signals
     //
@@ -486,36 +402,51 @@ module tb_dv_top;
   // DUT
   /////////////////////////////////////////////////////////////////////////////
 
-`ifdef TURBO9_GTR
+`ifdef TURBO9_TB_DUT_TURBO9_GTR
   soc_top_gtr
   #(
-    .TURBO9_SOC_MEM_ADDR_WIDTH (`MEM_ADDR_WIDTH) // SoC Memory Address Width: 16=64KB
+    .TURBO9_SOC_MEM_ADDR_WIDTH  (`TURBO9_TB_MEM_ADDR_WIDTH),       // SoC Memory Address Width: 16=64KB
+    .TURBO9_SOC_WB_PIPELINE_REG (`TURBO9_TB_SOC_WB_PIPELINE_REG),  // SoC WB Pipeline Registers: True=1, False=0
+    .TURBO9_CPU_WB_PIPELINE_REG (`TURBO9_TB_CPU_WB_PIPELINE_REG),  // CPU WB Pipeline Registers: True=1, False=0
+    .TURBO9_CPU_QUEUE_SIZE      (`TURBO9_TB_CPU_QUEUE_SIZE)        // CPU Fetch Queue Size: 6=Default, 4=Min, 7=Max
   )
   I_soc_top_gtr
-`elsif TURBO9_GTS
+`elsif TURBO9_TB_DUT_TURBO9_GTS
   soc_top_gts
   #(
-    .TURBO9_SOC_MEM_ADDR_WIDTH (`MEM_ADDR_WIDTH) // SoC Memory Address Width: 16=64KB
+    .TURBO9_SOC_MEM_ADDR_WIDTH  (`TURBO9_TB_MEM_ADDR_WIDTH),       // SoC Memory Address Width: 16=64KB
+    .TURBO9_SOC_WB_PIPELINE_REG (`TURBO9_TB_SOC_WB_PIPELINE_REG),  // SoC WB Pipeline Registers: True=1, False=0
+    .TURBO9_CPU_WB_PIPELINE_REG (`TURBO9_TB_CPU_WB_PIPELINE_REG),  // CPU WB Pipeline Registers: True=1, False=0
+    .TURBO9_CPU_QUEUE_SIZE      (`TURBO9_TB_CPU_QUEUE_SIZE)        // CPU Fetch Queue Size: 6=Default, 4=Min, 7=Max
   )
   I_soc_top_gts
-`elsif TURBO9_R
+`elsif TURBO9_TB_DUT_TURBO9_R
   soc_top_r
   #(
-    .TURBO9_SOC_MEM_ADDR_WIDTH (`MEM_ADDR_WIDTH) // SoC Memory Address Width: 16=64KB
+    .TURBO9_SOC_MEM_ADDR_WIDTH  (`TURBO9_TB_MEM_ADDR_WIDTH),       // SoC Memory Address Width: 16=64KB
+    .TURBO9_SOC_WB_PIPELINE_REG (`TURBO9_TB_SOC_WB_PIPELINE_REG),  // SoC WB Pipeline Registers: True=1, False=0
+    .TURBO9_CPU_WB_PIPELINE_REG (`TURBO9_TB_CPU_WB_PIPELINE_REG),  // CPU WB Pipeline Registers: True=1, False=0
+    .TURBO9_CPU_QUEUE_SIZE      (`TURBO9_TB_CPU_QUEUE_SIZE)        // CPU Fetch Queue Size: 6=Default, 4=Min, 7=Max
   )
   I_soc_top_r
-`elsif TURBO9_S
-  soc_top_s
-  #(
-    .TURBO9_SOC_MEM_ADDR_WIDTH (`MEM_ADDR_WIDTH) // SoC Memory Address Width: 16=64KB
-  )
-  I_soc_top_s
-`else
+`elsif TURBO9_TB_DUT_TURBO9
   soc_top
   #(
-    .TURBO9_SOC_MEM_ADDR_WIDTH (`MEM_ADDR_WIDTH) // SoC Memory Address Width: 16=64KB
+    .TURBO9_SOC_MEM_ADDR_WIDTH  (`TURBO9_TB_MEM_ADDR_WIDTH),       // SoC Memory Address Width: 16=64KB
+    .TURBO9_SOC_WB_PIPELINE_REG (`TURBO9_TB_SOC_WB_PIPELINE_REG),  // SoC WB Pipeline Registers: True=1, False=0
+    .TURBO9_CPU_WB_PIPELINE_REG (`TURBO9_TB_CPU_WB_PIPELINE_REG),  // CPU WB Pipeline Registers: True=1, False=0
+    .TURBO9_CPU_QUEUE_SIZE      (`TURBO9_TB_CPU_QUEUE_SIZE)        // CPU Fetch Queue Size: 6=Default, 4=Min, 7=Max
   )
   I_soc_top
+`else
+  soc_top_s
+  #(
+    .TURBO9_SOC_MEM_ADDR_WIDTH  (`TURBO9_TB_MEM_ADDR_WIDTH),       // SoC Memory Address Width: 16=64KB
+    .TURBO9_SOC_WB_PIPELINE_REG (`TURBO9_TB_SOC_WB_PIPELINE_REG),  // SoC WB Pipeline Registers: True=1, False=0
+    .TURBO9_CPU_WB_PIPELINE_REG (`TURBO9_TB_CPU_WB_PIPELINE_REG),  // CPU WB Pipeline Registers: True=1, False=0
+    .TURBO9_CPU_QUEUE_SIZE      (`TURBO9_TB_CPU_QUEUE_SIZE)        // CPU Fetch Queue Size: 6=Default, 4=Min, 7=Max
+  )
+  I_soc_top_s
 `endif
   (
     // Inputs: Clock & Reset
@@ -560,7 +491,8 @@ module tb_dv_top;
   /////////////////////////////////////////////////////////////////////////////
   tb_dv_soc_top_model
   #(
-    .TURBO9_SOC_MEM_ADDR_WIDTH (`MEM_ADDR_WIDTH) // SoC Model Memory Address Width: 16=64KB
+    .TURBO9_SOC_MEM_ADDR_WIDTH  (`TURBO9_TB_MEM_ADDR_WIDTH),      // SoC Model Memory Address Width: 16=64KB
+    .TURBO9_SOC_WB_PIPELINE_REG (`TURBO9_TB_SOC_WB_PIPELINE_REG)  // SoC Model WB Pipeline Registers: True=1, False=0
   )
   I_tb_dv_soc_top_model
   (
@@ -606,7 +538,7 @@ module tb_dv_top;
   /////////////////////////////////////////////////////////////////////////////
   tb_dv_memory
   #(
-    `MEM_ADDR_WIDTH // TB Memory Address Width: 16=64KB
+    `TURBO9_TB_MEM_ADDR_WIDTH // TB Memory Address Width: 16=64KB
   )
   I_tb_dv_memory ();
 

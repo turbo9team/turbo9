@@ -50,6 +50,8 @@
 // Wrap the memory array in a module so that the memory elements are contained
 // within their own module in the VCD dump
 //
+`include "turbo9_tb_config.vh"
+
 module tb_dv_memory
 #(
   parameter MEM_ADDR_WIDTH = 12
@@ -58,4 +60,3 @@ module tb_dv_memory
   reg [7:0] memory [0:(2**MEM_ADDR_WIDTH)-1];
 
 endmodule
-

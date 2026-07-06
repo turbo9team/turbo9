@@ -352,7 +352,11 @@ assign dat_i_hi_byte_nxt = (tag_16bit_i) ? DAT_I : 8'h00;
 assign tag_16bit_i_nxt  = tag_16bit_i;
 assign ack_width        = (tag_16bit_i_reg) ? WIDTH_16 : WIDTH_8; // FIXME just do this like the 16bit version
 
+`ifdef TURBO9_CPU_SYNC_RESET
+always @(posedge CLK_I) begin
+`else
 always @(posedge CLK_I, posedge RST_I) begin
+`endif
 
   if (RST_I) begin
     adr_o_reg               <= adr_o_rst;

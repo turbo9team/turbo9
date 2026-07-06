@@ -205,7 +205,11 @@ end
 //                           REGISTERS
 /////////////////////////////////////////////////////////////////////////////
 //
+`ifdef TURBO9_SOC_SYNC_RESET
+always @(posedge CLK_I) begin
+`else
 always @(posedge CLK_I, posedge RST_I) begin
+`endif
   if (RST_I) begin
   //rxd_meta_reg          <= rxd_meta_rst;
   //rxd_sync_reg          <= rxd_sync_rst;

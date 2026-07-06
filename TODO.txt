@@ -2,6 +2,12 @@
 
 Fix:
   Testcases: Run S19, Run Hex, Stimbench
+  sim/run_iv.sh test_list is stale: missing EXG/TFR 8b/16b and indirect-indexed
+    testcases (ind_m2, ind_p2, ind_pc8, ind_pc16), and has a typo
+    "tc_dv_16b_instr" that should be "tc_dv_ind_16b_instr" (silently skipped)
+  urtl_asm_src/urtl_asm.c: unbraced if/while around argc check lets the
+    getopt() loop run inside the "if (argc != 2)" body, defeating the
+    intended arg-count check
 
 Finish:
   Interrupts
@@ -20,19 +26,19 @@ On Reset:
 
 
 
-clk_counter.v:                            . Required
-clk_div.v:                                . Required
-fpga_leds.v:                              . Required
+clk_counter.v:                            . Required, ifdef'ed (TURBO9_SOC_SYNC_RESET)
+clk_div.v:                                . Required, ifdef'ed (TURBO9_SOC_SYNC_RESET)
+fpga_leds.v:                              . Required, ifdef'ed (TURBO9_SOC_SYNC_RESET)
 fpga_top.v:                               . Required
-gpo_port.v:                               . Required
-soc_top_gtr.v:                            . RST_I used for Wishbone pipeline bus registers 
-soc_top_gts.v:                            . RST_I used for Wishbone pipeline bus registers 
-soc_top_r.v:                              . RST_I used for Wishbone pipeline bus registers 
-soc_top_s.v:                              . RST_I used for Wishbone pipeline bus registers 
-soc_top.v:                                . RST_I used for Wishbone pipeline bus registers 
-t6551_rx.v:                               . RST_I to initialize  
-t6551_tx.v:                               . RST_I to initialize 
-t6551.v:                                  . RST_I to initialize 
+gpo_port.v:                               . Required, ifdef'ed (TURBO9_SOC_SYNC_RESET)
+soc_top_gtr.v:                            . RST_I used for Wishbone pipeline bus registers, ifdef'ed (TURBO9_SOC_SYNC_RESET)
+soc_top_gts.v:                            . RST_I used for Wishbone pipeline bus registers, ifdef'ed (TURBO9_SOC_SYNC_RESET)
+soc_top_r.v:                              . RST_I used for Wishbone pipeline bus registers, ifdef'ed (TURBO9_SOC_SYNC_RESET)
+soc_top_s.v:                              . RST_I used for Wishbone pipeline bus registers, ifdef'ed (TURBO9_SOC_SYNC_RESET)
+soc_top.v:                                . RST_I used for Wishbone pipeline bus registers, ifdef'ed (TURBO9_SOC_SYNC_RESET)
+t6551_rx.v:                               . RST_I to initialize, ifdef'ed (TURBO9_SOC_SYNC_RESET)
+t6551_tx.v:                               . RST_I to initialize, ifdef'ed (TURBO9_SOC_SYNC_RESET)
+t6551.v:                                  . RST_I to initialize, ifdef'ed (TURBO9_SOC_SYNC_RESET)
 turbo9_ccr.v:                             . ifdef 1 -> CCR(F), 1 -> CCR(I)
 turbo9_data_alu.v:                        . RST_I passthrough 
 turbo9_data_mem_ctrl.v:                   . ifdef dmem_req_o_reg, dmem_state_reg // reinitialize state machine, clear REQ
@@ -56,8 +62,8 @@ turbo9_seq_arithmetic_unit.v:             . ifdef'ed
 turbo9_s.v:                               . RST_I passthrough
 turbo9_uop_generator.v:                   . ifdef'ed
 turbo9.v:                                 . RST_I passthrough
-turbo9_wishbone_16bit.v:                  .
-turbo9_wishbone_2x8bit.v:                 .
-turbo9_wishbone_8bit.v:                   .
+turbo9_wishbone_16bit.v:                  . ifdef'ed
+turbo9_wishbone_2x8bit.v:                 . ifdef'ed
+turbo9_wishbone_8bit.v:                   . ifdef'ed
 
 

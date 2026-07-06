@@ -443,7 +443,11 @@ always @* begin
 end
 
 
+`ifdef TURBO9_CPU_SYNC_RESET
+always @(posedge CLK_I) begin
+`else
 always @(posedge CLK_I, posedge RST_I) begin
+`endif
 
   if (RST_I) begin
     even_adr_o_reg          <= even_adr_o_rst;

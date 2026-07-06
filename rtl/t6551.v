@@ -122,9 +122,13 @@ wire  tx_data_reg_empty;
 //
 // baud_div_en_reg is the clock enable signal and is registered.
 //
+`ifdef TURBO9_SOC_SYNC_RESET
+always @(posedge CLK_I) begin
+`else
 always @(posedge CLK_I, posedge RST_I) begin
+`endif
   if (RST_I) begin
-    baud_div_cnt_reg    <= baud_div_cnt_rst;  
+    baud_div_cnt_reg    <= baud_div_cnt_rst;
     frac_cycle_cnt_reg  <= frac_cycle_cnt_rst; 
     baud_div_en_reg     <= baud_div_en_rst;    
   end else begin

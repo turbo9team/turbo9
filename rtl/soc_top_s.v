@@ -191,7 +191,11 @@ generate
   assign ram_clk = CLK_I;
   //
   // Wishbone Pipeline Registers
+`ifdef TURBO9_SOC_SYNC_RESET
+  always @(posedge CLK_I) begin
+`else
   always @(posedge CLK_I, posedge RST_I) begin
+`endif
     if (RST_I) begin
       turbo9_adr_reg <= turbo9_adr_rst;
       turbo9_stb_reg <= turbo9_stb_rst;

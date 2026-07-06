@@ -207,7 +207,11 @@ generate
   assign ram_clk = CLK_I;
   //
   // Wishbone Pipeline Registers (Even Bytes)
+`ifdef TURBO9_SOC_SYNC_RESET
+  always @(posedge CLK_I) begin
+`else
   always @(posedge CLK_I, posedge RST_I) begin
+`endif
     if (RST_I) begin
       even_turbo9_adr_reg <= even_turbo9_adr_rst;
       even_turbo9_ack     <= 1'b0;
@@ -222,7 +226,11 @@ generate
   end
   //
   // Wishbone Pipeline Registers (Odd Bytes)
+`ifdef TURBO9_SOC_SYNC_RESET
+  always @(posedge CLK_I) begin
+`else
   always @(posedge CLK_I, posedge RST_I) begin
+`endif
     if (RST_I) begin
       odd_turbo9_adr_reg <= odd_turbo9_adr_rst;
       odd_turbo9_ack     <= 1'b0;

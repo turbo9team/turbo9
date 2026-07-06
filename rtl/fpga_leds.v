@@ -46,6 +46,8 @@
 /////////////////////////////////////////////////////////////////////////////
 //                                MODULE
 /////////////////////////////////////////////////////////////////////////////
+`include "turbo9_soc_config.vh"
+
 module fpga_leds
 (
   // Inputs: Clock & Reset
@@ -91,7 +93,11 @@ reg   [19:0] cnt_reg;
 //                                LOGIC
 /////////////////////////////////////////////////////////////////////////////
 
+`ifdef TURBO9_SOC_SYNC_RESET
+always @(posedge CLK_I) begin
+`else
 always @(posedge CLK_I, posedge RST_I) begin
+`endif
   if (RST_I) begin
     cnt_reg     <= 20'd0;
     led_pwm_reg <= 8'd0;

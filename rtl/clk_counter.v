@@ -84,9 +84,13 @@ localparam  STOP  = 2'b10;
 /////////////////////////////////////////////////////////////////////////////
 //                           Clock Counter Control
 /////////////////////////////////////////////////////////////////////////////
+`ifdef TURBO9_SOC_SYNC_RESET
+always @(posedge CLK_I) begin
+`else
 always @(posedge CLK_I, posedge RST_I) begin
+`endif
   if (RST_I) begin
-    clk_cnt_ctrl_reg   <= clk_cnt_ctrl_rst;  
+    clk_cnt_ctrl_reg   <= clk_cnt_ctrl_rst;
   end else begin
     if (CLK_CNT_CTRL_WR_EN_I) begin
       clk_cnt_ctrl_reg   <= DATA_I[1:0];
@@ -100,9 +104,13 @@ end
 /////////////////////////////////////////////////////////////////////////////
 //                               Clock Counter
 /////////////////////////////////////////////////////////////////////////////
+`ifdef TURBO9_SOC_SYNC_RESET
+always @(posedge CLK_I) begin
+`else
 always @(posedge CLK_I, posedge RST_I) begin
+`endif
   if (RST_I) begin
-    clk_cnt_reg   <= clk_cnt_rst;  
+    clk_cnt_reg   <= clk_cnt_rst;
   end else begin
     if (clk_cnt_ctrl_reg == CLEAR) begin
       clk_cnt_reg <= clk_cnt_rst;

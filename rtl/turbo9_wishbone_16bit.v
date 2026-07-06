@@ -551,7 +551,11 @@ assign odd_byte     = DAT_I[ 7:0];
 
 assign msb_byte_nxt = DAT_I[7:0];
 
+`ifdef TURBO9_CPU_SYNC_RESET
+always @(posedge CLK_I) begin
+`else
 always @(posedge CLK_I, posedge RST_I) begin
+`endif
   if (RST_I) begin
     msb_byte_reg    <= msb_byte_rst; // INFO: Could remove if data_mem_ctrl register was used
   end else begin

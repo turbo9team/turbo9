@@ -65,7 +65,11 @@ module gpo_port
 reg   [7:0] gpo_reg;
 localparam  gpo_rst = 8'd0;
 
+`ifdef TURBO9_SOC_SYNC_RESET
+always @(posedge CLK_I) begin
+`else
 always @(posedge CLK_I, posedge RST_I) begin
+`endif
   if (RST_I) begin
     gpo_reg <= gpo_rst;
   end else if (WE_I) begin

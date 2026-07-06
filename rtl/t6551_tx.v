@@ -175,7 +175,11 @@ end
 //                           REGISTERS
 /////////////////////////////////////////////////////////////////////////////
 //
+`ifdef TURBO9_SOC_SYNC_RESET
+always @(posedge CLK_I) begin
+`else
 always @(posedge CLK_I, posedge RST_I) begin
+`endif
   if (RST_I) begin
     clk_cnt_reg           <= clk_cnt_rst;
     bit_cnt_reg           <= bit_cnt_rst;

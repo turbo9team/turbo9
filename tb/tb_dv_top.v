@@ -404,48 +404,30 @@ module tb_dv_top;
 
 `ifdef TURBO9_TB_DUT_TURBO9_GTR
   soc_top_gtr
-  #(
-    .TURBO9_SOC_MEM_ADDR_WIDTH  (`TURBO9_TB_MEM_ADDR_WIDTH),       // SoC Memory Address Width: 16=64KB
-    .TURBO9_SOC_WB_PIPELINE_REG (`TURBO9_TB_SOC_WB_PIPELINE_REG),  // SoC WB Pipeline Registers: True=1, False=0
-    .TURBO9_CPU_WB_PIPELINE_REG (`TURBO9_TB_CPU_WB_PIPELINE_REG),  // CPU WB Pipeline Registers: True=1, False=0
-    .TURBO9_CPU_QUEUE_SIZE      (`TURBO9_TB_CPU_QUEUE_SIZE)        // CPU Fetch Queue Size: 6=Default, 4=Min, 7=Max
-  )
-  I_soc_top_gtr
 `elsif TURBO9_TB_DUT_TURBO9_GTS
   soc_top_gts
-  #(
-    .TURBO9_SOC_MEM_ADDR_WIDTH  (`TURBO9_TB_MEM_ADDR_WIDTH),       // SoC Memory Address Width: 16=64KB
-    .TURBO9_SOC_WB_PIPELINE_REG (`TURBO9_TB_SOC_WB_PIPELINE_REG),  // SoC WB Pipeline Registers: True=1, False=0
-    .TURBO9_CPU_WB_PIPELINE_REG (`TURBO9_TB_CPU_WB_PIPELINE_REG),  // CPU WB Pipeline Registers: True=1, False=0
-    .TURBO9_CPU_QUEUE_SIZE      (`TURBO9_TB_CPU_QUEUE_SIZE)        // CPU Fetch Queue Size: 6=Default, 4=Min, 7=Max
-  )
-  I_soc_top_gts
 `elsif TURBO9_TB_DUT_TURBO9_R
   soc_top_r
-  #(
-    .TURBO9_SOC_MEM_ADDR_WIDTH  (`TURBO9_TB_MEM_ADDR_WIDTH),       // SoC Memory Address Width: 16=64KB
-    .TURBO9_SOC_WB_PIPELINE_REG (`TURBO9_TB_SOC_WB_PIPELINE_REG),  // SoC WB Pipeline Registers: True=1, False=0
-    .TURBO9_CPU_WB_PIPELINE_REG (`TURBO9_TB_CPU_WB_PIPELINE_REG),  // CPU WB Pipeline Registers: True=1, False=0
-    .TURBO9_CPU_QUEUE_SIZE      (`TURBO9_TB_CPU_QUEUE_SIZE)        // CPU Fetch Queue Size: 6=Default, 4=Min, 7=Max
-  )
-  I_soc_top_r
 `elsif TURBO9_TB_DUT_TURBO9
   soc_top
-  #(
-    .TURBO9_SOC_MEM_ADDR_WIDTH  (`TURBO9_TB_MEM_ADDR_WIDTH),       // SoC Memory Address Width: 16=64KB
-    .TURBO9_SOC_WB_PIPELINE_REG (`TURBO9_TB_SOC_WB_PIPELINE_REG),  // SoC WB Pipeline Registers: True=1, False=0
-    .TURBO9_CPU_WB_PIPELINE_REG (`TURBO9_TB_CPU_WB_PIPELINE_REG),  // CPU WB Pipeline Registers: True=1, False=0
-    .TURBO9_CPU_QUEUE_SIZE      (`TURBO9_TB_CPU_QUEUE_SIZE)        // CPU Fetch Queue Size: 6=Default, 4=Min, 7=Max
-  )
-  I_soc_top
 `else
   soc_top_s
+`endif
   #(
     .TURBO9_SOC_MEM_ADDR_WIDTH  (`TURBO9_TB_MEM_ADDR_WIDTH),       // SoC Memory Address Width: 16=64KB
     .TURBO9_SOC_WB_PIPELINE_REG (`TURBO9_TB_SOC_WB_PIPELINE_REG),  // SoC WB Pipeline Registers: True=1, False=0
     .TURBO9_CPU_WB_PIPELINE_REG (`TURBO9_TB_CPU_WB_PIPELINE_REG),  // CPU WB Pipeline Registers: True=1, False=0
     .TURBO9_CPU_QUEUE_SIZE      (`TURBO9_TB_CPU_QUEUE_SIZE)        // CPU Fetch Queue Size: 6=Default, 4=Min, 7=Max
   )
+`ifdef TURBO9_TB_DUT_TURBO9_GTR
+  I_soc_top_gtr
+`elsif TURBO9_TB_DUT_TURBO9_GTS
+  I_soc_top_gts
+`elsif TURBO9_TB_DUT_TURBO9_R
+  I_soc_top_r
+`elsif TURBO9_TB_DUT_TURBO9
+  I_soc_top
+`else
   I_soc_top_s
 `endif
   (

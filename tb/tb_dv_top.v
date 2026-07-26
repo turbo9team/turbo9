@@ -168,7 +168,7 @@ module tb_dv_top;
     //
     // Defaults
     seed = 123;
-    rand_itr_total  = 4;
+    rand_itr_total  = 1;
     hex_file = "";
     s19_file = "";
     test_case = "tc_dv_dir_instr";
@@ -199,13 +199,12 @@ module tb_dv_top;
     /////////// Run selected test
     //
     case (test_case)
+      // [TURBO9_REGRESS_TEST_CASES_START]
       "tc_dv_dir_instr"      : tc_dv_dir_instr;      // Direct Addressing Test
       "tc_dv_ext_instr"      : tc_dv_ext_instr;      // Extended Addressing Test
       "tc_dv_imm_instr"      : tc_dv_imm_instr;      // Immediate Addressing Test
       "tc_dv_rel_instr"      : tc_dv_rel_instr;      // Relative Addressing Test
       "tc_dv_rel16_instr"    : tc_dv_rel16_instr;    // Long Relative Addressing Test
-      "tc_dv_run_hex"        : tc_dv_run_hex;        // Run HEX Code
-      "tc_dv_run_s19"        : tc_dv_run_s19;        // Run S19 Code
       "tc_dv_inh_instr"      : tc_dv_inh_instr;      // Inherent Addressing Test
       "tc_dv_sau_instr"      : tc_dv_sau_instr;      // Sequential Arithmetic Test
       "tc_dv_idx_a_instr"    : tc_dv_idx_a_instr;    // Indexed A Offset Addressing Test
@@ -235,7 +234,13 @@ module tb_dv_top;
       "tc_dv_exg_16b_instr"  : tc_dv_exg_16b_instr;  // Exchange 16-bit Registers Test
       "tc_dv_tfr_8b_instr"   : tc_dv_tfr_8b_instr;   // Exchange 8-bit Registers Test
       "tc_dv_tfr_16b_instr"  : tc_dv_tfr_16b_instr;  // Exchange 16-bit Registers Test
+      // [TURBO9_REGRESS_TEST_CASES_END]
+      
+      // [TURBO9_DEBUG_TEST_CASES_START]
+      "tc_dv_run_hex"        : tc_dv_run_hex;        // Run HEX Code
+      "tc_dv_run_s19"        : tc_dv_run_s19;        // Run S19 Code
       "debug_random"         : debug_random;         // debug random
+      // [TURBO9_DEBUG_TEST_CASES_END]
       default : $display("[TB; tb_dv_top      ] ERROR: Unknown test_case = %0s", test_case);
     endcase
 

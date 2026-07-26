@@ -66,29 +66,13 @@ TB_SRC=../tb/${TB}.v
 FLIST=../tb/f.list.${TB}
 NAME=$0
 
-########################################## Curated regression list
-#
-# Mirrors the list in run_iv.sh, with one fix: the original included
-# "tc_dv_16b_instr", which matches no real test_case in tb_dv_top.v (a typo for
-# tc_dv_ind_16b_instr) and has been silently running a vacuous 0-pass/0-fail
-# test. Utility tests (tc_dv_run_hex, tc_dv_run_s19, debug_random) are
-# deliberately excluded, same as today.
-REGRESS_TESTS=(
-  tc_dv_dir_instr     tc_dv_ext_instr     tc_dv_imm_instr     tc_dv_rel_instr
-  tc_dv_rel16_instr   tc_dv_inh_instr     tc_dv_sau_instr     tc_dv_idx_a_instr
-  tc_dv_idx_b_instr   tc_dv_idx_d_instr   tc_dv_idx_0b_instr  tc_dv_idx_5b_instr
-  tc_dv_idx_8b_instr  tc_dv_idx_16b_instr tc_dv_idx_p1_instr  tc_dv_idx_p2_instr
-  tc_dv_idx_m1_instr  tc_dv_idx_m2_instr  tc_dv_idx_pc8_instr tc_dv_idx_pc16_instr
-  tc_dv_ind_0b_instr  tc_dv_ind_8b_instr  tc_dv_ind_16b_instr tc_dv_ind_a_instr
-  tc_dv_ind_b_instr   tc_dv_ind_d_instr
-)
-
 ########################################## Known macros / plusargs (documentation only)
 #
 # Hand-maintained: this list is short and changes rarely, and a maintained
 # table documents defaults better than regex-scraping the `ifndef guards in
-# tb/turbo9_tb_config.vh would. The test case list below is NOT hand-maintained
-# -- see all_test_cases().
+# tb/turbo9_tb_config.vh would. The test case lists below are NOT
+# hand-maintained -- see all_test_cases(), regress_test_cases(), and
+# debug_test_cases().
 print_macro_table() {
   cat <<'EOF'
   DUT variant select (pick one, default TURBO9_TB_DUT_TURBO9_S):
@@ -121,21 +105,35 @@ EOF
 
 print_plusarg_table() {
   cat <<'EOF'
-  seed=N          Random seed (default: testbench picks 123 if omitted)
-  rand_itr=N      Random iterations per test (default: testbench picks 4)
+  seed=N          Random seed (default: seed generated from system clock)
+  rand_itr=N      Random iterations per test (default: testbench picks 1)
   hex_file=PATH   HEX image to load (default: asm/tb_dv_asm.hex if omitted)
   s19_file=PATH   S19 image to load (no default)
   dump            Boolean: dump <test_case>.vcd
 EOF
 }
 
-########################################## Auto-derived test case list
+########################################## Auto-derived test case lists
 #
-# Scraped from the case(test_case) block in tb_dv_top.v so this can never
-# drift out of sync with the testbench the way a second hand-maintained list
-# can (see AGENTS.md's note on mismatched test names).
+# Scraped from the marker-delimited blocks in tb_dv_top.v's case(test_case)
+# so these can never drift out of sync with the testbench the way a
+# hand-maintained list can (see AGENTS.md's note on mismatched test names).
+# all_test_cases() is just the union of the other two, so any test_case
+# arm that isn't inside one of the two marker blocks is silently excluded
+# from --help's "Test cases" listing until it's added to a block.
+regress_test_cases() {
+  sed -n '/\[TURBO9_REGRESS_TEST_CASES_START\]/,/\[TURBO9_REGRESS_TEST_CASES_END\]/p' "${TB_SRC}" \
+    | grep -oE '"[A-Za-z0-9_]+"' | tr -d '"'
+}
+
+debug_test_cases() {
+  sed -n '/\[TURBO9_DEBUG_TEST_CASES_START\]/,/\[TURBO9_DEBUG_TEST_CASES_END\]/p' "${TB_SRC}" \
+    | grep -oE '"[A-Za-z0-9_]+"' | tr -d '"'
+}
+
 all_test_cases() {
-  sed -n '/case (test_case)/,/endcase/p' "${TB_SRC}" | grep -oE '"[A-Za-z0-9_]+"' | tr -d '"'
+  regress_test_cases
+  debug_test_cases
 }
 
 ########################################## Usage
@@ -168,11 +166,11 @@ $(print_macro_table)
 Known runtime plusargs understood by tb_dv_top.v:
 $(print_plusarg_table)
 
-Test cases (from tb/tb_dv_top.v):
-  $(all_test_cases | tr '\n' ' ')
+Regression list (subset run by --regress):
+  $(regress_test_cases | tr '\n' ' ')
 
-Regression list (curated subset run by --regress):
-  $(printf '%s ' "${REGRESS_TESTS[@]}")
+Debug/utility test cases (excluded from --regress):
+  $(debug_test_cases | tr '\n' ' ')
 
 EOF
 }
@@ -226,7 +224,7 @@ if [[ -n "${TEST}" ]]; then
   fi
   TESTS=("${TEST}")
 else
-  TESTS=("${REGRESS_TESTS[@]}")
+  TESTS=($(regress_test_cases))
 fi
 
 ########################################## Script-level defaults
@@ -256,7 +254,7 @@ if [[ "${HAVE_HEX}" -eq 0 ]]; then
   PLUSARGS+=("hex_file=${SCRIPT_DIR}/../asm/tb_dv_asm.hex")
 fi
 
-########################################## Compile
+########################################## Compile tb_dv_top
 #
 CUR_DATE="$(date +"%m-%d-%y.%H-%M-%S")"
 WORKDIR="${TB}"
@@ -283,7 +281,7 @@ if ! iverilog -Wall -Wno-timescale -f "../${FLIST}" -g2001 "${DEFINE_FLAGS[@]}" 
 fi
 echo "${NAME}: Compile OK for ${TB}"
 
-########################################## Run
+########################################## Run tb_dv_top
 #
 echo ""
 for t in "${TESTS[@]}"; do

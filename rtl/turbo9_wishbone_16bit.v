@@ -46,7 +46,7 @@
 /////////////////////////////////////////////////////////////////////////////
 //                                MODULE
 /////////////////////////////////////////////////////////////////////////////
-`include "turbo9_cpu_config.vh"
+`include "turbo9_rtl_config.vh"
 
 module turbo9_wishbone_16bit
 #(
@@ -431,14 +431,14 @@ assign pending_cnt_term = ( stb_o_nxt & ~ACK_I) ? 3'b001 : // inc
                                                   3'b000 ; // hold
 assign pending_cnt_nxt  = pending_cnt_reg + pending_cnt_term;
 
-`ifdef TURBO9_CPU_SYNC_RESET
+`ifdef TURBO9_RTL_SYNC_RESET
 always @(posedge CLK_I) begin
 `else
 always @(posedge CLK_I, posedge RST_I) begin
 `endif
   if (RST_I) begin
     //
-`ifdef TURBO9_CPU_MIN_RESET
+`ifdef TURBO9_RTL_MIN_RESET
     //adr_o_reg                <= adr_o_rst;              // INFO: RESET_NO
     //dat_o_reg                <= dat_o_rst;              // INFO: RESET_NO
     sel_o_reg                <= sel_o_rst;                // INFO: RESET_YES
@@ -551,7 +551,7 @@ assign odd_byte     = DAT_I[ 7:0];
 
 assign msb_byte_nxt = DAT_I[7:0];
 
-`ifdef TURBO9_CPU_SYNC_RESET
+`ifdef TURBO9_RTL_SYNC_RESET
 always @(posedge CLK_I) begin
 `else
 always @(posedge CLK_I, posedge RST_I) begin

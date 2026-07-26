@@ -46,7 +46,7 @@
 /////////////////////////////////////////////////////////////////////////////
 //                                MODULE
 /////////////////////////////////////////////////////////////////////////////
-`include "turbo9_soc_config.vh"
+`include "turbo9_rtl_config.vh"
 
 module gpo_port
 (
@@ -65,7 +65,7 @@ module gpo_port
 reg   [7:0] gpo_reg;
 localparam  gpo_rst = 8'd0;
 
-`ifdef TURBO9_SOC_SYNC_RESET
+`ifdef TURBO9_RTL_SYNC_RESET
 always @(posedge CLK_I) begin
 `else
 always @(posedge CLK_I, posedge RST_I) begin

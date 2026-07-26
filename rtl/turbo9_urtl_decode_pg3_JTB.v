@@ -48,7 +48,7 @@
 /////////////////////////////////////////////////////////////////////////////
 //                                MODULE
 /////////////////////////////////////////////////////////////////////////////
-`include "turbo9_cpu_config.vh"
+`include "turbo9_rtl_config.vh"
 
 module turbo9_urtl_decode_pg3_JTB(
   input      [7:0] OPCODE_I,
@@ -71,7 +71,7 @@ always @* begin
   endcase
 end
 
-`ifdef TURBO9_CPU_SIM_DEBUG
+`ifdef TURBO9_RTL_SIM_DEBUG
 
 reg [(8*64):0] PG3_JTB_op;
 

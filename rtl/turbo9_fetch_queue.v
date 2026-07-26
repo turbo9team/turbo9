@@ -46,7 +46,7 @@
 /////////////////////////////////////////////////////////////////////////////
 //                                MODULE
 /////////////////////////////////////////////////////////////////////////////
-`include "turbo9_cpu_config.vh"
+`include "turbo9_rtl_config.vh"
 
 module turbo9_fetch_queue
 #(
@@ -295,14 +295,14 @@ endgenerate
 generate
   for (i=0; i<TURBO9_CPU_QUEUE_SIZE; i=i+1) begin: q_data_reg
 
-`ifdef TURBO9_CPU_SYNC_RESET
+`ifdef TURBO9_RTL_SYNC_RESET
     always @(posedge CLK_I) begin
 `else
     always @(posedge CLK_I, posedge RST_I) begin
 `endif
       if (RST_I) begin
 
-`ifdef TURBO9_CPU_MIN_RESET
+`ifdef TURBO9_RTL_MIN_RESET
         // queue_data_reg[i]  <= queue_data_rst; // INFO: RESET_NO
 `else
         queue_data_reg[i]  <= queue_data_rst;
@@ -321,7 +321,7 @@ endgenerate
 /////////////////////////////////// Level and Prebyte Registers
 //
 
-`ifdef TURBO9_CPU_SYNC_RESET
+`ifdef TURBO9_RTL_SYNC_RESET
 always @(posedge CLK_I) begin
 `else
 always @(posedge CLK_I, posedge RST_I) begin
@@ -329,7 +329,7 @@ always @(posedge CLK_I, posedge RST_I) begin
 
   if (RST_I) begin
 
-`ifdef TURBO9_CPU_MIN_RESET
+`ifdef TURBO9_RTL_MIN_RESET
     // queue_level_reg <= queue_level_rst;   // INFO: RESET_NO
     // prebyte_en_reg  <= prebyte_en_rst;    // INFO: RESET_NO
 `else

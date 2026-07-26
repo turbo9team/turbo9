@@ -77,7 +77,7 @@
 /////////////////////////////////////////////////////////////////////////////
 //                                MODULE
 /////////////////////////////////////////////////////////////////////////////
-`include "turbo9_soc_config.vh"
+`include "turbo9_rtl_config.vh"
 
 module soc_top_r
 #(
@@ -207,7 +207,7 @@ generate
   assign ram_clk = CLK_I;
   //
   // Wishbone Pipeline Registers (Even Bytes)
-`ifdef TURBO9_SOC_SYNC_RESET
+`ifdef TURBO9_RTL_SYNC_RESET
   always @(posedge CLK_I) begin
 `else
   always @(posedge CLK_I, posedge RST_I) begin
@@ -226,7 +226,7 @@ generate
   end
   //
   // Wishbone Pipeline Registers (Odd Bytes)
-`ifdef TURBO9_SOC_SYNC_RESET
+`ifdef TURBO9_RTL_SYNC_RESET
   always @(posedge CLK_I) begin
 `else
   always @(posedge CLK_I, posedge RST_I) begin

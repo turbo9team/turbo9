@@ -8,6 +8,11 @@ Fix:
   urtl_asm_src/urtl_asm.c: unbraced if/while around argc check lets the
     getopt() loop run inside the "if (argc != 2)" body, defeating the
     intended arg-count check
+  turbo9_soc_config.vh: TURBO9_SOC_MIN_RESET and TURBO9_SOC_USE_X are defined
+    but never referenced by any ifdef in rtl/ (dead macros) - their CPU-tier
+    equivalents (TURBO9_CPU_MIN_RESET, TURBO9_CPU_USE_X) are wired up in
+    10 and 3 files respectively, so the SoC config header appears to have
+    been scaffolded to mirror the CPU one but never finished for these two
 
 Finish:
   Interrupts

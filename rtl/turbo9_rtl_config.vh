@@ -33,29 +33,31 @@
 // [TURBO9_LICENSE_END]
 //////////////////////////////////////////////////////////////////////////////
 // Engineer: Kevin Phillipson
-// Description: Turbo9 SoC configuration macros. This header centralizes
-// optional SoC-level synthesis and simulation controls that are shared by the
-// top-level SoC wrappers and their directly instantiated peripheral RTL.
+// Description: Turbo9 RTL configuration macros, shared by CPU-core and
+// SoC/peripheral RTL alike.
 //
 //////////////////////////////////////////////////////////////////////////////
 // History:
-// 06.29.2026 - Kevin Phillipson
+// 06.27.2026 - Kevin Phillipson
 //   File header added
+// 07.25.2026 - Kevin Phillipson
+//   Renamed from turbo9_cpu_config.vh; merged in turbo9_soc_config.vh
 //
 //////////////////////////////////////////////////////////////////////////////
 // [TURBO9_HEADER_END]
 
-`ifndef TURBO9_SOC_CONFIG_VH
-`define TURBO9_SOC_CONFIG_VH
+`ifndef TURBO9_RTL_CONFIG_VH
+`define TURBO9_RTL_CONFIG_VH
 
 ///////////////////// Reset & Logic Defines
 //
-//`define TURBO9_SOC_SYNC_RESET // Use Synchronous Reset
-//`define TURBO9_SOC_MIN_RESET  // Reset minimal registers
-//`define TURBO9_SOC_USE_X      // Assign X in dont care logic for optimization
+//`define TURBO9_RTL_SYNC_RESET // Use Synchronous Reset
+//`define TURBO9_RTL_MIN_RESET  // Reset minimal registers
+//`define TURBO9_RTL_USE_X      // Assign X in dont care logic for optimization
 
 ///////////////////// Simulator Defines
 //
-//`define TURBO9_SOC_SIM_T6551_FAST // Runs T6551 UART as fast as possible
+//`define TURBO9_RTL_SIM_DEBUG        // Turns on debug strings in decode table verilog files
+//`define TURBO9_RTL_SIM_T6551_FAST   // Runs T6551 UART as fast as possible
 
 `endif

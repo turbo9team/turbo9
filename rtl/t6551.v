@@ -46,7 +46,7 @@
 /////////////////////////////////////////////////////////////////////////////
 //                                MODULE
 /////////////////////////////////////////////////////////////////////////////
-`include "turbo9_soc_config.vh"
+`include "turbo9_rtl_config.vh"
 
 module t6551
 (
@@ -122,7 +122,7 @@ wire  tx_data_reg_empty;
 //
 // baud_div_en_reg is the clock enable signal and is registered.
 //
-`ifdef TURBO9_SOC_SYNC_RESET
+`ifdef TURBO9_RTL_SYNC_RESET
 always @(posedge CLK_I) begin
 `else
 always @(posedge CLK_I, posedge RST_I) begin
@@ -159,7 +159,7 @@ always @(posedge CLK_I, posedge RST_I) begin
   end
 end
 
-`ifdef TURBO9_SOC_SIM_T6551_FAST
+`ifdef TURBO9_RTL_SIM_T6551_FAST
 assign baud_div_en = 1'b1;
 `else
 assign baud_div_en = baud_div_en_reg;

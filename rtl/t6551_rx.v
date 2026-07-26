@@ -46,7 +46,7 @@
 /////////////////////////////////////////////////////////////////////////////
 //                                MODULE
 /////////////////////////////////////////////////////////////////////////////
-`include "turbo9_soc_config.vh"
+`include "turbo9_rtl_config.vh"
 
 module t6551_rx
 (
@@ -84,7 +84,7 @@ reg         clk_cnt_dec;
 wire        clk_cnt_zero;
 reg [ 3:0]  clk_cnt_reg;
 
-`ifdef TURBO9_SOC_SIM_T6551_FAST
+`ifdef TURBO9_RTL_SIM_T6551_FAST
 localparam  clk_cnt_rst = 4'h6; // Works at 5, but lets do 6...
 `else
 localparam  clk_cnt_rst = 4'hF; // 16 cycles per bit
@@ -205,7 +205,7 @@ end
 //                           REGISTERS
 /////////////////////////////////////////////////////////////////////////////
 //
-`ifdef TURBO9_SOC_SYNC_RESET
+`ifdef TURBO9_RTL_SYNC_RESET
 always @(posedge CLK_I) begin
 `else
 always @(posedge CLK_I, posedge RST_I) begin

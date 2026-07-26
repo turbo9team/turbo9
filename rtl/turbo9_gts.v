@@ -47,7 +47,7 @@
 //                                MODULE
 /////////////////////////////////////////////////////////////////////////////
 
-`include "turbo9_cpu_config.vh"
+`include "turbo9_rtl_config.vh"
 
 module turbo9_gts
 #(

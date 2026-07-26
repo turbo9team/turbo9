@@ -47,7 +47,7 @@
 /////////////////////////////////////////////////////////////////////////////
 //                                MODULE
 /////////////////////////////////////////////////////////////////////////////
-`include "turbo9_cpu_config.vh"
+`include "turbo9_rtl_config.vh"
 
 module turbo9_wishbone_2x8bit
 #(
@@ -443,7 +443,7 @@ always @* begin
 end
 
 
-`ifdef TURBO9_CPU_SYNC_RESET
+`ifdef TURBO9_RTL_SYNC_RESET
 always @(posedge CLK_I) begin
 `else
 always @(posedge CLK_I, posedge RST_I) begin

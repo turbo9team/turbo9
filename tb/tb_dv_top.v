@@ -52,9 +52,6 @@
 
 module tb_dv_top;
 
-  `define TURBO9_CPU_SIM_DEBUG      // Turns on debug strings in decode table verilog files
-  `define TURBO9_SOC_SIM_T6551_FAST  // Runs T6551 UART as fast as possible
-
   `include "tb_dv_asm.vh"           // Address defines from assembly testbench 
   `include "tb_dv_lib.v"            // Library of utility tasks & functions
   `include "tc_dv_dir_instr.v"      // Testcase for direct addressing instrutions
@@ -102,8 +99,11 @@ module tb_dv_top;
   integer rand_itr_total;
   integer fail_test_cnt;
   integer pass_test_cnt;
-  reg [(128*8)-1:0] hex_file;
-  reg [(128*8)-1:0] s19_file;
+  reg [(96*8)-1:0] hex_file;
+  reg [(96*8)-1:0] s19_file;
+  reg [(32*8)-1:0] test_case;
+  reg [(128*8)-1:0] vcd_file_name;
+  integer dump_idx;
 
 
   wire [7:0]  model_output_port;
@@ -123,41 +123,6 @@ module tb_dv_top;
   wire        dut_uart_txd_pin;
   wire        dut_upload_done; 
   wire        dut_rx_idle;
-
-  ////////////////////////////////////////////////////////////////////////////
-  // Dump VCD
-  ////////////////////////////////////////////////////////////////////////////
-  reg [(128*8)-1:0] vcd_file_name;
-  integer dump_idx;
-  initial
-  begin
-    if ($value$plusargs("dump_vcd=%s", vcd_file_name)) begin
-      $dumpfile(vcd_file_name);
-      $dumpvars(0,tb_dv_top);
-      /*
-      for (dump_idx = 0; dump_idx < 7; dump_idx = dump_idx + 1) begin
-        $dumpvars(0, I_soc_top_r.I_turbo9_r.I_turbo9_pipeline.I_turbo9_fetch_stage.I_turbo9_fetch_queue.queue_data_nxt[dump_idx]);
-        $dumpvars(0, I_soc_top_r.I_turbo9_r.I_turbo9_pipeline.I_turbo9_fetch_stage.I_turbo9_fetch_queue.queue_data_reg[dump_idx]);
-        $dumpvars(0, I_soc_top_r.I_turbo9_r.I_turbo9_pipeline.I_turbo9_fetch_stage.I_turbo9_fetch_queue.queue_data_shift4[dump_idx]);
-        $dumpvars(0, I_soc_top_r.I_turbo9_r.I_turbo9_pipeline.I_turbo9_fetch_stage.I_turbo9_fetch_queue.queue_data_shift2[dump_idx]);
-        $dumpvars(0, I_soc_top_r.I_turbo9_r.I_turbo9_pipeline.I_turbo9_fetch_stage.I_turbo9_fetch_queue.queue_data_shift1[dump_idx]);
-      end
-       
-      for (dump_idx = 16'h2000; dump_idx < 16'h3000; dump_idx = dump_idx + 1) begin
-        $dumpvars(0, `model_mem[dump_idx]);
-        $dumpvars(0, `dut_mem[dump_idx]);
-        //$dumpvars(0, `tb_mem[dump_idx]);
-      end
-      
-      for (dump_idx = (2**`TURBO9_TB_MEM_ADDR_WIDTH)-4096; dump_idx < (2**`TURBO9_TB_MEM_ADDR_WIDTH); dump_idx = dump_idx + 1) begin
-        $dumpvars(0, `model_mem[dump_idx]);
-        $dumpvars(0, `dut_mem[dump_idx]);
-        //$dumpvars(0, `tb_mem[dump_idx]);
-      end
-      */
-    end
-  end
-
 
   ////////////////////////////////////////////////////////////////////////////
   // Generate Clock
@@ -206,154 +171,73 @@ module tb_dv_top;
     rand_itr_total  = 4;
     hex_file = "";
     s19_file = "";
+    test_case = "tc_dv_dir_instr";
     //
     if ($value$plusargs("seed=%0d", seed));
     if ($value$plusargs("rand_itr=%0d", rand_itr_total));
     if ($value$plusargs("hex_file=%s", hex_file));
     if ($value$plusargs("s19_file=%s", s19_file));
+    if ($value$plusargs("test_case=%s", test_case));
 
     $display("[TB; tb_dv_top      ] Random seed value = %0d", seed);
     $display("[TB; tb_dv_top      ] Random iterations = %0d", rand_itr_total);
     $display("[TB; tb_dv_top      ] HEX file = %0s", hex_file);
     $display("[TB; tb_dv_top      ] S19 file = %0s", s19_file);
-    $display("[TB; tb_dv_top      ]"); 
+    $display("[TB; tb_dv_top      ] Test Case = %0s", test_case);
+    $display("[TB; tb_dv_top      ]");
 
 
+    /////////// Dump VCD, named after the selected test case
+    //
+    if ($test$plusargs("dump")) begin
+      $sformat(vcd_file_name, "%0s.vcd", test_case);
+      $dumpfile(vcd_file_name);
+      $dumpvars(0, tb_dv_top);
+    end
 
-    /////////// Run selected tests
+
+    /////////// Run selected test
     //
-    if ($test$plusargs("tc_dv_dir_instr")) begin // Direct Addressing Test
-      tc_dv_dir_instr;
-    end
-    //
-    if ($test$plusargs("tc_dv_ext_instr")) begin // Extended Addressing Test
-      tc_dv_ext_instr;
-    end
-    //
-    if ($test$plusargs("tc_dv_imm_instr")) begin // Immediate Addressing Test
-      tc_dv_imm_instr;
-    end
-    //
-    if ($test$plusargs("tc_dv_rel_instr")) begin // Relative Addressing Test
-      tc_dv_rel_instr;
-    end
-    //
-    if ($test$plusargs("tc_dv_rel16_instr")) begin // Long Relative Addressing Test
-      tc_dv_rel16_instr;
-    end
-    //
-    if ($test$plusargs("tc_dv_run_hex")) begin // Run HEX Code
-      tc_dv_run_hex;
-    end
-    //
-    if ($test$plusargs("tc_dv_run_s19")) begin // Run S19 Code
-      tc_dv_run_s19;
-    end
-    //
-    if ($test$plusargs("tc_dv_inh_instr")) begin // Inherent Addressing Test
-      tc_dv_inh_instr;
-    end
-    //
-    if ($test$plusargs("tc_dv_sau_instr")) begin // Sequential Arithmetic Test
-      tc_dv_sau_instr;
-    end
-    //
-    if ($test$plusargs("tc_dv_idx_a_instr")) begin // Indexed A Offset Addressing Test
-      tc_dv_idx_a_instr;
-    end
-    //
-    if ($test$plusargs("tc_dv_idx_b_instr")) begin // Indexed B Offset Addressing Test
-      tc_dv_idx_b_instr;
-    end
-    //
-    if ($test$plusargs("tc_dv_idx_d_instr")) begin // Indexed D Offset Addressing Test
-      tc_dv_idx_d_instr;
-    end
-    //
-    if ($test$plusargs("tc_dv_idx_0b_instr")) begin // Indexed No Offset Addressing Test
-      tc_dv_idx_0b_instr;
-    end
-    //
-    if ($test$plusargs("tc_dv_idx_5b_instr")) begin // Indexed 5bit Offset Addressing Test
-      tc_dv_idx_5b_instr;
-    end
-    //
-    if ($test$plusargs("tc_dv_idx_8b_instr")) begin // Indexed 8bit Offset Addressing Test
-      tc_dv_idx_8b_instr;
-    end
-    //
-    if ($test$plusargs("tc_dv_idx_16b_instr")) begin // Indexed 16bit Offset Addressing Test
-      tc_dv_idx_16b_instr;
-    end
-    //
-    //
-    if ($test$plusargs("tc_dv_idx_p1_instr")) begin // Indexed Auto Increment by 1 Addressing Test
-      tc_dv_idx_p1_instr;
-    end
-    //
-    if ($test$plusargs("tc_dv_idx_p2_instr")) begin // Indexed Auto Increment by 2 Addressing Test
-      tc_dv_idx_p2_instr;
-    end
-    //
-    if ($test$plusargs("tc_dv_idx_m1_instr")) begin // Indexed Auto Increment by 1 Addressing Test
-      tc_dv_idx_m1_instr;
-    end
-    //
-    if ($test$plusargs("tc_dv_idx_m2_instr")) begin // Indexed Auto Increment by 2 Addressing Test
-      tc_dv_idx_m2_instr;
-    end
-    //
-    if ($test$plusargs("tc_dv_idx_pc8_instr")) begin // Indexed PC 8-bit Offset Addressing Test
-      tc_dv_idx_pc8_instr;
-    end
-    if ($test$plusargs("tc_dv_idx_pc16_instr")) begin // Indexed PC 16-bit Offset Addressing Test
-      tc_dv_idx_pc16_instr;
-    end
-    if ($test$plusargs("tc_dv_ind_0b_instr")) begin // Indexed Indirect Addressing Test
-      tc_dv_ind_0b_instr;
-    end
-    if ($test$plusargs("tc_dv_ind_8b_instr")) begin // Indexed 8-bit Indirect Addressing Test
-      tc_dv_ind_8b_instr;
-    end
-    if ($test$plusargs("tc_dv_ind_16b_instr")) begin // Indexed 16-bit Indirect Addressing Test
-      tc_dv_ind_16b_instr;
-    end
-    if ($test$plusargs("tc_dv_ind_a_instr")) begin // Indexed A Offset Indirect Addressing Test
-      tc_dv_ind_a_instr;
-    end
-    if ($test$plusargs("tc_dv_ind_b_instr")) begin // Indexed B Offset Indirect Addressing Test
-      tc_dv_ind_b_instr;
-    end
-    if ($test$plusargs("tc_dv_ind_d_instr")) begin // Indexed D Offset Indirect Addressing Test
-      tc_dv_ind_d_instr;
-    end
-    if ($test$plusargs("tc_dv_ind_p2_instr")) begin // Indexed Auto Increment by 2 Indirect Addressing Test
-      tc_dv_ind_p2_instr;
-    end
-    if ($test$plusargs("tc_dv_ind_m2_instr")) begin // Indexed Auto Increment by 2 Indirect Addressing Test
-      tc_dv_ind_m2_instr;
-    end
-    if ($test$plusargs("tc_dv_ind_pc8_instr")) begin // Indexed Auto Increment by 2 Indirect Addressing Test
-      tc_dv_ind_pc8_instr;
-    end
-    if ($test$plusargs("tc_dv_ind_pc16_instr")) begin // Indexed Auto Increment by 2 Indirect Addressing Test
-      tc_dv_ind_pc16_instr;
-    end
-    if ($test$plusargs("tc_dv_exg_8b_instr")) begin // Exchange 8-bit Registers Test
-      tc_dv_exg_8b_instr;
-    end
-    if ($test$plusargs("tc_dv_exg_16b_instr")) begin // Exchange 16-bit Registers Test
-      tc_dv_exg_16b_instr;
-    end
-    if ($test$plusargs("tc_dv_tfr_8b_instr")) begin // Exchange 8-bit Registers Test
-      tc_dv_tfr_8b_instr;
-    end
-    if ($test$plusargs("tc_dv_tfr_16b_instr")) begin // Exchange 16-bit Registers Test
-      tc_dv_tfr_16b_instr;
-    end
-    if ($test$plusargs("debug_random")) begin // debug random
-      debug_random;
-    end
+    case (test_case)
+      "tc_dv_dir_instr"      : tc_dv_dir_instr;      // Direct Addressing Test
+      "tc_dv_ext_instr"      : tc_dv_ext_instr;      // Extended Addressing Test
+      "tc_dv_imm_instr"      : tc_dv_imm_instr;      // Immediate Addressing Test
+      "tc_dv_rel_instr"      : tc_dv_rel_instr;      // Relative Addressing Test
+      "tc_dv_rel16_instr"    : tc_dv_rel16_instr;    // Long Relative Addressing Test
+      "tc_dv_run_hex"        : tc_dv_run_hex;        // Run HEX Code
+      "tc_dv_run_s19"        : tc_dv_run_s19;        // Run S19 Code
+      "tc_dv_inh_instr"      : tc_dv_inh_instr;      // Inherent Addressing Test
+      "tc_dv_sau_instr"      : tc_dv_sau_instr;      // Sequential Arithmetic Test
+      "tc_dv_idx_a_instr"    : tc_dv_idx_a_instr;    // Indexed A Offset Addressing Test
+      "tc_dv_idx_b_instr"    : tc_dv_idx_b_instr;    // Indexed B Offset Addressing Test
+      "tc_dv_idx_d_instr"    : tc_dv_idx_d_instr;    // Indexed D Offset Addressing Test
+      "tc_dv_idx_0b_instr"   : tc_dv_idx_0b_instr;   // Indexed No Offset Addressing Test
+      "tc_dv_idx_5b_instr"   : tc_dv_idx_5b_instr;   // Indexed 5bit Offset Addressing Test
+      "tc_dv_idx_8b_instr"   : tc_dv_idx_8b_instr;   // Indexed 8bit Offset Addressing Test
+      "tc_dv_idx_16b_instr"  : tc_dv_idx_16b_instr;  // Indexed 16bit Offset Addressing Test
+      "tc_dv_idx_p1_instr"   : tc_dv_idx_p1_instr;   // Indexed Auto Increment by 1 Addressing Test
+      "tc_dv_idx_p2_instr"   : tc_dv_idx_p2_instr;   // Indexed Auto Increment by 2 Addressing Test
+      "tc_dv_idx_m1_instr"   : tc_dv_idx_m1_instr;   // Indexed Auto Increment by 1 Addressing Test
+      "tc_dv_idx_m2_instr"   : tc_dv_idx_m2_instr;   // Indexed Auto Increment by 2 Addressing Test
+      "tc_dv_idx_pc8_instr"  : tc_dv_idx_pc8_instr;  // Indexed PC 8-bit Offset Addressing Test
+      "tc_dv_idx_pc16_instr" : tc_dv_idx_pc16_instr; // Indexed PC 16-bit Offset Addressing Test
+      "tc_dv_ind_0b_instr"   : tc_dv_ind_0b_instr;   // Indexed Indirect Addressing Test
+      "tc_dv_ind_8b_instr"   : tc_dv_ind_8b_instr;   // Indexed 8-bit Indirect Addressing Test
+      "tc_dv_ind_16b_instr"  : tc_dv_ind_16b_instr;  // Indexed 16-bit Indirect Addressing Test
+      "tc_dv_ind_a_instr"    : tc_dv_ind_a_instr;    // Indexed A Offset Indirect Addressing Test
+      "tc_dv_ind_b_instr"    : tc_dv_ind_b_instr;    // Indexed B Offset Indirect Addressing Test
+      "tc_dv_ind_d_instr"    : tc_dv_ind_d_instr;    // Indexed D Offset Indirect Addressing Test
+      "tc_dv_ind_p2_instr"   : tc_dv_ind_p2_instr;   // Indexed Auto Increment by 2 Indirect Addressing Test
+      "tc_dv_ind_m2_instr"   : tc_dv_ind_m2_instr;   // Indexed Auto Increment by 2 Indirect Addressing Test
+      "tc_dv_ind_pc8_instr"  : tc_dv_ind_pc8_instr;  // Indexed Auto Increment by 2 Indirect Addressing Test
+      "tc_dv_ind_pc16_instr" : tc_dv_ind_pc16_instr; // Indexed Auto Increment by 2 Indirect Addressing Test
+      "tc_dv_exg_8b_instr"   : tc_dv_exg_8b_instr;   // Exchange 8-bit Registers Test
+      "tc_dv_exg_16b_instr"  : tc_dv_exg_16b_instr;  // Exchange 16-bit Registers Test
+      "tc_dv_tfr_8b_instr"   : tc_dv_tfr_8b_instr;   // Exchange 8-bit Registers Test
+      "tc_dv_tfr_16b_instr"  : tc_dv_tfr_16b_instr;  // Exchange 16-bit Registers Test
+      "debug_random"         : debug_random;         // debug random
+      default : $display("[TB; tb_dv_top      ] ERROR: Unknown test_case = %0s", test_case);
+    endcase
 
 
     $display("[TB; tb_dv_top      ]"); 

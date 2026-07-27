@@ -89,13 +89,15 @@ print_macro_table() {
     TURBO9_TB_CPU_QUEUE_SIZE=6
 
   Behavior switches (opt-in, no value):
-    TURBO9_TB_MODEL_FAST        Run behavioral 6809 model w/ no idle cycles
     TURBO9_TB_MODEL_VERBOSE     Verbose 6809 model
     TURBO9_TB_MODEL_BREAK_DEC   Intentionally break 6809 model DEC instruction
     TURBO9_RTL_SYNC_RESET       Use synchronous reset
     TURBO9_RTL_MIN_RESET        Reset minimal registers
     TURBO9_RTL_USE_X            Assign X in don't-care logic for optimization
     TURBO9_RTL_SIM_DEBUG        Decode debug strings in decode table files
+
+  Behavior switches (default ON; --undefine=MACRO or -u=MACRO to disable):
+    TURBO9_TB_MODEL_FAST        Run behavioral 6809 model w/ no idle cycles
     TURBO9_RTL_SIM_T6551_FAST   Run the T6551 UART model as fast as possible
 EOF
 }
@@ -143,20 +145,22 @@ Usage:
   ${NAME} --regress [options]
 
 Single Test Examples:
-  ${NAME} --test=tc_dv_dir_instr --define="TURBO9_TB_MODEL_FAST" --plusarg=rand_itr=3
-  ${NAME} --test=tc_dv_dir_instr --define="TURBO9_TB_MODEL_FAST TURBO9_RTL_SIM_DEBUG" --plusarg=dump
-  ${NAME} --test=tc_dv_run_hex --plusarg="hex_file=../asm/tb_dv_asm.hex dump"
-  ${NAME} --test=tc_dv_run_s19 --plusarg="s19_file=../asm/byte_sieve_6809.s19 hex_file=../asm/turbo9_boot.hex" --define="TURBO9_TB_MODEL_FAST TURBO9_RTL_SIM_T6551_FAST"
+  ${NAME} --test=tc_dv_dir_instr
+  ${NAME} --test=tc_dv_dir_instr --define=TURBO9_RTL_SIM_DEBUG --plusarg=dump
+  ${NAME} --test=tc_dv_run_hex -p="hex_file=../asm/tb_dv_asm.hex dump"
+  ${NAME} --test=tc_dv_run_s19 -u=TURBO9_TB_MODEL_FAST -p=s19_file=../asm/byte_sieve_6809.s19
 
 Regression Examples:
-  ${NAME} --regress --define=TURBO9_TB_MODEL_FAST --plusarg=rand_itr=100 
+  ${NAME} --regress --plusarg=rand_itr=100
+  ${NAME} --regress -d=TURBO9_TB_DUT_TURBO9_GTR -p=rand_itr=100
 
 Options:
-  --test=NAME                               Run one test case (see list below)
-  --regress                                 Run the curated regression list (see list below)
-  --define=MACRO[=VAL] ["MACRO[=VAL] ..."]  Compile-time -DMACRO[=VAL] for iverilog. Use quotes for list.
-  --plusarg=NAME[=VAL] ["NAME[=VAL] ..."]   Runtime +NAME[=VAL] for vvp. Use quotes for list.
-  -h, --help                                Show this help
+  --test=NAME      -t=  Run one test case (see list below)
+  --regress        -r   Run the curated regression list (see list below)
+  --define=MACRO   -d=  Compile-time -DMACRO[=VAL]. Quote for list.
+  --undefine=MACRO -u=  Remove MACRO define (default-ON's above). Quote for list.
+  --plusarg=NAME   -p=  Runtime +NAME[=VAL]. Quote for list.
+  --help           -h   Show this help
 
 Known runtime plusargs understood by tb_dv_top.v:
 $(print_plusarg_table)
@@ -176,7 +180,12 @@ EOF
 #
 TEST=""
 REGRESS=0
-DEFINES=()
+# Default-on compile-time macros. These speed up / instrument every run and
+# are disabled per-macro with --undefine=/-u= rather than requiring the user
+# to opt back into a "normal" mode.
+DEFAULT_DEFINES=(TURBO9_RTL_SIM_T6551_FAST TURBO9_TB_MODEL_FAST)
+DEFINES=("${DEFAULT_DEFINES[@]}")
+UNDEFINES=()
 PLUSARGS=()
 
 if [[ $# -eq 0 ]]; then
@@ -186,17 +195,21 @@ fi
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --test=*)    TEST="${1#--test=}" ;;
-    --regress)   REGRESS=1 ;;
-    --define=*)
-      IFS=' ' read -ra _split <<< "${1#--define=}"
+    --test=*|-t=*)     TEST="${1#*=}" ;;
+    --regress|-r)      REGRESS=1 ;;
+    --define=*|-d=*)
+      IFS=' ' read -ra _split <<< "${1#*=}"
       DEFINES+=("${_split[@]}")
       ;;
-    --plusarg=*)
-      IFS=' ' read -ra _split <<< "${1#--plusarg=}"
+    --undefine=*|-u=*)
+      IFS=' ' read -ra _split <<< "${1#*=}"
+      UNDEFINES+=("${_split[@]}")
+      ;;
+    --plusarg=*|-p=*)
+      IFS=' ' read -ra _split <<< "${1#*=}"
       PLUSARGS+=("${_split[@]}")
       ;;
-    -h|--help)   usage; exit 0 ;;
+    -h|--help)         usage; exit 0 ;;
     *)
       echo "Unknown argument: $1" >&2
       usage
@@ -205,6 +218,19 @@ while [[ $# -gt 0 ]]; do
   esac
   shift
 done
+
+# Drop any define (default-on or explicitly added) named by --undefine=/-u=.
+if [[ "${#UNDEFINES[@]}" -gt 0 ]]; then
+  _filtered_defines=()
+  for d in "${DEFINES[@]}"; do
+    _drop=0
+    for u in "${UNDEFINES[@]}"; do
+      [[ "${d}" == "${u}" ]] && _drop=1 && break
+    done
+    [[ "${_drop}" -eq 0 ]] && _filtered_defines+=("${d}")
+  done
+  DEFINES=("${_filtered_defines[@]}")
+fi
 
 if [[ -z "${TEST}" && "${REGRESS}" -eq 0 ]]; then
   echo "Must pass --test=<name> or --regress." >&2

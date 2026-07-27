@@ -86,10 +86,7 @@ module tb_dv_top;
   `include "tc_dv_ind_m2_instr.v"   // Testcase for indirect indexed
   `include "tc_dv_ind_pc8_instr.v"  // Testcase for indirect indexed
   `include "tc_dv_ind_pc16_instr.v" // Testcase for indirect indexed
-  `include "tc_dv_exg_8b_instr.v"   // Testcase for exchange 8-bit registers
-  `include "tc_dv_exg_16b_instr.v"  // Testcase for exchange 16-bit registers
-  `include "tc_dv_tfr_8b_instr.v"   // Testcase for transfer 8-bit registers
-  `include "tc_dv_tfr_16b_instr.v"  // Testcase for transfer 16-bit registers
+  `include "tc_dv_exg_tfr_instr.v"  // Testcase for exchange / transfer registers
 
   reg sysclk;
   reg reset;
@@ -230,10 +227,7 @@ module tb_dv_top;
       "tc_dv_ind_m2_instr"   : tc_dv_ind_m2_instr;   // Indexed Auto Increment by 2 Indirect Addressing Test
       "tc_dv_ind_pc8_instr"  : tc_dv_ind_pc8_instr;  // Indexed Auto Increment by 2 Indirect Addressing Test
       "tc_dv_ind_pc16_instr" : tc_dv_ind_pc16_instr; // Indexed Auto Increment by 2 Indirect Addressing Test
-      "tc_dv_exg_8b_instr"   : tc_dv_exg_8b_instr;   // Exchange 8-bit Registers Test
-      "tc_dv_exg_16b_instr"  : tc_dv_exg_16b_instr;  // Exchange 16-bit Registers Test
-      "tc_dv_tfr_8b_instr"   : tc_dv_tfr_8b_instr;   // Exchange 8-bit Registers Test
-      "tc_dv_tfr_16b_instr"  : tc_dv_tfr_16b_instr;  // Exchange 16-bit Registers Test
+      "tc_dv_exg_tfr_instr"  : tc_dv_exg_tfr_instr;  // Exchange / Transfer Registers Test
       // [TURBO9_REGRESS_TEST_CASES_END]
       
       // [TURBO9_DEBUG_TEST_CASES_START]

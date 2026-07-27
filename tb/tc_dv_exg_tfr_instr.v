@@ -33,7 +33,7 @@
 // [TURBO9_LICENSE_END]
 //////////////////////////////////////////////////////////////////////////////
 // Engineer: Kevin Phillipson & Michael Rywalt
-// Description: Testcase: Transfer instruction w/ 16-bit registers
+// Description: Testcase: Exchange & Transfer instructions
 //
 //////////////////////////////////////////////////////////////////////////////
 // History:
@@ -47,15 +47,30 @@
 //                  Inherent Addressing Instruction Testcase
 /////////////////////////////////////////////////////////////////////////////
 
-  `define TEST_EXG_16_TOTAL_INSTR    1
-  `define TEST_EXG_16_RESET_CYCLES   40  // (16  nominal)
-  `define TEST_EXG_16_START_CYCLES   200 // (100 nominal)
-  `define TEST_EXG_16_FINISH_CYCLES  500 // (240 nominal)
+  `define TEST_EXG_TFR_TOTAL_INSTR    2
+  `define TEST_EXG_TFR_RESET_CYCLES   40  // (16  nominal)
+  `define TEST_EXG_TFR_START_CYCLES   200 // (100 nominal)
+  `define TEST_EXG_TFR_FINISH_CYCLES  500 // (240 nominal)
+
+  `define TEST_EXG_TFR_SEL_D     'b0000
+  `define TEST_EXG_TFR_SEL_X     'b0001
+  `define TEST_EXG_TFR_SEL_Y     'b0010
+  `define TEST_EXG_TFR_SEL_US    'b0011
+  `define TEST_EXG_TFR_SEL_SP    'b0100
+  `define TEST_EXG_TFR_SEL_PC    'b0101
+  //                            
+  `define TEST_EXG_TFR_SEL_0110  'b0110 
+  `define TEST_EXG_TFR_SEL_0111  'b0111 
+  //                            
+  `define TEST_EXG_TFR_SEL_A     'b1000
+  `define TEST_EXG_TFR_SEL_B     'b1001
+  `define TEST_EXG_TFR_SEL_CCR   'b1010
+  `define TEST_EXG_TFR_SEL_DPR   'b1011
 
   ////////////////////////////////////////////////////////////////////////////
   // Test Direct Addressing Instructions
   ////////////////////////////////////////////////////////////////////////////
-  task tc_dv_tfr_16b_instr;
+  task tc_dv_exg_tfr_instr;
 
     reg [15:0] addr_ptr;
     reg [15:0] inh_addr_ptr;
@@ -63,7 +78,7 @@
     reg [15:0] data_ea;
     reg [31:0] rand32;
 
-    integer inh_instr_list [0:`TEST_EXG_16_TOTAL_INSTR-1];
+    integer inh_instr_list [0:`TEST_EXG_TFR_TOTAL_INSTR-1];
     integer instr_idx;
     integer error_cnt;
 
@@ -74,8 +89,8 @@
     reg [ 7:0] prebyte;
     reg [ 7:0] opcode;
 
-    reg [ 3:0] msn;
-    reg [ 3:0] lsn;
+    reg [ 3:0] postbyte_src;
+    reg [ 3:0] postbyte_dst;
 
   begin
     // inh_instr_list define:
@@ -85,56 +100,43 @@
     // [ 7: 0] : Opcode
 
     // Page 1
-    inh_instr_list[0] =  'h00_2_1_00_1E; // EXG_16
+    inh_instr_list[0] =  'h00_2_1_00_1E; // EXG
+    inh_instr_list[1] =  'h00_2_1_00_1F; // TFR
 
-    for (instr_idx = 0; instr_idx < `TEST_EXG_16_TOTAL_INSTR; instr_idx++) begin
+    for (instr_idx = 0; instr_idx < `TEST_EXG_TFR_TOTAL_INSTR; instr_idx++) begin
 
       ///////////////// Load the instruction setup
       //
       opcode        = inh_instr_list[instr_idx][ 7: 0];
       prebyte       = inh_instr_list[instr_idx][15: 8];
       operand_size  = inh_instr_list[instr_idx][17:16];
-      $display("[TB: tc_dv_tfr_16b_instr]"); 
-      $display("[TB: tc_dv_tfr_16b_instr]"); 
-      $display("[TB: tc_dv_tfr_16b_instr] ////////////////////////////////////////////////////////////////////"); 
-      $write("[TB; tc_dv_tfr_16b_instr] // Testcase ");
+      $display("[TB: tc_dv_exg_tfr_instr]"); 
+      $display("[TB: tc_dv_exg_tfr_instr]"); 
+      $display("[TB: tc_dv_exg_tfr_instr] ////////////////////////////////////////////////////////////////////"); 
+      $write("[TB; tc_dv_exg_tfr_instr] // Testcase ");
       print_opcode_info(prebyte, opcode, 1'b1);
-      $display("[TB: tc_dv_tfr_16b_instr] ////////////////////////////////////////////////////////////////////"); 
+      $display("[TB: tc_dv_exg_tfr_instr] ////////////////////////////////////////////////////////////////////"); 
 
       rand_itr_idx = 1;
       error_cnt = 0;
       while ((rand_itr_idx <= rand_itr_total) && (error_cnt == 0)) begin
       
-        $display("[TB: tc_dv_tfr_16b_instr]"); 
-        $write("[TB: tc_dv_tfr_16b_instr] Random Iteration %0d of %0d for ",rand_itr_idx,rand_itr_total);
+        $display("[TB: tc_dv_exg_tfr_instr]"); 
+        $write("[TB: tc_dv_exg_tfr_instr] Random Iteration %0d of %0d for ",rand_itr_idx,rand_itr_total);
         print_opcode_info(prebyte, opcode, 1'b1);
 
         ///////////////// Select or randomize the stack pointer
         //
         stack_ptr_sel = choose_stack_ptr(inh_instr_list[instr_idx][21:20]);
       
-        // Get a random number to use to select bits for most and least significant bits of exchange postbyte.
-        rand32 = {$random(seed)};
-        msn = rand32[31:29] % 4; // we can only use values between 0 and 4
-        lsn = rand32[28:26] % 4; // same as above.
 
-        // If the S stack pointer is selected, make sure the msn doesn't select S.
-        // Otherwise if U is selected as the stack pointer, make sure the msn doesn't select U.
-        if(!stack_ptr_sel && msn == 'h4) msn--;
-        else if(stack_ptr_sel && msn == 'h3) msn++;
-      
-        // If the S stack pointer is selected, make sure the lsn doesn't select S.
-        // Otherwise if U is selected as the stack pointer, make sure the lsn doesn't select U.
-        if(!stack_ptr_sel && lsn == 'h4) lsn--;
-        else if(stack_ptr_sel && lsn == 'h3) lsn++;
-      
         ///////////////// Loading testbench template
         //
         if (rand_itr_idx == 1) begin
-          $display("[TB: tc_dv_tfr_16b_instr] Loading testbench template: %0s", hex_file);
+          $display("[TB: tc_dv_exg_tfr_instr] Loading testbench template: %0s", hex_file);
           $readmemh(hex_file,`tb_mem);
         end else begin
-          $display("[TB: tc_dv_tfr_16b_instr] Skip loading testbench template for subsequent randomization iterations");
+          $display("[TB: tc_dv_exg_tfr_instr] Skip loading testbench template for subsequent randomization iterations");
         end
       
       
@@ -154,25 +156,52 @@
         write_opcode(prebyte, opcode, addr_ptr, 1'b0);
         $display(" *** OPCODE UNDER TEST *** ");
       
-        // Write the postbyte to the opcode
-        write_tb_mem8p(addr_ptr, {msn,lsn});
+        ///////////////// Write the postbyte to the opcode
+        //
+        // Get a random number to use to select bits for most and least significant bits of exchange postbyte.
+        rand32 = {$random(seed)};
+
+        // Source Register
+        postbyte_src = rand32[31:28] % 10; // values between 0 and 9, i.e. 10 valid registers
+        if (postbyte_src > `TEST_EXG_TFR_SEL_PC) postbyte_src = postbyte_src + 'd2;
+
+        // Destination Register
+        postbyte_dst = rand32[27:24] % 10; // values between 0 and 9, i.e. 10 valid registers
+        if (postbyte_dst > `TEST_EXG_TFR_SEL_PC) postbyte_dst = postbyte_dst + 'd2;
+
+        // If the S stack pointer is selected, make sure the postbyte_dst doesn't select S.
+        if (!stack_ptr_sel && postbyte_dst == `TEST_EXG_TFR_SEL_SP) postbyte_dst = `TEST_EXG_TFR_SEL_US;
+        
+        // If the U stack pointer is selected, make sure the postbyte_dst doesn't select U.
+        if ( stack_ptr_sel && postbyte_dst == `TEST_EXG_TFR_SEL_US) postbyte_dst = `TEST_EXG_TFR_SEL_SP;
+    
+        // If postbyte_dst selects PC, select D 
+        if (postbyte_dst == `TEST_EXG_TFR_SEL_PC) postbyte_dst = `TEST_EXG_TFR_SEL_D;
+
+        // EXG writes back to both registers, so postbyte_src needs the same
+        // SP/US/PC shielding as postbyte_dst. TFR only writes postbyte_dst;
+        // its source is read-only, so no shielding is needed there.
+        if (opcode == 'h1E) begin
+          // If the S stack pointer is selected, make sure the postbyte_dst doesn't select S.
+          if (!stack_ptr_sel && postbyte_src == `TEST_EXG_TFR_SEL_SP) postbyte_src = `TEST_EXG_TFR_SEL_US;
+          
+          // If the U stack pointer is selected, make sure the postbyte_dst doesn't select U.
+          if ( stack_ptr_sel && postbyte_src == `TEST_EXG_TFR_SEL_US) postbyte_src = `TEST_EXG_TFR_SEL_SP;
+         
+          // If postbyte_dst selects PC, select D 
+          if (postbyte_src == `TEST_EXG_TFR_SEL_PC) postbyte_src = `TEST_EXG_TFR_SEL_D;
+        end
+
+        write_tb_mem8p(addr_ptr, {postbyte_src,postbyte_dst});
         addr_ptr++;
 
-        case(msn)
-        'b000: $write("D");
-        'b001: $write("X");
-        'b010: $write("Y");
-        'b011: $write("US");
-        'b100: $write("SP");
-        endcase
-        $write(" -> transferred to -> ");
-        case(lsn)
-        'b000: $write("D");
-        'b001: $write("X");
-        'b010: $write("Y");
-        'b011: $write("US");
-        'b100: $write("SP");
-        endcase
+        print_exg_tfr_register(postbyte_src);
+        if (opcode == 'h1E) begin
+          $write(" <- exchange -> ");
+        end else begin
+          $write(" -> transfer -> ");
+        end
+        print_exg_tfr_register(postbyte_dst);
         $display("");
 
 
@@ -211,33 +240,33 @@
       
         ///////////////// Reset DUT and Model
         //
-        $display("[TB: tc_dv_tfr_16b_instr] Resetting DUT and Model");
+        $display("[TB: tc_dv_exg_tfr_instr] Resetting DUT and Model");
         reset = 1'b1;
         wait_clk_cycles(4);
      
 
         ///////////////// Ensure the output port are cleared
         //
-        $display("[TB: tc_dv_tfr_16b_instr] Waiting for output ports of Model and DUT to clear...");
-        wait_bits_clear(8'hFF, `TEST_EXG_16_RESET_CYCLES, error_cnt);
+        $display("[TB: tc_dv_exg_tfr_instr] Waiting for output ports of Model and DUT to clear...");
+        wait_bits_clear(8'hFF, `TEST_EXG_TFR_RESET_CYCLES, error_cnt);
       
       
         ///////////////// Release Reset and begin testcase
         //
-        $display("[TB: tc_dv_tfr_16b_instr] Release reset and begin testcase!");
+        $display("[TB: tc_dv_exg_tfr_instr] Release reset and begin testcase!");
         reset = 1'b0;
         
       
         ///////////////// Waiting for indication of begining of code under test
         //
-        $display("[TB: tc_dv_tfr_16b_instr] Waiting for Model and DUT to indicate begining of code under test...");
-        wait_bits_set(8'h01, `TEST_EXG_16_START_CYCLES, error_cnt);
+        $display("[TB: tc_dv_exg_tfr_instr] Waiting for Model and DUT to indicate begining of code under test...");
+        wait_bits_set(8'h01, `TEST_EXG_TFR_START_CYCLES, error_cnt);
       
         
         ///////////////// Waiting for indication of completed code under test
         //
-        $display("[TB: tc_dv_tfr_16b_instr] Waiting for Model and DUT to indicate completion of code under test...");
-        wait_bits_set(8'h02, `TEST_EXG_16_FINISH_CYCLES, error_cnt);
+        $display("[TB: tc_dv_exg_tfr_instr] Waiting for Model and DUT to indicate completion of code under test...");
+        wait_bits_set(8'h02, `TEST_EXG_TFR_FINISH_CYCLES, error_cnt);
       
         wait_clk_cycles(4); // wait a few cycles to capture the output port in waveform dump
 
@@ -249,7 +278,7 @@
 
         ///////////////// Running a diff on the memories
         //
-        $display("[TB: tc_dv_tfr_16b_instr] Comparing DUT memory and Model memory...");
+        $display("[TB: tc_dv_exg_tfr_instr] Comparing DUT memory and Model memory...");
         error_cnt += mem_diff_cnt(1'b0);
       
 
@@ -257,15 +286,15 @@
         ///////////////// Test PASS / FAIL summary 
         //
         if (error_cnt == 0) begin
-          $write("[TB: tc_dv_tfr_16b_instr] Test PASS for iteration %0d of %0d for ", rand_itr_idx, rand_itr_total);
+          $write("[TB: tc_dv_exg_tfr_instr] Test PASS for iteration %0d of %0d for ", rand_itr_idx, rand_itr_total);
           print_opcode_info(prebyte, opcode, 1'b1);
           pass_test_cnt++;
         end else begin
-          $display("[TB: tc_dv_tfr_16b_instr] ERROR count: %0d", error_cnt);
-          $write("[TB; tc_dv_tfr_16b_instr] Test FAIL for iteration %0d of %0d for ", rand_itr_idx, rand_itr_total);
+          $display("[TB: tc_dv_exg_tfr_instr] ERROR count: %0d", error_cnt);
+          $write("[TB; tc_dv_exg_tfr_instr] Test FAIL for iteration %0d of %0d for ", rand_itr_idx, rand_itr_total);
           print_opcode_info(prebyte, opcode, 1'b1);
-          save_tb_mem("tc_dv_tfr_16b_instr",prebyte,opcode,rand_itr_idx);
-          $display("[TB: tc_dv_tfr_16b_instr] Exiting randomization iteration loop... ");
+          save_tb_mem("tc_dv_exg_tfr_instr",prebyte,opcode,rand_itr_idx);
+          $display("[TB: tc_dv_exg_tfr_instr] Exiting randomization iteration loop... ");
           fail_test_cnt++;
         end
 

@@ -622,6 +622,29 @@
   end
   endtask
 
+  ////////////////////////////////////////////////////////////////////////////
+  // Print EXG TFR Register 
+  ////////////////////////////////////////////////////////////////////////////
+  task print_exg_tfr_register(input [3:0] postbyte_nibble);
+  begin
+    case(postbyte_nibble)
+      'b0000  : $write("D");
+      'b0001  : $write("X");
+      'b0010  : $write("Y");
+      'b0011  : $write("US");
+      'b0100  : $write("SP");
+      'b0101  : $write("PC");
+      //                  
+      'b1000  : $write("A");
+      'b1001  : $write("B");
+      'b1010  : $write("CCR");
+      'b1011  : $write("DPR");
+      //
+      default : $write("undefined");
+    endcase
+  end
+  endtask
+
 
   ////////////////////////////////////////////////////////////////////////////
   // Print Opcode Infomation 

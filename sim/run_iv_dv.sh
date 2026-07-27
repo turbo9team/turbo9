@@ -88,13 +88,10 @@ print_macro_table() {
     TURBO9_TB_CPU_WB_PIPELINE_REG=0
     TURBO9_TB_CPU_QUEUE_SIZE=6
 
-  Model behavior switches (opt-in, no value):
-    TURBO9_TB_MODEL_FAST
-    TURBO9_TB_MODEL_VERBOSE
-    TURBO9_TB_MODEL_BREAK_DEC
-
-  RTL config, both CPU-core and SoC/peripheral (see rtl/turbo9_rtl_config.vh;
-  all off by default):
+  Behavior switches (opt-in, no value):
+    TURBO9_TB_MODEL_FAST        Run behavioral 6809 model w/ no idle cycles
+    TURBO9_TB_MODEL_VERBOSE     Verbose 6809 model
+    TURBO9_TB_MODEL_BREAK_DEC   Intentionally break 6809 model DEC instruction
     TURBO9_RTL_SYNC_RESET       Use synchronous reset
     TURBO9_RTL_MIN_RESET        Reset minimal registers
     TURBO9_RTL_USE_X            Assign X in don't-care logic for optimization
@@ -148,10 +145,10 @@ Usage:
 Examples:
   ${NAME} --test=tc_dv_dir_instr
   ${NAME} --test=tc_dv_dir_instr --plusarg=rand_itr=5 --plusarg=dump
+  ${NAME} --test=tc_dv_dir_instr --define=TURBO9_TB_MODEL_FAST --define=TURBO9_RTL_SIM_T6551_FAST --define=TURBO9_RTL_SIM_DEBUG
   ${NAME} --test=tc_dv_run_hex --plusarg=hex_file=../asm/tb_dv_asm.hex --plusarg=dump
   ${NAME} --test=tc_dv_run_s19 --plusarg=s19_file=../asm/byte_sieve_6809.s19 --plusarg=hex_file=../asm/turbo9_boot.hex
   ${NAME} --regress --plusarg=rand_itr=100
-  ${NAME} --test=tc_dv_dir_instr --define=TURBO9_TB_DUT_TURBO9_R --define=TURBO9_TB_MEM_ADDR_WIDTH=15
 
 Options:
   --test=NAME           Run one test case (see list below)
@@ -166,12 +163,11 @@ $(print_macro_table)
 Known runtime plusargs understood by tb_dv_top.v:
 $(print_plusarg_table)
 
-Regression list (subset run by --regress):
+Verification test cases (can be run individually or by --regress):
   $(regress_test_cases | tr '\n' ' ')
 
-Debug/utility test cases (excluded from --regress):
+Debug test cases (excluded from --regress):
   $(debug_test_cases | tr '\n' ' ')
-
 EOF
 }
 

@@ -93,9 +93,9 @@
 // These TB/model-only behavior switches are opt-in enable macros. Leave them
 // undefined by default so command-line defines only enable extra behavior.
 
-// `define TURBO9_TB_MODEL_FAST
-// `define TURBO9_TB_MODEL_VERBOSE
-// `define TURBO9_TB_MODEL_BREAK_DEC
+// `define TURBO9_TB_MODEL_FAST       // Run behavioral 6809 model w/ no idle cycles
+// `define TURBO9_TB_MODEL_VERBOSE    // Verbose 6809 model
+// `define TURBO9_TB_MODEL_BREAK_DEC  // Intentionally break 6809 model DEC instruction
 
 ///////////////////// Testbench Hierarchy Aliases
 //

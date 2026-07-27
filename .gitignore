@@ -4,3 +4,6 @@
 # ignore scratch files
 scratch.*
 
+# ignore agent instructions
+AGENTS.md
+

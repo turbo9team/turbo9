@@ -573,7 +573,7 @@
           dut_output_port, mask, (dut_output_port&mask));
         error_cnt++;
       end
-    end if (`model_error) begin
+    end else if (`model_error) begin
       $display("[TB: wait_bits_set  ] ERROR Model error detected");
     end else begin
       $display("[TB: wait_bits_clear] Masked output_port bits of Model and DUT clear! clk_cycles: %0d", clk_cycles);
@@ -614,7 +614,7 @@
           dut_output_port, mask, (dut_output_port&mask));
         error_cnt++;
       end
-    end if (`model_error) begin
+    end else if (`model_error) begin
       $display("[TB: wait_bits_set  ] ERROR Model error detected");
     end else begin
       $display("[TB: wait_bits_set  ] Masked output_port bits of Model and DUT set! clk_cycles: %0d", clk_cycles);
@@ -623,7 +623,45 @@
   endtask
 
   ////////////////////////////////////////////////////////////////////////////
-  // Print EXG TFR Register 
+  // Wait for UART receivers to go idle
+  ////////////////////////////////////////////////////////////////////////////
+  task wait_rx_idle(input integer timeout, inout integer error_cnt);
+    integer clk_cycles;
+    reg model_idle;
+    reg dut_idle;
+  begin
+    $display("[TB: wait_rx_idle   ] Waiting for Model and DUT UART receivers to go idle.");
+    model_idle = 1'b0;
+    dut_idle   = 1'b0;
+    clk_cycles = 0;
+    while ((~`model_error) && (clk_cycles < timeout) && ~(model_idle && dut_idle))
+    begin
+      if (model_rx_idle) model_idle = 1'b1;
+      if (dut_rx_idle)   dut_idle   = 1'b1;
+      @(posedge sysclk) clk_cycles++;
+    end
+    //
+    if (clk_cycles == timeout) begin
+      $display("[TB: wait_rx_idle   ] Timeout! clk_cycles: %0d", clk_cycles);
+      if (~model_idle) begin
+        $display("[TB: wait_rx_idle   ] ERROR Model UART receiver did not go idle.");
+        error_cnt++;
+      end
+      //
+      if (~dut_idle) begin
+        $display("[TB: wait_rx_idle   ] ERROR DUT UART receiver did not go idle.");
+        error_cnt++;
+      end
+    end else if (`model_error) begin
+      $display("[TB: wait_rx_idle   ] ERROR Model error detected");
+    end else begin
+      $display("[TB: wait_rx_idle   ] Model and DUT UART receivers idle! clk_cycles: %0d", clk_cycles);
+    end
+  end
+  endtask
+
+  ////////////////////////////////////////////////////////////////////////////
+  // Print EXG TFR Register
   ////////////////////////////////////////////////////////////////////////////
   task print_exg_tfr_register(input [3:0] postbyte_nibble);
   begin

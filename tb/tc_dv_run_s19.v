@@ -50,6 +50,7 @@
   `define RUN_S19_RESET_CYCLES    100
   `define RUN_S19_START_CYCLES    100_000
   `define RUN_S19_FINISH_CYCLES   300_000_000
+  `define RUN_S19_IDLE_CYCLES     10_000
 
   ////////////////////////////////////////////////////////////////////////////
   // Test Code
@@ -133,9 +134,19 @@
 
     wait_clk_cycles(32); // wait a few cycles to capture the output port in waveform dump
 
+    ///////////////// Waiting for Model and DUT UART receivers to settle
+    // The boot ROM loops back into boot_start immediately after signaling
+    // completion, with no synchronization between DUT and Model. Waiting on
+    // a fixed cycle count here let one side race ahead into that next boot
+    // pass before the other, drifting their final memory contents apart.
+    // Waiting for both receivers to go idle instead lets each side settle
+    // to its own natural idle point before the memory snapshot is taken.
+    //
+    wait_rx_idle(`RUN_S19_IDLE_CYCLES, error_cnt);
+
     error_cnt += `model_error; //add model error to error count
 
-    
+
     $display("[TB: tc_dv_run_s19] Resetting DUT and Model");
     reset = 1'b1;
     wait_clk_cycles(4);

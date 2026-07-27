@@ -142,26 +142,27 @@ Usage:
   ${NAME} --test=<name> [options]
   ${NAME} --regress [options]
 
-Examples:
-  ${NAME} --test=tc_dv_dir_instr
-  ${NAME} --test=tc_dv_dir_instr --plusarg=rand_itr=5 --plusarg=dump
-  ${NAME} --test=tc_dv_dir_instr --define=TURBO9_TB_MODEL_FAST --define=TURBO9_RTL_SIM_T6551_FAST --define=TURBO9_RTL_SIM_DEBUG
-  ${NAME} --test=tc_dv_run_hex --plusarg=hex_file=../asm/tb_dv_asm.hex --plusarg=dump
-  ${NAME} --test=tc_dv_run_s19 --plusarg=s19_file=../asm/byte_sieve_6809.s19 --plusarg=hex_file=../asm/turbo9_boot.hex
-  ${NAME} --regress --plusarg=rand_itr=100
+Single Test Examples:
+  ${NAME} --test=tc_dv_dir_instr --define="TURBO9_TB_MODEL_FAST" --plusarg=rand_itr=3
+  ${NAME} --test=tc_dv_dir_instr --define="TURBO9_TB_MODEL_FAST TURBO9_RTL_SIM_DEBUG" --plusarg=dump
+  ${NAME} --test=tc_dv_run_hex --plusarg="hex_file=../asm/tb_dv_asm.hex dump"
+  ${NAME} --test=tc_dv_run_s19 --plusarg="s19_file=../asm/byte_sieve_6809.s19 hex_file=../asm/turbo9_boot.hex" --define="TURBO9_TB_MODEL_FAST TURBO9_RTL_SIM_T6551_FAST"
+
+Regression Examples:
+  ${NAME} --regress --define=TURBO9_TB_MODEL_FAST --plusarg=rand_itr=100 
 
 Options:
-  --test=NAME           Run one test case (see list below)
-  --regress             Run the curated regression list (see list below)
-  --define=MACRO[=VAL]  Compile-time -DMACRO[=VAL] for iverilog. Repeatable.
-  --plusarg=NAME[=VAL]  Runtime +NAME[=VAL] for vvp. Repeatable.
-  -h, --help            Show this help
-
-Known compile-time macros (see tb/turbo9_tb_config.vh):
-$(print_macro_table)
+  --test=NAME                               Run one test case (see list below)
+  --regress                                 Run the curated regression list (see list below)
+  --define=MACRO[=VAL] ["MACRO[=VAL] ..."]  Compile-time -DMACRO[=VAL] for iverilog. Use quotes for list.
+  --plusarg=NAME[=VAL] ["NAME[=VAL] ..."]   Runtime +NAME[=VAL] for vvp. Use quotes for list.
+  -h, --help                                Show this help
 
 Known runtime plusargs understood by tb_dv_top.v:
 $(print_plusarg_table)
+
+Known compile-time macros (see tb/turbo9_tb_config.vh & rtl/turbo9_rtl_config.vh):
+$(print_macro_table)
 
 Verification test cases (can be run individually or by --regress):
   $(regress_test_cases | tr '\n' ' ')
@@ -187,8 +188,14 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     --test=*)    TEST="${1#--test=}" ;;
     --regress)   REGRESS=1 ;;
-    --define=*)  DEFINES+=("${1#--define=}") ;;
-    --plusarg=*) PLUSARGS+=("${1#--plusarg=}") ;;
+    --define=*)
+      IFS=' ' read -ra _split <<< "${1#--define=}"
+      DEFINES+=("${_split[@]}")
+      ;;
+    --plusarg=*)
+      IFS=' ' read -ra _split <<< "${1#--plusarg=}"
+      PLUSARGS+=("${_split[@]}")
+      ;;
     -h|--help)   usage; exit 0 ;;
     *)
       echo "Unknown argument: $1" >&2

@@ -104,8 +104,8 @@ print_plusarg_table() {
   cat <<'EOF'
   seed=N          Random seed (default: seed generated from system clock)
   rand_itr=N      Random iterations per test (default: testbench picks 1)
-  hex_file=PATH   HEX image to load (default: asm/tb_dv_asm.hex if omitted)
-  s19_file=PATH   S19 image to load (no default)
+  hex_file=PATH   HEX image to load (default: asm/tb_dv_asm.hex; asm/turbo9_boot.hex for tc_dv_run_s19)
+  s19_file=PATH   S19 image to load (default: asm/hello_world.s19 for tc_dv_run_s19; no default otherwise)
   dump            Boolean: dump <test_case>.vcd
 EOF
 }
@@ -239,9 +239,11 @@ fi
 # image loaded to have any code to execute.
 HAVE_SEED=0
 HAVE_HEX=0
+HAVE_S19=0
 for pa in "${PLUSARGS[@]}"; do
   [[ "${pa}" == seed=*     ]] && HAVE_SEED=1
   [[ "${pa}" == hex_file=* ]] && HAVE_HEX=1
+  [[ "${pa}" == s19_file=* ]] && HAVE_S19=1
 done
 
 if [[ "${HAVE_SEED}" -eq 0 ]]; then
@@ -253,7 +255,10 @@ else
   done
 fi
 
-if [[ "${HAVE_HEX}" -eq 0 ]]; then
+if [[ "${TEST}" == "tc_dv_run_s19" ]]; then
+  [[ "${HAVE_S19}" -eq 0 ]] && PLUSARGS+=("s19_file=${SCRIPT_DIR}/../asm/hello_world.s19")
+  [[ "${HAVE_HEX}" -eq 0 ]] && PLUSARGS+=("hex_file=${SCRIPT_DIR}/../asm/turbo9_boot.hex")
+elif [[ "${HAVE_HEX}" -eq 0 ]]; then
   PLUSARGS+=("hex_file=${SCRIPT_DIR}/../asm/tb_dv_asm.hex")
 fi
 

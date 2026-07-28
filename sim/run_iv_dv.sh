@@ -96,6 +96,7 @@ print_macro_table() {
   Behavior switches (default ON; --undefine=MACRO or -u=MACRO to disable):
     TURBO9_TB_MODEL_FAST        Run behavioral 6809 model w/ no idle cycles
     TURBO9_RTL_SIM_T6551_FAST   Run the T6551 UART model as fast as possible
+    TURBO9_RTL_SIM_NO_MEM_INIT  Skip RAM $readmemh; copy_tb_mem loads memory instead
 EOF
 }
 
@@ -182,7 +183,7 @@ RUN_NAME=""
 # Default-on compile-time macros. These speed up / instrument every run and
 # are disabled per-macro with --undefine=/-u= rather than requiring the user
 # to opt back into a "normal" mode.
-DEFAULT_DEFINES=(TURBO9_RTL_SIM_T6551_FAST TURBO9_TB_MODEL_FAST)
+DEFAULT_DEFINES=(TURBO9_RTL_SIM_T6551_FAST TURBO9_TB_MODEL_FAST TURBO9_RTL_SIM_NO_MEM_INIT)
 DEFINES=("${DEFAULT_DEFINES[@]}")
 UNDEFINES=()
 PLUSARGS=()

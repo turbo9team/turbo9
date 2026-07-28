@@ -59,5 +59,6 @@
 //
 //`define TURBO9_RTL_SIM_DEBUG        // Turns on debug strings in decode table verilog files
 //`define TURBO9_RTL_SIM_T6551_FAST   // Runs T6551 UART as fast as possible
+//`define TURBO9_RTL_SIM_NO_MEM_INIT  // Do not use $readmemh to init memory
 
 `endif

@@ -68,10 +68,12 @@ module syncram_8bit
 reg [7:0] ram [0:(2**MEM_ADDR_WIDTH)-1];
 reg [7:0] dat_o_reg;
 
+`ifndef TURBO9_RTL_SIM_NO_MEM_INIT
 initial
 begin
   $readmemh(MEM_INIT_FILE,ram);
 end
+`endif
 
 always @(posedge CLK_I)
 begin

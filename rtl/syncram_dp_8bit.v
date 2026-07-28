@@ -72,10 +72,12 @@ reg [7:0] ram [0:(2**MEM_ADDR_WIDTH)-1];
 reg [7:0] a_dat_o_reg;
 reg [7:0] b_dat_o_reg;
 
+`ifndef TURBO9_RTL_SIM_NO_MEM_INIT
 initial
 begin
   $readmemh(MEM_INIT_FILE,ram);
 end
+`endif
 
 always @(posedge CLK_I)
 begin

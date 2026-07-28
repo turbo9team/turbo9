@@ -35,9 +35,6 @@
 # ////////////////////////////////////////////////////////////////////////////
 # Engineer: Kevin Phillipson
 # Description: Run simulation script for Icarus Verilog, tb_dv_top only.
-# Flag-based args replace run_iv.sh's positional modes; --define/--plusarg are
-# generic passthroughs to iverilog -D / vvp +arg so new testbench knobs never
-# require a script change. tb_stim_top still runs through the old run_iv.sh.
 #
 # ////////////////////////////////////////////////////////////////////////////
 # History:
@@ -51,13 +48,13 @@ set -u
 
 ########################################## Locate ourselves
 #
+# Must be invoked from a directory parallel to 'tb' and 'asm' (e.g. sim/ or
+# regress/) -- everything below is relative to that directory
 INVOKED_FROM="$(pwd)"
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-cd "${SCRIPT_DIR}"
 
 if [[ ! -d ../tb || ! -d ../asm ]]; then
-  echo "Can't find '../tb' or '../asm' relative to ${SCRIPT_DIR}."
-  echo "This script expects to live in a directory parallel to 'tb' and 'asm'."
+  echo "Can't find '../tb' or '../asm' relative to ${INVOKED_FROM}."
+  echo "This script expects to be run from a directory parallel to 'tb' and 'asm'."
   exit 1
 fi
 
@@ -151,12 +148,13 @@ Single Test Examples:
   ${NAME} --test=tc_dv_run_s19 -u=TURBO9_TB_MODEL_FAST -p=s19_file=../asm/byte_sieve_6809.s19
 
 Regression Examples:
-  ${NAME} --regress --plusarg=rand_itr=100
   ${NAME} --regress -d=TURBO9_TB_DUT_TURBO9_GTR -p=rand_itr=100
+  ${NAME} --regress -n=before_fix -p=rand_itr=100
 
 Options:
   --test=NAME      -t=  Run one test case (see list below)
   --regress        -r   Run the curated regression list (see list below)
+  --name=NAME      -n=  Tag the run directory: tb_dv_top.NAME[.regress-date-stamp]
   --define=MACRO   -d=  Compile-time -DMACRO[=VAL]. Quote for list.
   --undefine=MACRO -u=  Remove MACRO define (default-ON's above). Quote for list.
   --plusarg=NAME   -p=  Runtime +NAME[=VAL]. Quote for list.
@@ -180,6 +178,7 @@ EOF
 #
 TEST=""
 REGRESS=0
+RUN_NAME=""
 # Default-on compile-time macros. These speed up / instrument every run and
 # are disabled per-macro with --undefine=/-u= rather than requiring the user
 # to opt back into a "normal" mode.
@@ -197,6 +196,7 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     --test=*|-t=*)     TEST="${1#*=}" ;;
     --regress|-r)      REGRESS=1 ;;
+    --name=*|-n=*)     RUN_NAME="${1#*=}" ;;
     --define=*|-d=*)
       IFS=' ' read -ra _split <<< "${1#*=}"
       DEFINES+=("${_split[@]}")
@@ -282,17 +282,18 @@ else
 fi
 
 if [[ "${TEST}" == "tc_dv_run_s19" ]]; then
-  [[ "${HAVE_S19}" -eq 0 ]] && PLUSARGS+=("s19_file=${SCRIPT_DIR}/../asm/hello_world.s19")
-  [[ "${HAVE_HEX}" -eq 0 ]] && PLUSARGS+=("hex_file=${SCRIPT_DIR}/../asm/turbo9_boot.hex")
+  [[ "${HAVE_S19}" -eq 0 ]] && PLUSARGS+=("s19_file=${INVOKED_FROM}/../asm/hello_world.s19")
+  [[ "${HAVE_HEX}" -eq 0 ]] && PLUSARGS+=("hex_file=${INVOKED_FROM}/../asm/turbo9_boot.hex")
 elif [[ "${HAVE_HEX}" -eq 0 ]]; then
-  PLUSARGS+=("hex_file=${SCRIPT_DIR}/../asm/tb_dv_asm.hex")
+  PLUSARGS+=("hex_file=${INVOKED_FROM}/../asm/tb_dv_asm.hex")
 fi
 
 ########################################## Compile tb_dv_top
 #
 CUR_DATE="$(date +"%m-%d-%y.%H-%M-%S")"
 WORKDIR="${TB}"
-[[ "${REGRESS}" -eq 1 ]] && WORKDIR="${TB}.${CUR_DATE}"
+[[ -n "${RUN_NAME}" ]] && WORKDIR="${WORKDIR}.${RUN_NAME}"
+[[ "${REGRESS}" -eq 1 ]] && WORKDIR="${WORKDIR}.${CUR_DATE}"
 
 mkdir -p "${WORKDIR}"
 cd "${WORKDIR}"
@@ -384,11 +385,13 @@ if grep -q FAIL "${TB}.summary.iv.run.log"; then
   echo "${NAME}: Run summary: FAIL for ${TB}" >> "${TB}.summary.iv.run.log"
   touch "${TB}.summary.iv.run.FAIL"
   rm -f "${TB}.summary.iv.run.PASS"
+  [[ "${REGRESS}" -eq 1 ]] && { cd ..; mv "${WORKDIR}" "${WORKDIR}.FAIL"; }
 else
   echo "${NAME}: Run summary: PASS for ${TB}"
   echo "${NAME}: Run summary: PASS for ${TB}" >> "${TB}.summary.iv.run.log"
   touch "${TB}.summary.iv.run.PASS"
   rm -f "${TB}.summary.iv.run.FAIL"
+  [[ "${REGRESS}" -eq 1 ]] && { cd ..; mv "${WORKDIR}" "${WORKDIR}.PASS"; }
 fi
 
 echo ""

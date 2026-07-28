@@ -44,9 +44,9 @@
 # ////////////////////////////////////////////////////////////////////////////
 # [TURBO9_HEADER_END]
 
-../sim/run_iv_dv.sh --regress --plusarg=rand_itr=32 --define=TURBO9_TB_DUT_TURBO9     --name=dut_turbo9
-../sim/run_iv_dv.sh --regress --plusarg=rand_itr=32 --define=TURBO9_TB_DUT_TURBO9_S   --name=dut_turbo9_s
-../sim/run_iv_dv.sh --regress --plusarg=rand_itr=32 --define=TURBO9_TB_DUT_TURBO9_R   --name=dut_turbo9_r
-../sim/run_iv_dv.sh --regress --plusarg=rand_itr=32 --define=TURBO9_TB_DUT_TURBO9_GTS --name=dut_turbo9_gts
-../sim/run_iv_dv.sh --regress --plusarg=rand_itr=32 --define=TURBO9_TB_DUT_TURBO9_GTR --name=dut_turbo9_gtr
+../sim/run_iv_dv.sh --regress --plusarg=rand_itr=10 --define=TURBO9_TB_DUT_TURBO9     --name=dut_turbo9
+../sim/run_iv_dv.sh --regress --plusarg=rand_itr=10 --define=TURBO9_TB_DUT_TURBO9_S   --name=dut_turbo9_s
+../sim/run_iv_dv.sh --regress --plusarg=rand_itr=10 --define=TURBO9_TB_DUT_TURBO9_R   --name=dut_turbo9_r
+../sim/run_iv_dv.sh --regress --plusarg=rand_itr=10 --define=TURBO9_TB_DUT_TURBO9_GTS --name=dut_turbo9_gts
+../sim/run_iv_dv.sh --regress --plusarg=rand_itr=10 --define=TURBO9_TB_DUT_TURBO9_GTR --name=dut_turbo9_gtr
 

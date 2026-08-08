@@ -1,4 +1,4 @@
-#!/bin/csh
+#!/bin/bash
 # [TURBO9_HEADER_START]
 # ////////////////////////////////////////////////////////////////////////////
 #                          Turbo9 Microprocessor IP
@@ -41,45 +41,62 @@
 # History:
 # 07.14.2023 - Kevin Phillipson
 #   File header added
-#
+# 07.28.2026 - Kevin Phillipson
+#   Converted from csh to bash. Swapped the retired
+#   s192hex8_offset0x0000[_even|_odd] trio for the new flag-driven s192hex
+#   tool (-i/-o file args, -l even/odd for the lane splits).
 # ////////////////////////////////////////////////////////////////////////////
 # [TURBO9_HEADER_END]
 
-set name=$0
-if ($#argv <1) then
-   echo Usage: $name \
-   '<filename w/o extension>'
-   echo Example: $name demo
-   exit
-endif
+set -u
 
-set filename=$1
+NAME=$0
 
-lwasm -f srec -o ${filename}.s19 -l${filename}.lst ${filename}.asm --symbol-dump=${filename}.sym
+if [[ $# -lt 1 ]]; then
+  echo "Usage: ${NAME} <filename w/o extension>" >&2
+  echo "Example: ${NAME} demo" >&2
+  exit 1
+fi
+
+FILENAME=$1
+
+# Unlike the old s192hex8_offset0x0000* tools it replaces, s192hex validates
+# S1 checksums and hex digits, so a bad .s19 now fails loudly here instead of
+# silently producing a bogus .hex.
+run_s192hex() {
+  if ! ./s192hex "$@"; then
+    echo "${NAME}: s192hex failed: $*" >&2
+    exit 1
+  fi
+}
+
+if ! lwasm -f srec -o "${FILENAME}.s19" -l"${FILENAME}.lst" "${FILENAME}.asm" --symbol-dump="${FILENAME}.sym"; then
+  echo "${NAME}: lwasm failed for ${FILENAME}.asm" >&2
+  exit 1
+fi
 
 
-if ($filename == "tb_dv_asm") then
-  ./s192hex8_offset0x0000      < ${filename}.s19 > ${filename}.hex
-  ./s192hex8_offset0x0000_even < ${filename}.s19 > ${filename}_even.hex
-  ./s192hex8_offset0x0000_odd  < ${filename}.s19 > ${filename}_odd.hex
-  ./verihead -i ${filename}.sym -o ${filename}.vh
-  #sed 's/^/  `define  tb_asm_/g' ${filename}.sym | sed 's/EQU.*\$/             16\x27h/g' > ${filename}.vh
-  echo "Copying ${filename}.vh to ../tb/."
-  cp ${filename}.vh ../tb/.
-endif
+if [[ "${FILENAME}" == "tb_dv_asm" ]]; then
+  run_s192hex -i "${FILENAME}.s19" -o "${FILENAME}.hex"
+  run_s192hex -i "${FILENAME}.s19" -o "${FILENAME}_even.hex" -l even
+  run_s192hex -i "${FILENAME}.s19" -o "${FILENAME}_odd.hex"  -l odd
+  ./verihead -i "${FILENAME}.sym" -o "${FILENAME}.vh"
+  #sed 's/^/  `define  tb_asm_/g' ${FILENAME}.sym | sed 's/EQU.*\$/             16\x27h/g' > ${FILENAME}.vh
+  echo "Copying ${FILENAME}.vh to ../tb/."
+  cp "${FILENAME}.vh" ../tb/.
+fi
 
-if ($filename == "turbo9_boot") then
-  ./s192hex8_offset0x0000      < ${filename}.s19 > ${filename}.hex
-  ./s192hex8_offset0x0000_even < ${filename}.s19 > ${filename}_even.hex
-  ./s192hex8_offset0x0000_odd  < ${filename}.s19 > ${filename}_odd.hex
-  echo "Copying ${filename}.hex to ../rtl/default.hex"
-  cp ${filename}.hex ../rtl/default.hex
-  echo "Copying ${filename}_even.hex to ../rtl/default_even.hex"
-  cp ${filename}_even.hex ../rtl/default_even.hex
-  echo "Copying ${filename}_odd.hex to ../rtl/default_odd.hex"
-  cp ${filename}_odd.hex ../rtl/default_odd.hex
+if [[ "${FILENAME}" == "turbo9_boot" ]]; then
+  run_s192hex -i "${FILENAME}.s19" -o "${FILENAME}.hex"
+  run_s192hex -i "${FILENAME}.s19" -o "${FILENAME}_even.hex" -l even
+  run_s192hex -i "${FILENAME}.s19" -o "${FILENAME}_odd.hex"  -l odd
+  echo "Copying ${FILENAME}.hex to ../rtl/default.hex"
+  cp "${FILENAME}.hex" ../rtl/default.hex
+  echo "Copying ${FILENAME}_even.hex to ../rtl/default_even.hex"
+  cp "${FILENAME}_even.hex" ../rtl/default_even.hex
+  echo "Copying ${FILENAME}_odd.hex to ../rtl/default_odd.hex"
+  cp "${FILENAME}_odd.hex" ../rtl/default_odd.hex
   echo "Creating turbo9_boot_io_lib.sym"
-  grep _io_lib  turbo9_boot.sym > turbo9_boot_io_lib.sym
-  sed -i 's/_io_lib//g' turbo9_boot_io_lib.sym
-endif
-
+  grep _io_lib "turbo9_boot.sym" > "turbo9_boot_io_lib.sym"
+  sed -i 's/_io_lib//g' "turbo9_boot_io_lib.sym"
+fi

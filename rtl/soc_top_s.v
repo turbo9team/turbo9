@@ -40,29 +40,33 @@
   ////////////// Memory Map
   //
   //
-  // Initialized RAM (Vector Table): FFFF - FFF0
+  // Boot ROM (Vector Table): FFFF - FFF0
   //
-  // FFFE : FFFF   RESET_VECTOR
-  // FFFC : FFFD   NMI_VECTOR
-  // FFFA : FFFB   SWI_VECTOR
-  // FFF8 : FFF9   IRQ_VECTOR
-  // FFF6 : FFF7   FIRQ_VECTOR
-  // FFF4 : FFF5   SWI2_VECTOR
-  // FFF2 : FFF3   SWI3_VECTOR
-  // FFF0 : FFF1   RESERVED_VECTOR
-  //
-  //
-  // I/O Space: FFEF - FF00
-  //
-  // FF08          CLK_CNT_CTRL[1:0] (read)  /  CLK_CNT_CTRL (write)
-  // FF04 : FF07   CLK_CNT[31:0]     (read)
-  // FF03          ACIA_STATUS       (read)
-  // FF02          ACIA_RX_DATA      (read)  /  ACIA_TX_DATA (write)
-  // FF01          GPI PORT          (read)
-  // FF00          GPO PORT          (read)  /  GPO_PORT    (write)
+  // FFFE : FFFF  RESET_VECTOR
+  // FFFC : FFFD  NMI_VECTOR
+  // FFFA : FFFB  SWI_VECTOR
+  // FFF8 : FFF9  IRQ_VECTOR
+  // FFF6 : FFF7  FIRQ_VECTOR
+  // FFF4 : FFF5  SWI2_VECTOR
+  // FFF2 : FFF3  SWI3_VECTOR
+  // FFF0 : FFF1  RESERVED_VECTOR
   //
   //
-  // Initialized RAM: FEFF - 0000
+  // I/O Space: FF09 - FF00
+  //
+  // FF09         ROM_ENABLE        (read)  /  ROM_ENABLE   (write)
+  // FF08         CLK_CNT_CTRL[1:0] (read)  /  CLK_CNT_CTRL (write)
+  // FF04 : FF07  CLK_CNT[31:0]     (read)
+  // FF03         ACIA_STATUS       (read)
+  // FF02         ACIA_RX_DATA      (read)  /  ACIA_TX_DATA (write)
+  // FF01         GPI PORT          (read)
+  // FF00         GPO PORT          (read)  /  GPO_PORT    (write)
+  //
+  //
+  // Boot ROM (RAM overlay when enabled): FFEF - FC00
+  //
+  //
+  // General RAM: FBFF - 0000
   //
   //
 
@@ -82,14 +86,16 @@
 
 module soc_top_s
 #(
-  parameter TURBO9_SOC_MEM_ADDR_WIDTH = 16, // SoC Memory Address Width: 16=64KB
+  parameter TURBO9_SOC_RAM_ADDR_WIDTH = 16, // SoC RAM Address Width: 16=64K
+  parameter TURBO9_SOC_ROM_ADDR_WIDTH =  9, // SoC ROM Address Width:  9=512
   parameter TURBO9_SOC_WB_PIPELINE_REG = 0, // SoC WB Pipeline Registers: True=1, False=0
   parameter TURBO9_CPU_WB_PIPELINE_REG = 0, // CPU WB Pipeline Registers: True=1, False=0
   parameter TURBO9_CPU_QUEUE_SIZE = 6 // CPU Fetch Queue Size: 6=Default, 4=Min, 7=Max
 )
 (
   // Inputs: Clock & Reset
-  input          RST_I, // Reset. Active high and synchronized to CLK_I
+  input          HARD_RST_I, // Hard Reset. Active high and synchronized to CLK_I
+  input          SOFT_RST_I, // Soft Reset. Active high and synchronized to CLK_I
   input          CLK_I, // Clock
 
   // Inputs
@@ -105,7 +111,8 @@ module soc_top_s
 //                             INTERNAL SIGNALS
 /////////////////////////////////////////////////////////////////////////////
 
-localparam WORD_MEM_ADDR_WIDTH = TURBO9_SOC_MEM_ADDR_WIDTH-1;
+localparam WORD_RAM_ADDR_WIDTH = TURBO9_SOC_RAM_ADDR_WIDTH-1;
+localparam WORD_ROM_ADDR_WIDTH = TURBO9_SOC_ROM_ADDR_WIDTH-1;
 
 wire  [4:0] turbo9_tgd_o;
 reg   [4:0] turbo9_tgd_reg;
@@ -116,8 +123,6 @@ reg  [15:0] turbo9_adr_reg;
 localparam  turbo9_adr_rst = 16'h0000;
 
 wire  [1:0] turbo9_sel;
-reg   [1:0] turbo9_sel_reg;
-localparam  turbo9_sel_rst = 2'b00;
 
 wire [15:0] turbo9_wr_dat;
 reg  [15:0] turbo9_rd_dat;
@@ -127,8 +132,11 @@ reg         turbo9_stb_reg;
 localparam  turbo9_stb_rst = 1'b0;
 wire        turbo9_ack = turbo9_stb_reg;
 wire        turbo9_we;
-reg         turbo9_we_reg;
-localparam  turbo9_we_rst = 1'b0;
+
+wire  [1:0] turbo9_we_sel = { turbo9_we,  turbo9_we} & turbo9_sel[1:0] & {turbo9_stb, turbo9_stb};
+wire  [1:0] turbo9_re_sel = {~turbo9_we, ~turbo9_we} & turbo9_sel[1:0] & {turbo9_stb, turbo9_stb};
+reg   [1:0] turbo9_re_sel_reg;
+localparam  turbo9_re_sel_rst = 2'b00;
 
 wire  [7:0] acia_data_rd_dat;
 wire  [7:0] acia_status_rd_dat;
@@ -139,9 +147,15 @@ reg         acia_data_rd_en;
 reg         clk_cnt_ctrl_wr_en;
 wire  [7:0] clk_cnt_ctrl_dat;
 
-reg         even_ram_we;
-reg         odd_ram_we;
+reg         rom_enable_we;
+reg         rom_enable_reg;
+localparam  rom_enable_rst = 1'b1;
+
+wire        mem_clk;
+reg   [1:0] ram_we;
 wire [15:0] ram_rd_dat;
+wire [15:0] rom_rd_dat;
+wire [15:0] mem_rd_dat = (rom_enable_reg) ? rom_rd_dat : ram_rd_dat;
 
 reg         gpo_port_we;
 wire  [7:0] gpo_port_rd_dat;
@@ -149,7 +163,6 @@ wire  [7:0] gpi_port_rd_dat;
 
 wire [31:0] clk_cnt_rd_dat;
 
-wire        ram_clk;
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -166,7 +179,7 @@ wire        ram_clk;
   I_turbo9_s
   (
     // Inputs: Clock & Reset
-    .RST_I  (RST_I),
+    .RST_I  (SOFT_RST_I),
     .CLK_I  (CLK_I),
 
     // Inputs
@@ -188,39 +201,36 @@ wire        ram_clk;
 generate
   if (TURBO9_SOC_WB_PIPELINE_REG) begin: gen_soc_pipeline_reg
   //
-  assign ram_clk = CLK_I;
+  assign mem_clk = CLK_I;
   //
   // Wishbone Pipeline Registers
 `ifdef TURBO9_RTL_SYNC_RESET
   always @(posedge CLK_I) begin
 `else
-  always @(posedge CLK_I, posedge RST_I) begin
+  always @(posedge CLK_I, posedge SOFT_RST_I) begin
 `endif
-    if (RST_I) begin
-      turbo9_adr_reg <= turbo9_adr_rst;
-      turbo9_stb_reg <= turbo9_stb_rst;
-      turbo9_tgd_reg <= turbo9_tgd_rst;
-      turbo9_sel_reg <= turbo9_sel_rst;
-      turbo9_we_reg  <= turbo9_we_rst;
+    if (SOFT_RST_I) begin
+      turbo9_adr_reg    <= turbo9_adr_rst;
+      turbo9_tgd_reg    <= turbo9_tgd_rst;
+      turbo9_re_sel_reg <= turbo9_re_sel_rst;
+      turbo9_stb_reg    <= turbo9_stb_rst;
     end else begin
-      turbo9_adr_reg <= turbo9_adr;
-      turbo9_stb_reg <= turbo9_stb;
-      turbo9_tgd_reg <= turbo9_tgd_o;
-      turbo9_sel_reg <= turbo9_sel;
-      turbo9_we_reg  <= turbo9_we;
+      turbo9_adr_reg    <= turbo9_adr;
+      turbo9_tgd_reg    <= turbo9_tgd_o;
+      turbo9_re_sel_reg <= turbo9_re_sel;
+      turbo9_stb_reg    <= turbo9_stb;
     end
   end
   //
   end else begin: gen_soc_no_pipeline_reg
   //
-  assign ram_clk = ~CLK_I;
+  assign mem_clk = ~CLK_I;
   //
   always @* begin
-    turbo9_adr_reg = turbo9_adr;
-    turbo9_stb_reg = turbo9_stb;
-    turbo9_tgd_reg = turbo9_tgd_o;
-    turbo9_sel_reg = turbo9_sel;
-    turbo9_we_reg  = turbo9_we;
+    turbo9_adr_reg    = turbo9_adr;
+    turbo9_tgd_reg    = turbo9_tgd_o;
+    turbo9_re_sel_reg = turbo9_re_sel;
+    turbo9_stb_reg    = turbo9_stb;
   end
   //
   end
@@ -230,66 +240,84 @@ endgenerate
   // Write Enables
   always @* begin
     // Defaults
-    even_ram_we = 1'b0;
-    odd_ram_we = 1'b0;
+    ram_we = 2'b00;
+    rom_enable_we = 1'b0; 
     gpo_port_we = 1'b0;
     acia_data_wr_en = 1'b0;
     clk_cnt_ctrl_wr_en = 1'b0;
     //
-    // Memory Bus Read Data Mux
-    if (turbo9_adr[15:8] == 8'hFF) begin
-      if (turbo9_adr[7:4] == 4'hF) begin  /////////// FFFF - FFF0 : Vector Table
-        even_ram_we = turbo9_we & turbo9_sel[1];
-        odd_ram_we  = turbo9_we & turbo9_sel[0];
-      end else begin
-        case (turbo9_adr[3:0])            /////////// FFEF - FF00 : I/O Space
-          4'h8: clk_cnt_ctrl_wr_en = turbo9_we & turbo9_sel[1];
-          4'h2: acia_data_wr_en    = turbo9_we & turbo9_sel[1];
-          4'h0: gpo_port_we        = turbo9_we & turbo9_sel[1];
+    case (turbo9_adr[15:8])
+      //
+      8'hFF: begin
+        case (turbo9_adr[7:0])            
+          /////////// FFFF - FF0A : RAM
+          default: ram_we[1:0]                         = turbo9_we_sel[1:0];
+          /////////// FF09 - FF00 : I/O Space
+          8'h08:   {clk_cnt_ctrl_wr_en, rom_enable_we} = turbo9_we_sel[1:0];
+          8'h02:   acia_data_wr_en                     = turbo9_we_sel[1];
+          8'h00:   gpo_port_we                         = turbo9_we_sel[1];
         endcase
       end
-    end else begin                        /////////// FEFF - 0000 : RAM
-      even_ram_we = turbo9_we & turbo9_sel[1];
-      odd_ram_we  = turbo9_we & turbo9_sel[0];
-    end
+      //
+      default: begin
+        /////////// FEFF - 0000 : RAM
+        ram_we[1:0] = turbo9_we_sel[1:0];
+      end
+      //
+    endcase
   end
 
-  // RAM (Even bytes)
-  syncram_8bit
+
+  // RAM
+  syncram
   #(
-    .MEM_ADDR_WIDTH (WORD_MEM_ADDR_WIDTH),   // RAM Address Width: word address excludes byte lane bit
-    .MEM_INIT_FILE  ("default_even.hex")     // RAM Init File: default_even.hex
+    .RAM_BYTE_WIDTH (2),
+    .RAM_ADDR_WIDTH (WORD_RAM_ADDR_WIDTH)    // RAM Address Width: word address excludes byte lane bit
   )
-  I_even_syncram_8bit
+  I_syncram
   (
-    .CLK_I  (ram_clk),
-    .WE_I   (even_ram_we),
-    .ADR_I  (turbo9_adr[TURBO9_SOC_MEM_ADDR_WIDTH-1:1]),
-    .DAT_I  (turbo9_wr_dat[15:8]),
-    .DAT_O  (ram_rd_dat[15:8])
+    .CLK_I  (mem_clk),
+    .WE_I   (ram_we),
+    .ADR_I  (turbo9_adr[TURBO9_SOC_RAM_ADDR_WIDTH-1:1]),
+    .DAT_I  (turbo9_wr_dat),
+    .DAT_O  (ram_rd_dat)
   );
 
-  // RAM (Odd bytes)
-  syncram_8bit
+
+  // ROM
+  syncrom
   #(
-    .MEM_ADDR_WIDTH (WORD_MEM_ADDR_WIDTH),   // RAM Address Width: word address excludes byte lane bit
-    .MEM_INIT_FILE  ("default_odd.hex")      // RAM Init File: default_odd.hex
+    .ROM_BYTE_WIDTH (2),
+    .ROM_ADDR_WIDTH (WORD_ROM_ADDR_WIDTH),    // ROM Address Width: word address excludes byte lane bit
+    .ROM_INIT_FILE  ("turbo9_boot_16bit.hex") // ROM Init File: Turbo9 Bootloader
   )
-  I_odd_syncram_8bit
+  I_syncrom
   (
-    .CLK_I  (ram_clk),
-    .WE_I   (odd_ram_we),
-    .ADR_I  (turbo9_adr[TURBO9_SOC_MEM_ADDR_WIDTH-1:1]),
-    .DAT_I  (turbo9_wr_dat[7:0]),
-    .DAT_O  (ram_rd_dat[7:0])
+    .CLK_I  (mem_clk),
+    .ADR_I  (turbo9_adr[TURBO9_SOC_ROM_ADDR_WIDTH-1:1]),
+    .DAT_O  (rom_rd_dat)
   );
+
+
+  //ROM Enable Register
+`ifdef TURBO9_RTL_SYNC_RESET
+  always @(posedge CLK_I) begin
+`else
+  always @(posedge CLK_I, posedge HARD_RST_I) begin
+`endif
+    if (HARD_RST_I) begin
+      rom_enable_reg <= rom_enable_rst;
+    end else if (rom_enable_we) begin
+      rom_enable_reg <= turbo9_wr_dat[0];
+    end
+  end
 
 
   // Output Port
   gpo_port I_gpo_port
   (
     .CLK_I      (CLK_I),
-    .RST_I      (RST_I),
+    .RST_I      (SOFT_RST_I),
     .WE_I       (gpo_port_we         ),
     .DAT_I      (turbo9_wr_dat[15:8] ),
     .DAT_O      (gpo_port_rd_dat     ),
@@ -310,12 +338,12 @@ endgenerate
   t6551 I_t6551
   (
     // Inputs: Clock & Reset
-    .RST_I            (RST_I              ),
+    .RST_I            (SOFT_RST_I         ),
     .CLK_I            (CLK_I              ),
 
     // Inputs
-    .TX_DATA_I        (turbo9_wr_dat[15:8] ),
-    .TX_DATA_WR_EN_I  (acia_data_wr_en     ),
+    .TX_DATA_I        (turbo9_wr_dat[15:8]),
+    .TX_DATA_WR_EN_I  (acia_data_wr_en    ),
     .RXD_PIN_I        (RXD_PIN_I          ),
     .RX_DATA_RD_EN_I  (acia_data_rd_en    ),
 
@@ -329,7 +357,7 @@ endgenerate
   clk_counter I_clk_counter
   (
     // Inputs: Clock & Reset
-    .RST_I                (RST_I          ),
+    .RST_I                (SOFT_RST_I     ),
     .CLK_I                (CLK_I          ),
 
     // Inputs
@@ -348,30 +376,38 @@ endgenerate
     turbo9_rd_dat = 16'h0000;
     acia_data_rd_en = 1'b0;
     //
-    if (turbo9_adr_reg[15:8] == 8'hFF) begin
-      if (turbo9_adr_reg[7:4] == 4'hF) begin  /////////// FFFF - FFF0 : Vector Table
-        turbo9_rd_dat = ram_rd_dat;
-      end else begin
-        case (turbo9_adr_reg[3:0])     /////////// FFEF - FF00 : I/O Space
-          //
-          4'h8:    turbo9_rd_dat = {clk_cnt_ctrl_dat, 8'h00};
+    case (turbo9_adr_reg[15:8])
+      //
+      8'hFF: begin
+        case (turbo9_adr_reg[7:0])
+          /////////// FFFF - FF0A : ROM / RAM
+          default: turbo9_rd_dat = mem_rd_dat;
+          /////////// FF09 - FF00 : I/O Space
+          4'h8:    turbo9_rd_dat = {clk_cnt_ctrl_dat, {7'd0, rom_enable_reg}};
           4'h6:    turbo9_rd_dat = clk_cnt_rd_dat[15: 0];
           4'h4:    turbo9_rd_dat = clk_cnt_rd_dat[31:16];
           4'h2: begin
             turbo9_rd_dat   = {acia_data_rd_dat,  acia_status_rd_dat};
-            acia_data_rd_en = ~turbo9_we_reg & turbo9_sel_reg[1] & turbo9_stb_reg;
+            acia_data_rd_en = turbo9_re_sel_reg[1];
           end
           4'h0:    turbo9_rd_dat = {gpo_port_rd_dat, gpi_port_rd_dat};
-          default: turbo9_rd_dat = 16'h0000;
         endcase
       end
-    end else begin                            /////////// FEFF - 0000 : RAM
-      turbo9_rd_dat = ram_rd_dat;
-    end
+      //
+      8'hFE,
+      8'hFD,
+      8'hFC: begin
+        /////////// FEFF - FC00 : ROM / RAM
+        turbo9_rd_dat = mem_rd_dat;
+      end
+      //
+      default: begin
+        /////////// FBFF - 0000 : RAM
+        turbo9_rd_dat = ram_rd_dat;
+      end
+      //
+    endcase
   end
-
-
-
 
 
 /////////////////////////////////////////////////////////////////////////////

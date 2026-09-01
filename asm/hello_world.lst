@@ -44,16 +44,16 @@
                       (  hello_world.asm):00044         ; [TURBO9_HEADER_END]
                       (  hello_world.asm):00045           
                       (  hello_world.asm):00046           include turbo9_boot_io_lib.sym
-     FDB8             (9_boot_io_lib.sym):00001         boot_return EQU $FDB8
-     FE4A             (9_boot_io_lib.sym):00002         getchar_b EQU $FE4A
-     FE55             (9_boot_io_lib.sym):00003         gethex_16bit EQU $FE55
-     FE5C             (9_boot_io_lib.sym):00004         gethex_byte EQU $FE5C
-     FE69             (9_boot_io_lib.sym):00005         gethex_digit EQU $FE69
-     FE88             (9_boot_io_lib.sym):00006         print_string EQU $FE88
-     FE7A             (9_boot_io_lib.sym):00007         putchar_b EQU $FE7A
-     FEA0             (9_boot_io_lib.sym):00008         puthex_16bit EQU $FEA0
-     FEA9             (9_boot_io_lib.sym):00009         puthex_byte EQU $FEA9
-     FEB6             (9_boot_io_lib.sym):00010         puthex_digit EQU $FEB6
+     FCB8             (9_boot_io_lib.sym):00001         boot_return EQU $FCB8
+     FD4A             (9_boot_io_lib.sym):00002         getchar_b EQU $FD4A
+     FD55             (9_boot_io_lib.sym):00003         gethex_16bit EQU $FD55
+     FD5C             (9_boot_io_lib.sym):00004         gethex_byte EQU $FD5C
+     FD69             (9_boot_io_lib.sym):00005         gethex_digit EQU $FD69
+     FD88             (9_boot_io_lib.sym):00006         print_string EQU $FD88
+     FD7A             (9_boot_io_lib.sym):00007         putchar_b EQU $FD7A
+     FDA0             (9_boot_io_lib.sym):00008         puthex_16bit EQU $FDA0
+     FDA9             (9_boot_io_lib.sym):00009         puthex_byte EQU $FDA9
+     FDB6             (9_boot_io_lib.sym):00010         puthex_digit EQU $FDB6
                       (  hello_world.asm):00047         
      1111             (  hello_world.asm):00048         prog_start  equ $1111
                       (  hello_world.asm):00049         ; ////////////////////////////////////////////////////////////////////////////
@@ -63,8 +63,8 @@
                       (  hello_world.asm):00053           org   prog_start
                       (  hello_world.asm):00054         
 1111 CC111A           (  hello_world.asm):00055           ldd   #string_hello_world
-1114 BDFE88           (  hello_world.asm):00056           jsr   print_string
-1117 7EFDB8           (  hello_world.asm):00057           jmp   boot_return
+1114 BDFD88           (  hello_world.asm):00056           jsr   print_string
+1117 7EFCB8           (  hello_world.asm):00057           jmp   boot_return
                       (  hello_world.asm):00058         
                       (  hello_world.asm):00059         ; ////////////////////////////////////////////////////////////////////////////
                       (  hello_world.asm):00060         ;                              Data Block

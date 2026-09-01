@@ -1,326 +1,332 @@
-                      (byte_sieve_6809.a):00001         ; [TURBO9_HEADER_START]
-                      (byte_sieve_6809.a):00002         ; ////////////////////////////////////////////////////////////////////////////
-                      (byte_sieve_6809.a):00003         ;                          Turbo9 Microprocessor IP
-                      (byte_sieve_6809.a):00004         ; ////////////////////////////////////////////////////////////////////////////
-                      (byte_sieve_6809.a):00005         ; Website: www.turbo9.org
-                      (byte_sieve_6809.a):00006         ; Contact: team[at]turbo9[dot]org
-                      (byte_sieve_6809.a):00007         ; ////////////////////////////////////////////////////////////////////////////
-                      (byte_sieve_6809.a):00008         ; [TURBO9_LICENSE_START]
-                      (byte_sieve_6809.a):00009         ; BSD-1-Clause
-                      (byte_sieve_6809.a):00010         ;
-                      (byte_sieve_6809.a):00011         ; Copyright (c) 2020-2023
-                      (byte_sieve_6809.a):00012         ; Kevin Phillipson
-                      (byte_sieve_6809.a):00013         ; Michael Rywalt
-                      (byte_sieve_6809.a):00014         ; All rights reserved.
-                      (byte_sieve_6809.a):00015         ;
-                      (byte_sieve_6809.a):00016         ; Redistribution and use in source and binary forms, with or without
-                      (byte_sieve_6809.a):00017         ; modification, are permitted provided that the following conditions are met:
-                      (byte_sieve_6809.a):00018         ;
-                      (byte_sieve_6809.a):00019         ; 1. Redistributions of source code must retain the above copyright notice,
-                      (byte_sieve_6809.a):00020         ;    this list of conditions and the following disclaimer.
-                      (byte_sieve_6809.a):00021         ;
-                      (byte_sieve_6809.a):00022         ; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-                      (byte_sieve_6809.a):00023         ; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-                      (byte_sieve_6809.a):00024         ; IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-                      (byte_sieve_6809.a):00025         ; ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS AND CONTRIBUTORS BE
-                      (byte_sieve_6809.a):00026         ; LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-                      (byte_sieve_6809.a):00027         ; CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-                      (byte_sieve_6809.a):00028         ; SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-                      (byte_sieve_6809.a):00029         ; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-                      (byte_sieve_6809.a):00030         ; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-                      (byte_sieve_6809.a):00031         ; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-                      (byte_sieve_6809.a):00032         ; POSSIBILITY OF SUCH DAMAGE.
-                      (byte_sieve_6809.a):00033         ; [TURBO9_LICENSE_END]
-                      (byte_sieve_6809.a):00034         ; ////////////////////////////////////////////////////////////////////////////
-                      (byte_sieve_6809.a):00035         ; Engineer: Kevin Phillipson
-                      (byte_sieve_6809.a):00036         ; Description:
-                      (byte_sieve_6809.a):00037         ; BYTE Sieve Benchmark (Language: 6809 ASM)
-                      (byte_sieve_6809.a):00038         ; Originally published in BYTE magazine September 1981
-                      (byte_sieve_6809.a):00039         ; 6809 Assembly port by Kevin Phillipson
-                      (byte_sieve_6809.a):00040         ;
-                      (byte_sieve_6809.a):00041         ; ////////////////////////////////////////////////////////////////////////////
-                      (byte_sieve_6809.a):00042         ; History:
-                      (byte_sieve_6809.a):00043         ; 07.14.2023 - Kevin Phillipson
-                      (byte_sieve_6809.a):00044         ;   File header added
-                      (byte_sieve_6809.a):00045         ;
-                      (byte_sieve_6809.a):00046         ; ////////////////////////////////////////////////////////////////////////////
-                      (byte_sieve_6809.a):00047         ; [TURBO9_HEADER_END]
-                      (byte_sieve_6809.a):00048         
-                      (byte_sieve_6809.a):00049         ; ////////////////////////////////////////////////////////////////////////////
-                      (byte_sieve_6809.a):00050         ;                  Turbo9 / 6809 BYTE sieve benchmark program
-                      (byte_sieve_6809.a):00051         ; ////////////////////////////////////////////////////////////////////////////
-                      (byte_sieve_6809.a):00052         
-                      (byte_sieve_6809.a):00053         
-                      (byte_sieve_6809.a):00054         ; //////////// Memory Map
-                      (byte_sieve_6809.a):00055         ;
-                      (byte_sieve_6809.a):00056         ; Initialized RAM (Vector Table): FFFF - FFF0
-                      (byte_sieve_6809.a):00057         ;
-                      (byte_sieve_6809.a):00058         ; FFFE : FFFF   RESET_VECTOR
-                      (byte_sieve_6809.a):00059         ; FFFC : FFFD   NMI_VECTOR
-                      (byte_sieve_6809.a):00060         ; FFFA : FFFB   SWI_VECTOR
-                      (byte_sieve_6809.a):00061         ; FFF8 : FFF9   IRQ_VECTOR
-                      (byte_sieve_6809.a):00062         ; FFF6 : FFF7   FIRQ_VECTOR
-                      (byte_sieve_6809.a):00063         ; FFF4 : FFF5   SWI2_VECTOR
-                      (byte_sieve_6809.a):00064         ; FFF2 : FFF3   SWI3_VECTOR
-                      (byte_sieve_6809.a):00065         ; FFF0 : FFF1   RESERVED_VECTOR
-                      (byte_sieve_6809.a):00066         ;
-                      (byte_sieve_6809.a):00067         ;
-                      (byte_sieve_6809.a):00068         ; I/O Space: FFEF - FF00
-                      (byte_sieve_6809.a):00069         ;
-                      (byte_sieve_6809.a):00070         ; FF08          CLK_CNT_CTRL[1:0] (read)  /  CLK_CNT_CTRL (write)
-                      (byte_sieve_6809.a):00071         ; FF04 : FF07   CLK_CNT[31:0]     (read)
-                      (byte_sieve_6809.a):00072         ; FF03          ACIA_STATUS       (read)
-                      (byte_sieve_6809.a):00073         ; FF02          ACIA_RX_DATA      (read)  /  ACIA_TX_DATA (write)
-                      (byte_sieve_6809.a):00074         ; FF01          GPI PORT          (read)
-                      (byte_sieve_6809.a):00075         ; FF00          GPO PORT          (read)  /  GPO_PORT    (write)
-                      (byte_sieve_6809.a):00076         ;
-                      (byte_sieve_6809.a):00077         ; Initialized RAM: FEFF - 0000
-                      (byte_sieve_6809.a):00078         ;
-                      (byte_sieve_6809.a):00079         
-                      (byte_sieve_6809.a):00080         
-                      (byte_sieve_6809.a):00081           include turbo9_boot_io_lib.sym
-     FDB8             (turbo9_boot_io_li):00001         boot_return EQU $FDB8
-     FE4A             (turbo9_boot_io_li):00002         getchar_b EQU $FE4A
-     FE55             (turbo9_boot_io_li):00003         gethex_16bit EQU $FE55
-     FE5C             (turbo9_boot_io_li):00004         gethex_byte EQU $FE5C
-     FE69             (turbo9_boot_io_li):00005         gethex_digit EQU $FE69
-     FE88             (turbo9_boot_io_li):00006         print_string EQU $FE88
-     FE7A             (turbo9_boot_io_li):00007         putchar_b EQU $FE7A
-     FEA0             (turbo9_boot_io_li):00008         puthex_16bit EQU $FEA0
-     FEA9             (turbo9_boot_io_li):00009         puthex_byte EQU $FEA9
-     FEB6             (turbo9_boot_io_li):00010         puthex_digit EQU $FEB6
-                      (byte_sieve_6809.a):00082         
-                      (byte_sieve_6809.a):00083         
-     FF08             (byte_sieve_6809.a):00084         clk_cnt_ctrl  equ $ff08
-     FF04             (byte_sieve_6809.a):00085         clk_cnt       equ $ff04
-     FF03             (byte_sieve_6809.a):00086         acia_status   equ $ff03
-     FF02             (byte_sieve_6809.a):00087         acia_data     equ $ff02
-     FF01             (byte_sieve_6809.a):00088         gpi_port      equ $ff01
-     FF00             (byte_sieve_6809.a):00089         gpo_port      equ $ff00
-                      (byte_sieve_6809.a):00090         
-     8000             (byte_sieve_6809.a):00091         prog_start    equ $8000
-                      (byte_sieve_6809.a):00092         
-     1FFE             (byte_sieve_6809.a):00093         data_size   equ 8190
-     000A             (byte_sieve_6809.a):00094         iter        equ 10
-                      (byte_sieve_6809.a):00095         
-                      (byte_sieve_6809.a):00096         
-                      (byte_sieve_6809.a):00097           org  prog_start  ; 32k of memory at the top
-                      (byte_sieve_6809.a):00098         
-                      (byte_sieve_6809.a):00099         ; ////////////////////////////////////////////////////////////////////////////
-                      (byte_sieve_6809.a):00100         ;                             Code Under Test
-                      (byte_sieve_6809.a):00101         ; ////////////////////////////////////////////////////////////////////////////
-8000                  (byte_sieve_6809.a):00102         code_under_test:
-8000 327F             (byte_sieve_6809.a):00103           leas  -1,s
-                      (byte_sieve_6809.a):00104         
-8002 CCA0D8           (byte_sieve_6809.a):00105           ldd   #string_prog_title
-8005 BDFE88           (byte_sieve_6809.a):00106           jsr   print_string
-                      (byte_sieve_6809.a):00107         
-8008 7FFF08           (byte_sieve_6809.a):00108           clr   clk_cnt_ctrl    ; Set clk_cnt_ctrl    = 0, clearing clk_counter
-800B 7CFF08           (byte_sieve_6809.a):00109           inc   clk_cnt_ctrl    ; Set clk_cnt_ctrl[0] = 1, starting clk_counter
-                      (byte_sieve_6809.a):00110         
-                      (byte_sieve_6809.a):00111         
-                      (byte_sieve_6809.a):00112         ; ////////////////////////////////////////////////////////////////////////////
-                      (byte_sieve_6809.a):00113         ;                               BYTE sieve function
-                      (byte_sieve_6809.a):00114         ; ////////////////////////////////////////////////////////////////////////////
-                      (byte_sieve_6809.a):00115         ; #define true 1
-                      (byte_sieve_6809.a):00116         ; #define false 0
-                      (byte_sieve_6809.a):00117         ; #define size 8190
-                      (byte_sieve_6809.a):00118         ; #define sizepl 8191
-                      (byte_sieve_6809.a):00119         ; char flags[sizepl];
-                      (byte_sieve_6809.a):00120         ; main() {
-                      (byte_sieve_6809.a):00121         ;     int i, prime, k, count, iter; 
-                      (byte_sieve_6809.a):00122         ;     printf("10 iterations\n");
-                      (byte_sieve_6809.a):00123         ;     for (iter = 1; iter <= 10; iter ++) {     // interation_loop
-                      (byte_sieve_6809.a):00124         ;         count=0 ; 
-                      (byte_sieve_6809.a):00125         ;         for (i = 0; i <= size; i++)           // set_flags_loop
-                      (byte_sieve_6809.a):00126         ;             flags[i] = true;                  // set_flags_loop_done
-                      (byte_sieve_6809.a):00127         ;         for (i = 0; i <= size; i++) {         // find_primes_loop 
-                      (byte_sieve_6809.a):00128         ;             if (flags[i]) {
-                      (byte_sieve_6809.a):00129         ;                 prime = i + i + 3; 
-                      (byte_sieve_6809.a):00130         ;                 k = i + prime; 
-                      (byte_sieve_6809.a):00131         ;                 while (k <= size) {           // clr_flags_loop
-                      (byte_sieve_6809.a):00132         ;                     flags[k] = false; 
-                      (byte_sieve_6809.a):00133         ;                     k += prime; 
-                      (byte_sieve_6809.a):00134         ;                 }                             // clr_flags_loop_done
-                      (byte_sieve_6809.a):00135         ;                 count = count + 1;
-                      (byte_sieve_6809.a):00136         ;             }
-                      (byte_sieve_6809.a):00137         ;         }                                     // find_primes_loop_done 
-                      (byte_sieve_6809.a):00138         ;     }                                         // interation_loop_done
-                      (byte_sieve_6809.a):00139         ;    printf("\n%d primes", count);
-                      (byte_sieve_6809.a):00140         ; }
-                      (byte_sieve_6809.a):00141         ; Variables:
-                      (byte_sieve_6809.a):00142         ;
-                      (byte_sieve_6809.a):00143         ; i: generic loop counter (16bit) (X used) 
-                      (byte_sieve_6809.a):00144         ; prime:  16bit                   (D used)
-                      (byte_sieve_6809.a):00145         ; k:      16bit                   (Y used)
-                      (byte_sieve_6809.a):00146         ; count:  16bit                   (U used)
-                      (byte_sieve_6809.a):00147         ; iter:   8bit                    (0,s)
-                      (byte_sieve_6809.a):00148         
-800E 860A             (byte_sieve_6809.a):00149           lda   #iter
-8010 A7E4             (byte_sieve_6809.a):00150           sta   ,s
-                      (byte_sieve_6809.a):00151         
-8012                  (byte_sieve_6809.a):00152         interation_loop
-                      (byte_sieve_6809.a):00153           
-8012 8E0007           (byte_sieve_6809.a):00154           ldx   #((data_size+1)&$0007)
-8015 CE80BA           (byte_sieve_6809.a):00155           ldu   #flags
-8018 CC0101           (byte_sieve_6809.a):00156           ldd   #$0101
-                      (byte_sieve_6809.a):00157           ;  
-801B                  (byte_sieve_6809.a):00158         set_flags_loop_1
-801B A7C0             (byte_sieve_6809.a):00159           sta   ,u+
-801D 301F             (byte_sieve_6809.a):00160           leax  -1,x
-801F 26FA             (byte_sieve_6809.a):00161           bne   set_flags_loop_1
-                      (byte_sieve_6809.a):00162           ;
-8021 8E1FF8           (byte_sieve_6809.a):00163           ldx   #((data_size+1)&$FFF8)
-8024 2717             (byte_sieve_6809.a):00164           beq   set_flags_done
-                      (byte_sieve_6809.a):00165         
-8026 1F02             (byte_sieve_6809.a):00166           tfr   d,y   ; y   = $0101
-8028 1F01             (byte_sieve_6809.a):00167           tfr   d,x   ; x   = $0101
-802A 1F8B             (byte_sieve_6809.a):00168           tfr   a,dp  ; dp  = $01
-802C CEA0B9           (byte_sieve_6809.a):00169           ldu   #(flags+data_size+1)
-                      (byte_sieve_6809.a):00170         
-802F 3401             (byte_sieve_6809.a):00171           pshs  cc
-8031                  (byte_sieve_6809.a):00172         set_flags_loop_8
-8031 1F8A             (byte_sieve_6809.a):00173           tfr   a,cc  ; cc  = $01
-8033 363F             (byte_sieve_6809.a):00174           pshu  y,x,dp,b,a,cc
-8035 118380C1         (byte_sieve_6809.a):00175           cmpu  #(flags+((data_size+1)&$0007))
-8039 26F6             (byte_sieve_6809.a):00176           bne   set_flags_loop_8  ; Could unroll this loop...
-803B 3501             (byte_sieve_6809.a):00177           puls  cc
-803D                  (byte_sieve_6809.a):00178         set_flags_done
-                      (byte_sieve_6809.a):00179         
-803D CE0000           (byte_sieve_6809.a):00180           ldu   #0                ; U = count = 0
-8040 CC0003           (byte_sieve_6809.a):00181           ldd   #3                ; D = i + i + 3 (prime)
-8043 8E80BA           (byte_sieve_6809.a):00182           ldx   #flags            ; X = i + flags
-8046                  (byte_sieve_6809.a):00183         find_primes_loop
-8046 6D80             (byte_sieve_6809.a):00184           tst   ,x+               ; need to account for this +1
-8048 260E             (byte_sieve_6809.a):00185           bne   if_flag_set       ; flag[i] = 1?
-804A C30002           (byte_sieve_6809.a):00186           addd  #2
-804D 8CA0B8           (byte_sieve_6809.a):00187           cmpx  #(flags+data_size)
-8050 23F4             (byte_sieve_6809.a):00188           bls   find_primes_loop  ; Could unroll this loop...
-8052                  (byte_sieve_6809.a):00189         find_primes_loop_done_0
-                      (byte_sieve_6809.a):00190           
-8052 6AE4             (byte_sieve_6809.a):00191           dec   ,s
-8054 26BC             (byte_sieve_6809.a):00192           bne   interation_loop
-8056                  (byte_sieve_6809.a):00193         interation_loop_done_0
-                      (byte_sieve_6809.a):00194         
-8056 2020             (byte_sieve_6809.a):00195           bra   main_done
-                      (byte_sieve_6809.a):00196         
-8058                  (byte_sieve_6809.a):00197         if_flag_set
-8058 318B             (byte_sieve_6809.a):00198           leay  d,x                   ; Y = k = i + prime + flags +1
-805A 108CA0B9         (byte_sieve_6809.a):00199           cmpy  #(data_size+flags+1)  ; while (k <= size) (+1 correction for tst ,x+)
-805E 220A             (byte_sieve_6809.a):00200           bhi   clr_flags_loop_done
-8060                  (byte_sieve_6809.a):00201         clr_flags_loop
-8060 6F3F             (byte_sieve_6809.a):00202           clr   -1,y                  ; flags[k] = false; (-1 correction for tst ,x+)
-8062 31AB             (byte_sieve_6809.a):00203           leay  d,y                   ; X = k += prime
-8064 108CA0B9         (byte_sieve_6809.a):00204           cmpy  #(data_size+flags+1)  ; while (k <= size) (+1 correction for tst ,x+)
-8068 23F6             (byte_sieve_6809.a):00205           bls   clr_flags_loop        ; Could unroll this loop...
-806A                  (byte_sieve_6809.a):00206         clr_flags_loop_done
-                      (byte_sieve_6809.a):00207         
-806A 3341             (byte_sieve_6809.a):00208           leau  1,u
-                      (byte_sieve_6809.a):00209         
-806C C30002           (byte_sieve_6809.a):00210           addd  #2
-806F 8CA0B8           (byte_sieve_6809.a):00211           cmpx  #(flags+data_size)
-8072 23D2             (byte_sieve_6809.a):00212           bls   find_primes_loop
-8074                  (byte_sieve_6809.a):00213         find_primes_loop_done_1
-                      (byte_sieve_6809.a):00214           
-8074 6AE4             (byte_sieve_6809.a):00215           dec   ,s
-8076 269A             (byte_sieve_6809.a):00216           bne   interation_loop
-8078                  (byte_sieve_6809.a):00217         interation_loop_done_1
-                      (byte_sieve_6809.a):00218         
-                      (byte_sieve_6809.a):00219         ; ////////////////////////////////////////////////////////////////////////////
-                      (byte_sieve_6809.a):00220         
-                      (byte_sieve_6809.a):00221         
-8078                  (byte_sieve_6809.a):00222         main_done:
-                      (byte_sieve_6809.a):00223         
-                      (byte_sieve_6809.a):00224         ; //////////////////////// Stop Clock Counter / Test Bench
-8078 7CFF08           (byte_sieve_6809.a):00225           inc   clk_cnt_ctrl    ; set clk_cnt_ctrl[1] = 1 to stop clock counter
-                      (byte_sieve_6809.a):00226         
-                      (byte_sieve_6809.a):00227         ; //////////////////////// Print Primes Found
-807B CCA0C8           (byte_sieve_6809.a):00228           ldd   #string_primes_found
-807E BDFE88           (byte_sieve_6809.a):00229           jsr   print_string
-8081 1F30             (byte_sieve_6809.a):00230           tfr   u,d
-8083 BDFEA0           (byte_sieve_6809.a):00231           jsr   puthex_16bit
-8086 CCA15F           (byte_sieve_6809.a):00232           ldd   #string_linefeed
-8089 BDFE88           (byte_sieve_6809.a):00233           jsr   print_string
-                      (byte_sieve_6809.a):00234         
-                      (byte_sieve_6809.a):00235         ; ////////; //////////////////////// Number of Iterations
-808C CCA161           (byte_sieve_6809.a):00236           ldd   #string_num_iter
-808F BDFE88           (byte_sieve_6809.a):00237           jsr   print_string
-8092 C60A             (byte_sieve_6809.a):00238           ldb   #iter
-8094 BDFEA9           (byte_sieve_6809.a):00239           jsr   puthex_byte
-8097 CCA15F           (byte_sieve_6809.a):00240           ldd   #string_linefeed
-809A BDFE88           (byte_sieve_6809.a):00241           jsr   print_string
-                      (byte_sieve_6809.a):00242          
-                      (byte_sieve_6809.a):00243           
-                      (byte_sieve_6809.a):00244         ; //////////////// Print Clock Count
-809D CCA0B9           (byte_sieve_6809.a):00245           ldd   #string_clk_cnt
-80A0 BDFE88           (byte_sieve_6809.a):00246           jsr   print_string
-80A3 FCFF04           (byte_sieve_6809.a):00247           ldd   >clk_cnt
-80A6 BDFEA0           (byte_sieve_6809.a):00248           jsr   puthex_16bit
-                      (byte_sieve_6809.a):00249         
-80A9 FCFF06           (byte_sieve_6809.a):00250           ldd   >(clk_cnt+2)
-80AC BDFEA0           (byte_sieve_6809.a):00251           jsr   puthex_16bit
-                      (byte_sieve_6809.a):00252           
-80AF CCA15F           (byte_sieve_6809.a):00253           ldd   #string_linefeed
-80B2 BDFE88           (byte_sieve_6809.a):00254           jsr   print_string
-                      (byte_sieve_6809.a):00255           
-80B5 3261             (byte_sieve_6809.a):00256           leas  1,s
-80B7 7EFDB8           (byte_sieve_6809.a):00257           jmp   boot_return
-                      (byte_sieve_6809.a):00258         
-                      (byte_sieve_6809.a):00259         
-                      (byte_sieve_6809.a):00260         ; ////////////////////////////////////////////////////////////////////////////
-                      (byte_sieve_6809.a):00261         ;                               Data Block
-                      (byte_sieve_6809.a):00262         ; ////////////////////////////////////////////////////////////////////////////
-                      (byte_sieve_6809.a):00263         
-80BA                  (byte_sieve_6809.a):00264         data_addr:
-                      (byte_sieve_6809.a):00265         
-80BA                  (byte_sieve_6809.a):00266         flags:  .blkb  (data_size+1)
-                      (byte_sieve_6809.a):00267         
-                      (byte_sieve_6809.a):00268         
-A0B9                  (byte_sieve_6809.a):00269         data_end:
-                      (byte_sieve_6809.a):00270         
-A0B9                  (byte_sieve_6809.a):00271         string_clk_cnt
-A0B9 436C6F636B20636F (byte_sieve_6809.a):00272           fcc  "Clock count: $"
+                      (te_sieve_6809.asm):00001         ; [TURBO9_HEADER_START]
+                      (te_sieve_6809.asm):00002         ; ////////////////////////////////////////////////////////////////////////////
+                      (te_sieve_6809.asm):00003         ;                          Turbo9 Microprocessor IP
+                      (te_sieve_6809.asm):00004         ; ////////////////////////////////////////////////////////////////////////////
+                      (te_sieve_6809.asm):00005         ; Website: www.turbo9.org
+                      (te_sieve_6809.asm):00006         ; Contact: team[at]turbo9[dot]org
+                      (te_sieve_6809.asm):00007         ; ////////////////////////////////////////////////////////////////////////////
+                      (te_sieve_6809.asm):00008         ; [TURBO9_LICENSE_START]
+                      (te_sieve_6809.asm):00009         ; BSD-1-Clause
+                      (te_sieve_6809.asm):00010         ;
+                      (te_sieve_6809.asm):00011         ; Copyright (c) 2020-2023
+                      (te_sieve_6809.asm):00012         ; Kevin Phillipson
+                      (te_sieve_6809.asm):00013         ; Michael Rywalt
+                      (te_sieve_6809.asm):00014         ; All rights reserved.
+                      (te_sieve_6809.asm):00015         ;
+                      (te_sieve_6809.asm):00016         ; Redistribution and use in source and binary forms, with or without
+                      (te_sieve_6809.asm):00017         ; modification, are permitted provided that the following conditions are met:
+                      (te_sieve_6809.asm):00018         ;
+                      (te_sieve_6809.asm):00019         ; 1. Redistributions of source code must retain the above copyright notice,
+                      (te_sieve_6809.asm):00020         ;    this list of conditions and the following disclaimer.
+                      (te_sieve_6809.asm):00021         ;
+                      (te_sieve_6809.asm):00022         ; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+                      (te_sieve_6809.asm):00023         ; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+                      (te_sieve_6809.asm):00024         ; IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+                      (te_sieve_6809.asm):00025         ; ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS AND CONTRIBUTORS BE
+                      (te_sieve_6809.asm):00026         ; LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+                      (te_sieve_6809.asm):00027         ; CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+                      (te_sieve_6809.asm):00028         ; SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+                      (te_sieve_6809.asm):00029         ; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+                      (te_sieve_6809.asm):00030         ; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+                      (te_sieve_6809.asm):00031         ; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+                      (te_sieve_6809.asm):00032         ; POSSIBILITY OF SUCH DAMAGE.
+                      (te_sieve_6809.asm):00033         ; [TURBO9_LICENSE_END]
+                      (te_sieve_6809.asm):00034         ; ////////////////////////////////////////////////////////////////////////////
+                      (te_sieve_6809.asm):00035         ; Engineer: Kevin Phillipson
+                      (te_sieve_6809.asm):00036         ; Description:
+                      (te_sieve_6809.asm):00037         ; BYTE Sieve Benchmark (Language: 6809 ASM)
+                      (te_sieve_6809.asm):00038         ; Originally published in BYTE magazine September 1981
+                      (te_sieve_6809.asm):00039         ; 6809 Assembly port by Kevin Phillipson
+                      (te_sieve_6809.asm):00040         ;
+                      (te_sieve_6809.asm):00041         ; ////////////////////////////////////////////////////////////////////////////
+                      (te_sieve_6809.asm):00042         ; History:
+                      (te_sieve_6809.asm):00043         ; 07.14.2023 - Kevin Phillipson
+                      (te_sieve_6809.asm):00044         ;   File header added
+                      (te_sieve_6809.asm):00045         ;
+                      (te_sieve_6809.asm):00046         ; ////////////////////////////////////////////////////////////////////////////
+                      (te_sieve_6809.asm):00047         ; [TURBO9_HEADER_END]
+                      (te_sieve_6809.asm):00048         
+                      (te_sieve_6809.asm):00049         ; ////////////////////////////////////////////////////////////////////////////
+                      (te_sieve_6809.asm):00050         ;                  Turbo9 / 6809 BYTE sieve benchmark program
+                      (te_sieve_6809.asm):00051         ; ////////////////////////////////////////////////////////////////////////////
+                      (te_sieve_6809.asm):00052         
+                      (te_sieve_6809.asm):00053         
+                      (te_sieve_6809.asm):00054         ; //////////// Memory Map
+                      (te_sieve_6809.asm):00055         ;
+                      (te_sieve_6809.asm):00056         ;
+                      (te_sieve_6809.asm):00057         ; Boot ROM (Vector Table): FFFF - FFF0
+                      (te_sieve_6809.asm):00058         ;
+                      (te_sieve_6809.asm):00059         ; FFFE : FFFF   RESET_VECTOR
+                      (te_sieve_6809.asm):00060         ; FFFC : FFFD   NMI_VECTOR
+                      (te_sieve_6809.asm):00061         ; FFFA : FFFB   SWI_VECTOR
+                      (te_sieve_6809.asm):00062         ; FFF8 : FFF9   IRQ_VECTOR
+                      (te_sieve_6809.asm):00063         ; FFF6 : FFF7   FIRQ_VECTOR
+                      (te_sieve_6809.asm):00064         ; FFF4 : FFF5   SWI2_VECTOR
+                      (te_sieve_6809.asm):00065         ; FFF2 : FFF3   SWI3_VECTOR
+                      (te_sieve_6809.asm):00066         ; FFF0 : FFF1   RESERVED_VECTOR
+                      (te_sieve_6809.asm):00067         ;
+                      (te_sieve_6809.asm):00068         ;
+                      (te_sieve_6809.asm):00069         ; I/O Space: FF09 - FF00
+                      (te_sieve_6809.asm):00070         ;
+                      (te_sieve_6809.asm):00071         ; FF09          ROM_ENABLE        (read)  /  ROM_ENABLE   (write)
+                      (te_sieve_6809.asm):00072         ; FF08          CLK_CNT_CTRL[1:0] (read)  /  CLK_CNT_CTRL (write)
+                      (te_sieve_6809.asm):00073         ; FF04 : FF07   CLK_CNT[31:0]     (read)
+                      (te_sieve_6809.asm):00074         ; FF03          ACIA_STATUS       (read)
+                      (te_sieve_6809.asm):00075         ; FF02          ACIA_RX_DATA      (read)  /  ACIA_TX_DATA (write)
+                      (te_sieve_6809.asm):00076         ; FF01          GPI PORT          (read)
+                      (te_sieve_6809.asm):00077         ; FF00          GPO PORT          (read)  /  GPO_PORT    (write)
+                      (te_sieve_6809.asm):00078         ;
+                      (te_sieve_6809.asm):00079         ;
+                      (te_sieve_6809.asm):00080         ; Boot ROM (RAM overlay when enabled): FFEF - FC00
+                      (te_sieve_6809.asm):00081         ;
+                      (te_sieve_6809.asm):00082         ;
+                      (te_sieve_6809.asm):00083         ; General RAM: FBFF - 0000
+                      (te_sieve_6809.asm):00084         ;
+                      (te_sieve_6809.asm):00085         
+                      (te_sieve_6809.asm):00086         
+                      (te_sieve_6809.asm):00087           include turbo9_boot_io_lib.sym
+     FCB8             (9_boot_io_lib.sym):00001         boot_return EQU $FCB8
+     FD4A             (9_boot_io_lib.sym):00002         getchar_b EQU $FD4A
+     FD55             (9_boot_io_lib.sym):00003         gethex_16bit EQU $FD55
+     FD5C             (9_boot_io_lib.sym):00004         gethex_byte EQU $FD5C
+     FD69             (9_boot_io_lib.sym):00005         gethex_digit EQU $FD69
+     FD88             (9_boot_io_lib.sym):00006         print_string EQU $FD88
+     FD7A             (9_boot_io_lib.sym):00007         putchar_b EQU $FD7A
+     FDA0             (9_boot_io_lib.sym):00008         puthex_16bit EQU $FDA0
+     FDA9             (9_boot_io_lib.sym):00009         puthex_byte EQU $FDA9
+     FDB6             (9_boot_io_lib.sym):00010         puthex_digit EQU $FDB6
+                      (te_sieve_6809.asm):00088         
+                      (te_sieve_6809.asm):00089         
+     FF08             (te_sieve_6809.asm):00090         clk_cnt_ctrl  equ $ff08
+     FF04             (te_sieve_6809.asm):00091         clk_cnt       equ $ff04
+     FF03             (te_sieve_6809.asm):00092         acia_status   equ $ff03
+     FF02             (te_sieve_6809.asm):00093         acia_data     equ $ff02
+     FF01             (te_sieve_6809.asm):00094         gpi_port      equ $ff01
+     FF00             (te_sieve_6809.asm):00095         gpo_port      equ $ff00
+                      (te_sieve_6809.asm):00096         
+     8000             (te_sieve_6809.asm):00097         prog_start    equ $8000
+                      (te_sieve_6809.asm):00098         
+     1FFE             (te_sieve_6809.asm):00099         data_size   equ 8190
+     000A             (te_sieve_6809.asm):00100         iter        equ 10
+                      (te_sieve_6809.asm):00101         
+                      (te_sieve_6809.asm):00102         
+                      (te_sieve_6809.asm):00103           org  prog_start  ; 32k of memory at the top
+                      (te_sieve_6809.asm):00104         
+                      (te_sieve_6809.asm):00105         ; ////////////////////////////////////////////////////////////////////////////
+                      (te_sieve_6809.asm):00106         ;                             Code Under Test
+                      (te_sieve_6809.asm):00107         ; ////////////////////////////////////////////////////////////////////////////
+8000                  (te_sieve_6809.asm):00108         code_under_test:
+8000 327F             (te_sieve_6809.asm):00109           leas  -1,s
+                      (te_sieve_6809.asm):00110         
+8002 CCA0D8           (te_sieve_6809.asm):00111           ldd   #string_prog_title
+8005 BDFD88           (te_sieve_6809.asm):00112           jsr   print_string
+                      (te_sieve_6809.asm):00113         
+8008 7FFF08           (te_sieve_6809.asm):00114           clr   clk_cnt_ctrl    ; Set clk_cnt_ctrl    = 0, clearing clk_counter
+800B 7CFF08           (te_sieve_6809.asm):00115           inc   clk_cnt_ctrl    ; Set clk_cnt_ctrl[0] = 1, starting clk_counter
+                      (te_sieve_6809.asm):00116         
+                      (te_sieve_6809.asm):00117         
+                      (te_sieve_6809.asm):00118         ; ////////////////////////////////////////////////////////////////////////////
+                      (te_sieve_6809.asm):00119         ;                               BYTE sieve function
+                      (te_sieve_6809.asm):00120         ; ////////////////////////////////////////////////////////////////////////////
+                      (te_sieve_6809.asm):00121         ; #define true 1
+                      (te_sieve_6809.asm):00122         ; #define false 0
+                      (te_sieve_6809.asm):00123         ; #define size 8190
+                      (te_sieve_6809.asm):00124         ; #define sizepl 8191
+                      (te_sieve_6809.asm):00125         ; char flags[sizepl];
+                      (te_sieve_6809.asm):00126         ; main() {
+                      (te_sieve_6809.asm):00127         ;     int i, prime, k, count, iter; 
+                      (te_sieve_6809.asm):00128         ;     printf("10 iterations\n");
+                      (te_sieve_6809.asm):00129         ;     for (iter = 1; iter <= 10; iter ++) {     // interation_loop
+                      (te_sieve_6809.asm):00130         ;         count=0 ; 
+                      (te_sieve_6809.asm):00131         ;         for (i = 0; i <= size; i++)           // set_flags_loop
+                      (te_sieve_6809.asm):00132         ;             flags[i] = true;                  // set_flags_loop_done
+                      (te_sieve_6809.asm):00133         ;         for (i = 0; i <= size; i++) {         // find_primes_loop 
+                      (te_sieve_6809.asm):00134         ;             if (flags[i]) {
+                      (te_sieve_6809.asm):00135         ;                 prime = i + i + 3; 
+                      (te_sieve_6809.asm):00136         ;                 k = i + prime; 
+                      (te_sieve_6809.asm):00137         ;                 while (k <= size) {           // clr_flags_loop
+                      (te_sieve_6809.asm):00138         ;                     flags[k] = false; 
+                      (te_sieve_6809.asm):00139         ;                     k += prime; 
+                      (te_sieve_6809.asm):00140         ;                 }                             // clr_flags_loop_done
+                      (te_sieve_6809.asm):00141         ;                 count = count + 1;
+                      (te_sieve_6809.asm):00142         ;             }
+                      (te_sieve_6809.asm):00143         ;         }                                     // find_primes_loop_done 
+                      (te_sieve_6809.asm):00144         ;     }                                         // interation_loop_done
+                      (te_sieve_6809.asm):00145         ;    printf("\n%d primes", count);
+                      (te_sieve_6809.asm):00146         ; }
+                      (te_sieve_6809.asm):00147         ; Variables:
+                      (te_sieve_6809.asm):00148         ;
+                      (te_sieve_6809.asm):00149         ; i: generic loop counter (16bit) (X used) 
+                      (te_sieve_6809.asm):00150         ; prime:  16bit                   (D used)
+                      (te_sieve_6809.asm):00151         ; k:      16bit                   (Y used)
+                      (te_sieve_6809.asm):00152         ; count:  16bit                   (U used)
+                      (te_sieve_6809.asm):00153         ; iter:   8bit                    (0,s)
+                      (te_sieve_6809.asm):00154         
+800E 860A             (te_sieve_6809.asm):00155           lda   #iter
+8010 A7E4             (te_sieve_6809.asm):00156           sta   ,s
+                      (te_sieve_6809.asm):00157         
+8012                  (te_sieve_6809.asm):00158         interation_loop
+                      (te_sieve_6809.asm):00159           
+8012 8E0007           (te_sieve_6809.asm):00160           ldx   #((data_size+1)&$0007)
+8015 CE80BA           (te_sieve_6809.asm):00161           ldu   #flags
+8018 CC0101           (te_sieve_6809.asm):00162           ldd   #$0101
+                      (te_sieve_6809.asm):00163           ;  
+801B                  (te_sieve_6809.asm):00164         set_flags_loop_1
+801B A7C0             (te_sieve_6809.asm):00165           sta   ,u+
+801D 301F             (te_sieve_6809.asm):00166           leax  -1,x
+801F 26FA             (te_sieve_6809.asm):00167           bne   set_flags_loop_1
+                      (te_sieve_6809.asm):00168           ;
+8021 8E1FF8           (te_sieve_6809.asm):00169           ldx   #((data_size+1)&$FFF8)
+8024 2717             (te_sieve_6809.asm):00170           beq   set_flags_done
+                      (te_sieve_6809.asm):00171         
+8026 1F02             (te_sieve_6809.asm):00172           tfr   d,y   ; y   = $0101
+8028 1F01             (te_sieve_6809.asm):00173           tfr   d,x   ; x   = $0101
+802A 1F8B             (te_sieve_6809.asm):00174           tfr   a,dp  ; dp  = $01
+802C CEA0B9           (te_sieve_6809.asm):00175           ldu   #(flags+data_size+1)
+                      (te_sieve_6809.asm):00176         
+802F 3401             (te_sieve_6809.asm):00177           pshs  cc
+8031                  (te_sieve_6809.asm):00178         set_flags_loop_8
+8031 1F8A             (te_sieve_6809.asm):00179           tfr   a,cc  ; cc  = $01
+8033 363F             (te_sieve_6809.asm):00180           pshu  y,x,dp,b,a,cc
+8035 118380C1         (te_sieve_6809.asm):00181           cmpu  #(flags+((data_size+1)&$0007))
+8039 26F6             (te_sieve_6809.asm):00182           bne   set_flags_loop_8  ; Could unroll this loop...
+803B 3501             (te_sieve_6809.asm):00183           puls  cc
+803D                  (te_sieve_6809.asm):00184         set_flags_done
+                      (te_sieve_6809.asm):00185         
+803D CE0000           (te_sieve_6809.asm):00186           ldu   #0                ; U = count = 0
+8040 CC0003           (te_sieve_6809.asm):00187           ldd   #3                ; D = i + i + 3 (prime)
+8043 8E80BA           (te_sieve_6809.asm):00188           ldx   #flags            ; X = i + flags
+8046                  (te_sieve_6809.asm):00189         find_primes_loop
+8046 6D80             (te_sieve_6809.asm):00190           tst   ,x+               ; need to account for this +1
+8048 260E             (te_sieve_6809.asm):00191           bne   if_flag_set       ; flag[i] = 1?
+804A C30002           (te_sieve_6809.asm):00192           addd  #2
+804D 8CA0B8           (te_sieve_6809.asm):00193           cmpx  #(flags+data_size)
+8050 23F4             (te_sieve_6809.asm):00194           bls   find_primes_loop  ; Could unroll this loop...
+8052                  (te_sieve_6809.asm):00195         find_primes_loop_done_0
+                      (te_sieve_6809.asm):00196           
+8052 6AE4             (te_sieve_6809.asm):00197           dec   ,s
+8054 26BC             (te_sieve_6809.asm):00198           bne   interation_loop
+8056                  (te_sieve_6809.asm):00199         interation_loop_done_0
+                      (te_sieve_6809.asm):00200         
+8056 2020             (te_sieve_6809.asm):00201           bra   main_done
+                      (te_sieve_6809.asm):00202         
+8058                  (te_sieve_6809.asm):00203         if_flag_set
+8058 318B             (te_sieve_6809.asm):00204           leay  d,x                   ; Y = k = i + prime + flags +1
+805A 108CA0B9         (te_sieve_6809.asm):00205           cmpy  #(data_size+flags+1)  ; while (k <= size) (+1 correction for tst ,x+)
+805E 220A             (te_sieve_6809.asm):00206           bhi   clr_flags_loop_done
+8060                  (te_sieve_6809.asm):00207         clr_flags_loop
+8060 6F3F             (te_sieve_6809.asm):00208           clr   -1,y                  ; flags[k] = false; (-1 correction for tst ,x+)
+8062 31AB             (te_sieve_6809.asm):00209           leay  d,y                   ; X = k += prime
+8064 108CA0B9         (te_sieve_6809.asm):00210           cmpy  #(data_size+flags+1)  ; while (k <= size) (+1 correction for tst ,x+)
+8068 23F6             (te_sieve_6809.asm):00211           bls   clr_flags_loop        ; Could unroll this loop...
+806A                  (te_sieve_6809.asm):00212         clr_flags_loop_done
+                      (te_sieve_6809.asm):00213         
+806A 3341             (te_sieve_6809.asm):00214           leau  1,u
+                      (te_sieve_6809.asm):00215         
+806C C30002           (te_sieve_6809.asm):00216           addd  #2
+806F 8CA0B8           (te_sieve_6809.asm):00217           cmpx  #(flags+data_size)
+8072 23D2             (te_sieve_6809.asm):00218           bls   find_primes_loop
+8074                  (te_sieve_6809.asm):00219         find_primes_loop_done_1
+                      (te_sieve_6809.asm):00220           
+8074 6AE4             (te_sieve_6809.asm):00221           dec   ,s
+8076 269A             (te_sieve_6809.asm):00222           bne   interation_loop
+8078                  (te_sieve_6809.asm):00223         interation_loop_done_1
+                      (te_sieve_6809.asm):00224         
+                      (te_sieve_6809.asm):00225         ; ////////////////////////////////////////////////////////////////////////////
+                      (te_sieve_6809.asm):00226         
+                      (te_sieve_6809.asm):00227         
+8078                  (te_sieve_6809.asm):00228         main_done:
+                      (te_sieve_6809.asm):00229         
+                      (te_sieve_6809.asm):00230         ; //////////////////////// Stop Clock Counter / Test Bench
+8078 7CFF08           (te_sieve_6809.asm):00231           inc   clk_cnt_ctrl    ; set clk_cnt_ctrl[1] = 1 to stop clock counter
+                      (te_sieve_6809.asm):00232         
+                      (te_sieve_6809.asm):00233         ; //////////////////////// Print Primes Found
+807B CCA0C8           (te_sieve_6809.asm):00234           ldd   #string_primes_found
+807E BDFD88           (te_sieve_6809.asm):00235           jsr   print_string
+8081 1F30             (te_sieve_6809.asm):00236           tfr   u,d
+8083 BDFDA0           (te_sieve_6809.asm):00237           jsr   puthex_16bit
+8086 CCA15F           (te_sieve_6809.asm):00238           ldd   #string_linefeed
+8089 BDFD88           (te_sieve_6809.asm):00239           jsr   print_string
+                      (te_sieve_6809.asm):00240         
+                      (te_sieve_6809.asm):00241         ; ////////; //////////////////////// Number of Iterations
+808C CCA161           (te_sieve_6809.asm):00242           ldd   #string_num_iter
+808F BDFD88           (te_sieve_6809.asm):00243           jsr   print_string
+8092 C60A             (te_sieve_6809.asm):00244           ldb   #iter
+8094 BDFDA9           (te_sieve_6809.asm):00245           jsr   puthex_byte
+8097 CCA15F           (te_sieve_6809.asm):00246           ldd   #string_linefeed
+809A BDFD88           (te_sieve_6809.asm):00247           jsr   print_string
+                      (te_sieve_6809.asm):00248          
+                      (te_sieve_6809.asm):00249           
+                      (te_sieve_6809.asm):00250         ; //////////////// Print Clock Count
+809D CCA0B9           (te_sieve_6809.asm):00251           ldd   #string_clk_cnt
+80A0 BDFD88           (te_sieve_6809.asm):00252           jsr   print_string
+80A3 FCFF04           (te_sieve_6809.asm):00253           ldd   >clk_cnt
+80A6 BDFDA0           (te_sieve_6809.asm):00254           jsr   puthex_16bit
+                      (te_sieve_6809.asm):00255         
+80A9 FCFF06           (te_sieve_6809.asm):00256           ldd   >(clk_cnt+2)
+80AC BDFDA0           (te_sieve_6809.asm):00257           jsr   puthex_16bit
+                      (te_sieve_6809.asm):00258           
+80AF CCA15F           (te_sieve_6809.asm):00259           ldd   #string_linefeed
+80B2 BDFD88           (te_sieve_6809.asm):00260           jsr   print_string
+                      (te_sieve_6809.asm):00261           
+80B5 3261             (te_sieve_6809.asm):00262           leas  1,s
+80B7 7EFCB8           (te_sieve_6809.asm):00263           jmp   boot_return
+                      (te_sieve_6809.asm):00264         
+                      (te_sieve_6809.asm):00265         
+                      (te_sieve_6809.asm):00266         ; ////////////////////////////////////////////////////////////////////////////
+                      (te_sieve_6809.asm):00267         ;                               Data Block
+                      (te_sieve_6809.asm):00268         ; ////////////////////////////////////////////////////////////////////////////
+                      (te_sieve_6809.asm):00269         
+80BA                  (te_sieve_6809.asm):00270         data_addr:
+                      (te_sieve_6809.asm):00271         
+80BA                  (te_sieve_6809.asm):00272         flags:  .blkb  (data_size+1)
+                      (te_sieve_6809.asm):00273         
+                      (te_sieve_6809.asm):00274         
+A0B9                  (te_sieve_6809.asm):00275         data_end:
+                      (te_sieve_6809.asm):00276         
+A0B9                  (te_sieve_6809.asm):00277         string_clk_cnt
+A0B9 436C6F636B20636F (te_sieve_6809.asm):00278           fcc  "Clock count: $"
      756E743A2024
-A0C7 00               (byte_sieve_6809.a):00273           fcb  $00
-                      (byte_sieve_6809.a):00274         
-                      (byte_sieve_6809.a):00275         
-A0C8                  (byte_sieve_6809.a):00276         string_primes_found
-A0C8 5072696D65732066 (byte_sieve_6809.a):00277           fcc  "Primes found: $"
+A0C7 00               (te_sieve_6809.asm):00279           fcb  $00
+                      (te_sieve_6809.asm):00280         
+                      (te_sieve_6809.asm):00281         
+A0C8                  (te_sieve_6809.asm):00282         string_primes_found
+A0C8 5072696D65732066 (te_sieve_6809.asm):00283           fcc  "Primes found: $"
      6F756E643A2024
-A0D7 00               (byte_sieve_6809.a):00278           fcb  $00
-                      (byte_sieve_6809.a):00279         
-A0D8                  (byte_sieve_6809.a):00280         string_prog_title:
-A0D8 0A               (byte_sieve_6809.a):00281           fcb   $0a
-A0D9 4259544520536965 (byte_sieve_6809.a):00282           fcc   "BYTE Sieve Benchmark (Language: 6809 ASM)"
+A0D7 00               (te_sieve_6809.asm):00284           fcb  $00
+                      (te_sieve_6809.asm):00285         
+A0D8                  (te_sieve_6809.asm):00286         string_prog_title:
+A0D8 0A               (te_sieve_6809.asm):00287           fcb   $0a
+A0D9 4259544520536965 (te_sieve_6809.asm):00288           fcc   "BYTE Sieve Benchmark (Language: 6809 ASM)"
      76652042656E6368
      6D61726B20284C61
      6E67756167653A20
      363830392041534D
      29
-A102 0A               (byte_sieve_6809.a):00283           fcb   $0a
-A103 4F726967696E616C (byte_sieve_6809.a):00284           fcc   "Originally published in BYTE magazine September 1981"
+A102 0A               (te_sieve_6809.asm):00289           fcb   $0a
+A103 4F726967696E616C (te_sieve_6809.asm):00290           fcc   "Originally published in BYTE magazine September 1981"
      6C79207075626C69
      7368656420696E20
      42595445206D6167
      617A696E65205365
      7074656D62657220
      31393831
-A137 0A               (byte_sieve_6809.a):00285           fcb   $0a
-A138 3638303920417373 (byte_sieve_6809.a):00286           fcc   "6809 Assembly port by Kevin Phillipson"
+A137 0A               (te_sieve_6809.asm):00291           fcb   $0a
+A138 3638303920417373 (te_sieve_6809.asm):00292           fcc   "6809 Assembly port by Kevin Phillipson"
      656D626C7920706F
      7274206279204B65
      76696E205068696C
      6C6970736F6E
-A15E 0A               (byte_sieve_6809.a):00287           fcb   $0a
-A15F                  (byte_sieve_6809.a):00288         string_linefeed
-A15F 0A               (byte_sieve_6809.a):00289           fcb   $0a
-A160 00               (byte_sieve_6809.a):00290           fcb   $00
-                      (byte_sieve_6809.a):00291         
-A161                  (byte_sieve_6809.a):00292         string_num_iter:
-A161 4E756D626572206F (byte_sieve_6809.a):00293           fcc   "Number of iterations: $"
+A15E 0A               (te_sieve_6809.asm):00293           fcb   $0a
+A15F                  (te_sieve_6809.asm):00294         string_linefeed
+A15F 0A               (te_sieve_6809.asm):00295           fcb   $0a
+A160 00               (te_sieve_6809.asm):00296           fcb   $00
+                      (te_sieve_6809.asm):00297         
+A161                  (te_sieve_6809.asm):00298         string_num_iter:
+A161 4E756D626572206F (te_sieve_6809.asm):00299           fcc   "Number of iterations: $"
      6620697465726174
      696F6E733A2024
-A178 00               (byte_sieve_6809.a):00294           fcb   $00
-                      (byte_sieve_6809.a):00295         
-                      (byte_sieve_6809.a):00296         
-                      (byte_sieve_6809.a):00297           END   prog_start
+A178 00               (te_sieve_6809.asm):00300           fcb   $00
+                      (te_sieve_6809.asm):00301         
+                      (te_sieve_6809.asm):00302         
+                      (te_sieve_6809.asm):00303           END   prog_start

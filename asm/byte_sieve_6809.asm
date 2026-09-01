@@ -53,7 +53,8 @@
 
 ; //////////// Memory Map
 ;
-; Initialized RAM (Vector Table): FFFF - FFF0
+;
+; Boot ROM (Vector Table): FFFF - FFF0
 ;
 ; FFFE : FFFF   RESET_VECTOR
 ; FFFC : FFFD   NMI_VECTOR
@@ -65,8 +66,9 @@
 ; FFF0 : FFF1   RESERVED_VECTOR
 ;
 ;
-; I/O Space: FFEF - FF00
+; I/O Space: FF09 - FF00
 ;
+; FF09          ROM_ENABLE        (read)  /  ROM_ENABLE   (write)
 ; FF08          CLK_CNT_CTRL[1:0] (read)  /  CLK_CNT_CTRL (write)
 ; FF04 : FF07   CLK_CNT[31:0]     (read)
 ; FF03          ACIA_STATUS       (read)
@@ -74,7 +76,11 @@
 ; FF01          GPI PORT          (read)
 ; FF00          GPO PORT          (read)  /  GPO_PORT    (write)
 ;
-; Initialized RAM: FEFF - 0000
+;
+; Boot ROM (RAM overlay when enabled): FFEF - FC00
+;
+;
+; General RAM: FBFF - 0000
 ;
 
 

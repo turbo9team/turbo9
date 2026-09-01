@@ -50,7 +50,10 @@ module fpga_top
 (
   // Inputs: Clock & Reset
   input  CLK100MHZ,
-  input  ck_rst, //active low
+  input  ck_rst,    //active low
+
+  input  [3:0] sw,  //active high
+  input  [3:0] btn, //active high
 
   // Inputs 
   input  uart_txd_in,
@@ -87,8 +90,12 @@ reg         clk100_rst_meta;
 reg         clk100_rst_sync;
 
 wire        clk;
-reg         rst_meta;
-reg         rst_sync;
+
+reg         hard_rst_meta;
+reg         hard_rst_sync;
+
+reg         soft_rst_meta;
+reg         soft_rst_sync;
 
 wire  [7:0] led_port;
 
@@ -123,15 +130,25 @@ clk_div I_clk_div
   .CLK_DIV2   (clk              )
 );
 
-
-// Reset Synchro
-always @(posedge clk, negedge ck_rst) begin
-  if (~ck_rst) begin
-    rst_meta <= 1'b1;
-    rst_sync <= 1'b1;
+// Hard Reset Synchro
+always @(posedge clk, posedge clk100_rst_sync) begin
+  if (clk100_rst_sync) begin
+    hard_rst_meta <= 1'b1;
+    hard_rst_sync <= 1'b1;
   end else begin
-    rst_meta <= 1'b0;
-    rst_sync <= rst_meta;
+    hard_rst_meta <= 1'b0;
+    hard_rst_sync <= hard_rst_meta;
+  end
+end
+
+// Soft Reset Synchro
+always @(posedge clk, posedge hard_rst_sync) begin
+  if (hard_rst_sync || btn[0]) begin
+    soft_rst_meta <= 1'b1;
+    soft_rst_sync <= 1'b1;
+  end else begin
+    soft_rst_meta <= 1'b0;
+    soft_rst_sync <= soft_rst_meta;
   end
 end
 
@@ -143,18 +160,19 @@ end
 soc_top_gts
 //soc_top
 #(
-  .TURBO9_SOC_MEM_ADDR_WIDTH (16) // SoC Memory Address Width: 16=64KB
+  .TURBO9_SOC_RAM_ADDR_WIDTH (16) // SoC RAM Address Width: 16=64KB
 )
 //I_soc_top
 I_soc_top_gts
 //I_soc_top
 (
   // Inputs: Clock & Reset
-  .RST_I      (rst_sync ), // Reset. Active high and synchronized to CLK_I
-  .CLK_I      (clk      ), // Clock
+  .HARD_RST_I (hard_rst_sync), // Hard Reset. Active high and synchronized to CLK_I
+  .SOFT_RST_I (soft_rst_sync), // Soft Reset. Active high and synchronized to CLK_I
+  .CLK_I      (clk          ), // Clock
 
   .RXD_PIN_I  (uart_txd_in  ),
-  .GPI_PORT_I (             ), 
+  .GPI_PORT_I ({sw, btn}    ), 
    
   // Outputs
   .TXD_PIN_O  (uart_rxd_out ),
@@ -165,26 +183,26 @@ I_soc_top_gts
 fpga_leds I_fpga_leds
 (
   // Inputs: Clock & Reset
-  .CLK_I      (clk      ),
-  .RST_I      (rst_sync ),
+  .CLK_I      (clk          ),
+  .RST_I      (soft_rst_sync),
   //
   // Inputs 
-  .LED_PORT_I (led_port ),
+  .LED_PORT_I (led_port     ),
   //
   // Outputs
-  .LED_O      (led      ),
-  .LED0_B_O   (led0_b   ),
-  .LED0_G_O   (led0_g   ),
-  .LED0_R_O   (led0_r   ),
-  .LED1_B_O   (led1_b   ),
-  .LED1_G_O   (led1_g   ),
-  .LED1_R_O   (led1_r   ),
-  .LED2_B_O   (led2_b   ),
-  .LED2_G_O   (led2_g   ),
-  .LED2_R_O   (led2_r   ),
-  .LED3_B_O   (led3_b   ),
-  .LED3_G_O   (led3_g   ),
-  .LED3_R_O   (led3_r   )
+  .LED_O      (led          ),
+  .LED0_B_O   (led0_b       ),
+  .LED0_G_O   (led0_g       ),
+  .LED0_R_O   (led0_r       ),
+  .LED1_B_O   (led1_b       ),
+  .LED1_G_O   (led1_g       ),
+  .LED1_R_O   (led1_r       ),
+  .LED2_B_O   (led2_b       ),
+  .LED2_G_O   (led2_g       ),
+  .LED2_R_O   (led2_r       ),
+  .LED3_B_O   (led3_b       ),
+  .LED3_G_O   (led3_g       ),
+  .LED3_R_O   (led3_r       )
 );
 /////////////////////////////////////////////////////////////////////////////
 

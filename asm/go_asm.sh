@@ -60,9 +60,6 @@ fi
 
 FILENAME=$1
 
-# Unlike the old s192hex8_offset0x0000* tools it replaces, s192hex validates
-# S1 checksums and hex digits, so a bad .s19 now fails loudly here instead of
-# silently producing a bogus .hex.
 run_s192hex() {
   if ! ./s192hex "$@"; then
     echo "${NAME}: s192hex failed: $*" >&2
@@ -77,25 +74,20 @@ fi
 
 
 if [[ "${FILENAME}" == "tb_dv_asm" ]]; then
-  run_s192hex -i "${FILENAME}.s19" -o "${FILENAME}.hex"
-  run_s192hex -i "${FILENAME}.s19" -o "${FILENAME}_even.hex" -l even
-  run_s192hex -i "${FILENAME}.s19" -o "${FILENAME}_odd.hex"  -l odd
-  ./verihead -i "${FILENAME}.sym" -o "${FILENAME}.vh"
+  run_s192hex -i tb_dv_asm.s19 -o tb_dv_asm.hex
+  ./verihead -i tb_dv_asm.sym -o tb_dv_asm.vh
   #sed 's/^/  `define  tb_asm_/g' ${FILENAME}.sym | sed 's/EQU.*\$/             16\x27h/g' > ${FILENAME}.vh
-  echo "Copying ${FILENAME}.vh to ../tb/."
-  cp "${FILENAME}.vh" ../tb/.
+  echo "Copying tb_dv_asm.vh to ../tb/."
+  cp tb_dv_asm.vh ../tb/.
 fi
 
 if [[ "${FILENAME}" == "turbo9_boot" ]]; then
-  run_s192hex -i "${FILENAME}.s19" -o "${FILENAME}.hex"
-  run_s192hex -i "${FILENAME}.s19" -o "${FILENAME}_even.hex" -l even
-  run_s192hex -i "${FILENAME}.s19" -o "${FILENAME}_odd.hex"  -l odd
-  echo "Copying ${FILENAME}.hex to ../rtl/default.hex"
-  cp "${FILENAME}.hex" ../rtl/default.hex
-  echo "Copying ${FILENAME}_even.hex to ../rtl/default_even.hex"
-  cp "${FILENAME}_even.hex" ../rtl/default_even.hex
-  echo "Copying ${FILENAME}_odd.hex to ../rtl/default_odd.hex"
-  cp "${FILENAME}_odd.hex" ../rtl/default_odd.hex
+  run_s192hex -i turbo9_boot.s19 -o turbo9_boot.hex       -s fc00 -e fdff
+  run_s192hex -i turbo9_boot.s19 -o turbo9_boot_even.hex  -s fc00 -e fdff -l even
+  run_s192hex -i turbo9_boot.s19 -o turbo9_boot_odd.hex   -s fc00 -e fdff -l odd 
+  run_s192hex -i turbo9_boot.s19 -o turbo9_boot_16bit.hex -s fc00 -e fdff -w 16  
+  echo "Copying turbo9_boot*.hex to ../rtl/."
+  cp turbo9_boot*.hex ../rtl/.
   echo "Creating turbo9_boot_io_lib.sym"
   grep _io_lib "turbo9_boot.sym" > "turbo9_boot_io_lib.sym"
   sed -i 's/_io_lib//g' "turbo9_boot_io_lib.sym"

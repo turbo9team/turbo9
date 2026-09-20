@@ -7,3 +7,5 @@ scratch.*
 # ignore agent instructions
 AGENTS.md
 
+# Apio build artifacts
+_build/

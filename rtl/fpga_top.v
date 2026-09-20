@@ -143,7 +143,10 @@ end
 
 // Soft Reset Synchro
 always @(posedge clk, posedge hard_rst_sync) begin
-  if (hard_rst_sync || btn[0]) begin
+  if (hard_rst_sync) begin
+    soft_rst_meta <= 1'b1;
+    soft_rst_sync <= 1'b1;
+  end else if (btn[0]) begin
     soft_rst_meta <= 1'b1;
     soft_rst_sync <= 1'b1;
   end else begin
@@ -156,15 +159,12 @@ end
 //                                LOGIC
 /////////////////////////////////////////////////////////////////////////////
 
-//soc_top
-soc_top_gts
-//soc_top
+// Turbo9S SoC with boot ROM and separate hard/soft reset inputs.
+soc_top_s
 #(
   .TURBO9_SOC_RAM_ADDR_WIDTH (16) // SoC RAM Address Width: 16=64KB
 )
-//I_soc_top
-I_soc_top_gts
-//I_soc_top
+I_soc_top_s
 (
   // Inputs: Clock & Reset
   .HARD_RST_I (hard_rst_sync), // Hard Reset. Active high and synchronized to CLK_I

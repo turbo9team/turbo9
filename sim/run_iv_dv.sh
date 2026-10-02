@@ -307,7 +307,7 @@ done
 echo ""
 echo "Defines: ${DEFINES[*]:-none}"
 echo "Compiling ${TB}..."
-if ! iverilog -Wall -Wno-timescale -f "../${FLIST}" -g2001 "${DEFINE_FLAGS[@]}" -o "${TB}.vvp" > "${TB}.iv.com.log" 2>&1; then
+if ! iverilog -s "$TB" -Wall -Wno-timescale -f "../${FLIST}" -g2001 "${DEFINE_FLAGS[@]}" -o "${TB}.vvp" > "${TB}.iv.com.log" 2>&1; then
   echo "${NAME}: Compile FAILED for ${TB}"
   for t in "${TESTS[@]}"; do
     mkdir -p "${t}"
@@ -329,12 +329,12 @@ for t in "${TESTS[@]}"; do
     for pa in "${PLUSARGS[@]}"; do
       case "${pa}" in
         hex_file=*)
-          abspath="$(cd "${INVOKED_FROM}" && realpath -m "${pa#hex_file=}")"
+          abspath="$(cd "${INVOKED_FROM}" && python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "${pa#hex_file=}")"
           cp "${abspath}" .
           RUN_PLUSARGS+=("hex_file=${abspath}")
           ;;
         s19_file=*)
-          abspath="$(cd "${INVOKED_FROM}" && realpath -m "${pa#s19_file=}")"
+          abspath="$(cd "${INVOKED_FROM}" && python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "${pa#s19_file=}")"
           cp "${abspath}" .
           RUN_PLUSARGS+=("s19_file=${abspath}")
           ;;
@@ -387,6 +387,7 @@ if grep -q FAIL "${TB}.summary.iv.run.log"; then
   touch "${TB}.summary.iv.run.FAIL"
   rm -f "${TB}.summary.iv.run.PASS"
   [[ "${REGRESS}" -eq 1 ]] && { cd ..; mv "${WORKDIR}" "${WORKDIR}.FAIL"; }
+  exit 1
 else
   echo "${NAME}: Run summary: PASS for ${TB}"
   echo "${NAME}: Run summary: PASS for ${TB}" >> "${TB}.summary.iv.run.log"

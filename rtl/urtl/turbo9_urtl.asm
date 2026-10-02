@@ -1606,6 +1606,17 @@ SWI:
   decode pg1_AR  S        $3F ; SWI
   decode pg1_R1  PC       $3F ; SWI
   decode pg1_R2  DMEM_RD  $3F ; SWI
+  decode pg1_JTB SWI_VECTOR_MASK $3F ; SWI
+  decode pg2_JTA SWI $3F ; SWI2
+  decode pg2_JTB SWI_VECTOR_NO_MASK $3F ; SWI2
+  decode pg2_AR S $3F ; SWI2
+  decode pg2_R1 PC $3F ; SWI2
+  decode pg2_R2 DMEM_RD $3F ; SWI2
+  decode pg3_JTA SWI $3F ; SWI3
+  decode pg3_JTB SWI_VECTOR_NO_MASK $3F ; SWI3
+  decode pg3_AR S $3F ; SWI3
+  decode pg3_R1 PC $3F ; SWI3
+  decode pg3_R2 DMEM_RD $3F ; SWI3
   
   STACK_PUSH      ZERO  ; Prime the decode pipeline!
 
@@ -1624,6 +1635,10 @@ SWI_LOOP:
   JUMP            SWI_LOOP
   micro_op_end
 
+  JUMP_TABLE_B
+  micro_op_end
+
+SWI_VECTOR_MASK:
   ; R1 is PC
   ; R2 is DMEM_RD
 
@@ -1641,6 +1656,84 @@ SWI_LOOP:
 
 ; ////////////////////////////////////////////////////////////////////////////
 
+
+SWI_VECTOR_NO_MASK:
+  SET_DATA_WIDTH W_16
+  ADDR_PASS IDATA
+  DMEM_LOAD_W
+  JUMP JMP
+  micro_op_end
+
+  ORG $B0
+CWAI:
+  decode pg1_JTA CWAI $3C ; CWAI
+  decode pg1_AR S $3C ; CWAI
+  decode pg1_R1 CCR $3C ; CWAI
+  decode pg1_R2 DMEM_RD $3C ; CWAI
+  DATA_AND R1, IDATA
+  DATA_WRITE R1
+  CCR_OP_W OP_XXXXXXXX
+  micro_op_end
+
+  STACK_PUSH ZERO
+  CCR_OP_W OP_1ooooooo
+  micro_op_end
+
+CWAI_LOOP:
+  DATA_PASS_A STACK_REG
+  SET_DATA_WIDTH W_STACK_REG
+  STACK_PUSH AR
+  DMEM_STORE_W
+  IF STACK_NEXT
+  JUMP CWAI_LOOP
+  micro_op_end
+
+CWAI_WAIT:
+  IF WAIT_DONE
+  JUMP NOP
+  micro_op_end
+  JUMP CWAI_WAIT
+  micro_op_end
+
+  ORG $C0
+SYNC:
+  decode pg1_JTA SYNC $13 ; SYNC
+  IF WAIT_DONE
+  JUMP NOP
+  micro_op_end
+  JUMP SYNC
+  micro_op_end
+
+  ORG $D0
+INTERRUPT_FULL:
+  STACK_PUSH ZERO
+  CCR_OP_W OP_1ooooooo
+  JUMP INTERRUPT_LOOP
+  micro_op_end
+
+INTERRUPT_LOOP:
+  DATA_PASS_A STACK_REG
+  SET_DATA_WIDTH W_STACK_REG
+  STACK_PUSH AR
+  DMEM_STORE_W
+  IF STACK_NEXT
+  JUMP INTERRUPT_LOOP
+  micro_op_end
+
+INTERRUPT_VECTOR:
+  SET_DATA_WIDTH W_16
+  ADDR_PASS IDATA
+  DMEM_LOAD_W
+  CCR_OP_W OP_INTERRUPT
+  JUMP JMP
+  micro_op_end
+
+  ORG $E0
+INTERRUPT_FAST:
+  STACK_PUSH ZERO
+  CCR_OP_W OP_0ooooooo
+  JUMP INTERRUPT_LOOP
+  micro_op_end
 
   ORG  $FF
 

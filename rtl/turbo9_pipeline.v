@@ -55,9 +55,13 @@ module turbo9_pipeline
   parameter TURBO9_CPU_QUEUE_SIZE = 6 // CPU Fetch Queue Size: 6=Default, 4=Min, 7=Max
 )
 (
+  // Interrupt requests (active low). Unconnected inputs are inactive.
   // Inputs: Clock & Reset
   input          RST_I,
   input          CLK_I,
+  input wire     IRQ_N_I,
+  input wire     FIRQ_N_I,
+  input wire     NMI_N_I,
   //
   // Data Memory Interface
   output  [15:0] DMEM_DAT_O,
@@ -93,6 +97,9 @@ localparam TYPE_TURBO9GT  = 3; // Separate Program & Data  8-bit Buses
 localparam TYPE_TURBO9GTS = 4; // Separate Program & Data 16-bit Buses (Aligned)
 localparam TYPE_TURBO9GTR = 5; // Separate Program & Data 16-bit Buses (Non-aligned)
 
+wire [1:0] interrupt_masks;
+wire [1:0] interrupt_type;
+wire s_init;
 wire [15:0] fet_dec_pc;
 wire        fet_dec_load_pc;
 wire        fet_dec_instr_rd_en;
@@ -188,6 +195,12 @@ wire [15:0] dec_exe_new_pc;
     // Inputs: Clock & Reset
     .RST_I                               (RST_I                          ),
     .CLK_I                               (CLK_I                          ),
+    .INTERRUPT_MASKS_I (interrupt_masks),
+    .INTERRUPT_TYPE_O (interrupt_type),
+    .S_INIT_I (s_init),
+    .IRQ_N_I (IRQ_N_I),
+    .FIRQ_N_I (FIRQ_N_I),
+    .NMI_N_I (NMI_N_I),
     //
     // Decode Execute Control Interface
     .DEC_EXE_STALL_MICROCYCLE_O          (dec_exe_stall_microcycle       ),
@@ -245,6 +258,9 @@ wire [15:0] dec_exe_new_pc;
     // Inputs: Clock & Reset
     .RST_I                               (RST_I                          ),
     .CLK_I                               (CLK_I                          ),
+    .INTERRUPT_MASKS_O (interrupt_masks),
+    .INTERRUPT_TYPE_I (interrupt_type),
+    .S_INIT_O (s_init),
 
     // Decode Execute Control Interface
     .DEC_EXE_STALL_MICROCYCLE_I          (dec_exe_stall_microcycle       ),

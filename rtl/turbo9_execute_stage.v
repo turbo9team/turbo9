@@ -53,6 +53,9 @@ module turbo9_execute_stage
   // Inputs: Clock & Reset
   input          RST_I,
   input          CLK_I,
+  input    [1:0] INTERRUPT_TYPE_I,
+  output   [1:0] INTERRUPT_MASKS_O,
+  output         S_INIT_O,
 
   // Decode Execute Control Interface
   input          DEC_EXE_STALL_MICROCYCLE_I,
@@ -249,6 +252,8 @@ wire  [15:0] dmem_rd_data_reg;
     .RA_CCR_RD_DATA_O         (ra_ccr_rd_data                   ),
     //                                                
     // Outputs                                        
+    .INTERRUPT_TYPE_I         (INTERRUPT_TYPE_I),
+    .INTERRUPT_MASKS_O        (INTERRUPT_MASKS_O),
     .CCR_FLAGS_O              (ccr_flags                        ),
     .MICRO_SEQ_COND_O         (DEC_EXE_MICRO_SEQ_COND_O         )
   );
@@ -294,5 +299,10 @@ wire  [15:0] dmem_rd_data_reg;
 
 
 /////////////////////////////////////////////////////////////////////////////
+// Only explicit writes initialize S; stack traffic must not arm NMI.
+// LDS, LEAS, TFR, EXG and explicit pulls into S all use this write port.
+assign S_INIT_O = ~DEC_EXE_STALL_MICROCYCLE_I &
+                 (DEC_EXE_UOP_DATA_ALU_WR_SEL_I == 4'h4);
+
 endmodule
 

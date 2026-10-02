@@ -72,6 +72,8 @@ module turbo9_ccr // Down on the corner, out in the street.
   output  [7:0] RA_CCR_RD_DATA_O,
                      
   // Outputs
+  output  [1:0] INTERRUPT_MASKS_O, // {F,I}, after the current micro-op
+  input   [1:0] INTERRUPT_TYPE_I, // 1=IRQ, 2=FIRQ, 3=NMI
   output  [4:0] CCR_FLAGS_O,
   output reg    MICRO_SEQ_COND_O
                                   
@@ -94,6 +96,8 @@ localparam  OP_ooooXXoX = 4'h6;
 localparam  OP_1ooooooo = 4'h7;
 localparam  OP_o1o1oooo = 4'h8;
 localparam  OP_XXXXXXXX = 4'h9;
+localparam  OP_0ooooooo = 4'hA;
+localparam  OP_INTERRUPT = 4'hB;
 
 //////////////////////////////////////// MICRO_SEQ_COND_SEL_I defines
 //
@@ -201,6 +205,11 @@ always @(posedge CLK_I, posedge RST_I) begin
     if (STALL_MICROCYCLE_I == 1'b0) begin
       //unique case (CCR_OP_I) // TODO: optimize logic
       case (CCR_OP_I)
+        OP_0ooooooo : e_reg <= 1'b0; // Short FIRQ frame
+        OP_INTERRUPT : begin
+          i_reg <= 1'b1;
+          if (INTERRUPT_TYPE_I != 2'd1) f_reg <= 1'b1;
+        end
         OP_oooooooo : begin
           // c_reg <=  alu_c;
           // v_reg <=  alu_v;
@@ -395,6 +404,12 @@ assign RA_CCR_RD_DATA_O[3] = n_reg;
 assign RA_CCR_RD_DATA_O[2] = z_reg;
 assign RA_CCR_RD_DATA_O[1] = v_reg;
 assign RA_CCR_RD_DATA_O[0] = c_reg;
+
+assign INTERRUPT_MASKS_O = (CCR_OP_I == OP_XXXXXXXX && RA_CCR_WR_EN_I) ?
+                           {RA_CCR_WR_DATA_I[6], RA_CCR_WR_DATA_I[4]} :
+                           (CCR_OP_I == OP_o1o1oooo) ? 2'b11 :
+                           (CCR_OP_I == OP_INTERRUPT) ? {(INTERRUPT_TYPE_I != 2'd1) | f_reg, 1'b1} :
+                           {f_reg, i_reg};
 
 assign CCR_FLAGS_O[4] = h_reg;
 assign CCR_FLAGS_O[3] = n_reg;

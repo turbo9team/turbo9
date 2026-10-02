@@ -61,6 +61,7 @@ module turbo9_urtl_decode_pg3_JTA(
 
 always @* begin
   case (OPCODE_I)
+    8'h3F : PG3_JTA_O = 8'h3f; // SWI         SWI3
     8'h83 : PG3_JTA_O = 8'h1b; // CMP         CMPU (imm)
     8'h8C : PG3_JTA_O = 8'h1b; // CMP         CMPS (imm)
     8'h93 : PG3_JTA_O = 8'h1; // LD_DIR_EXT  CMPU (dir ext)
@@ -79,6 +80,7 @@ reg [(8*64):0] PG3_JTA_op;
 
 always @* begin
   case (OPCODE_I)
+    8'h3F : PG3_JTA_op = "SWI3";
     8'h83 : PG3_JTA_op = "CMPU (imm)";
     8'h8C : PG3_JTA_op = "CMPS (imm)";
     8'h93 : PG3_JTA_op = "CMPU (dir ext)";
@@ -95,6 +97,7 @@ reg [(8*64):0] PG3_JTA_eq;
 
 always @* begin
   case (OPCODE_I)
+    8'h3F : PG3_JTA_eq = "SWI";
     8'h83 : PG3_JTA_eq = "CMP";
     8'h8C : PG3_JTA_eq = "CMP";
     8'h93 : PG3_JTA_eq = "LD_DIR_EXT";

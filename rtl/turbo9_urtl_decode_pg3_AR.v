@@ -61,6 +61,7 @@ module turbo9_urtl_decode_pg3_AR(
 
 always @* begin
   case (OPCODE_I)
+    8'h3F : PG3_AR_O = 4'h4; // S           SWI3
     default : PG3_AR_O = 4'hx; // from decode_init
   endcase
 end
@@ -71,6 +72,7 @@ reg [(8*64):0] PG3_AR_op;
 
 always @* begin
   case (OPCODE_I)
+    8'h3F : PG3_AR_op = "SWI3";
     default : PG3_AR_op = "invalid";
   endcase
 end
@@ -79,6 +81,7 @@ reg [(8*64):0] PG3_AR_eq;
 
 always @* begin
   case (OPCODE_I)
+    8'h3F : PG3_AR_eq = "S";
     default : PG3_AR_eq = "invalid";
   endcase
 end

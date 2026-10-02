@@ -81,6 +81,7 @@ always @* begin
     8'h2D : PG2_R2_O = 4'hc; // EA          LBGE LBLT LBGT LBLE
     8'h2E : PG2_R2_O = 4'hc; // EA          LBGE LBLT LBGT LBLE
     8'h2F : PG2_R2_O = 4'hc; // EA          LBGE LBLT LBGT LBLE
+    8'h3F : PG2_R2_O = 4'hd; // DMEM_RD     SWI2
     8'h83 : PG2_R2_O = 4'he; // IDATA       CMPD (imm)
     8'h8C : PG2_R2_O = 4'he; // IDATA       CMPY (imm)
     8'h8E : PG2_R2_O = 4'he; // IDATA       LDY (imm)
@@ -127,6 +128,7 @@ always @* begin
     8'h2D : PG2_R2_op = "LBGE LBLT LBGT LBLE";
     8'h2E : PG2_R2_op = "LBGE LBLT LBGT LBLE";
     8'h2F : PG2_R2_op = "LBGE LBLT LBGT LBLE";
+    8'h3F : PG2_R2_op = "SWI2";
     8'h83 : PG2_R2_op = "CMPD (imm)";
     8'h8C : PG2_R2_op = "CMPY (imm)";
     8'h8E : PG2_R2_op = "LDY (imm)";
@@ -171,6 +173,7 @@ always @* begin
     8'h2D : PG2_R2_eq = "EA";
     8'h2E : PG2_R2_eq = "EA";
     8'h2F : PG2_R2_eq = "EA";
+    8'h3F : PG2_R2_eq = "DMEM_RD";
     8'h83 : PG2_R2_eq = "IDATA";
     8'h8C : PG2_R2_eq = "IDATA";
     8'h8E : PG2_R2_eq = "IDATA";

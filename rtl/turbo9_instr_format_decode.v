@@ -83,7 +83,8 @@ wire [15:0] instr_data_u16     = {QUEUE_D1_I          , QUEUE_D2_I      }; // in
 wire [15:0] instr_data_idx_s05 = {{11{QUEUE_D1_I[4]}} , QUEUE_D1_I[4:0] }; // instr_data_idx_s05
 wire [15:0] instr_data_idx_s08 = {{8{QUEUE_D2_I[7]}}  , QUEUE_D2_I      }; // instr_data_idx_s08
 wire [15:0] instr_data_idx_s16 = {QUEUE_D2_I          , QUEUE_D3_I      }; // instr_data_idx_s16
-wire [15:0] swi_vector_u16     = {16'hFFFA                              }; // swi_vector_u16
+wire [15:0] swi_vector_u16 = PAGE_SEL_I == 2'b10 ? 16'hFFF4 :
+                             PAGE_SEL_I == 2'b11 ? 16'hFFF2 : 16'hFFFA;
 
 localparam   len_1 = 3'h1;
 localparam   len_2 = 3'h2;

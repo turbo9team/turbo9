@@ -76,6 +76,7 @@ always @* begin
     8'h10 : PG1_JTA_O = 8'hc; // NOP         page2 (prebyte)
     8'h11 : PG1_JTA_O = 8'hc; // NOP         page3 (prebyte)
     8'h12 : PG1_JTA_O = 8'hc; // NOP         NOP(inh)
+    8'h13 : PG1_JTA_O = 8'hc0; // SYNC        SYNC
     8'h14 : PG1_JTA_O = 8'hd; // SAU16       EMUL (inh)
     8'h15 : PG1_JTA_O = 8'hd; // SAU16       EMULS (inh)
     8'h16 : PG1_JTA_O = 8'h2e; // BRANCH      LBRA On page 1!
@@ -114,6 +115,7 @@ always @* begin
     8'h39 : PG1_JTA_O = 8'h32; // RTS         RTS
     8'h3A : PG1_JTA_O = 8'h6; // ABX         ABX(inh)
     8'h3B : PG1_JTA_O = 8'h33; // RTI         RTI
+    8'h3C : PG1_JTA_O = 8'hb0; // CWAI        CWAI
     8'h3D : PG1_JTA_O = 8'hf; // SAU8        MUL (inh)
     8'h3F : PG1_JTA_O = 8'h3f; // SWI         SWI
     8'h40 : PG1_JTA_O = 8'h2a; // NEG         NEGA (inh)
@@ -310,6 +312,7 @@ always @* begin
     8'h10 : PG1_JTA_op = "page2 (prebyte)";
     8'h11 : PG1_JTA_op = "page3 (prebyte)";
     8'h12 : PG1_JTA_op = "NOP(inh)";
+    8'h13 : PG1_JTA_op = "SYNC";
     8'h14 : PG1_JTA_op = "EMUL (inh)";
     8'h15 : PG1_JTA_op = "EMULS (inh)";
     8'h16 : PG1_JTA_op = "LBRA On page 1!";
@@ -348,6 +351,7 @@ always @* begin
     8'h39 : PG1_JTA_op = "RTS";
     8'h3A : PG1_JTA_op = "ABX(inh)";
     8'h3B : PG1_JTA_op = "RTI";
+    8'h3C : PG1_JTA_op = "CWAI";
     8'h3D : PG1_JTA_op = "MUL (inh)";
     8'h3F : PG1_JTA_op = "SWI";
     8'h40 : PG1_JTA_op = "NEGA (inh)";
@@ -542,6 +546,7 @@ always @* begin
     8'h10 : PG1_JTA_eq = "NOP";
     8'h11 : PG1_JTA_eq = "NOP";
     8'h12 : PG1_JTA_eq = "NOP";
+    8'h13 : PG1_JTA_eq = "SYNC";
     8'h14 : PG1_JTA_eq = "SAU16";
     8'h15 : PG1_JTA_eq = "SAU16";
     8'h16 : PG1_JTA_eq = "BRANCH";
@@ -580,6 +585,7 @@ always @* begin
     8'h39 : PG1_JTA_eq = "RTS";
     8'h3A : PG1_JTA_eq = "ABX";
     8'h3B : PG1_JTA_eq = "RTI";
+    8'h3C : PG1_JTA_eq = "CWAI";
     8'h3D : PG1_JTA_eq = "SAU8";
     8'h3F : PG1_JTA_eq = "SWI";
     8'h40 : PG1_JTA_eq = "NEG";

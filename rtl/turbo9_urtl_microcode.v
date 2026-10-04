@@ -2400,11 +2400,22 @@ always @* begin
     // 1606:   decode pg1_AR  S        $3F ; SWI
     // 1607:   decode pg1_R1  PC       $3F ; SWI
     // 1608:   decode pg1_R2  DMEM_RD  $3F ; SWI
-    // 1609:   
-    // 1610:   STACK_PUSH      ZERO  ; Prime the decode pipeline!
-    // 1611: 
-    // 1612:   CCR_OP_W        OP_1ooooooo ; Set E
-    // 1613:   micro_op_end
+    // 1609:   decode pg1_JTB SWI_VECTOR_MASK $3F ; SWI
+    // 1610:   decode pg2_JTA SWI $3F ; SWI2
+    // 1611:   decode pg2_JTB SWI_VECTOR_NO_MASK $3F ; SWI2
+    // 1612:   decode pg2_AR S $3F ; SWI2
+    // 1613:   decode pg2_R1 PC $3F ; SWI2
+    // 1614:   decode pg2_R2 DMEM_RD $3F ; SWI2
+    // 1615:   decode pg3_JTA SWI $3F ; SWI3
+    // 1616:   decode pg3_JTB SWI_VECTOR_NO_MASK $3F ; SWI3
+    // 1617:   decode pg3_AR S $3F ; SWI3
+    // 1618:   decode pg3_R1 PC $3F ; SWI3
+    // 1619:   decode pg3_R2 DMEM_RD $3F ; SWI3
+    // 1620:   
+    // 1621:   STACK_PUSH      ZERO  ; Prime the decode pipeline!
+    // 1622: 
+    // 1623:   CCR_OP_W        OP_1ooooooo ; Set E
+    // 1624:   micro_op_end
     8'h3f: begin
       CV_ADDR_ALU_REG_SEL_O = 4'hf;  // ZERO
       CV_CCR_OP_O = 4'h7;  // OP_1OOOOOOO
@@ -2412,18 +2423,18 @@ always @* begin
     end
 
 
-    // 1614:   
-    // 1615: SWI_LOOP:
-    // 1616:   DATA_PASS_A     STACK_REG
-    // 1617:   
-    // 1618:   SET_DATA_WIDTH  W_STACK_REG
-    // 1619: 
-    // 1620:   STACK_PUSH      AR
-    // 1621:   DMEM_STORE_W
-    // 1622: 
-    // 1623:   IF              STACK_NEXT
-    // 1624:   JUMP            SWI_LOOP
-    // 1625:   micro_op_end
+    // 1625:   
+    // 1626: SWI_LOOP:
+    // 1627:   DATA_PASS_A     STACK_REG
+    // 1628:   
+    // 1629:   SET_DATA_WIDTH  W_STACK_REG
+    // 1630: 
+    // 1631:   STACK_PUSH      AR
+    // 1632:   DMEM_STORE_W
+    // 1633: 
+    // 1634:   IF              STACK_NEXT
+    // 1635:   JUMP            SWI_LOOP
+    // 1636:   micro_op_end
     8'h40: begin
       CV_MICRO_SEQ_OP_O = 3'h1;  // OP_JUMP
       CV_MICRO_SEQ_BRANCH_ADDR_O = 8'h40;  // SWI_LOOP
@@ -2439,20 +2450,29 @@ always @* begin
     end
 
 
-    // 1626: 
-    // 1627:   ; R1 is PC
-    // 1628:   ; R2 is DMEM_RD
-    // 1629: 
-    // 1630:   SET_DATA_WIDTH  W_16
-    // 1631: 
-    // 1632:   ADDR_PASS       IDATA ; SWI vector
-    // 1633:   DMEM_LOAD_W
-    // 1634:   
-    // 1635:   CCR_OP_W        OP_o1o1oooo ; Set I & F
-    // 1636: 
-    // 1637:   JUMP            JMP
-    // 1638:   micro_op_end
+    // 1637: 
+    // 1638:   JUMP_TABLE_B
+    // 1639:   micro_op_end
     8'h41: begin
+      CV_MICRO_SEQ_OP_O = 3'h4;  // OP_JUMP_TABLE_B
+    end
+
+
+    // 1640: 
+    // 1641: SWI_VECTOR_MASK:
+    // 1642:   ; R1 is PC
+    // 1643:   ; R2 is DMEM_RD
+    // 1644: 
+    // 1645:   SET_DATA_WIDTH  W_16
+    // 1646: 
+    // 1647:   ADDR_PASS       IDATA ; SWI vector
+    // 1648:   DMEM_LOAD_W
+    // 1649:   
+    // 1650:   CCR_OP_W        OP_o1o1oooo ; Set I & F
+    // 1651: 
+    // 1652:   JUMP            JMP
+    // 1653:   micro_op_end
+    8'h42: begin
       CV_MICRO_SEQ_OP_O = 3'h1;  // OP_JUMP
       CV_MICRO_SEQ_BRANCH_ADDR_O = 8'h30;  // JMP
       CV_ADDR_ALU_REG_SEL_O = 4'he;  // IDATA
@@ -2462,25 +2482,213 @@ always @* begin
     end
 
 
-    // 1639: 
-    // 1640: 
-    // 1641: 
-    // 1642: ; ////////////////////////////////////////////////////////////////////////////
-    // 1643: 
-    // 1644: 
-    // 1645:   ORG  $FF
-    // 1646: 
-    // 1647: TRAP:
-    // 1648: 
-    // 1649:   JUMP            TRAP
-    // 1650:   micro_op_end
+    // 1654: 
+    // 1655: 
+    // 1656: 
+    // 1657: ; ////////////////////////////////////////////////////////////////////////////
+    // 1658: 
+    // 1659: 
+    // 1660: SWI_VECTOR_NO_MASK:
+    // 1661:   SET_DATA_WIDTH W_16
+    // 1662:   ADDR_PASS IDATA
+    // 1663:   DMEM_LOAD_W
+    // 1664:   JUMP JMP
+    // 1665:   micro_op_end
+    8'h43: begin
+      CV_MICRO_SEQ_OP_O = 3'h1;  // OP_JUMP
+      CV_MICRO_SEQ_BRANCH_ADDR_O = 8'h30;  // JMP
+      CV_ADDR_ALU_REG_SEL_O = 4'he;  // IDATA
+      CV_DATA_WIDTH_SEL_O = 3'h3;  // W_16
+      CV_DMEM_OP_O = 2'h2;  // DMEM_OP_RD
+    end
+
+
+    // 1666: 
+    // 1667:   ORG $B0
+    // 1668: CWAI:
+    // 1669:   decode pg1_JTA CWAI $3C ; CWAI
+    // 1670:   decode pg1_AR S $3C ; CWAI
+    // 1671:   decode pg1_R1 CCR $3C ; CWAI
+    // 1672:   decode pg1_R2 DMEM_RD $3C ; CWAI
+    // 1673:   DATA_AND R1, IDATA
+    // 1674:   DATA_WRITE R1
+    // 1675:   CCR_OP_W OP_XXXXXXXX
+    // 1676:   micro_op_end
+    8'hb0: begin
+      CV_DATA_ALU_A_SEL_O = 4'h8;  // R1
+      CV_DATA_ALU_B_SEL_O = 3'h6;  // IDATA
+      CV_DATA_ALU_WR_SEL_O = 4'h8;  // R1
+      CV_DATA_ALU_OP_O = 3'h4;  // A_AND_B
+      CV_CCR_OP_O = 4'h9;  // OP_XXXXXXXX
+      CV_DATA_ALU_COND_SEL_O = 2'h0;  // ZERO_BIT
+    end
+
+
+    // 1677: 
+    // 1678:   STACK_PUSH ZERO
+    // 1679:   CCR_OP_W OP_1ooooooo
+    // 1680:   micro_op_end
+    8'hb1: begin
+      CV_ADDR_ALU_REG_SEL_O = 4'hf;  // ZERO
+      CV_CCR_OP_O = 4'h7;  // OP_1OOOOOOO
+      CV_STACK_OP_O = 2'h2;  // STACK_OP_PUSH
+    end
+
+
+    // 1681: 
+    // 1682: CWAI_LOOP:
+    // 1683:   DATA_PASS_A STACK_REG
+    // 1684:   SET_DATA_WIDTH W_STACK_REG
+    // 1685:   STACK_PUSH AR
+    // 1686:   DMEM_STORE_W
+    // 1687:   IF STACK_NEXT
+    // 1688:   JUMP CWAI_LOOP
+    // 1689:   micro_op_end
+    8'hb2: begin
+      CV_MICRO_SEQ_OP_O = 3'h1;  // OP_JUMP
+      CV_MICRO_SEQ_BRANCH_ADDR_O = 8'hb2;  // CWAI_LOOP
+      CV_DATA_ALU_A_SEL_O = 4'h0;  // STACK_REG
+      CV_DATA_ALU_B_SEL_O = 3'h7;  // ZERO
+      CV_ADDR_ALU_REG_SEL_O = 4'h8;  // AR
+      CV_DATA_ALU_OP_O = 3'h0;  // A_PLUS_B
+      CV_DATA_WIDTH_SEL_O = 3'h2;  // W_STACK_REG
+      CV_DATA_ALU_COND_SEL_O = 2'h0;  // ZERO_BIT
+      CV_MICRO_SEQ_COND_SEL_O = 4'h3;  // STACK_NEXT
+      CV_DMEM_OP_O = 2'h3;  // DMEM_OP_WR
+      CV_STACK_OP_O = 2'h2;  // STACK_OP_PUSH
+    end
+
+
+    // 1690: 
+    // 1691: CWAI_WAIT:
+    // 1692:   IF WAIT_DONE
+    // 1693:   JUMP NOP
+    // 1694:   micro_op_end
+    8'hb3: begin
+      CV_MICRO_SEQ_OP_O = 3'h1;  // OP_JUMP
+      CV_MICRO_SEQ_BRANCH_ADDR_O = 8'hc;  // NOP
+      CV_MICRO_SEQ_COND_SEL_O = 4'h7;  // WAIT_DONE
+    end
+
+
+    // 1695:   JUMP CWAI_WAIT
+    // 1696:   micro_op_end
+    8'hb4: begin
+      CV_MICRO_SEQ_OP_O = 3'h1;  // OP_JUMP
+      CV_MICRO_SEQ_BRANCH_ADDR_O = 8'hb3;  // CWAI_WAIT
+    end
+
+
+    // 1697: 
+    // 1698:   ORG $C0
+    // 1699: SYNC:
+    // 1700:   decode pg1_JTA SYNC $13 ; SYNC
+    // 1701:   IF WAIT_DONE
+    // 1702:   JUMP NOP
+    // 1703:   micro_op_end
+    8'hc0: begin
+      CV_MICRO_SEQ_OP_O = 3'h1;  // OP_JUMP
+      CV_MICRO_SEQ_BRANCH_ADDR_O = 8'hc;  // NOP
+      CV_MICRO_SEQ_COND_SEL_O = 4'h7;  // WAIT_DONE
+    end
+
+
+    // 1704:   JUMP SYNC
+    // 1705:   micro_op_end
+    8'hc1: begin
+      CV_MICRO_SEQ_OP_O = 3'h1;  // OP_JUMP
+      CV_MICRO_SEQ_BRANCH_ADDR_O = 8'hc0;  // SYNC
+    end
+
+
+    // 1706: 
+    // 1707:   ORG $D0
+    // 1708: INTERRUPT_FULL:
+    // 1709:   STACK_PUSH ZERO
+    // 1710:   CCR_OP_W OP_1ooooooo
+    // 1711:   JUMP INTERRUPT_LOOP
+    // 1712:   micro_op_end
+    8'hd0: begin
+      CV_MICRO_SEQ_OP_O = 3'h1;  // OP_JUMP
+      CV_MICRO_SEQ_BRANCH_ADDR_O = 8'hd1;  // INTERRUPT_LOOP
+      CV_ADDR_ALU_REG_SEL_O = 4'hf;  // ZERO
+      CV_CCR_OP_O = 4'h7;  // OP_1OOOOOOO
+      CV_STACK_OP_O = 2'h2;  // STACK_OP_PUSH
+    end
+
+
+    // 1713: 
+    // 1714: INTERRUPT_LOOP:
+    // 1715:   DATA_PASS_A STACK_REG
+    // 1716:   SET_DATA_WIDTH W_STACK_REG
+    // 1717:   STACK_PUSH AR
+    // 1718:   DMEM_STORE_W
+    // 1719:   IF STACK_NEXT
+    // 1720:   JUMP INTERRUPT_LOOP
+    // 1721:   micro_op_end
+    8'hd1: begin
+      CV_MICRO_SEQ_OP_O = 3'h1;  // OP_JUMP
+      CV_MICRO_SEQ_BRANCH_ADDR_O = 8'hd1;  // INTERRUPT_LOOP
+      CV_DATA_ALU_A_SEL_O = 4'h0;  // STACK_REG
+      CV_DATA_ALU_B_SEL_O = 3'h7;  // ZERO
+      CV_ADDR_ALU_REG_SEL_O = 4'h8;  // AR
+      CV_DATA_ALU_OP_O = 3'h0;  // A_PLUS_B
+      CV_DATA_WIDTH_SEL_O = 3'h2;  // W_STACK_REG
+      CV_DATA_ALU_COND_SEL_O = 2'h0;  // ZERO_BIT
+      CV_MICRO_SEQ_COND_SEL_O = 4'h3;  // STACK_NEXT
+      CV_DMEM_OP_O = 2'h3;  // DMEM_OP_WR
+      CV_STACK_OP_O = 2'h2;  // STACK_OP_PUSH
+    end
+
+
+    // 1722: 
+    // 1723: INTERRUPT_VECTOR:
+    // 1724:   SET_DATA_WIDTH W_16
+    // 1725:   ADDR_PASS IDATA
+    // 1726:   DMEM_LOAD_W
+    // 1727:   CCR_OP_W OP_INTERRUPT
+    // 1728:   JUMP JMP
+    // 1729:   micro_op_end
+    8'hd2: begin
+      CV_MICRO_SEQ_OP_O = 3'h1;  // OP_JUMP
+      CV_MICRO_SEQ_BRANCH_ADDR_O = 8'h30;  // JMP
+      CV_ADDR_ALU_REG_SEL_O = 4'he;  // IDATA
+      CV_DATA_WIDTH_SEL_O = 3'h3;  // W_16
+      CV_CCR_OP_O = 4'hb;  // OP_INTERRUPT
+      CV_DMEM_OP_O = 2'h2;  // DMEM_OP_RD
+    end
+
+
+    // 1730: 
+    // 1731:   ORG $E0
+    // 1732: INTERRUPT_FAST:
+    // 1733:   STACK_PUSH ZERO
+    // 1734:   CCR_OP_W OP_0ooooooo
+    // 1735:   JUMP INTERRUPT_LOOP
+    // 1736:   micro_op_end
+    8'he0: begin
+      CV_MICRO_SEQ_OP_O = 3'h1;  // OP_JUMP
+      CV_MICRO_SEQ_BRANCH_ADDR_O = 8'hd1;  // INTERRUPT_LOOP
+      CV_ADDR_ALU_REG_SEL_O = 4'hf;  // ZERO
+      CV_CCR_OP_O = 4'ha;  // OP_0OOOOOOO
+      CV_STACK_OP_O = 2'h2;  // STACK_OP_PUSH
+    end
+
+
+    // 1737: 
+    // 1738:   ORG  $FF
+    // 1739: 
+    // 1740: TRAP:
+    // 1741: 
+    // 1742:   JUMP            TRAP
+    // 1743:   micro_op_end
     8'hff: begin
       CV_MICRO_SEQ_OP_O = 3'h1;  // OP_JUMP
       CV_MICRO_SEQ_BRANCH_ADDR_O = 8'hff;  // TRAP
     end
 
 
-    // 1651: 
+    // 1744: 
     default: begin
       //
       // Control Logic Defaults

@@ -4,10 +4,10 @@
 +==========================================================================================================+
 Use Count:
      OP_CONTINUE (0) | 0 (default) (equate not used!) 
-         OP_JUMP (1) |###################### 22
+         OP_JUMP (1) |################################ 32 (clipped)
          OP_CALL (2) | 0 (equate not used!) 
        OP_RETURN (3) | 0 (equate not used!) 
-  OP_JUMP_TABLE_B (4) |###### 6
+  OP_JUMP_TABLE_B (4) |####### 7
   OP_JUMP_TABLE_A_NEXT_PC (5) |################################ 32 (clipped)
 
 Decode Use Count:
@@ -34,7 +34,7 @@ Use Count:
             EXG (07) | 0 (equate not used!) 
          LEA_SU (0A) | 0 (equate not used!) 
          LEA_XY (0B) | 0 (equate not used!) 
-            NOP (0C) |## 2
+            NOP (0C) |#### 4
           SAU16 (0D) |# 1
      SAU16_DONE (0E) | 0 (equate not used!) 
            SAU8 (0F) |# 1
@@ -69,7 +69,7 @@ Use Count:
             TST (2D) | 0 (equate not used!) 
          BRANCH (2E) | 0 (equate not used!) 
       GO_NEW_PC (2F) |##### 5
-            JMP (30) |#### 4
+            JMP (30) |###### 6
             JSR (31) | 0 (equate not used!) 
             RTS (32) |# 1
             RTI (33) | 0 (equate not used!) 
@@ -83,6 +83,16 @@ Use Count:
        PSH_LOOP (3D) |# 1
             SWI (3F) | 0 (equate not used!) 
        SWI_LOOP (40) |# 1
+  SWI_VECTOR_MASK (42) | 0 (equate not used!) 
+  SWI_VECTOR_NO_MASK (43) | 0 (equate not used!) 
+           CWAI (B0) | 0 (equate not used!) 
+      CWAI_LOOP (B2) |# 1
+      CWAI_WAIT (B3) |# 1
+           SYNC (C0) |# 1
+  INTERRUPT_FULL (D0) | 0 (equate not used!) 
+  INTERRUPT_LOOP (D1) |### 3
+  INTERRUPT_VECTOR (D2) | 0 (equate not used!) 
+  INTERRUPT_FAST (E0) | 0 (equate not used!) 
            TRAP (FF) |# 1
 
 Decode Use Count:
@@ -143,8 +153,18 @@ Decode Use Count:
        PUL_DONE (3B) | 0 (equate not used!) 
             PSH (3C) |## 2
        PSH_LOOP (3D) | 0 (equate not used!) 
-            SWI (3F) |# 1
+            SWI (3F) |### 3
        SWI_LOOP (40) | 0 (equate not used!) 
+  SWI_VECTOR_MASK (42) |# 1
+  SWI_VECTOR_NO_MASK (43) |## 2
+           CWAI (B0) |# 1
+      CWAI_LOOP (B2) | 0 (equate not used!) 
+      CWAI_WAIT (B3) | 0 (equate not used!) 
+           SYNC (C0) |# 1
+  INTERRUPT_FULL (D0) | 0 (equate not used!) 
+  INTERRUPT_LOOP (D1) | 0 (equate not used!) 
+  INTERRUPT_VECTOR (D2) | 0 (equate not used!) 
+  INTERRUPT_FAST (E0) | 0 (equate not used!) 
            TRAP (FF) | 0 (equate not used!) 
 
 
@@ -157,9 +177,9 @@ Use Count:
            IDATA (E) | 0 (equate not used!) 
          DMEM_RD (D) | 0 (equate not used!) 
               EA (C) |# 1
-              R1 (8) |######################### 25
+              R1 (8) |########################## 26
               R2 (4) |# 1
-       STACK_REG (0) |## 2
+       STACK_REG (0) |#### 4
 
 Decode Use Count:
             ZERO (F) | 0 (default) (equate not used!) 
@@ -176,8 +196,8 @@ Decode Use Count:
 |                                         microprogram_word[31:29]                                         |
 +==========================================================================================================+
 Use Count:
-            ZERO (7) |################# 17 (default)
-           IDATA (6) |## 2
+            ZERO (7) |################### 19 (default)
+           IDATA (6) |### 3
          DMEM_RD (5) |###### 6
               EA (4) |## 2
               R2 (0) |################# 17
@@ -199,7 +219,7 @@ Use Count:
            IDATA (E) | 0 (equate not used!) 
          DMEM_RD (D) | 0 (equate not used!) 
               EA (C) |##### 5
-              R1 (8) |########################### 27
+              R1 (8) |############################ 28
               R2 (4) |### 3
        STACK_REG (0) |### 3
 
@@ -218,11 +238,11 @@ Decode Use Count:
 |                                         microprogram_word[24:21]                                         |
 +==========================================================================================================+
 Use Count:
-            ZERO (F) |##### 5 (default)
-           IDATA (E) |## 2
+            ZERO (F) |######## 8 (default)
+           IDATA (E) |#### 4
          DMEM_RD (D) |# 1
               EA (C) |######### 9
-              AR (8) |########## 10
+              AR (8) |############ 12
          RR1_WR2 (4) |## 2
          INDEXED (0) |## 2
 
@@ -241,11 +261,11 @@ Decode Use Count:
 |                                         microprogram_word[20:18]                                         |
 +==========================================================================================================+
 Use Count:
-        A_PLUS_B (0) |########################### 27 (default)
+        A_PLUS_B (0) |############################# 29 (default)
     A_PLUS_NOT_B (1) |###### 6
         LSHIFT_A (2) |## 2
         RSHIFT_A (3) |### 3
-         A_AND_B (4) |### 3
+         A_AND_B (4) |#### 4
           A_OR_B (5) |## 2
          A_XOR_B (6) |# 1
              SAU (7) |## 2
@@ -268,8 +288,8 @@ Decode Use Count:
 Use Count:
             W_R1 (0) |############################### 31 (default) (clipped)
      W_R1_OR_IND (1) |#### 4
-     W_STACK_REG (2) |###### 6
-            W_16 (3) |## 2
+     W_STACK_REG (2) |######## 8
+            W_16 (3) |#### 4
              W_8 (4) |## 2
 
 Decode Use Count:
@@ -305,9 +325,11 @@ Use Count:
      OP_ooooXXXo (4) |########## 10
      OP_ooXoXXXX (5) |## 2
      OP_ooooXXoX (6) |### 3
-     OP_1ooooooo (7) |# 1
+     OP_1ooooooo (7) |### 3
      OP_o1o1oooo (8) |# 1
-     OP_XXXXXXXX (9) |######## 8
+     OP_XXXXXXXX (9) |######### 9
+     OP_0ooooooo (A) |# 1
+    OP_INTERRUPT (B) |# 1
 
 Decode Use Count:
      OP_oooooooo (0) | 0 (default) (equate not used!) 
@@ -320,6 +342,8 @@ Decode Use Count:
      OP_1ooooooo (7) | 0 (equate not used!) 
      OP_o1o1oooo (8) | 0 (equate not used!) 
      OP_XXXXXXXX (9) | 0 (equate not used!) 
+     OP_0ooooooo (A) | 0 (equate not used!) 
+    OP_INTERRUPT (B) | 0 (equate not used!) 
 
 
 +==========================================================================================================+
@@ -327,7 +351,7 @@ Decode Use Count:
 |                                         microprogram_word[ 9: 8]                                         |
 +==========================================================================================================+
 Use Count:
-        ZERO_BIT (0) |#################################### 36 (default) (clipped)
+        ZERO_BIT (0) |####################################### 39 (default) (clipped)
          ONE_BIT (1) |### 3
        CARRY_BIT (2) |#### 4
         SIGN_BIT (3) |# 1
@@ -347,10 +371,11 @@ Use Count:
             TRUE (1) | 0 (default) (equate not used!) 
     NOT_INDIRECT (0) |## 2
       STACK_DONE (2) |### 3
-      STACK_NEXT (3) |### 3
+      STACK_NEXT (3) |##### 5
         SAU_DONE (4) |# 1
     SAU_NOT_DONE (5) |## 2
          E_CLEAR (6) |# 1
+       WAIT_DONE (7) |## 2
      BRANCH_COND (8) |# 1
 
 Decode Use Count:
@@ -361,6 +386,7 @@ Decode Use Count:
         SAU_DONE (4) | 0 (equate not used!) 
     SAU_NOT_DONE (5) | 0 (equate not used!) 
          E_CLEAR (6) | 0 (equate not used!) 
+       WAIT_DONE (7) | 0 (equate not used!) 
      BRANCH_COND (8) | 0 (equate not used!) 
 
 
@@ -370,8 +396,8 @@ Decode Use Count:
 +==========================================================================================================+
 Use Count:
     DMEM_OP_IDLE (0) | 0 (default) (equate not used!) 
-      DMEM_OP_RD (2) |########### 11
-      DMEM_OP_WR (3) |############### 15
+      DMEM_OP_RD (2) |############# 13
+      DMEM_OP_WR (3) |################# 17
 
 Decode Use Count:
     DMEM_OP_IDLE (0) | 0 (default) (equate not used!) 
@@ -386,7 +412,7 @@ Decode Use Count:
 Use Count:
    STACK_OP_IDLE (0) | 0 (default) (equate not used!) 
    STACK_OP_PULL (1) |####### 7
-   STACK_OP_PUSH (2) |###### 6
+   STACK_OP_PUSH (2) |########### 11
 
 Decode Use Count:
    STACK_OP_IDLE (0) | 0 (default) (equate not used!) 
@@ -421,11 +447,11 @@ Decode Use Count:
          DMEM_RD (D) |################################# 33 (clipped)
               EA (C) | 0 (equate not used!) 
              DPR (B) | 0 (equate not used!) 
-             CCR (A) |## 2
+             CCR (A) |### 3
                B (9) |###################################################### 54 (clipped)
                A (8) |###################################################### 54 (clipped)
             SEXB (7) | 0 (equate not used!) 
-              PC (5) |############################################ 44 (clipped)
+              PC (5) |############################################## 46 (clipped)
                S (4) |############ 12
                U (3) |############ 12
                Y (2) |############## 14
@@ -457,7 +483,7 @@ Use Count:
 Decode Use Count:
             ZERO (F) | 0 (default) (equate not used!) 
            IDATA (E) |###################################### 38 (clipped)
-         DMEM_RD (D) |######################################################################################################### 105 (clipped)
+         DMEM_RD (D) |############################################################################################################ 108 (clipped)
               EA (C) |##################################### 37 (clipped)
              DPR (B) | 0 (equate not used!) 
              CCR (A) | 0 (equate not used!) 
@@ -493,7 +519,7 @@ Decode Use Count:
          DMEM_RD (D) | 0 (equate not used!) 
               EA (C) |######## 8
               PC (5) | 0 (equate not used!) 
-               S (4) |########## 10
+               S (4) |############# 13
                U (3) |## 2
                Y (2) | 0 (equate not used!) 
                X (1) | 0 (equate not used!) 

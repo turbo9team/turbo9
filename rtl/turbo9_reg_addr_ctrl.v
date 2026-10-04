@@ -647,7 +647,10 @@ always @(posedge CLK_I, posedge RST_I) begin
     if (~STALL_MICROCYCLE_I) begin
       //
       stk_postbyte_reg  <= stk_postbyte_nxt & stk_postbyte_msk;
-      stk_a_sel_reg     <= stk_a_sel_nxt;
+      // RTI restores CC and tests E between pulls. Preserve the next
+      // register (and its width) across those idle stack microcycles.
+      if (CV_STACK_OP_I != 2'b00)
+        stk_a_sel_reg   <= stk_a_sel_nxt;
       if (CV_STACK_OP_I[0]) begin // INFO: Partial Decode STACK_OP_PULL!
         stk_wr_sel_reg  <= stk_a_sel_reg;
       end

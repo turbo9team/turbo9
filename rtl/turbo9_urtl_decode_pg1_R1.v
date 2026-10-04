@@ -105,6 +105,7 @@ always @* begin
     8'h39 : PG1_R1_O = 4'h5; // PC          RTS
     8'h3A : PG1_R1_O = 4'h1; // X           ABX(inh)
     8'h3B : PG1_R1_O = 4'h5; // PC          RTI
+    8'h3C : PG1_R1_O = 4'ha; // CCR         CWAI
     8'h3D : PG1_R1_O = 4'h0; // D           MUL (inh)
     8'h3F : PG1_R1_O = 4'h5; // PC          SWI
     8'h40 : PG1_R1_O = 4'h8; // A           NEGA (inh)
@@ -330,6 +331,7 @@ always @* begin
     8'h39 : PG1_R1_op = "RTS";
     8'h3A : PG1_R1_op = "ABX(inh)";
     8'h3B : PG1_R1_op = "RTI";
+    8'h3C : PG1_R1_op = "CWAI";
     8'h3D : PG1_R1_op = "MUL (inh)";
     8'h3F : PG1_R1_op = "SWI";
     8'h40 : PG1_R1_op = "NEGA (inh)";
@@ -553,6 +555,7 @@ always @* begin
     8'h39 : PG1_R1_eq = "PC";
     8'h3A : PG1_R1_eq = "X";
     8'h3B : PG1_R1_eq = "PC";
+    8'h3C : PG1_R1_eq = "CCR";
     8'h3D : PG1_R1_eq = "D";
     8'h3F : PG1_R1_eq = "PC";
     8'h40 : PG1_R1_eq = "A";

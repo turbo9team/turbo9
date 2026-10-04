@@ -91,6 +91,7 @@ always @* begin
     8'h39 : PG1_R2_O = 4'hd; // DMEM_RD     RTS
     8'h3A : PG1_R2_O = 4'h9; // B           ABX(inh)
     8'h3B : PG1_R2_O = 4'hd; // DMEM_RD     RTI
+    8'h3C : PG1_R2_O = 4'hd; // DMEM_RD     CWAI
     8'h3F : PG1_R2_O = 4'hd; // DMEM_RD     SWI
     8'h40 : PG1_R2_O = 4'h8; // A           NEGA (inh)
     8'h43 : PG1_R2_O = 4'h8; // A           COMA (inh)
@@ -250,6 +251,7 @@ always @* begin
     8'h39 : PG1_R2_op = "RTS";
     8'h3A : PG1_R2_op = "ABX(inh)";
     8'h3B : PG1_R2_op = "RTI";
+    8'h3C : PG1_R2_op = "CWAI";
     8'h3F : PG1_R2_op = "SWI";
     8'h40 : PG1_R2_op = "NEGA (inh)";
     8'h43 : PG1_R2_op = "COMA (inh)";
@@ -407,6 +409,7 @@ always @* begin
     8'h39 : PG1_R2_eq = "DMEM_RD";
     8'h3A : PG1_R2_eq = "B";
     8'h3B : PG1_R2_eq = "DMEM_RD";
+    8'h3C : PG1_R2_eq = "DMEM_RD";
     8'h3F : PG1_R2_eq = "DMEM_RD";
     8'h40 : PG1_R2_eq = "A";
     8'h43 : PG1_R2_eq = "A";

@@ -53,6 +53,12 @@ module turbo9_decode_stage
   // Inputs: Clock & Reset
   input  RST_I,
   input  CLK_I,
+  input wire IRQ_N_I,
+  input wire FIRQ_N_I,
+  input wire NMI_N_I,
+  input [1:0] INTERRUPT_MASKS_I,
+  input S_INIT_I,
+  output [1:0] INTERRUPT_TYPE_O,
   //                                                                              
   // Decode Execute Control Interface
   output        DEC_EXE_STALL_MICROCYCLE_O,
@@ -132,6 +138,86 @@ reg          page_sel_clear;
 reg    [1:0] page_sel_reg;
 localparam   page_sel_rst = 2'b00;
 
+// Weak defaults keep legacy unconnected simulation ports inactive.
+// Integrators should tie unused interrupt pins high.
+`ifdef SYNTHESIS
+wire irq_n_input, firq_n_input, nmi_n_input;
+`else
+tri1 irq_n_input, firq_n_input, nmi_n_input;
+`endif
+assign irq_n_input = IRQ_N_I;
+assign firq_n_input = FIRQ_N_I;
+assign nmi_n_input = NMI_N_I;
+// Synchronize levels; NMI is edge triggered and armed by initializing S.
+(* ASYNC_REG = "TRUE" *) reg [1:0] irq_sync, firq_sync, nmi_sync;
+reg nmi_prev, nmi_pending, nmi_armed;
+reg [1:0] wait_mode; // 0=running, 1=SYNC, 2=CWAI (already stacked)
+reg [1:0] wake_type, interrupt_type;
+reg [15:0] prebyte_pc; // Start of a prefixed instruction not yet issued.
+wire nmi_edge = nmi_armed && nmi_prev && !nmi_sync[1];
+wire [1:0] pending_type = (nmi_pending || nmi_edge) ? 2'd3 :
+                         (!firq_sync[1] && !INTERRUPT_MASKS_I[1]) ? 2'd2 :
+                         (!irq_sync[1] && !INTERRUPT_MASKS_I[0]) ? 2'd1 : 2'd0;
+wire [1:0] selected_type = wake_type != 0 ? wake_type : pending_type;
+wire any_request = !irq_sync[1] | !firq_sync[1] | !nmi_sync[1] | nmi_pending;
+wire wait_done = (wait_mode == 1) ? any_request : (pending_type != 0);
+wire waiting = (DEC_EXE_UOP_MICRO_SEQ_COND_SEL_O == 4'h7);
+wire inject_interrupt = next_instr_req && selected_type != 0 &&
+                        !(DEC_EXE_NEW_PC_WR_EN_I && microcycle_start);
+wire accept_interrupt = inject_interrupt && next_instr_ack && !stall_microcycle;
+wire [15:0] interrupt_vector = selected_type == 3 ? 16'hFFFC :
+                               selected_type == 2 ? 16'hFFF6 : 16'hFFF8;
+// Reserved ORG addresses in rtl/urtl/turbo9_urtl.asm; the generator checks them.
+wire [7:0] interrupt_entry = wait_mode == 2 ? 8'hD2 :
+                            selected_type == 2 ? 8'hE0 : 8'hD0;
+assign INTERRUPT_TYPE_O = interrupt_type;
+
+`ifdef TURBO9_RTL_SYNC_RESET
+always @(posedge CLK_I) begin
+`else
+always @(posedge CLK_I or posedge RST_I) begin
+`endif
+  if (RST_I) begin
+    irq_sync <= 2'b11;
+    firq_sync <= 2'b11;
+    nmi_sync <= 2'b11;
+    nmi_prev <= 1'b1;
+    nmi_pending <= 1'b0;
+    nmi_armed <= 1'b0;
+    wait_mode <= 0;
+    wake_type <= 0;
+    interrupt_type <= 0;
+    prebyte_pc <= 0;
+  end else begin
+    irq_sync <= {irq_sync[0], irq_n_input};
+    firq_sync <= {firq_sync[0], firq_n_input};
+    nmi_sync <= {nmi_sync[0], nmi_n_input};
+    nmi_prev <= nmi_sync[1];
+    if (page_sel_load)
+      prebyte_pc <= FET_DEC_NXT_PC_I - {13'b0, instr_len};
+    if (S_INIT_I) nmi_armed <= 1'b1;
+    if (accept_interrupt && selected_type == 3) nmi_pending <= 1'b0;
+    // A new edge wins over acknowledgement of an older edge.
+    if (nmi_edge)
+      nmi_pending <= !(accept_interrupt && selected_type == 3 && !nmi_pending);
+    if (!stall_microcycle && waiting && wait_done && wake_type == 0)
+      wake_type <= pending_type;
+    if (!stall_microcycle && next_instr_ack) begin
+      wake_type <= 0;
+      if (inject_interrupt) begin
+        interrupt_type <= selected_type;
+        wait_mode <= 0;
+      end else if (!page_sel_reg[1] && FET_DEC_REG_QUEUE_D0_I == 8'h13)
+        wait_mode <= 1;
+      else if (!page_sel_reg[1] && FET_DEC_REG_QUEUE_D0_I == 8'h3C)
+        wait_mode <= 2;
+      else wait_mode <= 0;
+    end
+  end
+end
+
+
+
 /////////////////////////////////////////////////////////////////////////////
 
 
@@ -155,6 +241,12 @@ always @* begin
       page_sel_load     = 1'b0;
       page_sel_clear    = 1'b1;
       //
+    end else if (inject_interrupt) begin
+      decode_ready = 1'b1;
+      next_instr_ack = 1'b1;
+      fet_dec_load_pc = 1'b0;
+      page_sel_load = 1'b0;
+      page_sel_clear = ~stall_microcycle;
     end else if (instr_len_valid) begin
       //
       // Execute stage ready for next instruction & instruction is decoded
@@ -186,7 +278,7 @@ always @* begin
     decode_ready      = 1'b1; // no need to stall the execute stage
     next_instr_ack    = 1'b0;
     fet_dec_load_pc   = 1'b0;
-    if (instr_len_valid && FET_DEC_REG_PREBYTE_EN_I && ~page_sel_reg[1]) begin
+    if (wait_mode == 0 && instr_len_valid && FET_DEC_REG_PREBYTE_EN_I && ~page_sel_reg[1]) begin
       page_sel_load     = 1'b1; // decode prebyte in page_sel_reg
     end else begin
       page_sel_load     = 1'b0;
@@ -260,23 +352,23 @@ turbo9_uop_generator I_turbo9_uop_generator
   .MICROCYCLE_START_O          (microcycle_start                 ),
   .NEXT_INSTR_REQ_O            (next_instr_req                   ),
   .STALL_MICROCYCLE_I          (stall_microcycle                 ),
-  .MICRO_SEQ_COND_I            (DEC_EXE_MICRO_SEQ_COND_I         ),
+  .MICRO_SEQ_COND_I            (waiting ? wait_done : DEC_EXE_MICRO_SEQ_COND_I),
   .NEXT_INSTR_ACK_I            (next_instr_ack                   ),
 
   // Instruction Queue
   //.QUEUE_D2_I                  (FET_DEC_REG_QUEUE_D2_I           ),
-  .QUEUE_D1_I                  (FET_DEC_REG_QUEUE_D1_I           ),
-  .QUEUE_D0_I                  (FET_DEC_REG_QUEUE_D0_I           ),
-  .PAGE_SEL_I                  (page_sel_reg                     ),
+  .QUEUE_D1_I                  (inject_interrupt ? (selected_type == 2 ? 8'h81 : 8'hFF) : FET_DEC_REG_QUEUE_D1_I),
+  .QUEUE_D0_I                  (inject_interrupt ? 8'h34 : FET_DEC_REG_QUEUE_D0_I),
+  .PAGE_SEL_I                  (inject_interrupt ? 2'b00 : page_sel_reg),
 
   // Decoded Instruction                                        
-  .INSTR_DATA_I                (instr_data                       ),
-  .INSTR_DIRECT_EN_I           (instr_direct_en                  ),
-  .INSTR_INH_EN_I              (instr_inh_en                     ),
-  .INSTR_R1_SEL_I              (instr_r1_sel                     ),
-  .INSTR_R2_SEL_I              (instr_r2_sel                     ),
-  .INSTR_AR_SEL_I              (instr_ar_sel                     ),
-  .INSTR_JUMP_TABLE_A_I        (jump_table_a                     ),
+  .INSTR_DATA_I                (inject_interrupt ? interrupt_vector : instr_data),
+  .INSTR_DIRECT_EN_I           (inject_interrupt ? 1'b0 : instr_direct_en),
+  .INSTR_INH_EN_I              (inject_interrupt ? 1'b0 : instr_inh_en),
+  .INSTR_R1_SEL_I              (inject_interrupt ? 4'h5 : instr_r1_sel),
+  .INSTR_R2_SEL_I              (inject_interrupt ? 4'hD : instr_r2_sel),
+  .INSTR_AR_SEL_I              (inject_interrupt ? 4'h4 : instr_ar_sel),
+  .INSTR_JUMP_TABLE_A_I        (inject_interrupt ? interrupt_entry : jump_table_a),
   .INSTR_JUMP_TABLE_B_I        (jump_table_b                     ),
 
   // Micro-Op
@@ -315,16 +407,19 @@ turbo9_uop_generator I_turbo9_uop_generator
 //
 
 assign DEC_EXE_STALL_MICROCYCLE_O   = stall_microcycle;
-assign DEC_EXE_NXT_PC_O             = FET_DEC_NXT_PC_I;
+// A prebyte may have been consumed speculatively while the previous
+// instruction ran. Rewind to its start on entry; RTI must refetch both bytes.
+assign DEC_EXE_NXT_PC_O = inject_interrupt ?
+                          (page_sel_reg[1] ? prebyte_pc : DEC_EXE_NEW_PC_I) :
+                          FET_DEC_NXT_PC_I;
 assign DEC_EXE_NEXT_INSTR_ACK_O     = next_instr_ack;
 
 assign FET_DEC_LOAD_PC_O     = fet_dec_load_pc;
 assign FET_DEC_PC_O          = DEC_EXE_NEW_PC_I;
-assign FET_DEC_INSTR_RD_EN_O = (next_instr_ack & ~stall_microcycle) | page_sel_load;
+assign FET_DEC_INSTR_RD_EN_O = (next_instr_ack & ~stall_microcycle & ~inject_interrupt) | page_sel_load;
 assign FET_DEC_INSTR_LEN_O   = instr_len;
 
 /////////////////////////////////////////////////////////////////////////////
 
 
 endmodule
-

@@ -55,9 +55,13 @@ module turbo9_r
   parameter TURBO9_CPU_QUEUE_SIZE = 6 // CPU Fetch Queue Size: 6=Default, 4=Min, 7=Max
 )
 (
+  // Interrupt requests (active low). Unconnected inputs are inactive.
   // Inputs: Clock & Reset
   input          RST_I,
   input          CLK_I,
+  input wire     IRQ_N_I,
+  input wire     FIRQ_N_I,
+  input wire     NMI_N_I,
 
   // Wishbone Interface (Even bytes)
   input    [4:0] EVEN_TGD_I,
@@ -137,6 +141,9 @@ wire        pmem_rd_ack_i;
     // Inputs: Clock & Reset
     .RST_I            (RST_I            ),
     .CLK_I            (CLK_I            ),
+    .IRQ_N_I (IRQ_N_I),
+    .FIRQ_N_I (FIRQ_N_I),
+    .NMI_N_I (NMI_N_I),
     //
     // Data Memory Interface
     .DMEM_DAT_O       (dmem_dat_o       ),

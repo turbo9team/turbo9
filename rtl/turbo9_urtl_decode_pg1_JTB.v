@@ -93,6 +93,7 @@ always @* begin
     8'h31 : PG1_JTB_O = 8'hb; // LEA_XY      LEAY(inh)
     8'h32 : PG1_JTB_O = 8'ha; // LEA_SU      LEAS(inh)
     8'h33 : PG1_JTB_O = 8'ha; // LEA_SU      LEAU(inh)
+    8'h3F : PG1_JTB_O = 8'h42; // SWI_VECTOR_MASK SWI
     8'h60 : PG1_JTB_O = 8'h2a; // NEG         NEG (dir idx ext)
     8'h63 : PG1_JTB_O = 8'h26; // COM         COM (dir idx ext)
     8'h64 : PG1_JTB_O = 8'h29; // LSR         LSR (dir idx ext)
@@ -242,6 +243,7 @@ always @* begin
     8'h31 : PG1_JTB_op = "LEAY(inh)";
     8'h32 : PG1_JTB_op = "LEAS(inh)";
     8'h33 : PG1_JTB_op = "LEAU(inh)";
+    8'h3F : PG1_JTB_op = "SWI";
     8'h60 : PG1_JTB_op = "NEG (dir idx ext)";
     8'h63 : PG1_JTB_op = "COM (dir idx ext)";
     8'h64 : PG1_JTB_op = "LSR (dir idx ext)";
@@ -389,6 +391,7 @@ always @* begin
     8'h31 : PG1_JTB_eq = "LEA_XY";
     8'h32 : PG1_JTB_eq = "LEA_SU";
     8'h33 : PG1_JTB_eq = "LEA_SU";
+    8'h3F : PG1_JTB_eq = "SWI_VECTOR_MASK";
     8'h60 : PG1_JTB_eq = "NEG";
     8'h63 : PG1_JTB_eq = "COM";
     8'h64 : PG1_JTB_eq = "LSR";

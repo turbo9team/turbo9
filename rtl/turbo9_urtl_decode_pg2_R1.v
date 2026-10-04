@@ -81,6 +81,7 @@ always @* begin
     8'h2D : PG2_R1_O = 4'h5; // PC          LBGE LBLT LBGT LBLE
     8'h2E : PG2_R1_O = 4'h5; // PC          LBGE LBLT LBGT LBLE
     8'h2F : PG2_R1_O = 4'h5; // PC          LBGE LBLT LBGT LBLE
+    8'h3F : PG2_R1_O = 4'h5; // PC          SWI2
     8'h83 : PG2_R1_O = 4'h0; // D           CMPD (imm)
     8'h8C : PG2_R1_O = 4'h2; // Y           CMPY (imm)
     8'h8E : PG2_R1_O = 4'h2; // Y           LDY (imm)
@@ -133,6 +134,7 @@ always @* begin
     8'h2D : PG2_R1_op = "LBGE LBLT LBGT LBLE";
     8'h2E : PG2_R1_op = "LBGE LBLT LBGT LBLE";
     8'h2F : PG2_R1_op = "LBGE LBLT LBGT LBLE";
+    8'h3F : PG2_R1_op = "SWI2";
     8'h83 : PG2_R1_op = "CMPD (imm)";
     8'h8C : PG2_R1_op = "CMPY (imm)";
     8'h8E : PG2_R1_op = "LDY (imm)";
@@ -183,6 +185,7 @@ always @* begin
     8'h2D : PG2_R1_eq = "PC";
     8'h2E : PG2_R1_eq = "PC";
     8'h2F : PG2_R1_eq = "PC";
+    8'h3F : PG2_R1_eq = "PC";
     8'h83 : PG2_R1_eq = "D";
     8'h8C : PG2_R1_eq = "Y";
     8'h8E : PG2_R1_eq = "Y";

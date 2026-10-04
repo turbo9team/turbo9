@@ -17,7 +17,8 @@
 * [Presentations](#presentations)
 * [Publications](#publications)
 * [Directory Structure](#directory-structure)
-* [Third-Party Tools](#third-party-tools)
+  * [Third-Party Tools](#third-party-tools)
+  * [Interrupts](#interrupts)
 * [Current Status](#current-status)
 * [Team Members](#team-members)
 * [Faculty](#faculty)
@@ -207,6 +208,122 @@ We addressed this challenge by developing uRTL, a novel toolset for systematical
 
 ----------------------------------------
 
+## TurbOS RTL boot validation
+
+The `turbo9sim` TurbOS port can boot directly on the interrupt-enabled pipeline.
+`tb/tb_turbos.v` supplies a 64 KiB memory and the port's Hyper9-compatible I/O:
+
+| Address | Function |
+| --- | --- |
+| `$FF00` | Terminal transmit byte |
+| `$FF01` | Terminal receive byte |
+| `$FF02` | Pending status: bit 0 timer, bit 1 terminal; write one to acknowledge |
+| `$FF03` | Interrupt enables: bit 0 timer, bit 1 terminal |
+
+IRQ remains asserted while an enabled source is pending. The test timer uses
+20,000 CPU cycles per tick to accelerate simulation; a physical implementation
+must use the clock frequency divided by 60. Reset and interrupt vectors come
+from the final bytes of the complete 65,536-byte TurbOS image.
+
+Build the images in a TurbOS checkout:
+
+```sh
+make -C "$TURBOSDIR/ports/turbo9sim" TURBOSDIR="$TURBOSDIR" turbos_smoke.img turbos_dev.img
+```
+
+Then run from this checkout (requires Python 3 and Icarus Verilog):
+
+```sh
+sim/run_turbos.sh "$TURBOSDIR/ports/turbo9sim/turbos_smoke.img"
+sim/run_turbos.sh "$TURBOSDIR/ports/turbo9sim/turbos_dev.img" dev
+```
+
+Both commands cover all six pipeline types. The smoke test checks `TurbOS OK`
+and timer acknowledgements. The development test boots the shell, injects
+`mfree` through receive IRQs, checks its output and a second `TOS:` prompt,
+and verifies continued timer service. The terminal driver must acknowledge
+`Term.RxReady` by writing that bit alone to `Reg.Stat` after reading `Term.In`.
+`IVERILOG` and `VVP` can specify alternate executable paths.
+
+With [Apio](https://fpgawars.github.io/apio/docs/installing-apio-cli/) installed,
+install its toolchain packages once, then run the existing scripts in its tool
+environment (no `apio.ini` is needed for these checks):
+
+```sh
+apio packages install
+apio raw -- bash sim/run_turbos.sh "$TURBOSDIR/ports/turbo9sim/turbos_smoke.img"
+apio raw -- bash sim/run_turbos.sh "$TURBOSDIR/ports/turbo9sim/turbos_dev.img" dev
+```
+
+This is an RTL virtual board. The existing FPGA top still needs the corresponding
+64 KiB memory layout, a 60 Hz timer and UART receive/transmit integration before
+these images can run on a BASYS 3. FPGA timing and physical UART behavior are
+not validated by this simulation.
+
+## Interrupts
+
+The CPU pipeline and all CPU/SoC wrappers expose active-low `IRQ_N_I`,
+`FIRQ_N_I`, and `NMI_N_I` inputs. Tie unused inputs high. Requests pass through
+two flip-flops before reaching the interrupt controller; hold level requests
+until serviced, and make NMI pulses long enough to be sampled by the CPU clock.
+Interrupts enter at instruction boundaries, including after branches and
+multi-cycle arithmetic. A consumed prebyte is refetched on return if its
+instruction had not yet issued.
+
+| Source | Vector | Saved state | Masks set on entry |
+| --- | --- | --- | --- |
+| NMI | `$FFFC` | Full, E=1 | I and F |
+| FIRQ | `$FFF6` | CC and PC, E=0 | I and F |
+| IRQ | `$FFF8` | Full, E=1 | I |
+| SWI | `$FFFA` | Full, E=1 | I and F |
+| SWI2 | `$FFF4` | Full, E=1 | Neither |
+| SWI3 | `$FFF2` | Full, E=1 | Neither |
+
+Hardware priority is NMI, FIRQ, then IRQ. IRQ and FIRQ are level sensitive and
+obey the I and F bits respectively. NMI latches a falling edge, ignores I/F,
+and remains disarmed after reset until software initializes S. A request held
+low before S initialization does not become a new NMI when S is initialized.
+The full frame is 12 bytes (CC, A, B, DP, X, Y, U, PC in ascending stack-address
+order); the short frame is three bytes (CC, PC). RTI uses the stacked E bit to
+select the frame size and restores all stacked CC bits.
+
+SYNC waits without stacking and wakes on a synchronized request, including a
+masked request. Enabled requests vector; masked requests resume execution.
+CWAI ANDs CC with its immediate operand, sets E, saves the full state once,
+and waits for an enabled request. Even FIRQ uses that existing full frame;
+interrupt entry does not stack it a second time. Reset cancels either wait.
+These are architectural behaviors, not MC6809 cycle-exact timing.
+
+Run `bash sim/run_interrupts.sh` with Icarus Verilog installed. The directed
+suite checks stack bytes, vectors, masking, priority, nested and held requests,
+NMI arming, wait states, prebytes, and RTI across six pipeline configurations,
+queue sizes 4/6/7, memory latencies 1/3 with stalls, and default/synchronous/
+minimal reset modes and the X don't-care option. `IVERILOG` and `VVP` can select local tool paths.
+To regenerate the checked-in RTL from its microcode sources, run
+`bash sim/generate_microcode.sh` (requires a C compiler).
+
+Apio also supplies the tools for interrupt simulation and synthesis:
+
+```sh
+apio raw -- bash sim/run_interrupts.sh
+apio raw -- bash sim/run_synthesis.sh
+bash sim/generate_microcode.sh --check
+```
+
+The synthesis script maps all six CPU pipelines, with queue size 6, to Xilinx
+7-series cells and checks the resulting netlists. It prints resource counts
+and fails on synthesis or structural errors. `YOSYS` can select a local tool
+path. Unused hardware interrupt inputs must be tied high; weak pull-ups for
+legacy unconnected inputs are retained only in simulation.
+
+GitHub Actions runs the 144-case interrupt matrix, synthesis of all six
+pipelines, and a byte-for-byte microcode regeneration check. Simulation and
+synthesis logs are saved as workflow artifacts. TurbOS boot tests run locally
+against separately built images; they are not part of this workflow.
+Synthesis checks do not establish placement, routing, board resource fit or
+timing closure. See [recorded validation results](docs/interrupt-validation.md)
+for tool versions, resource counts and TurbOS image provenance.
+
 ## Current Status
 The current version of the Turbo9 is thoroughly verified and is capable of running C code.
 
@@ -270,5 +387,3 @@ Version 1.0 is in development and testing. Version 1.0 completes the interrupt s
 
 ## Contact
 You may contact us at **team**[at]**turbo9**[dot]**org**. Thank you!
-
-

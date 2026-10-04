@@ -160,16 +160,18 @@ end
 soc_top_gts
 //soc_top
 #(
-  .TURBO9_SOC_RAM_ADDR_WIDTH (16) // SoC RAM Address Width: 16=64KB
+  .TURBO9_SOC_MEM_ADDR_WIDTH (16) // SoC Memory Address Width: 16=64KB
 )
 //I_soc_top
 I_soc_top_gts
 //I_soc_top
 (
   // Inputs: Clock & Reset
-  .HARD_RST_I (hard_rst_sync), // Hard Reset. Active high and synchronized to CLK_I
-  .SOFT_RST_I (soft_rst_sync), // Soft Reset. Active high and synchronized to CLK_I
+  .RST_I      (hard_rst_sync | soft_rst_sync), // Current SoC uses one reset input.
   .CLK_I      (clk          ), // Clock
+  .IRQ_N_I    (1'b1), // Connect interrupt sources here when integrating peripherals.
+  .FIRQ_N_I   (1'b1),
+  .NMI_N_I    (1'b1),
 
   .RXD_PIN_I  (uart_txd_in  ),
   .GPI_PORT_I ({sw, btn}    ), 

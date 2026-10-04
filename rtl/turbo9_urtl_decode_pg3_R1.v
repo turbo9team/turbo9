@@ -61,6 +61,7 @@ module turbo9_urtl_decode_pg3_R1(
 
 always @* begin
   case (OPCODE_I)
+    8'h3F : PG3_R1_O = 4'h5; // PC          SWI3
     8'h83 : PG3_R1_O = 4'h3; // U           CMPU (imm)
     8'h8C : PG3_R1_O = 4'h4; // S           CMPS (imm)
     8'h93 : PG3_R1_O = 4'h3; // U           CMPU (dir idx ext)
@@ -79,6 +80,7 @@ reg [(8*64):0] PG3_R1_op;
 
 always @* begin
   case (OPCODE_I)
+    8'h3F : PG3_R1_op = "SWI3";
     8'h83 : PG3_R1_op = "CMPU (imm)";
     8'h8C : PG3_R1_op = "CMPS (imm)";
     8'h93 : PG3_R1_op = "CMPU (dir idx ext)";
@@ -95,6 +97,7 @@ reg [(8*64):0] PG3_R1_eq;
 
 always @* begin
   case (OPCODE_I)
+    8'h3F : PG3_R1_eq = "PC";
     8'h83 : PG3_R1_eq = "U";
     8'h8C : PG3_R1_eq = "S";
     8'h93 : PG3_R1_eq = "U";

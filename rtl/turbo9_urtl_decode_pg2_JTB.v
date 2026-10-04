@@ -77,6 +77,7 @@ always @* begin
     8'h2D : PG2_JTB_O = 8'h30; // JMP         LBGE LBLT LBGT LBLE
     8'h2E : PG2_JTB_O = 8'h30; // JMP         LBGE LBLT LBGT LBLE
     8'h2F : PG2_JTB_O = 8'h30; // JMP         LBGE LBLT LBGT LBLE
+    8'h3F : PG2_JTB_O = 8'h43; // SWI_VECTOR_NO_MASK SWI2
     8'h93 : PG2_JTB_O = 8'h1b; // CMP         CMPD (dir idx ext)
     8'h9C : PG2_JTB_O = 8'h1b; // CMP         CMPY (dir idx ext)
     8'h9E : PG2_JTB_O = 8'h1d; // LD          LDY (dir idx ext)
@@ -117,6 +118,7 @@ always @* begin
     8'h2D : PG2_JTB_op = "LBGE LBLT LBGT LBLE";
     8'h2E : PG2_JTB_op = "LBGE LBLT LBGT LBLE";
     8'h2F : PG2_JTB_op = "LBGE LBLT LBGT LBLE";
+    8'h3F : PG2_JTB_op = "SWI2";
     8'h93 : PG2_JTB_op = "CMPD (dir idx ext)";
     8'h9C : PG2_JTB_op = "CMPY (dir idx ext)";
     8'h9E : PG2_JTB_op = "LDY (dir idx ext)";
@@ -155,6 +157,7 @@ always @* begin
     8'h2D : PG2_JTB_eq = "JMP";
     8'h2E : PG2_JTB_eq = "JMP";
     8'h2F : PG2_JTB_eq = "JMP";
+    8'h3F : PG2_JTB_eq = "SWI_VECTOR_NO_MASK";
     8'h93 : PG2_JTB_eq = "CMP";
     8'h9C : PG2_JTB_eq = "CMP";
     8'h9E : PG2_JTB_eq = "LD";

@@ -159,6 +159,7 @@ s16 dump_verilog_header()
   fprintf(_verilog_fp, "/////////////////////////////////////////////////////////////////////////////\n");
   fprintf(_verilog_fp, "//                                MODULE\n");
   fprintf(_verilog_fp, "/////////////////////////////////////////////////////////////////////////////\n");
+  fprintf(_verilog_fp, "`include \"turbo9_rtl_config.vh\"\n\n");
   module_name = basename(_vlog_file_name);
   module_name = strtok(module_name,".");
   fprintf(_verilog_fp, "module %s\n", module_name);

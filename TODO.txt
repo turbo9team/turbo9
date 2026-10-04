@@ -15,7 +15,7 @@ Fix:
     been scaffolded to mirror the CPU one but never finished for these two
 
 Finish:
-  Interrupts
+  FPGA timing/synthesis and hardware validation of the interrupt implementation
 
 
 Reset Audit:
@@ -70,5 +70,4 @@ turbo9.v:                                 . RST_I passthrough
 turbo9_wishbone_16bit.v:                  . ifdef'ed
 turbo9_wishbone_2x8bit.v:                 . ifdef'ed
 turbo9_wishbone_8bit.v:                   . ifdef'ed
-
 

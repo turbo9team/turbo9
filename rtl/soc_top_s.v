@@ -93,10 +93,14 @@ module soc_top_s
   parameter TURBO9_CPU_QUEUE_SIZE = 6 // CPU Fetch Queue Size: 6=Default, 4=Min, 7=Max
 )
 (
+  // Interrupt requests (active low). Unconnected inputs are inactive.
   // Inputs: Clock & Reset
   input          HARD_RST_I, // Hard Reset. Active high and synchronized to CLK_I
   input          SOFT_RST_I, // Soft Reset. Active high and synchronized to CLK_I
   input          CLK_I, // Clock
+  input wire     IRQ_N_I,
+  input wire     FIRQ_N_I,
+  input wire     NMI_N_I,
 
   // Inputs
   input          RXD_PIN_I,
@@ -181,6 +185,9 @@ wire [31:0] clk_cnt_rd_dat;
     // Inputs: Clock & Reset
     .RST_I  (SOFT_RST_I),
     .CLK_I  (CLK_I),
+    .IRQ_N_I (IRQ_N_I),
+    .FIRQ_N_I (FIRQ_N_I),
+    .NMI_N_I (NMI_N_I),
 
     // Inputs
     .DAT_I   (turbo9_rd_dat),

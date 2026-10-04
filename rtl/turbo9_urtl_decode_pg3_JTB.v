@@ -61,6 +61,7 @@ module turbo9_urtl_decode_pg3_JTB(
 
 always @* begin
   case (OPCODE_I)
+    8'h3F : PG3_JTB_O = 8'h43; // SWI_VECTOR_NO_MASK SWI3
     8'h93 : PG3_JTB_O = 8'h1b; // CMP         CMPU (dir idx ext)
     8'h9C : PG3_JTB_O = 8'h1b; // CMP         CMPS (dir idx ext)
     8'hA3 : PG3_JTB_O = 8'h1b; // CMP         CMPU (dir idx ext)
@@ -77,6 +78,7 @@ reg [(8*64):0] PG3_JTB_op;
 
 always @* begin
   case (OPCODE_I)
+    8'h3F : PG3_JTB_op = "SWI3";
     8'h93 : PG3_JTB_op = "CMPU (dir idx ext)";
     8'h9C : PG3_JTB_op = "CMPS (dir idx ext)";
     8'hA3 : PG3_JTB_op = "CMPU (dir idx ext)";
@@ -91,6 +93,7 @@ reg [(8*64):0] PG3_JTB_eq;
 
 always @* begin
   case (OPCODE_I)
+    8'h3F : PG3_JTB_eq = "SWI_VECTOR_NO_MASK";
     8'h93 : PG3_JTB_eq = "CMP";
     8'h9C : PG3_JTB_eq = "CMP";
     8'hA3 : PG3_JTB_eq = "CMP";

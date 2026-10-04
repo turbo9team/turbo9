@@ -61,6 +61,7 @@ module turbo9_urtl_decode_pg2_AR(
 
 always @* begin
   case (OPCODE_I)
+    8'h3F : PG2_AR_O = 4'h4; // S           SWI2
     8'h9F : PG2_AR_O = 4'he; // IDATA       STY (dir ext)
     8'hAF : PG2_AR_O = 4'hc; // EA          STY (idx)
     8'hBF : PG2_AR_O = 4'he; // IDATA       STY (dir ext)
@@ -77,6 +78,7 @@ reg [(8*64):0] PG2_AR_op;
 
 always @* begin
   case (OPCODE_I)
+    8'h3F : PG2_AR_op = "SWI2";
     8'h9F : PG2_AR_op = "STY (dir ext)";
     8'hAF : PG2_AR_op = "STY (idx)";
     8'hBF : PG2_AR_op = "STY (dir ext)";
@@ -91,6 +93,7 @@ reg [(8*64):0] PG2_AR_eq;
 
 always @* begin
   case (OPCODE_I)
+    8'h3F : PG2_AR_eq = "S";
     8'h9F : PG2_AR_eq = "IDATA";
     8'hAF : PG2_AR_eq = "EA";
     8'hBF : PG2_AR_eq = "IDATA";

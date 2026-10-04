@@ -82,6 +82,7 @@ always @* begin
     8'h2D : PG2_JTA_O = 8'h2e; // BRANCH      LBGE LBLT LBGT LBLE
     8'h2E : PG2_JTA_O = 8'h2e; // BRANCH      LBGE LBLT LBGT LBLE
     8'h2F : PG2_JTA_O = 8'h2e; // BRANCH      LBGE LBLT LBGT LBLE
+    8'h3F : PG2_JTA_O = 8'h3f; // SWI         SWI2
     8'h83 : PG2_JTA_O = 8'h1b; // CMP         CMPD (imm)
     8'h8C : PG2_JTA_O = 8'h1b; // CMP         CMPY (imm)
     8'h8E : PG2_JTA_O = 8'h1d; // LD          LDY (imm)
@@ -135,6 +136,7 @@ always @* begin
     8'h2D : PG2_JTA_op = "LBGE LBLT LBGT LBLE";
     8'h2E : PG2_JTA_op = "LBGE LBLT LBGT LBLE";
     8'h2F : PG2_JTA_op = "LBGE LBLT LBGT LBLE";
+    8'h3F : PG2_JTA_op = "SWI2";
     8'h83 : PG2_JTA_op = "CMPD (imm)";
     8'h8C : PG2_JTA_op = "CMPY (imm)";
     8'h8E : PG2_JTA_op = "LDY (imm)";
@@ -186,6 +188,7 @@ always @* begin
     8'h2D : PG2_JTA_eq = "BRANCH";
     8'h2E : PG2_JTA_eq = "BRANCH";
     8'h2F : PG2_JTA_eq = "BRANCH";
+    8'h3F : PG2_JTA_eq = "SWI";
     8'h83 : PG2_JTA_eq = "CMP";
     8'h8C : PG2_JTA_eq = "CMP";
     8'h8E : PG2_JTA_eq = "LD";

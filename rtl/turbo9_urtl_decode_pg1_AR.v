@@ -69,6 +69,7 @@ always @* begin
     8'h37 : PG1_AR_O = 4'h3; // U           PULU
     8'h39 : PG1_AR_O = 4'h4; // S           RTS
     8'h3B : PG1_AR_O = 4'h4; // S           RTI
+    8'h3C : PG1_AR_O = 4'h4; // S           CWAI
     8'h3F : PG1_AR_O = 4'h4; // S           SWI
     8'h6F : PG1_AR_O = 4'hc; // EA          CLR (idx)
     8'h7F : PG1_AR_O = 4'he; // IDATA       CLR (dir ext)
@@ -109,6 +110,7 @@ always @* begin
     8'h37 : PG1_AR_op = "PULU";
     8'h39 : PG1_AR_op = "RTS";
     8'h3B : PG1_AR_op = "RTI";
+    8'h3C : PG1_AR_op = "CWAI";
     8'h3F : PG1_AR_op = "SWI";
     8'h6F : PG1_AR_op = "CLR (idx)";
     8'h7F : PG1_AR_op = "CLR (dir ext)";
@@ -147,6 +149,7 @@ always @* begin
     8'h37 : PG1_AR_eq = "U";
     8'h39 : PG1_AR_eq = "S";
     8'h3B : PG1_AR_eq = "S";
+    8'h3C : PG1_AR_eq = "S";
     8'h3F : PG1_AR_eq = "S";
     8'h6F : PG1_AR_eq = "EA";
     8'h7F : PG1_AR_eq = "IDATA";

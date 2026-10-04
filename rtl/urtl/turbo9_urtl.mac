@@ -195,6 +195,8 @@ ctrl_vec_begin cv_CCR_OP 4
   OP_1ooooooo  EQU $7 ; = 4'h7,
   OP_o1o1oooo  EQU $8 ; = 4'h8,
   OP_XXXXXXXX  EQU $9 ; = 4'h9
+  OP_0ooooooo  EQU $A
+  OP_INTERRUPT EQU $B
 ctrl_vec_end
 ; /////////////////////////////////////////
 
@@ -218,6 +220,7 @@ ctrl_vec_begin cv_MICRO_SEQ_COND_SEL 4
   SAU_DONE          EQU $4
   SAU_NOT_DONE      EQU $5
   E_CLEAR           EQU $6
+  WAIT_DONE         EQU $7
   BRANCH_COND       EQU $8 ; One hot encoded!
 ctrl_vec_end
 ; /////////////////////////////////////////

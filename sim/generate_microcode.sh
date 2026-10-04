@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
+check=0
+case "${1:-}" in
+  "") ;;
+  --check) check=1;;
+  *) echo "Usage: $0 [--check]" >&2; exit 2;;
+esac
 root=$(cd "$(dirname "$0")/.." && pwd)
 build=$(mktemp -d "${TMPDIR:-/tmp}/turbo9-microcode.XXXXXX")
 trap 'rm -rf "$build"' EXIT
@@ -15,6 +21,16 @@ cd "$build"
 for entry in 'INTERRUPT_FULL (D0)' 'INTERRUPT_LOOP (D1)' 'INTERRUPT_VECTOR (D2)' 'INTERRUPT_FAST (E0)'; do
   grep -Fq "$entry" urtl_statistics.log || { echo "Moved interrupt microcode entry: $entry" >&2; exit 1; }
 done
-cp turbo9_urtl*.v "$root/rtl/"
-cp urtl_statistics.log "$root/rtl/urtl/"
-echo "Regenerated microcode and opcode decode tables."
+if (( check )); then
+  for file in turbo9_urtl*.v; do
+    cmp "$file" "$root/rtl/$file" || { echo "Stale generated file: rtl/$file" >&2; exit 1; }
+  done
+  cmp urtl_statistics.log "$root/rtl/urtl/urtl_statistics.log" || {
+    echo "Stale generated statistics log" >&2; exit 1;
+  }
+  echo "Generated microcode, decode tables and statistics match their sources."
+else
+  cp turbo9_urtl*.v "$root/rtl/"
+  cp urtl_statistics.log "$root/rtl/urtl/"
+  echo "Regenerated microcode and opcode decode tables."
+fi

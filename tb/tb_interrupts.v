@@ -57,6 +57,8 @@ module tb_interrupts;
 
   reg [15:0] saved_pc, saved_s, saved_x, saved_y, saved_u;
   reg [7:0] saved_a, saved_b, saved_dp, saved_cc;
+  reg [7:0] cwai_mask;
+  reg interrupted_prebyte = 0;
   reg cwai_frame = 0;
   reg return_expected = 0;
   reg [7:0] return_cc;
@@ -131,14 +133,12 @@ module tb_interrupts;
     input [7:0] value;
     begin mem[cursor] = value; cursor = cursor+1; end
   endtask
-  reg [7:0] cwai_mask;
   reg [1:0] init_method = 0;
   integer method;
   reg delay_stack_init = 0;
   reg irq_from_reset = 0;
   reg [1:0] software_page = 0;
   reg irq_at_prebyte = 0;
-  reg interrupted_prebyte = 0;
   task setup;
     input [7:0] opcode, masks, wait_mask;
     begin

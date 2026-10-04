@@ -8,9 +8,10 @@ module tb_turbos;
   parameter STALLS = 0;
   reg clk = 0, reset = 1;
   always #5 clk = ~clk;
-  wire irq_n = !(|(status[1:0] & control[1:0]));
   reg firq_n = 1, nmi_n = 1;
+  reg [7:0] mem [0:65535];
   reg [7:0] status = 0, control = 0;
+  wire irq_n = !(|(status[1:0] & control[1:0]));
   integer ticks = 0, output_count = 0, serviced_ticks = 0;
   integer prompts = 0, input_index = 0, terminal_irqs = 0;
   reg [7:0] rx_byte = 0;
@@ -29,7 +30,6 @@ module tb_turbos;
       endcase
     end
   endfunction
-  reg [7:0] mem [0:65535];
   wire [15:0] pa, da, dw;
   wire pr, pw, dr, dwidth, we;
   reg [LATENCY-1:0] pack, dack, wack, pwidth, awidth;

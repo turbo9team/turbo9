@@ -111,9 +111,40 @@ module turbo9_decode_stage
 /////////////////////////////////////////////////////////////////////////////
 //                             INTERNAL SIGNALS
 /////////////////////////////////////////////////////////////////////////////
+wire   [2:0] instr_len;
+wire         instr_len_valid;
+
+wire         microcycle_start;
+wire         next_instr_req;
+
+wire         stall_microcycle;
+
+reg          next_instr_ack;
+reg          decode_ready;
+
+wire   [7:0] jump_table_a;
+wire   [7:0] jump_table_b;
+wire  [15:0] instr_data;
+wire         instr_direct_en;
+wire         instr_inh_en;
+wire   [3:0] instr_r1_sel;
+wire   [3:0] instr_r2_sel;
+wire   [3:0] instr_ar_sel;
+
+reg          fet_dec_load_pc;
+
+reg          page_sel_load;
+reg          page_sel_clear;
+reg    [1:0] page_sel_reg;
+localparam   page_sel_rst = 2'b00;
+
 // Weak defaults keep legacy unconnected simulation ports inactive.
 // Integrators should tie unused interrupt pins high.
+`ifdef SYNTHESIS
+wire irq_n_input, firq_n_input, nmi_n_input;
+`else
 tri1 irq_n_input, firq_n_input, nmi_n_input;
+`endif
 assign irq_n_input = IRQ_N_I;
 assign firq_n_input = FIRQ_N_I;
 assign nmi_n_input = NMI_N_I;
@@ -185,32 +216,7 @@ always @(posedge CLK_I or posedge RST_I) begin
   end
 end
 
-wire   [2:0] instr_len;
-wire         instr_len_valid;
 
-wire         microcycle_start;
-wire         next_instr_req;
-
-wire         stall_microcycle;
-
-reg          next_instr_ack;
-reg          decode_ready;
-
-wire   [7:0] jump_table_a;
-wire   [7:0] jump_table_b;
-wire  [15:0] instr_data;
-wire         instr_direct_en;
-wire         instr_inh_en;
-wire   [3:0] instr_r1_sel;
-wire   [3:0] instr_r2_sel;
-wire   [3:0] instr_ar_sel;
-
-reg          fet_dec_load_pc;
-
-reg          page_sel_load;
-reg          page_sel_clear;
-reg    [1:0] page_sel_reg;
-localparam   page_sel_rst = 2'b00;
 
 /////////////////////////////////////////////////////////////////////////////
 

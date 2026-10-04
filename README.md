@@ -245,6 +245,16 @@ and verifies continued timer service. The terminal driver must acknowledge
 `Term.RxReady` by writing that bit alone to `Reg.Stat` after reading `Term.In`.
 `IVERILOG` and `VVP` can specify alternate executable paths.
 
+With [Apio](https://fpgawars.github.io/apio/docs/installing-apio-cli/) installed,
+install its toolchain packages once, then run the existing scripts in its tool
+environment (no `apio.ini` is needed for these checks):
+
+```sh
+apio packages install
+apio raw -- bash sim/run_turbos.sh "$TURBOSDIR/ports/turbo9sim/turbos_smoke.img"
+apio raw -- bash sim/run_turbos.sh "$TURBOSDIR/ports/turbo9sim/turbos_dev.img" dev
+```
+
 This is an RTL virtual board. The existing FPGA top still needs the corresponding
 64 KiB memory layout, a 60 Hz timer and UART receive/transmit integration before
 these images can run on a BASYS 3. FPGA timing and physical UART behavior are
@@ -291,6 +301,28 @@ queue sizes 4/6/7, memory latencies 1/3 with stalls, and default/synchronous/
 minimal reset modes and the X don't-care option. `IVERILOG` and `VVP` can select local tool paths.
 To regenerate the checked-in RTL from its microcode sources, run
 `bash sim/generate_microcode.sh` (requires a C compiler).
+
+Apio also supplies the tools for interrupt simulation and synthesis:
+
+```sh
+apio raw -- bash sim/run_interrupts.sh
+apio raw -- bash sim/run_synthesis.sh
+bash sim/generate_microcode.sh --check
+```
+
+The synthesis script maps all six CPU pipelines, with queue size 6, to Xilinx
+7-series cells and checks the resulting netlists. It prints resource counts
+and fails on synthesis or structural errors. `YOSYS` can select a local tool
+path. Unused hardware interrupt inputs must be tied high; weak pull-ups for
+legacy unconnected inputs are retained only in simulation.
+
+GitHub Actions runs the 144-case interrupt matrix, synthesis of all six
+pipelines, and a byte-for-byte microcode regeneration check. Simulation and
+synthesis logs are saved as workflow artifacts. TurbOS boot tests run locally
+against separately built images; they are not part of this workflow.
+Synthesis checks do not establish placement, routing, board resource fit or
+timing closure. See [recorded validation results](docs/interrupt-validation.md)
+for tool versions, resource counts and TurbOS image provenance.
 
 ## Current Status
 The current version of the Turbo9 is thoroughly verified and is capable of running C code.

@@ -21,6 +21,7 @@ for cpu in 0 1 2 3 4 5; do
           -Ptb_interrupts.LATENCY="$latency" -Ptb_interrupts.STALLS=1 \
           -o "$build/test.vvp" tb/tb_interrupts.v rtl/turbo9*.v 2>"$build/compile.log" || \
           { cat "$build/compile.log"; exit 1; }
+        echo "Interrupts CPU=$cpu queue=$queue reset=$mode latency=$latency stalls=1"
         "$vvp" "$build/test.vvp"
       done
     done
